@@ -2,17 +2,21 @@
 Coursera Downloader
 -------------------
 
-For downloading videos for Coursera classes. Given a class name and related cookie file, it scrapes the course listing page to get the week and class names, and then downloads the related videos into appropriately named files and directories.
+Coursera.org is creating some fantastic, free educational videos. This script
+allows one to batch download videos for a Coursera classe. Given a class name
+and related cookie file, it scrapes the course listing page to get the week and
+class names, and then downloads the related videos into appropriately named
+files and directories.  
 
-Why did I do this?  Because I was using wget before, but I had the following
+Why is this helpful?  Before I was using wget, but I had the following
 problems:
 1. Video names have a number in them, but this does not correspond to the actual order.  Manually renaming them is a pain.
 2. Using names from the syllabus page provides more informative names.
 3. Using a wget in a forloop picks up extra videos which are not posted/linked, and these are sometimes duplicates.
 
-Naming is somewhat verbose, so that it will display and sort properly using MX Video on my andriod phone.
+Naming is somewhat verbose, so that it will display and sort properly using MX Video on my Andriod phone.
 
-Inspired in part by youtube-dl: http://rg3.github.com/youtube-dl
+Inspired in part by youtube-dl (http://rg3.github.com/youtube-dl) by which I've downloaded many other good videos such those from Khan Academy.
 
 ----------
 Directions
