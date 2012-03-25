@@ -27,7 +27,6 @@ import urllib2, cookielib
 import tempfile
 import subprocess
 import argparse
-from collections import namedtuple
 from BeautifulSoup import BeautifulSoup        
 
 def get_syllabus_url(className):
@@ -81,8 +80,6 @@ def clean_filename(s):
 def parse_syllabus(page):
   """Parses a Coursera course listing/syllabus page. 
   Each section is a week of classes."""
-  Section = namedtuple('Section', 'name videos')
-  Video = namedtuple('Video', 'name url')
   sections = []
   soup = BeautifulSoup(page)
   # traverse sections
@@ -99,10 +96,10 @@ def parse_syllabus(page):
       # find the anchor with .mp4 reference
       url = vtag.find('a', {"href":re.compile("\.mp4")})["href"]
       print "  ", url
-      videos.append(Video(vname, url))
-    sections.append(Section(section_name, videos))
+      videos.append((vname, url))
+    sections.append((section_name, videos))
   print "Found %d sections and %d videos on this page" % \
-    (len(sections), sum((len(s.videos) for s in sections)))
+    (len(sections), sum((len(s[1]) for s in sections)))
   if (not len(sections)):
     print "Probably bad cookies file (or wrong class name)"
   return sections
@@ -137,7 +134,7 @@ def download_file(url, fn, cookies_file, wget_bin):
       download_file_wget(wget_bin, url, fn, cookies_file)
     else:
       download_file_nowget(url, fn, cookies_file)
-  except KeyboardInterrupt as e: 
+  except KeyboardInterrupt, e: 
     print "\nKeyboard Interrupt -- Removing partial file:", fn
     os.remove(fn)
     sys.exit()
