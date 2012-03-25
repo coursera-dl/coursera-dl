@@ -10,13 +10,19 @@ problems:
 2. Using names from the syllabus page provides more informative names.
 3. Using a wget in a forloop picks up extra videos which are not posted/linked, and these are sometimes duplicates.
 
-Tested on:
-- Ubuntu/Python 2.6.5
-- Win7/Python2.5 (Cygwin)
+Naming is somewhat verbose, so that it will display and sort properly using MX Video on my andriod phone.
+
+Inspired in part by youtube-dl: http://rg3.github.com/youtube-dl
 
 ----------
 Directions
 ----------
+
+Requires Python 2.x (where x >= 5).
+
+Tested on:
+- Ubuntu/Python 2.6.5
+- Win7/Python2.5 (Cygwin)
 
 1. Install dependencies 
   1a. (Optionally) install "easy_install"
@@ -49,4 +55,5 @@ Use -l listing.html and then examine that file -- if it's the non-logged-in
 page then this is definitely your problem.
 
 Examples:
-coursera_dl.py -c cookies.txt -l listing.html -o saas --skip-download
+  coursera_dl.py -c cookies.txt saas
+  coursera_dl.py -c cookies.txt -l listing.html -o saas --skip-download
