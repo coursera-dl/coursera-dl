@@ -118,14 +118,14 @@ def download_videos(wget_bin, cookies_file, class_name, sections, overwrite=Fals
   def format_video(num, video):
     return "%02d_%s.mp4" % (num, video)
 
-  for (secnum, (section, videos)) in enumerate(sections, 1):
-    if only_section_num and secnum != only_section_num:
+  for (secnum, (section, videos)) in enumerate(sections):
+    if only_section_num and secnum+1 != only_section_num:
       continue
-    sec = format_section(secnum, section)
+    sec = format_section(secnum+1, section)
     if not os.path.exists(sec):
       os.mkdir(sec)
-    for (vidnum, (vname, url)) in enumerate(videos, 1):
-      vidfn = os.path.join(sec, format_video(vidnum, vname))
+    for (vidnum, (vname, url)) in enumerate(videos):
+      vidfn = os.path.join(sec, format_video(vidnum+1, vname))
       if overwrite or not os.path.exists(vidfn):
         if not skip_download: 
           download_file(url, vidfn, cookies_file, wget_bin)
