@@ -2,24 +2,9 @@
 """
 For downloading videos for Coursera classes. Given a class name and related cookie file, it scrapes the course listing page to get the week and class names, and then downloads the related videos into appropriately named files and directories.
 
-Tested on Python 2.6.5.
-
-Dependencies:
-- BeautifulSoup 3
-- argparser         # sudo easy_install argparse
-
-Other:
-- must point script at your browser's cookie file for authentication
-  to coursera.org
-  - Chrome users use "cookie.txt export" extension
-- wget can optionally be used
-
-If it's finding 0 sections, you probably have a bad cookies file.
-Use -l listing.html and then examine that file -- if it's the non-logged-in
-page then this is definitely your problem.
-
 Examples:
-coursera_dl.py -c cookies.txt -l listing.html -o saas --skip-download
+  coursera_dl.py -c cookies.txt saas
+  coursera_dl.py -c cookies.txt -l listing.html -o saas --skip-download
 """
 
 import sys, os, re, string
