@@ -27,6 +27,7 @@ import urllib2, cookielib
 import tempfile
 import subprocess
 import argparse
+import StringIO
 from BeautifulSoup import BeautifulSoup        
 
 def get_syllabus_url(className):
@@ -37,18 +38,22 @@ def load_cookies_file(cookies_file):
   """Loads the cookies file. I am pre-pending the file with the special
   Netscape header because the cookie loader is being very particular about 
   this string."""
+  cookies = StringIO.StringIO()
   NETSCAPE_HEADER = "# Netscape HTTP Cookie File"
-  cookies = tempfile.NamedTemporaryFile()
-  cookies.write(NETSCAPE_HEADER)
+  cookies.write(NETSCAPE_HEADER);
   cookies.write(open(cookies_file, 'r').read())
   cookies.flush()
+  cookies.seek(0)
   return cookies
 
 def get_opener(cookies_file):
   """  """
   cj = cookielib.MozillaCookieJar()
   cookies = load_cookies_file(cookies_file)
-  cj.load(cookies.name)
+  # nasty hack: cj.load() requires a filename not a file, but if
+  # I use stringio, that file doesn't exist. I used NamedTemporaryFile 
+  # before, but encountered problems on Windows.
+  cj._really_load(cookies, "StringIO.cookies", False, False)
   return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
 def get_page(url, cookies_file):
