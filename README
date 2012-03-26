@@ -1,24 +1,28 @@
--------------------
+
 Coursera Downloader
 -------------------
 
 Coursera.org is creating some fantastic, free educational videos. This script
-allows one to batch download videos for a Coursera classe. Given a class name
+allows one to batch download videos for a Coursera class. Given a class name
 and related cookie file, it scrapes the course listing page to get the week and
 class names, and then downloads the related videos into appropriately named
 files and directories.  
 
-Why is this helpful?  Before I was using wget, but I had the following
-problems:
-1. Video names have a number in them, but this does not correspond to the actual order.  Manually renaming them is a pain.
-2. Using names from the syllabus page provides more informative names.
-3. Using a wget in a forloop picks up extra videos which are not posted/linked, and these are sometimes duplicates.
+Why is this helpful?  Before I was using wget, but I had the following problems:
 
-Naming is somewhat verbose, so that it will display and sort properly using MX Video on my Andriod phone.
+  1. Video names have a number in them, but this does not correspond to the
+     actual order.  Manually renaming them is a pain.
+  2. Using names from the syllabus page provides more informative names.
+  3. Using a wget in a forloop picks up extra videos which are not posted/linked,
+     and these are sometimes duplicates.
 
-Inspired in part by youtube-dl (http://rg3.github.com/youtube-dl) by which I've downloaded many other good videos such those from Khan Academy.
+Naming is somewhat verbose, so that it will display and sort properly using MX
+Video on my Andriod phone.
 
-----------
+Inspired in part by youtube-dl (http://rg3.github.com/youtube-dl) by which I've
+downloaded many other good videos such those from Khan Academy.  
+
+
 Directions
 ----------
 
@@ -48,9 +52,9 @@ Tested on:
     https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
 
 4. Run the script to download the videos.
-    e.g. coursera_dl.py -c cookies.txt saas
+    e.g. coursera-dl -c cookies.txt saas
 
----------------
+
 Troubleshooting
 ---------------
 
@@ -59,5 +63,10 @@ Use -l listing.html and then examine that file -- if it's the non-logged-in
 page then this is definitely your problem.
 
 Examples:
-  coursera_dl.py -c cookies.txt saas
-  coursera_dl.py -c cookies.txt -l listing.html -o saas --skip-download
+  coursera-dl -c cookies.txt saas
+  coursera-dl -c cookies.txt -l listing.html -o saas --skip-download
+
+
+Contact
+-------
+John Lehmann (first last at geemail dotcom)

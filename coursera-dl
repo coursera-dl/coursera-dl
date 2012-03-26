@@ -3,8 +3,11 @@
 For downloading videos for Coursera classes. Given a class name and related cookie file, it scrapes the course listing page to get the week and class names, and then downloads the related videos into appropriately named files and directories.
 
 Examples:
-  coursera_dl.py -c cookies.txt saas
-  coursera_dl.py -c cookies.txt -l listing.html -o saas --skip-download
+  coursera-dl -c cookies.txt saas
+  coursera-dl -c cookies.txt -l listing.html -o saas --skip-download
+
+Author: 
+  John Lehmann (first last at geemail dotcom)
 """
 
 import sys, os, re, string
@@ -32,7 +35,7 @@ def load_cookies_file(cookies_file):
   return cookies
 
 def get_opener(cookies_file):
-  """  """
+  """Use cookie file to create a url opener."""
   cj = cookielib.MozillaCookieJar()
   cookies = load_cookies_file(cookies_file)
   # nasty hack: cj.load() requires a filename not a file, but if
