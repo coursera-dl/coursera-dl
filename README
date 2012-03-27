@@ -28,18 +28,14 @@ Directions
 
 Requires Python 2.x (where x >= 5) and a free Coursera account.
 
-Tested on:
-- Ubuntu/Python 2.6.5
-- Win7/Python2.5 (Cygwin)
-
-1. Install dependencies 
+1. Install any missing dependencies.
 
   1a. Beautiful Soup 3 -- http://www.crummy.com/software/BeautifulSoup/
     Ubuntu/Debian: sudo apt-get install python-beautifulsoup 
     Other*: easy_install BeautifulSoup
 
   1b.  Argparse -- http://pypi.python.org/pypi/argparse
-    Only need install if Python version < 2.7
+    (Not necessary if Python version >= 2.7)
     Ubuntu/Debian: sudo apt-get install python-argparse
     Other*: easy_install argparse
 
@@ -47,15 +43,21 @@ Tested on:
     Ubuntu: sudo apt-get install python-setuptools
     Windows: http://pypi.python.org/pypi/setuptools
 
-2. Create a Coursera.org account and login
+2. Create a Coursera.org account and login.
     e.g. http://saas-class.org
 
-3. Locate or export your Netscape-style cookies file for authentication
-    Chrome users can use "cookie.txt export" extension.
-    https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
+3. Locate or export your Netscape-style cookies file with a browser extension.
+    Chrome: Cookie.txt Export
+      https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
+    Firefox: Export Cookies 1.2
+      https://addons.mozilla.org/en-US/firefox/addon/export-cookies/
 
 4. Run the script to download the videos.
     e.g. coursera-dl -c cookies.txt saas
+
+Tested on:
+  - Ubuntu/Python 2.6.5
+  - Win7/Python2.5 (Cygwin)
 
 
 Troubleshooting
