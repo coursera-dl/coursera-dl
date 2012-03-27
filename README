@@ -26,23 +26,26 @@ downloaded many other good videos such those from Khan Academy.
 Directions
 ----------
 
-Requires Python 2.x (where x >= 5).
+Requires Python 2.x (where x >= 5) and a free Coursera account.
 
 Tested on:
 - Ubuntu/Python 2.6.5
 - Win7/Python2.5 (Cygwin)
 
 1. Install dependencies 
-  1a. (Optionally) install "easy_install"
-    Windows: http://pypi.python.org/pypi/setuptools
+
+  1a. Beautiful Soup 3 -- http://www.crummy.com/software/BeautifulSoup/
+    Ubuntu/Debian: sudo apt-get install python-beautifulsoup 
+    Other*: easy_install BeautifulSoup
+
+  1b.  Argparse -- http://pypi.python.org/pypi/argparse
+    Only need install if Python version < 2.7
+    Ubuntu/Debian: sudo apt-get install python-argparse
+    Other*: easy_install argparse
+
+  * To install "easy_install"
     Ubuntu: sudo apt-get install python-setuptools
-
-  1b. Beautiful Soup 3 -- http://www.crummy.com/software/BeautifulSoup/
-    easy_install BeautifulSoup
-
-  1c.  Argparse -- http://pypi.python.org/pypi/argparse
-    If Python version >= 2.7, this is a built-in
-    easy_install argparse
+    Windows: http://pypi.python.org/pypi/setuptools
 
 2. Create a Coursera.org account and login
     e.g. http://saas-class.org
@@ -69,4 +72,4 @@ Examples:
 
 Contact
 -------
-John Lehmann (first last at geemail dotcom)
+John Lehmann: @jplehmann, first last at geemail dotcom
