@@ -135,7 +135,7 @@ def download_file(url, fn, cookies_file, wget_bin):
 def download_file_wget(wget_bin, url, fn, cookies_file):
   """Downloads a file using wget.  Could possibly use python to stream files to
   disk, but wget is robust and gives nice visual feedback."""
-  cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file]
+  cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
   print "Executing wget:", cmd 
   retcode = subprocess.call(cmd)
 
