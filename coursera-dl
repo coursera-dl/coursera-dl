@@ -97,7 +97,7 @@ def parse_syllabus(page):
     print "Probably bad cookies file (or wrong class name)"
   return sections
 
-def download_videos(wget_bin, cookies_file, class_name, sections, overwrite=False, skip_download=False, only_section_num=None):
+def download_videos(wget_bin, cookies_file, class_name, sections, overwrite=False, skip_download=False, section_filter=None, video_filter=None):
   """Downloads videos described by sections."""
 
   def format_section(num, section):
@@ -107,12 +107,15 @@ def download_videos(wget_bin, cookies_file, class_name, sections, overwrite=Fals
     return "%02d_%s.mp4" % (num, video)
 
   for (secnum, (section, videos)) in enumerate(sections):
-    if only_section_num and secnum+1 != only_section_num:
+    if section_filter and not re.search(section_filter, section): 
+      print "Skipping b/c of sf: ", section_filter, section
       continue
     sec = format_section(secnum+1, section)
-    if not os.path.exists(sec):
-      os.mkdir(sec)
     for (vidnum, (vname, url)) in enumerate(videos):
+      if video_filter and not re.search(video_filter, vname): 
+        continue
+      if not os.path.exists(sec):
+        os.mkdir(sec)
       vidfn = os.path.join(sec, format_video(vidnum+1, vname))
       if overwrite or not os.path.exists(vidfn):
         if not skip_download: 
@@ -165,10 +168,12 @@ def parseArgs():
   parser.add_argument('-c', '--cookies_file', dest='cookies_file', 
     action='store', required=True, help='full path to the cookies.txt file')
   # optional
+  parser.add_argument('-sf', '--section_filter', dest='section_filter', 
+    action='store', default=None, help='only download sections which contain this regex (default: disabled)')
+  parser.add_argument('-vf', '--video_filter', dest='video_filter', 
+    action='store', default=None, help='only download resources which contain this regex (default: disabled)')
   parser.add_argument('-w', '--wget_bin', dest='wget_bin', 
     action='store', default=None, help='wget binary if it should be used for downloading')
-  parser.add_argument('-s', '--section_num', dest='only_section_num', type=int,
-    action='store', help='only download this section number')
   parser.add_argument('-o', '--overwrite', dest='overwrite', 
     action='store_true', default=False, 
     help='whether existing video files should be overwritten (default: False)')
@@ -187,7 +192,7 @@ def main():
   args = parseArgs()
   page = get_syllabus(args.class_name, args.cookies_file, args.local_page)
   sections = parse_syllabus(page)
-  download_videos(args.wget_bin, args.cookies_file, args.class_name, sections, args.overwrite, args.skip_download, args.only_section_num)
+  download_videos(args.wget_bin, args.cookies_file, args.class_name, sections, args.overwrite, args.skip_download, args.section_filter, args.video_filter)
 
 if __name__ == "__main__":
   main()

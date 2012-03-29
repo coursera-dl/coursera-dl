@@ -3,28 +3,30 @@ Coursera Downloader
 -------------------
 
 Coursera (http://coursera.org) is creating some fantastic, free educational
-videos. This script allows one to batch download videos for a Coursera class.
-Given a class name and related cookie file, it scrapes the course listing page
-to get the week and class names, and then downloads the related videos into
+videos (e.g., algorithms, machine learning, natural language processing, SaaS).
+This script allows one to batch download videos for a Coursera class.  Given a
+class name and related cookie file, it scrapes the course listing page to get
+the week and class names, and then downloads the related videos into
 appropriately named files and directories.  
 
 Why is this helpful?  Before I was using wget, but I had the following problems:
-
   1. Video names have a number in them, but this does not correspond to the
      actual order.  Manually renaming them is a pain.
   2. Using names from the syllabus page provides more informative names.
   3. Using a wget in a forloop picks up extra videos which are not
      posted/linked, and these are sometimes duplicates.
 
-Naming is somewhat verbose, so that it will display and sort properly using MX
-Video on my Andriod phone.
+DownloadThemAll can also work, but this provides better names.
+
+Features:
+  * Intentionally detailed names, so that it will display and sort properly
+    using MX Video on my Andriod phone.
+  * Regex-based section (week) and video name filters to download only certain
+    resources.
+  * Tested on both Linux and Windows.
 
 Inspired in part by youtube-dl (http://rg3.github.com/youtube-dl) by which I've
 downloaded many other good videos such those from Khan Academy.  
-
-Tested on:
-  - Ubuntu/Python 2.6.5
-  - Win7/Python2.5 (with wget)
 
 
 Directions
@@ -63,10 +65,14 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
 
 4. Run the script to download the videos.
     Linux:
-      e.g. coursera-dl saas -c cookies.txt
+      coursera-dl saas -c cookies.txt
+    # filter by section name
+      coursera-dl saas -c cookies.txt -sf "Chapter_Four"
+    # filter by video name
+      coursera-dl saas -c cookies.txt -vf "3.1_"
     Windows:
       You need to use wget right now.
-      e.g. coursera-dl saas -c cookies.txt -w C:\...\wget.exe
+      coursera-dl saas -c cookies.txt -w C:\...\wget.exe
 
 
 Troubleshooting
@@ -75,6 +81,10 @@ Troubleshooting
 If it's finding 0 sections, you probably have a bad cookies file.
 Use -l listing.html and then examine that file -- if it's the non-logged-in
 page then this is definitely your problem.
+
+Tested on:
+  - Ubuntu/Python 2.6.5
+  - Win7/Python2.5 (with wget)
 
 
 Contact
