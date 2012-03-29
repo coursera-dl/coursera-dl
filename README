@@ -13,14 +13,18 @@ Why is this helpful?  Before I was using wget, but I had the following problems:
   1. Video names have a number in them, but this does not correspond to the
      actual order.  Manually renaming them is a pain.
   2. Using names from the syllabus page provides more informative names.
-  3. Using a wget in a forloop picks up extra videos which are not posted/linked,
-     and these are sometimes duplicates.
+  3. Using a wget in a forloop picks up extra videos which are not
+     posted/linked, and these are sometimes duplicates.
 
 Naming is somewhat verbose, so that it will display and sort properly using MX
 Video on my Andriod phone.
 
 Inspired in part by youtube-dl (http://rg3.github.com/youtube-dl) by which I've
 downloaded many other good videos such those from Khan Academy.  
+
+Tested on:
+  - Ubuntu/Python 2.6.5
+  - Win7/Python2.5 (with wget)
 
 
 Directions
@@ -34,7 +38,7 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
     Ubuntu/Debian: sudo apt-get install python-beautifulsoup 
     Other*: easy_install BeautifulSoup
 
-  1b.  Argparse -- http://pypi.python.org/pypi/argparse
+  1b. Argparse -- http://pypi.python.org/pypi/argparse
     (Not necessary if Python version >= 2.7)
     Ubuntu/Debian: sudo apt-get install python-argparse
     Other*: easy_install argparse
@@ -42,6 +46,11 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
   * To install "easy_install"
     Ubuntu: sudo apt-get install python-setuptools
     Windows: http://pypi.python.org/pypi/setuptools
+
+  1c. wget (needed on Windows)
+    http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe/
+    This is a temporary workaround as currently the python download 
+    has a problem.
 
 2. Create a Coursera.org account and login.
     e.g. http://saas-class.org
@@ -53,11 +62,11 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
       https://addons.mozilla.org/en-US/firefox/addon/export-cookies/
 
 4. Run the script to download the videos.
-    e.g. coursera-dl -c cookies.txt saas
-
-Tested on:
-  - Ubuntu/Python 2.6.5
-  - Win7/Python2.5 (Cygwin)
+    Linux:
+      e.g. coursera-dl saas -c cookies.txt
+    Windows:
+      You need to use wget right now.
+      e.g. coursera-dl saas -c cookies.txt -w C:\...\wget.exe
 
 
 Troubleshooting
@@ -66,10 +75,6 @@ Troubleshooting
 If it's finding 0 sections, you probably have a bad cookies file.
 Use -l listing.html and then examine that file -- if it's the non-logged-in
 page then this is definitely your problem.
-
-Examples:
-  coursera-dl -c cookies.txt saas
-  coursera-dl -c cookies.txt -l listing.html -o saas --skip-download
 
 
 Contact
