@@ -60,9 +60,15 @@ e.g. http://saas-class.org
 Troubleshooting
 ---------------
 
-If it's finding 0 sections, you probably have a bad cookies file.
-Use -l listing.html and then examine that file -- if it's the non-logged-in
-page then this is definitely your problem.
+* If it's finding 0 sections, you probably have a bad cookies file.  Re-login
+  to the site with your browser, copy the cookie file and try again (step 3 & 4
+  above).  (Use -l listing.html and then examine that file -- if it's the
+  non-logged-in page then this is definitely your problem.)
+
+* If you get the error: "ValueError: need more than 1 value to unpack", the
+  process or text editor you used to copy the cookie.txt probably converted the
+  tabs to spaces. 
+
 
 Tested on:
 
