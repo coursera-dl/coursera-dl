@@ -50,16 +50,11 @@ e.g. http://saas-class.org
     Firefox: [Export Cookies 1.2]  
       
 4. Run the script to download the materials.  
-    General:  
-      `coursera-dl saas -c cookies.txt`  
-    On *Windows* make sure to use wget.
-      `coursera-dl saas -c cookies.txt -w C:\...\wget.exe`  
-    Filter by section name:  
-      `coursera-dl saas -c cookies.txt -sf "Chapter_Four"`  
-    Filter by lecture name:  
-      `coursera-dl saas -c cookies.txt -lf "3.1_"`  
-    Download only ppt files:  
-      `coursera-dl saas -c cookies.txt -f "ppt"`  
+    General:                 `coursera-dl saas -c cookies.txt`  
+    On *Windows* use wget.   `coursera-dl saas -c cookies.txt -w C:\...\wget.exe`  
+    Filter by section name:  `coursera-dl saas -c cookies.txt -sf "Chapter_Four"`  
+    Filter by lecture name:  `coursera-dl saas -c cookies.txt -lf "3.1_"`  
+    Download only ppt files: `coursera-dl saas -c cookies.txt -f "ppt"`  
 
 
 Troubleshooting
@@ -93,4 +88,3 @@ John Lehmann: first last at geemail dotcom or [@jplehmann]
 [wget]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [Export Cookies 1.2]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [easy_install]: http://pypi.python.org/pypi/setuptools
-
