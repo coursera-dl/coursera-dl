@@ -171,7 +171,7 @@ def download_file_nowget(url, fn, cookies_file):
   urlfile = get_opener(cookies_file).open(url)
   chunk_sz = 1048576
   bytesread = 0
-  f = open(fn, "w")
+  f = open(fn, "wb")
   while True:
     data = urlfile.read(chunk_sz)
     if not data:
