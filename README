@@ -3,11 +3,11 @@ Coursera Downloader
 -------------------
 
 Coursera (http://coursera.org) is creating some fantastic, free educational
-videos (e.g., algorithms, machine learning, natural language processing, SaaS).
-This script allows one to batch download videos for a Coursera class.  Given a
-class name and related cookie file, it scrapes the course listing page to get
-the week and class names, and then downloads the related videos into
-appropriately named files and directories.  
+classes (e.g., algorithms, machine learning, natural language processing,
+SaaS).  This script allows one to batch download lecture resources (e.g., videos,
+ppt, etc) for a Coursera class.  Given a class name and related cookie file, it
+scrapes the course listing page to get the week and class names, and then
+downloads the related materials into appropriately named files and directories.  
 
 Why is this helpful?  Before I was using wget, but I had the following problems:
   1. Video names have a number in them, but this does not correspond to the
@@ -20,9 +20,10 @@ DownloadThemAll can also work, but this provides better names.
 
 Features:
   * Intentionally detailed names, so that it will display and sort properly
-    using MX Video on my Andriod phone.
-  * Regex-based section (week) and video name filters to download only certain
-    resources.
+    on most interfaces (e.g., MX Video on Andriod phone).
+  * Regex-based section (week) and lecture name filters to download only
+    certain resources.
+  * File format extension filter to grab resource types you want.
   * Tested on both Linux and Windows.
 
 Inspired in part by youtube-dl (http://rg3.github.com/youtube-dl) by which I've
@@ -63,13 +64,15 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
     Firefox: Export Cookies 1.2
       https://addons.mozilla.org/en-US/firefox/addon/export-cookies/
 
-4. Run the script to download the videos.
+4. Run the script to download the materials.
     Linux:
       coursera-dl saas -c cookies.txt
     # filter by section name
       coursera-dl saas -c cookies.txt -sf "Chapter_Four"
-    # filter by video name
-      coursera-dl saas -c cookies.txt -vf "3.1_"
+    # filter by lecture name
+      coursera-dl saas -c cookies.txt -lf "3.1_"
+    # download only ppt files
+      coursera-dl saas -c cookies.txt -f "ppt"
     Windows:
       You need to use wget right now.
       coursera-dl saas -c cookies.txt -w C:\...\wget.exe
