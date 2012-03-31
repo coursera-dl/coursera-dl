@@ -37,8 +37,6 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
   * [Argparse] (Not necessary if Python version >= 2.7)  
   Ubuntu/Debian: `sudo apt-get install python-argparse`  
   Other: `easy_install argparse`  
-  * [wget]  
-  Needed on Windows -- this is a temporary workaround as currently the python download has a problem.  
   * [easy_install] (for the above)  
   Ubuntu: `sudo apt-get install python-setuptools`  
   
@@ -51,7 +49,6 @@ e.g. http://saas-class.org
       
 4. Run the script to download the materials.  
     General:                 `coursera-dl saas -c cookies.txt`  
-    On *Windows* use wget.   `coursera-dl saas -c cookies.txt -w C:\...\wget.exe`  
     Filter by section name:  `coursera-dl saas -c cookies.txt -sf "Chapter_Four"`  
     Filter by lecture name:  `coursera-dl saas -c cookies.txt -lf "3.1_"`  
     Download only ppt files: `coursera-dl saas -c cookies.txt -f "ppt"`  
@@ -73,7 +70,7 @@ Troubleshooting
 Tested on:
 
   * Ubuntu/Python 2.6.5
-  * Win7/Python2.5 (with wget)
+  * Win7/Python2.5
 
 
 Contact
