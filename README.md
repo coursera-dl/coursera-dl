@@ -66,18 +66,15 @@ Troubleshooting
     process or text editor you used to copy the cookie.txt probably converted the
     tabs to spaces.
 
-* Please try the steps above (recreating your cookies.txt) before you post an [issue].
+* If you've tried recreating your cookies.txt and still have problems, please post an [issue].
 
 
 Contact
 -------
-Send any questions, comments, or problems to:  
+Post bugs and enhancement requests to [issues].  Send any other questions or comments to:
 John Lehmann: first last at geemail dotcom or [@jplehmann]  
 
   
-  
-*For the record, I do not like this "GitHub Flavored Markdown" (GMF) flavor at all!!*
-
 
 [@jplehmann]: www.twitter.com/jplehmann
 [Cookie.txt Export]: https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
