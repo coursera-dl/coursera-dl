@@ -85,4 +85,4 @@ John Lehmann: first last at geemail dotcom or [@jplehmann]
 [wget]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [Export Cookies 1.2]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [easy_install]: http://pypi.python.org/pypi/setuptools
-[issue]: https://github.com/jplehmann/coursera/issues
+[issues]: https://github.com/jplehmann/coursera/issues
