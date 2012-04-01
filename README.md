@@ -40,14 +40,16 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
   * [easy_install] (for the above)  
   Ubuntu: `sudo apt-get install python-setuptools`  
   
-2. Create a Coursera.org account and login.  
+2. Create a Coursera.org account.
 e.g. http://saas-class.org  
 
-3. Locate or export your Netscape-style cookies file with a browser extension.  
+3. Login with your web browser.
+
+4. Locate or export your Netscape-style cookies file with a browser extension.  
     Chrome: [Cookie.txt Export]  
     Firefox: [Export Cookies 1.2]  
       
-4. Run the script to download the materials.  
+5. Run the script to download the materials.  
     General:                 `coursera-dl saas -c cookies.txt`  
     Filter by section name:  `coursera-dl saas -c cookies.txt -sf "Chapter_Four"`  
     Filter by lecture name:  `coursera-dl saas -c cookies.txt -lf "3.1_"`  
@@ -58,14 +60,13 @@ Troubleshooting
 ---------------
 
 * If it's finding 0 sections, you most likely have an invalid cookies file.
-  * Most likely your cookies are expired. This can happen very quickly.
-    Try recreating your cookes.txt by logging in and re-copying the cookie file. (step 3 & 4 above).  
+  * It's possible the cookies are already expired. This can happen very quickly.
+    Try recreating your cookies.txt by logging in and re-copying the cookie file (step 3-5 above).  
   * If you get the error: "ValueError: need more than 1 value to unpack", the
     process or text editor you used to copy the cookie.txt probably converted the
-    tabs to spaces. 
+    tabs to spaces.
 
-* Please try the steps above (recreating your cookies.txt) before you post an
-  issue or email me.
+* Please try the steps above (recreating your cookies.txt) before you post an [issue].
 
 
 Contact
@@ -87,3 +88,4 @@ John Lehmann: first last at geemail dotcom or [@jplehmann]
 [wget]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [Export Cookies 1.2]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [easy_install]: http://pypi.python.org/pypi/setuptools
+[issue]: https://github.com/jplehmann/coursera/issues
