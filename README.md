@@ -57,26 +57,22 @@ e.g. http://saas-class.org
 Troubleshooting
 ---------------
 
-* If it's finding 0 sections, you probably have a bad cookies file.  Re-login
-  to the site with your browser, copy the cookie file and try again (step 3 & 4
-  above).  (Use -l listing.html and then examine that file -- if it's the
-  non-logged-in page then this is definitely your problem.)
+* If it's finding 0 sections, you most likely have an invalid cookies file.
+  * Most likely your cookies are expired. This can happen very quickly.
+    Try recreating your cookes.txt by logging in and re-copying the cookie file. (step 3 & 4 above).  
+  * If you get the error: "ValueError: need more than 1 value to unpack", the
+    process or text editor you used to copy the cookie.txt probably converted the
+    tabs to spaces. 
 
-* If you get the error: "ValueError: need more than 1 value to unpack", the
-  process or text editor you used to copy the cookie.txt probably converted the
-  tabs to spaces. 
-
-
-Tested on:
-
-  * Ubuntu/Python 2.6.5
-  * Win7/Python2.5
+* Please try the steps above (recreating your cookies.txt) before you post an
+  issue or email me.
 
 
 Contact
 -------
 Send any questions, comments, or problems to:  
-John Lehmann: first last at geemail dotcom or [@jplehmann]
+John Lehmann: first last at geemail dotcom or [@jplehmann]  
+
   
   
 *For the record, I do not like this "GitHub Flavored Markdown" (GMF) flavor at all!!*
