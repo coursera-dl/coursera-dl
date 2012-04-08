@@ -240,8 +240,8 @@ def parseArgs():
     print >> sys.stderr, "Cookies file not found: " + args.cookies_file
     sys.exit(1)
   if args.username and not args.password:
-	print >> sys.stderr, "Password required when username is specified"
-	sys.exit(1)
+    print >> sys.stderr, "Password required when username is specified"
+    sys.exit(1)
   return args
 
 def main():
