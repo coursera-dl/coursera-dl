@@ -262,7 +262,7 @@ def main():
     args.lecture_filter
   )
   if not args.cookies_file:
-    unlink(tmp_cookie_file)
+    os.unlink(tmp_cookie_file)
 
 if __name__ == "__main__":
   main()
