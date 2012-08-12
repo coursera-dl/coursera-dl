@@ -17,6 +17,7 @@ import subprocess
 import argparse
 import StringIO
 import tempfile
+import netrc
 from BeautifulSoup import BeautifulSoup        
 
 def get_syllabus_url(className):
@@ -221,8 +222,14 @@ def parseArgs():
     action='store', default=None, help='full path to the cookies.txt file')
   group.add_argument('-u', '--username', dest='username',
     action='store', default=None, help='coursera username')
+  group.add_argument('-n', '--netrc', dest='netrc',
+    action='store_true', default=False,
+    help='uset .netrc for reading passwords instead of specifying them on the command line (default: False)')
+
+  # required if username selected above
   parser.add_argument('-p', '--password', dest='password',
     action='store', default=None, help='coursera password')
+
   # optional
   parser.add_argument('-f', '--formats', dest='file_formats', 
     action='store', default="all", help='file format extensions to be downloaded in quotes space separated, e.g. "mp4 pdf" (default: special value "all")')
@@ -247,9 +254,13 @@ def parseArgs():
   if args.cookies_file and not os.path.exists(args.cookies_file):
     print >> sys.stderr, "Cookies file not found: " + args.cookies_file
     sys.exit(1)
-  if args.username and not args.password:
+  if args.username and not args.password and not args.netrc:
     print >> sys.stderr, "Password required when username is specified"
     sys.exit(1)
+  if args.netrc:
+    auths = netrc.netrc().authenticators('coursera-dl')
+    args.username = auths[0]
+    args.password = auths[2]
   return args
 
 def main():
