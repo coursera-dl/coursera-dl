@@ -11,16 +11,35 @@ Author:
 """
 
 import sys, os, re, string
-import urllib2, cookielib 
+import urllib, urllib2, urlparse, cookielib
 import tempfile
 import subprocess
 import argparse
 import StringIO
+import tempfile
 from BeautifulSoup import BeautifulSoup        
 
 def get_syllabus_url(className):
   """Return the Coursera index/syllabus URL."""
   return "http://class.coursera.org/%s/lecture/index" % className
+
+def get_auth_url(className):
+  return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
+
+def write_cookie_file(className, username, password):
+  fn = tempfile.mkstemp()[1]
+  cj = cookielib.MozillaCookieJar(fn)
+  opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
+
+  req = urllib2.Request(get_auth_url(className))
+  ref = opener.open(req).geturl()
+
+  data = urllib.urlencode({'email': username, 'password': password, 'login': 'Login'})
+  req = urllib2.Request(ref, data)
+  opener.open(req)
+
+  cj.save()
+  return fn
 
 def load_cookies_file(cookies_file):
   """Loads the cookies file. I am pre-pending the file with the special
@@ -123,8 +142,8 @@ def download_lectures(
   def format_section(num, section):
     return "%s_%02d_%s" % (class_name.upper(), num, section)
 
-  def format_resource(num, name, format):
-    return "%02d_%s.%s" % (num, name, format)
+  def format_resource(section_num, num, name, format):
+    return "%s_%02d_%02d_%s.%s" % (class_name.lower(), section_num, num, name, format)
 
   for (secnum, (section, lectures)) in enumerate(sections):
     if section_filter and not re.search(section_filter, section): 
@@ -138,7 +157,7 @@ def download_lectures(
         os.mkdir(sec)
       # write lecture resources
       for format,url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
-        lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, format))
+        lecfn = os.path.join(sec, format_resource(secnum+1, lecnum+1, lecname, format))
         print lecfn
         if overwrite or not os.path.exists(lecfn):
           if not skip_download: 
@@ -188,8 +207,14 @@ def parseArgs():
   parser.add_argument('class_name', action='store', 
     help='name of the class (e.g. "nlp")')
   # required
-  parser.add_argument('-c', '--cookies_file', dest='cookies_file', 
-    action='store', required=True, help='full path to the cookies.txt file')
+  group = parser.add_mutually_exclusive_group(required=True)
+
+  group.add_argument('-c', '--cookies_file', dest='cookies_file',
+    action='store', default=None, help='full path to the cookies.txt file')
+  group.add_argument('-u', '--username', dest='username',
+    action='store', default=None, help='coursera username')
+  parser.add_argument('-p', '--password', dest='password',
+    action='store', default=None, help='coursera password')
   # optional
   parser.add_argument('-f', '--formats', dest='file_formats', 
     action='store', default="all", help='file format extensions to be downloaded in quotes space separated, e.g. "mp4 pdf" (default: special value "all")')
@@ -211,17 +236,23 @@ def parseArgs():
   # turn list of strings into list
   args.file_formats = args.file_formats.split()
   # check arguments
-  if not os.path.exists(args.cookies_file):
-    raise IOError("Cookies file not found: " + args.cookies_file)
+  if args.cookies_file and not os.path.exists(args.cookies_file):
+    print >> sys.stderr, "Cookies file not found: " + args.cookies_file
+    sys.exit(1)
+  if args.username and not args.password:
+    print >> sys.stderr, "Password required when username is specified"
+    sys.exit(1)
   return args
 
 def main():
   args = parseArgs()
-  page = get_syllabus(args.class_name, args.cookies_file, args.local_page)
+  if args.username:
+    tmp_cookie_file = write_cookie_file(args.class_name, args.username, args.password)
+  page = get_syllabus(args.class_name, args.cookies_file or tmp_cookie_file, args.local_page)
   sections = parse_syllabus(page)
   download_lectures(
     args.wget_bin, 
-    args.cookies_file, 
+    args.cookies_file or tmp_cookie_file,
     args.class_name, 
     sections, 
     args.file_formats, 
@@ -230,6 +261,8 @@ def main():
     args.section_filter, 
     args.lecture_filter
   )
+  if not args.cookies_file:
+    os.unlink(tmp_cookie_file)
 
 if __name__ == "__main__":
   main()
