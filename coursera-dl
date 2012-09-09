@@ -27,7 +27,7 @@ def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
 
 def write_cookie_file(className, username, password):
-  fn = tempfile.mkstemp()[1]
+  (hn,fn) = tempfile.mkstemp()
   cj = cookielib.MozillaCookieJar(fn)
   opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
 
@@ -39,6 +39,9 @@ def write_cookie_file(className, username, password):
   opener.open(req)
 
   cj.save()
+  opener.close()
+  os.close(hn)
+
   return fn
 
 def load_cookies_file(cookies_file):
@@ -66,7 +69,10 @@ def get_opener(cookies_file):
 def get_page(url, cookies_file):
   """Download an HTML page using the cookiejar."""
   opener = get_opener(cookies_file)
-  return opener.open(url).read()
+  #return opener.open(url).read()
+  ret = opener.open(url).read()
+  opener.close()
+  return ret
 
 def get_syllabus(class_name, cookies_file, local_page=False):
   """ Get the course listing webpage."""
@@ -200,6 +206,7 @@ def download_file_nowget(url, fn, cookies_file):
     bytesread += len(data)
     print "\r%d bytes read" % bytesread,
     sys.stdout.flush()
+  urlfile.close()
 
 def parseArgs():
   parser = argparse.ArgumentParser(description='Download Coursera.org lecture material and resources.')

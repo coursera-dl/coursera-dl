@@ -27,7 +27,7 @@ Features
 Directions
 ----------
 
-Requires Python 2.x (where x >= 5) and a free Coursera account.
+Requires Python 2.x (where x >= 5) and a free Coursera account enrolled in the class of interest.
 
 1. Install any missing dependencies.
 
@@ -40,10 +40,10 @@ Requires Python 2.x (where x >= 5) and a free Coursera account.
   * [easy_install] (for the above)  
   Ubuntu: `sudo apt-get install python-setuptools`  
   
-2. Create a Coursera.org account.
+2. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org  
 
-3. Login with your web browser.
+3. Login to that class with your web browser.
 
 4. Locate or export your Netscape-style cookies file with a browser extension.  
     Chrome: [Cookie.txt Export]  
