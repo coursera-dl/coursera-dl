@@ -13,6 +13,11 @@ Why is this helpful?  Before I was using *wget*, but I had the following problem
 Inspired in part by [youtube-dl] by which I've downloaded many other good videos such those from Khan Academy.  
 
 
+NOTE!
+--------
+Fall 2012 Coursera classes require an update by @wiedi found [here], which I will merge soon. Until then please clone that fork.
+
+
 Features
 --------
 
@@ -21,7 +26,7 @@ Features
   * Regex-based section (week) and lecture name filters to download only
     certain resources.
   * File format extension filter to grab resource types you want.
-  * Tested on both Linux and Windows.
+  * Tested on Linux, Mac and Windows.
 
 
 Directions
@@ -46,7 +51,7 @@ e.g. http://saas-class.org
 3. Login to that class with your web browser.
 
 4. Locate or export your Netscape-style cookies file with a browser extension.  
-    Chrome: [Cookie.txt Export]  
+    Chrome: [Cookie.txt Export]  (see [workaround] for Mac)
     Firefox: [Export Cookies 1.2]  
       
 5. Run the script to download the materials.  
@@ -71,7 +76,7 @@ Troubleshooting
 
 Contact
 -------
-Post bugs and enhancement requests to [issues].  Send any other questions or comments to:  
+Post bugs and issues on [github].  Send other comments to:  
 John Lehmann: first last at geemail dotcom or [@jplehmann]  
 
   
@@ -85,4 +90,6 @@ John Lehmann: first last at geemail dotcom or [@jplehmann]
 [wget]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [Export Cookies 1.2]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [easy_install]: http://pypi.python.org/pypi/setuptools
-[issues]: https://github.com/jplehmann/coursera/issues
+[github]: https://github.com/jplehmann/coursera/issues
+[workaround]: https://github.com/jplehmann/coursera/issues/6
+[here]: https://github.com/wiedi/coursera
