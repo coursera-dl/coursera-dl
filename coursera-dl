@@ -148,8 +148,8 @@ def download_lectures(
   def format_section(num, section):
     return "%s_%02d_%s" % (class_name.upper(), num, section)
 
-  def format_resource(num, section, name, format):
-    return "%s_%02d_%s.%s" % (section[0:7].lower(), num, name, format)
+  def format_resource(num, name, format):
+    return "%02d_%s.%s" % (num, name, format)
 
   for (secnum, (section, lectures)) in enumerate(sections):
     if section_filter and not re.search(section_filter, section): 
@@ -163,7 +163,7 @@ def download_lectures(
         os.mkdir(sec)
       # write lecture resources
       for format,url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
-        lecfn = os.path.join(sec, format_resource(lecnum+1, sec, lecname, format))
+        lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, format))
         print lecfn
         if overwrite or not os.path.exists(lecfn):
           if not skip_download: 
