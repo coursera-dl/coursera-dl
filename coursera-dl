@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """
-For downloading lecture resources such as videos for Coursera classes. Given a class name and related cookie file, it scrapes the course listing page to get the section (week) and lecture names, and then downloads the related materials into appropriately named files and directories.
+For downloading lecture resources such as videos for Coursera classes. Given a class name, username and password, it scrapes the coarse listing page to get the section (week) and lecture names, and then downloads the related materials into appropriately named files and directories.
 
 Examples:
-  coursera-dl -c cookies.txt saas
-  coursera-dl -c cookies.txt -l listing.html -o saas --skip-download
+  coursera-dl -u <user> -p <passwd> saas
+  coursera-dl -u <user> -p <passwd> -l listing.html -o saas --skip-download
 
 Author: 
   John Lehmann (first last at geemail dotcom or @jplehmann)
@@ -27,6 +27,7 @@ def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
 
 def write_cookie_file(className, username, password):
+  """automatically generate a cookie file for the coursera site"""
   (hn,fn) = tempfile.mkstemp()
   cj = cookielib.MozillaCookieJar(fn)
   opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
