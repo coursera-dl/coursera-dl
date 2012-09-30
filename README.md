@@ -21,6 +21,7 @@ Features
   * Regex-based section (week) and lecture name filters to download only
     certain resources.
   * File format extension filter to grab resource types you want.
+  * Login credentials accepted on command-line or from .netrc file
   * Tested on Linux, Mac and Windows.
 
 
@@ -43,16 +44,20 @@ Requires Python 2.x (where x >= 5) and a free Coursera account enrolled in the c
 2\. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org  
 
-3\. Run the script to download the materials by providing your Coursera username and password.
+3\. Run the script to download the materials by providing your Coursera username, password, and the class name.
 
     General:                 coursera-dl saas -u <user> -p <pass>
     Filter by section name:  coursera-dl saas -u <user> -p <pass> -sf "Chapter_Four"
     Filter by lecture name:  coursera-dl saas -u <user> -p <pass> -lf "3.1_"
-    Download only ppt files: coursera-dl saas -u <user> -p <pass> -f "ppt"
+    Download only ppt files: coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
 
 
 Troubleshooting
 ---------------
+
+* Make sure the classname you are using corresponds to the resource name used in
+  the URL for that class:
+    `https://class.coursera.org/<CLASS_NAME>/class/index`
 
 * Previously one could export a Netscape-style cookies file with a browser
   extension ([1], [2]) for use with the `-c` option, but this approach does 
