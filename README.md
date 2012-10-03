@@ -44,13 +44,14 @@ Requires Python 2.x (where x >= 5) and a free Coursera account enrolled in the c
 2\. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org  
 
-3\. Run the script to download the materials by providing your Coursera username, password, and the class name.
+3\. Run the script to download the materials by providing your Coursera
+username, password (or a `~/.netrc` file) and the class name.
 
     General:                 coursera-dl saas -u <user> -p <pass>
     Filter by section name:  coursera-dl saas -u <user> -p <pass> -sf "Chapter_Four"
     Filter by lecture name:  coursera-dl saas -u <user> -p <pass> -lf "3.1_"
     Download only ppt files: coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
-
+    Use a ~/.netrc file:     coursera-dl progfun-2012-001 -n
 
 Troubleshooting
 ---------------
@@ -60,15 +61,13 @@ Troubleshooting
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
 * Previously one could export a Netscape-style cookies file with a browser
-  extension ([1], [2]) for use with the `-c` option, but this approach does 
-  not appear to work with recent classes. Use the `-u` and `-p` flags instead.
+  extension ([1], [2]) for use with the `-c` option, but this approach does
+  not appear to work with recent classes. Use the `-u` and `-p` flags
+  instead or use the `-n` flag.
 
-* If results show 0 sections, you most likely have an invalid cookies file.
-  * It's possible the cookies are already expired. This can happen very quickly.
-    Try recreating your cookies.txt by logging in and re-copying the cookie file (step 3-5 above).  
-  * If you get the error: `ValueError: need more than 1 value to unpack`, the
-    process or text editor you used to copy the cookie.txt probably converted the
-    tabs to spaces.
+* If results show 0 sections, you most likely have provided invalid
+  credentials (username and/or password in the command line or in your
+  `.netrc` file).
 
 
 Contact
