@@ -6,22 +6,22 @@ Why is this helpful?  Before I was using *wget*, but I had the following problem
 
 1. Video names have a number in them, but this does not correspond to the actual order.  Manually renaming them is a pain.
 2. Using names from the syllabus page provides more informative names.
-3. Using a wget in a forloop picks up extra videos which are not posted/linked, and these are sometimes duplicates.
+3. Using a wget in a for loop picks up extra videos which are not posted/linked, and these are sometimes duplicates.
 
 *DownloadThemAll* can also work, but this provides better names.  
 
-Inspired in part by [youtube-dl] by which I've downloaded many other good videos such those from Khan Academy.  
+Inspired in part by [youtube-dl] by which I've downloaded many other good videos such as those from Khan Academy.
 
 
 Features
 --------
 
   * Intentionally detailed names, so that it will display and sort properly
-    on most interfaces (e.g., MX Video on Andriod phone).
+    on most interfaces (e.g., MX Video on Android phone).
   * Regex-based section (week) and lecture name filters to download only
     certain resources.
   * File format extension filter to grab resource types you want.
-  * Login credentials accepted on command-line or from .netrc file
+  * Login credentials accepted on command-line or from `.netrc` file
   * Tested on Linux, Mac and Windows.
 
 
@@ -44,13 +44,27 @@ Requires Python 2.x (where x >= 5) and a free Coursera account enrolled in the c
 2\. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org  
 
-3\. Run the script to download the materials by providing your Coursera username, password, and the class name.
+3\. Run the script to download the materials by providing your Coursera
+username, password (or a `~/.netrc` file) and the class name.
 
     General:                 coursera-dl saas -u <user> -p <pass>
     Filter by section name:  coursera-dl saas -u <user> -p <pass> -sf "Chapter_Four"
     Filter by lecture name:  coursera-dl saas -u <user> -p <pass> -lf "3.1_"
     Download only ppt files: coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
+    Use a ~/.netrc file:     coursera-dl progfun-2012-001 -n
 
+The use of a `~/.netrc` file is a good alternative to specifying both your
+username and password every time on the command line. To use it, simply add
+a line like the one below to a file named `.netrc` in your home directory
+(or the [equivalent], if you are using Windows) with contents like:
+
+    machine coursera-dl login <user> password <pass>
+
+Create the file if it doesn't exist yet.  From then on, you can switch from
+using `-u` and `-p` to simply call `coursera-dl` with the option `-n`
+instead.  This is especially convenient, as typing usernames and passwords
+directly on the command line can get tiresome (even more if you happened to
+choose a "strong" password).
 
 Troubleshooting
 ---------------
@@ -60,15 +74,13 @@ Troubleshooting
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
 * Previously one could export a Netscape-style cookies file with a browser
-  extension ([1], [2]) for use with the `-c` option, but this approach does 
-  not appear to work with recent classes. Use the `-u` and `-p` flags instead.
+  extension ([1], [2]) for use with the `-c` option, but this approach does
+  not appear to work with recent classes. Use the `-u` and `-p` flags
+  instead or use the `-n` flag.
 
-* If results show 0 sections, you most likely have an invalid cookies file.
-  * It's possible the cookies are already expired. This can happen very quickly.
-    Try recreating your cookies.txt by logging in and re-copying the cookie file (step 3-5 above).  
-  * If you get the error: "ValueError: need more than 1 value to unpack", the
-    process or text editor you used to copy the cookie.txt probably converted the
-    tabs to spaces.
+* If results show 0 sections, you most likely have provided invalid
+  credentials (username and/or password in the command line or in your
+  `.netrc` file).
 
 
 Contact
@@ -89,3 +101,4 @@ Post bugs and issues on [github].  Send other comments to John Lehmann: first la
 [github]: https://github.com/jplehmann/coursera/issues
 [workaround]: https://github.com/jplehmann/coursera/issues/6
 [here]: https://github.com/wiedi/coursera
+[equivalent]: http://stackoverflow.com/a/6031266/962311
