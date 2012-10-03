@@ -53,6 +53,19 @@ username, password (or a `~/.netrc` file) and the class name.
     Download only ppt files: coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
     Use a ~/.netrc file:     coursera-dl progfun-2012-001 -n
 
+The use of a `~/.netrc` file is a good alternative to specifying both your
+username and password every time on the command line. To use it, simply add
+a line like the one below to a file named `.netrc` in your home directory
+(or the [equivalent], if you are using Windows) with contents like:
+
+    machine coursera-dl login <user> password <pass>
+
+Create the file if it doesn't exist yet.  From then on, you can switch from
+using `-u` and `-p` to simply call `coursera-dl` with the option `-n`
+instead.  This is especially convenient, as typing usernames and passwords
+directly on the command line can get tiresome (even more if you happened to
+choose a "strong" password).
+
 Troubleshooting
 ---------------
 
@@ -88,3 +101,4 @@ Post bugs and issues on [github].  Send other comments to John Lehmann: first la
 [github]: https://github.com/jplehmann/coursera/issues
 [workaround]: https://github.com/jplehmann/coursera/issues/6
 [here]: https://github.com/wiedi/coursera
+[equivalent]: http://stackoverflow.com/a/6031266/962311
