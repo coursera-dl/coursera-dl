@@ -6,22 +6,22 @@ Why is this helpful?  Before I was using *wget*, but I had the following problem
 
 1. Video names have a number in them, but this does not correspond to the actual order.  Manually renaming them is a pain.
 2. Using names from the syllabus page provides more informative names.
-3. Using a wget in a forloop picks up extra videos which are not posted/linked, and these are sometimes duplicates.
+3. Using a wget in a for loop picks up extra videos which are not posted/linked, and these are sometimes duplicates.
 
 *DownloadThemAll* can also work, but this provides better names.  
 
-Inspired in part by [youtube-dl] by which I've downloaded many other good videos such those from Khan Academy.  
+Inspired in part by [youtube-dl] by which I've downloaded many other good videos such as those from Khan Academy.
 
 
 Features
 --------
 
   * Intentionally detailed names, so that it will display and sort properly
-    on most interfaces (e.g., MX Video on Andriod phone).
+    on most interfaces (e.g., MX Video on Android phone).
   * Regex-based section (week) and lecture name filters to download only
     certain resources.
   * File format extension filter to grab resource types you want.
-  * Login credentials accepted on command-line or from .netrc file
+  * Login credentials accepted on command-line or from `.netrc` file
   * Tested on Linux, Mac and Windows.
 
 
@@ -66,7 +66,7 @@ Troubleshooting
 * If results show 0 sections, you most likely have an invalid cookies file.
   * It's possible the cookies are already expired. This can happen very quickly.
     Try recreating your cookies.txt by logging in and re-copying the cookie file (step 3-5 above).  
-  * If you get the error: "ValueError: need more than 1 value to unpack", the
+  * If you get the error: `ValueError: need more than 1 value to unpack`, the
     process or text editor you used to copy the cookie.txt probably converted the
     tabs to spaces.
 
