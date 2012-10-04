@@ -76,6 +76,16 @@ def get_page(url, cookies_file):
   opener.close()
   return ret
 
+def grab_hidden_video_url(href, cookies_file):
+  """
+  Follow some extra redirects to grab hidden video URLs (like those from
+  University of Washington).
+  """
+  page = get_page(href, cookies_file)
+  soup = BeautifulSoup(page)
+  l = soup.findAll('source', attrs={'type': 'video/mp4'})
+  return l[0]['src']
+
 def get_syllabus(class_name, cookies_file, local_page=False):
   """ Get the course listing webpage."""
   if (not (local_page and os.path.exists(local_page))):
@@ -104,7 +114,7 @@ def get_anchor_format(a):
   format = re.search("(?:\.|format=)(\w+)(?:\?.*)?$", a)
   return format.group(1) if format else None
 
-def parse_syllabus(page):
+def parse_syllabus(page, cookies_file):
   """Parses a Coursera course listing/syllabus page. 
   Each section is a week of classes."""
   sections = []
@@ -126,6 +136,17 @@ def parse_syllabus(page):
         format = get_anchor_format(href)
         print "    ", format, href
         if format: lecture[format] = href
+
+      # Special case: we possibly have hidden video links---thanks to the
+      # University of Washington for that.
+      if 'mp4' not in lecture:
+        for a in vtag.findAll('a'):
+          if a.get('data-lecture-view-link'):
+            href = grab_hidden_video_url(a['data-lecture-view-link'], cookies_file)
+            format = 'mp4'
+            print "    ", format, href
+            lecture[format] = href
+
       lectures.append((vname, lecture))
     sections.append((section_name, lectures))
   print "Found %d sections and %d lectures on this page" % \
@@ -268,7 +289,7 @@ def main():
   if args.username:
     tmp_cookie_file = write_cookie_file(args.class_name, args.username, args.password)
   page = get_syllabus(args.class_name, args.cookies_file or tmp_cookie_file, args.local_page)
-  sections = parse_syllabus(page)
+  sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
   download_lectures(
     args.wget_bin, 
     args.cookies_file or tmp_cookie_file,
