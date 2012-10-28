@@ -19,6 +19,8 @@ import StringIO
 import tempfile
 import netrc
 from BeautifulSoup import BeautifulSoup        
+import locale
+
 
 def get_syllabus_url(className):
   """Return the Coursera index/syllabus URL."""
@@ -33,7 +35,7 @@ def write_cookie_file(className, username, password):
   cj = cookielib.MozillaCookieJar(fn)
   opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
 
-  req = urllib2.Request(get_auth_url(className))
+  req = urllib2.Request(get_auth_url(className))  
   ref = opener.open(req).geturl()
 
   data = urllib.urlencode({'email': username, 'password': password, 'login': 'Login'})
@@ -120,9 +122,10 @@ def parse_syllabus(page, cookies_file):
   sections = []
   soup = BeautifulSoup(page)
   # traverse sections
+
+
   for stag in soup.findAll(attrs={'class':'list_header'}):
-    assert stag.string != None, "couldn't find section"
-    section_name = clean_filename(stag.string)
+    section_name = clean_filename(stag.string) if stag.string != None else stag.contents[0]
     print section_name
     lectures = [] # resources for 1 lecture
     # traverse resources (e.g., video, ppt, ..)
@@ -223,11 +226,11 @@ def download_file_nowget(url, fn, cookies_file):
   while True:
     data = urlfile.read(chunk_sz)
     if not data:
-      print "."
+      print "\b." #don't need a space before the dot.
       break
     f.write(data)
     bytesread += len(data)
-    print "\r%d bytes read" % bytesread,
+    print "\r", locale.format("%d", bytesread, grouping=True), "bytes read",
     sys.stdout.flush()
   urlfile.close()
 
@@ -285,6 +288,7 @@ def parseArgs():
   return args
 
 def main():
+  locale.setlocale(locale.LC_ALL, '')
   args = parseArgs()
   if args.username:
     tmp_cookie_file = write_cookie_file(args.class_name, args.username, args.password)
