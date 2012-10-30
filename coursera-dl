@@ -121,8 +121,8 @@ def parse_syllabus(page, cookies_file):
   soup = BeautifulSoup(page)
   # traverse sections
   for stag in soup.findAll(attrs={'class':'list_header'}):
-    assert stag.string != None, "couldn't find section"
-    section_name = clean_filename(stag.string)
+    assert stag.contents[0] != None, "couldn't find section"
+    section_name = clean_filename(stag.contents[0])
     print section_name
     lectures = [] # resources for 1 lecture
     # traverse resources (e.g., video, ppt, ..)
