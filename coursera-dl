@@ -6,7 +6,7 @@ Examples:
   coursera-dl -u <user> -p <passwd> saas
   coursera-dl -u <user> -p <passwd> -l listing.html -o saas --skip-download
 
-Author: 
+Author:
   John Lehmann (first last at geemail dotcom or @jplehmann)
 """
 
@@ -18,7 +18,7 @@ import argparse
 import StringIO
 import tempfile
 import netrc
-from BeautifulSoup import BeautifulSoup        
+from bs4 import BeautifulSoup
 
 def get_syllabus_url(className):
   """Return the Coursera index/syllabus URL."""
@@ -48,7 +48,7 @@ def write_cookie_file(className, username, password):
 
 def load_cookies_file(cookies_file):
   """Loads the cookies file. I am pre-pending the file with the special
-  Netscape header because the cookie loader is being very particular about 
+  Netscape header because the cookie loader is being very particular about
   this string."""
   cookies = StringIO.StringIO()
   NETSCAPE_HEADER = "# Netscape HTTP Cookie File"
@@ -63,7 +63,7 @@ def get_opener(cookies_file):
   cj = cookielib.MozillaCookieJar()
   cookies = load_cookies_file(cookies_file)
   # nasty hack: cj.load() requires a filename not a file, but if
-  # I use stringio, that file doesn't exist. I used NamedTemporaryFile 
+  # I use stringio, that file doesn't exist. I used NamedTemporaryFile
   # before, but encountered problems on Windows.
   cj._really_load(cookies, "StringIO.cookies", False, False)
   return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
@@ -115,7 +115,7 @@ def get_anchor_format(a):
   return format.group(1) if format else None
 
 def parse_syllabus(page, cookies_file):
-  """Parses a Coursera course listing/syllabus page. 
+  """Parses a Coursera course listing/syllabus page.
   Each section is a week of classes."""
   sections = []
   soup = BeautifulSoup(page)
@@ -155,43 +155,52 @@ def parse_syllabus(page, cookies_file):
     print "Probably bad cookies file (or wrong class name)"
   return sections
 
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc: # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
 def download_lectures(
-  wget_bin, 
-  cookies_file, 
-  class_name, 
-  sections, 
-  file_formats, 
-  overwrite=False, 
-  skip_download=False, 
-  section_filter=None, 
-  lecture_filter=None
+  wget_bin,
+  cookies_file,
+  class_name,
+  sections,
+  file_formats,
+  overwrite=False,
+  skip_download=False,
+  section_filter=None,
+  lecture_filter=None,
+  path=''
   ):
   """Downloads lecture resources described by sections."""
 
   def format_section(num, section):
-    return "%s_%02d_%s" % (class_name.upper(), num, section)
+    return "%02d_%s" % (num, section)
 
   def format_resource(num, name, format):
     return "%02d_%s.%s" % (num, name, format)
 
   for (secnum, (section, lectures)) in enumerate(sections):
-    if section_filter and not re.search(section_filter, section): 
+    if section_filter and not re.search(section_filter, section):
       #print "Skipping b/c of sf: ", section_filter, section
       continue
-    sec = format_section(secnum+1, section)
+    sec = "%s\%s\%s" % (path, class_name, format_section(secnum+1, section))
     for (lecnum, (lecname, lecture)) in enumerate(lectures):
-      if lecture_filter and not re.search(lecture_filter, lecname): 
+      if lecture_filter and not re.search(lecture_filter, lecname):
         continue
       if not os.path.exists(sec):
-        os.mkdir(sec)
+          mkdir_p(sec)
       # write lecture resources
       for format,url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
         lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, format))
         print lecfn
         if overwrite or not os.path.exists(lecfn):
-          if not skip_download: 
+          if not skip_download:
             download_file(url, lecfn, cookies_file, wget_bin)
-          else: 
+          else:
             open(lecfn, 'w').close()  # touch
 
 def download_file(url, fn, cookies_file, wget_bin):
@@ -201,7 +210,7 @@ def download_file(url, fn, cookies_file, wget_bin):
       download_file_wget(wget_bin, url, fn, cookies_file)
     else:
       download_file_nowget(url, fn, cookies_file)
-  except KeyboardInterrupt, e: 
+  except KeyboardInterrupt, e:
     print "\nKeyboard Interrupt -- Removing partial file:", fn
     os.remove(fn)
     sys.exit()
@@ -210,7 +219,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
   """Downloads a file using wget.  Could possibly use python to stream files to
   disk, but wget is robust and gives nice visual feedback."""
   cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
-  print "Executing wget:", cmd 
+  print "Executing wget:", cmd
   retcode = subprocess.call(cmd)
 
 def download_file_nowget(url, fn, cookies_file):
@@ -234,7 +243,7 @@ def download_file_nowget(url, fn, cookies_file):
 def parseArgs():
   parser = argparse.ArgumentParser(description='Download Coursera.org lecture material and resources.')
   # positional
-  parser.add_argument('class_name', action='store', 
+  parser.add_argument('class_name', action='store',
     help='name of the class (e.g. "nlp")')
   # required
   group = parser.add_mutually_exclusive_group(required=True)
@@ -252,22 +261,23 @@ def parseArgs():
     action='store', default=None, help='coursera password')
 
   # optional
-  parser.add_argument('-f', '--formats', dest='file_formats', 
+  parser.add_argument('-f', '--formats', dest='file_formats',
     action='store', default="all", help='file format extensions to be downloaded in quotes space separated, e.g. "mp4 pdf" (default: special value "all")')
-  parser.add_argument('-sf', '--section_filter', dest='section_filter', 
+  parser.add_argument('-sf', '--section_filter', dest='section_filter',
     action='store', default=None, help='only download sections which contain this regex (default: disabled)')
-  parser.add_argument('-lf', '--lecture_filter', dest='lecture_filter', 
+  parser.add_argument('-lf', '--lecture_filter', dest='lecture_filter',
     action='store', default=None, help='only download lectures which contain this regex (default: disabled)')
-  parser.add_argument('-w', '--wget_bin', dest='wget_bin', 
+  parser.add_argument('-w', '--wget_bin', dest='wget_bin',
     action='store', default=None, help='wget binary if it should be used for downloading')
-  parser.add_argument('-o', '--overwrite', dest='overwrite', 
-    action='store_true', default=False, 
+  parser.add_argument('-o', '--overwrite', dest='overwrite',
+    action='store_true', default=False,
     help='whether existing files should be overwritten (default: False)')
-  parser.add_argument('-l', '--process_local_page', dest='local_page', 
+  parser.add_argument('-l', '--process_local_page', dest='local_page',
     help='for debugging: uses or creates local cached version of syllabus page')
-  parser.add_argument('--skip-download', dest='skip_download', 
-    action='store_true', default=False, 
+  parser.add_argument('--skip-download', dest='skip_download',
+    action='store_true', default=False,
     help='for debugging: skip actual downloading of files')
+  parser.add_argument('--path', dest='path', action='store', default='', help='path to save the file')
   args = parser.parse_args()
   # turn list of strings into list
   args.file_formats = args.file_formats.split()
@@ -291,15 +301,16 @@ def main():
   page = get_syllabus(args.class_name, args.cookies_file or tmp_cookie_file, args.local_page)
   sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
   download_lectures(
-    args.wget_bin, 
+    args.wget_bin,
     args.cookies_file or tmp_cookie_file,
-    args.class_name, 
-    sections, 
-    args.file_formats, 
-    args.overwrite, 
-    args.skip_download, 
-    args.section_filter, 
-    args.lecture_filter
+    args.class_name,
+    sections,
+    args.file_formats,
+    args.overwrite,
+    args.skip_download,
+    args.section_filter,
+    args.lecture_filter,
+    args.path
   )
   if not args.cookies_file:
     os.unlink(tmp_cookie_file)
