@@ -8,6 +8,8 @@ Examples:
 
 Author:
   John Lehmann (first last at geemail dotcom or @jplehmann)
+
+Contributions are welcome, but please try to make them platform independent and backward compatible.
 """
 
 import sys, os, re, string
@@ -18,7 +20,9 @@ import argparse
 import StringIO
 import tempfile
 import netrc
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
+# for OSX, bs4 is recommended
+#from bs4 import BeautifulSoup
 
 def get_syllabus_url(className):
   """Return the Coursera index/syllabus URL."""
@@ -173,12 +177,16 @@ def download_lectures(
   skip_download=False,
   section_filter=None,
   lecture_filter=None,
-  path=''
+  path='',
+  verbose_dirs=False
   ):
   """Downloads lecture resources described by sections."""
 
   def format_section(num, section):
-    return "%02d_%s" % (num, section)
+    sec = "%02d_%s" % (num, section)
+    if verbose_dirs:
+      sec = class_name.upper() + "_" + sec
+    return sec
 
   def format_resource(num, name, format):
     return "%02d_%s.%s" % (num, name, format)
@@ -187,7 +195,7 @@ def download_lectures(
     if section_filter and not re.search(section_filter, section):
       #print "Skipping b/c of sf: ", section_filter, section
       continue
-    sec = "%s\%s\%s" % (path, class_name, format_section(secnum+1, section))
+    sec = os.path.join(path, class_name, format_section(secnum+1, section))
     for (lecnum, (lecname, lecture)) in enumerate(lectures):
       if lecture_filter and not re.search(lecture_filter, lecname):
         continue
@@ -278,6 +286,9 @@ def parseArgs():
     action='store_true', default=False,
     help='for debugging: skip actual downloading of files')
   parser.add_argument('--path', dest='path', action='store', default='', help='path to save the file')
+  parser.add_argument('--verbose-dirs', dest='verbose_dirs',
+    action='store_true', default=False,
+    help='include class name in section directory name')
   args = parser.parse_args()
   # turn list of strings into list
   args.file_formats = args.file_formats.split()
@@ -310,7 +321,8 @@ def main():
     args.skip_download,
     args.section_filter,
     args.lecture_filter,
-    args.path
+    args.path,
+    args.verbose_dirs
   )
   if not args.cookies_file:
     os.unlink(tmp_cookie_file)
