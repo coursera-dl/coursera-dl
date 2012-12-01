@@ -22,7 +22,7 @@ Features
     certain resources.
   * File format extension filter to grab resource types you want.
   * Login credentials accepted on command-line or from `.netrc` file
-  * Tested on Linux, Mac and Windows.
+  * Core functionality tested on Linux, Mac and Windows.
 
 
 Directions
@@ -34,12 +34,20 @@ Requires Python 2.x (where x >= 5) and a free Coursera account enrolled in the c
 
   * [Beautiful Soup 3]  
   Ubuntu/Debian: `sudo apt-get install python-beautifulsoup`  
+  Mac OSX: bs4 may be required instead (modify import as well)
   Other: `easy_install BeautifulSoup`  
   * [Argparse] (Not necessary if Python version >= 2.7)  
   Ubuntu/Debian: `sudo apt-get install python-argparse`  
   Other: `easy_install argparse`  
   * [easy_install] (for the above)  
   Ubuntu: `sudo apt-get install python-setuptools`  
+
+On Mac OSX using MacPort, the following may be used:
+
+    port
+    > install py-beautifulsoup
+    > install py-argparse
+    > install py24-distribute  # for "py-setuptools", the obsolete name
   
 2\. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org  
@@ -53,18 +61,13 @@ username, password (or a `~/.netrc` file) and the class name.
     Download only ppt files: coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
     Use a ~/.netrc file:     coursera-dl progfun-2012-001 -n
 
-The use of a `~/.netrc` file is a good alternative to specifying both your
-username and password every time on the command line. To use it, simply add
-a line like the one below to a file named `.netrc` in your home directory
-(or the [equivalent], if you are using Windows) with contents like:
+On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to specifying both your username and password every time on the command line. To use it, simply add a line like the one below to a file named `.netrc` in your home directory (or the [equivalent], if you are using Windows) with contents like:
 
     machine coursera-dl login <user> password <pass>
 
-Create the file if it doesn't exist yet.  From then on, you can switch from
-using `-u` and `-p` to simply call `coursera-dl` with the option `-n`
-instead.  This is especially convenient, as typing usernames and passwords
-directly on the command line can get tiresome (even more if you happened to
-choose a "strong" password).
+Create the file if it doesn't exist yet.  From then on, you can switch from using `-u` and `-p` to simply call `coursera-dl` with the option `-n` instead.  This is especially convenient, as typing usernames and passwords directly on the command line can get tiresome (even more if you happened to choose a "strong" password).
+
+\* if this works on Windows, please add additional instructions for it if any are needed.
 
 Troubleshooting
 ---------------
