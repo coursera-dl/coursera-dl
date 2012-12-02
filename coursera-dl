@@ -20,7 +20,7 @@ import argparse
 import StringIO
 import tempfile
 import netrc
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 # for OSX, bs4 is recommended
 #from bs4 import BeautifulSoup
 
@@ -289,6 +289,7 @@ def parseArgs():
   parser.add_argument('--verbose-dirs', dest='verbose_dirs',
     action='store_true', default=False,
     help='include class name in section directory name')
+  parser.add_argument('--add-class', dest='add_class', action='append', default=[], help='additional classes to get')
   args = parser.parse_args()
   # turn list of strings into list
   args.file_formats = args.file_formats.split()
@@ -305,16 +306,15 @@ def parseArgs():
     args.password = auths[2]
   return args
 
-def main():
-  args = parseArgs()
+def download_class(args, class_name):
   if args.username:
-    tmp_cookie_file = write_cookie_file(args.class_name, args.username, args.password)
-  page = get_syllabus(args.class_name, args.cookies_file or tmp_cookie_file, args.local_page)
+    tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
+  page = get_syllabus(class_name, args.cookies_file or tmp_cookie_file, args.local_page)
   sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
   download_lectures(
     args.wget_bin,
     args.cookies_file or tmp_cookie_file,
-    args.class_name,
+    class_name,
     sections,
     args.file_formats,
     args.overwrite,
@@ -326,6 +326,13 @@ def main():
   )
   if not args.cookies_file:
     os.unlink(tmp_cookie_file)
+
+def main():
+  args = parseArgs()
+  download_class(args, args.class_name)
+  for class_name in args.add_class:
+    print "Downloading additional class: %s" % class_name
+    download_class(args, class_name)
 
 if __name__ == "__main__":
   main()
