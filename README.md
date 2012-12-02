@@ -55,11 +55,13 @@ e.g. http://saas-class.org
 3\. Run the script to download the materials by providing your Coursera
 username, password (or a `~/.netrc` file) and the class name.
 
-    General:                 coursera-dl saas -u <user> -p <pass>
-    Filter by section name:  coursera-dl saas -u <user> -p <pass> -sf "Chapter_Four"
-    Filter by lecture name:  coursera-dl saas -u <user> -p <pass> -lf "3.1_"
-    Download only ppt files: coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
-    Use a ~/.netrc file:     coursera-dl progfun-2012-001 -n
+    General:                     coursera-dl saas -u <user> -p <pass>
+    Filter by section name:      coursera-dl saas -u <user> -p <pass> -sf "Chapter_Four"
+    Filter by lecture name:      coursera-dl saas -u <user> -p <pass> -lf "3.1_"
+    Download only ppt files:     coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
+    Use a ~/.netrc file:         coursera-dl progfun-2012-001 -n
+    Specify download path:       coursera-dl progfun-2012-001 -n --path=C:\Coursera\Classes\
+    Download multiple classes:   coursera-dl progfun-2012-001 -n --add-class=hetero-2012-001 --add-class=thinkagain-2012-001
 
 On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to specifying both your username and password every time on the command line. To use it, simply add a line like the one below to a file named `.netrc` in your home directory (or the [equivalent], if you are using Windows) with contents like:
 
