@@ -20,7 +20,7 @@ import argparse
 import StringIO
 import tempfile
 import netrc
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 # for OSX, bs4 is recommended
 #from bs4 import BeautifulSoup
 
