@@ -32,17 +32,23 @@ def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
 
 def write_cookie_file(className, username, password):
-  """automatically generate a cookie file for the coursera site"""
-  (hn,fn) = tempfile.mkstemp()
-  cj = cookielib.MozillaCookieJar(fn)
-  opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
+  try:
+    """automatically generate a cookie file for the coursera site"""
+    (hn,fn) = tempfile.mkstemp()
+    cj = cookielib.MozillaCookieJar(fn)
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
 
-  req = urllib2.Request(get_auth_url(className))
-  ref = opener.open(req).geturl()
+    req = urllib2.Request(get_auth_url(className))
+    ref = opener.open(req).geturl()
 
-  data = urllib.urlencode({'email': username, 'password': password, 'login': 'Login'})
-  req = urllib2.Request(ref, data)
-  opener.open(req)
+    data = urllib.urlencode({'email': username, 'password': password, 'login': 'Login'})
+    req = urllib2.Request(ref, data)
+  
+    opener.open(req)
+  except Exception, e:
+    if '404' in str(e):
+      print 'No lectures with that name are available'
+      exit(0)
 
   cj.save()
   opener.close()
