@@ -36,8 +36,10 @@ def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
 
 def write_cookie_file(className, username, password):
+  """
+  Automatically generate a cookie file for the coursera site.
+  """
   try:
-    """automatically generate a cookie file for the coursera site"""
     (hn,fn) = tempfile.mkstemp()
     cj = cookielib.MozillaCookieJar(fn)
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
