@@ -29,7 +29,9 @@ from BeautifulSoup import BeautifulSoup
 #from bs4 import BeautifulSoup
 
 def get_syllabus_url(className):
-  """Return the Coursera index/syllabus URL."""
+  """
+  Return the Coursera index/syllabus URL.
+  """
   return "http://class.coursera.org/%s/lecture/index" % className
 
 def get_auth_url(className):
@@ -63,9 +65,11 @@ def write_cookie_file(className, username, password):
   return fn
 
 def load_cookies_file(cookies_file):
-  """Loads the cookies file. I am pre-pending the file with the special
+  """
+  Loads the cookies file. I am pre-pending the file with the special
   Netscape header because the cookie loader is being very particular about
-  this string."""
+  this string.
+  """
   cookies = StringIO.StringIO()
   NETSCAPE_HEADER = "# Netscape HTTP Cookie File"
   cookies.write(NETSCAPE_HEADER);
@@ -75,7 +79,9 @@ def load_cookies_file(cookies_file):
   return cookies
 
 def get_opener(cookies_file):
-  """Use cookie file to create a url opener."""
+  """
+  Use cookie file to create a url opener.
+  """
   cj = cookielib.MozillaCookieJar()
   cookies = load_cookies_file(cookies_file)
   # nasty hack: cj.load() requires a filename not a file, but if
@@ -85,7 +91,9 @@ def get_opener(cookies_file):
   return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
 def get_page(url, cookies_file):
-  """Download an HTML page using the cookiejar."""
+  """
+  Download an HTML page using the cookiejar.
+  """
   opener = get_opener(cookies_file)
   #return opener.open(url).read()
   ret = opener.open(url).read()
@@ -103,7 +111,9 @@ def grab_hidden_video_url(href, cookies_file):
   return l[0]['src']
 
 def get_syllabus(class_name, cookies_file, local_page=False):
-  """ Get the course listing webpage."""
+  """
+  Get the course listing webpage.
+  """
   if (not (local_page and os.path.exists(local_page))):
     url = get_syllabus_url(class_name)
     page = get_page(url, cookies_file)
@@ -116,7 +126,9 @@ def get_syllabus(class_name, cookies_file, local_page=False):
   return page
 
 def clean_filename(s):
-  """Sanitize a string to be used as a filename."""
+  """
+  Sanitize a string to be used as a filename.
+  """
   # strip paren portions which contain trailing time length (...)
   s = re.sub("\([^\(]*$", "", s)
   s = s.strip().replace(':','-').replace(' ', '_')
@@ -124,15 +136,19 @@ def clean_filename(s):
   return ''.join(c for c in s if c in valid_chars)
 
 def get_anchor_format(a):
-  """Extract the resource file-type format from the anchor"""
+  """
+  Extract the resource file-type format from the anchor
+  """
   # (. or format=) then (file_extension) then (? or $)
   # e.g. "...format=txt" or "...download.mp4?..."
   format = re.search("(?:\.|format=)(\w+)(?:\?.*)?$", a)
   return format.group(1) if format else None
 
 def parse_syllabus(page, cookies_file):
-  """Parses a Coursera course listing/syllabus page.
-  Each section is a week of classes."""
+  """
+  Parses a Coursera course listing/syllabus page.  Each section is a week of
+  classes.
+  """
   sections = []
   soup = BeautifulSoup(page)
   # traverse sections
@@ -192,7 +208,9 @@ def download_lectures(
   path='',
   verbose_dirs=False
   ):
-  """Downloads lecture resources described by sections."""
+  """
+  Downloads lecture resources described by sections.
+  """
 
   def format_section(num, section):
     sec = "%02d_%s" % (num, section)
@@ -224,7 +242,9 @@ def download_lectures(
             open(lecfn, 'w').close()  # touch
 
 def download_file(url, fn, cookies_file, wget_bin):
-  """Downloads file and removes current file if aborted by user."""
+  """
+  Downloads file and removes current file if aborted by user.
+  """
   try:
     if wget_bin:
       download_file_wget(wget_bin, url, fn, cookies_file)
@@ -236,14 +256,18 @@ def download_file(url, fn, cookies_file, wget_bin):
     sys.exit()
 
 def download_file_wget(wget_bin, url, fn, cookies_file):
-  """Downloads a file using wget.  Could possibly use python to stream files to
-  disk, but wget is robust and gives nice visual feedback."""
+  """
+  Downloads a file using wget.  Could possibly use python to stream files to
+  disk, but wget is robust and gives nice visual feedback.
+  """
   cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
   print "Executing wget:", cmd
   retcode = subprocess.call(cmd)
 
 def download_file_nowget(url, fn, cookies_file):
-  """'Native' python downloader -- slower than wget."""
+  """
+  'Native' python downloader -- slower than wget.
+  """
   print "Downloading %s -> %s" % (url, fn)
   urlfile = get_opener(cookies_file).open(url)
   chunk_sz = 1048576
