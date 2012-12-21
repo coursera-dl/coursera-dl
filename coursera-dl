@@ -16,14 +16,20 @@ Contributions are welcome, but please try to make them platform independent
 and backward compatible.
 """
 
-import sys, os, re, string
-import urllib, urllib2, urlparse, cookielib
-import tempfile
-import subprocess
 import argparse
-import StringIO
-import tempfile
+import cookielib
 import netrc
+import os
+import re
+import string
+import StringIO
+import subprocess
+import sys
+import tempfile
+import urllib
+import urllib2
+import urlparse
+
 from BeautifulSoup import BeautifulSoup
 # for OSX, bs4 is recommended
 #from bs4 import BeautifulSoup
