@@ -43,9 +43,11 @@ the class of interest.
 
 1\. Install any missing dependencies.
 
-  * [Beautiful Soup 3]  
-  Ubuntu/Debian: `sudo apt-get install python-beautifulsoup`  
-  Mac OSX: bs4 may be required instead (modify import as well)
+  * [Beautiful Soup 3] or [Beautiful Soup 4]  
+  Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`  
+  Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`  
+  Mac OSX: `bs4` may be required instead.
+  When using `bs4`, be sure to modify the import at the top of the script.
   Other: `easy_install BeautifulSoup`  
   * [Argparse] (Not necessary if Python version >= 2.7)  
   Ubuntu/Debian: `sudo apt-get install python-argparse`  
@@ -119,7 +121,8 @@ first last at geemail dotcom or [@jplehmann]
 [2]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [youtube-dl]: http://rg3.github.com/youtube-dl
 [Coursera]: http://www.coursera.org
-[Beautiful Soup 3]: http://www.crummy.com/software/BeautifulSoup
+[Beautiful Soup 3]: http://www.crummy.com/software/BeautifulSoup/bs3
+[Beautiful Soup 4]: http://www.crummy.com/software/BeautifulSoup
 [Argparse]: http://pypi.python.org/pypi/argparse
 [wget]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [easy_install]: http://pypi.python.org/pypi/setuptools
