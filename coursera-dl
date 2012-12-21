@@ -28,7 +28,6 @@ import sys
 import tempfile
 import urllib
 import urllib2
-import urlparse
 
 from BeautifulSoup import BeautifulSoup
 # for OSX, bs4 is recommended
