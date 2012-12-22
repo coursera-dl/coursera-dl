@@ -113,8 +113,8 @@ def grab_hidden_video_url(href, cookies_file):
   """
   page = get_page(href, cookies_file)
   soup = BeautifulSoup(page)
-  l = soup.findAll('source', attrs={'type': 'video/mp4'})
-  return l[0]['src']
+  l = soup.find('source', attrs={'type': 'video/mp4'})
+  return l['src']
 
 def get_syllabus(class_name, cookies_file, local_page=False):
   """
