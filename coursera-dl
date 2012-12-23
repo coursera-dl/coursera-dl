@@ -57,7 +57,7 @@ def write_cookie_file(className, username, password):
 
     data = urllib.urlencode({'email': username, 'password': password, 'login': 'Login'})
     req = urllib2.Request(ref, data)
-  
+
     opener.open(req)
   except Exception, e:
     if '404' in str(e):
@@ -203,6 +203,7 @@ def mkdir_p(path):
 
 def download_lectures(
   wget_bin,
+  curl_bin,
   cookies_file,
   class_name,
   sections,
@@ -243,17 +244,19 @@ def download_lectures(
         print lecfn
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
-            download_file(url, lecfn, cookies_file, wget_bin)
+            download_file(url, lecfn, cookies_file, wget_bin, curl_bin)
           else:
             open(lecfn, 'w').close()  # touch
 
-def download_file(url, fn, cookies_file, wget_bin):
+def download_file(url, fn, cookies_file, wget_bin, curl_bin):
   """
   Downloads file and removes current file if aborted by user.
   """
   try:
     if wget_bin:
       download_file_wget(wget_bin, url, fn, cookies_file)
+    elif curl_bin:
+      download_file_curl(curl_bin, url, fn, cookies_file)
     else:
       download_file_nowget(url, fn, cookies_file)
   except KeyboardInterrupt, e:
@@ -268,6 +271,15 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
   """
   cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
   print "Executing wget:", cmd
+  retcode = subprocess.call(cmd)
+
+def download_file_curl(curl_bin, url, fn, cookies_file):
+  """
+  Downloads a file using curl.  Could possibly use python to stream files to
+  disk, but curl is robust and gives nice visual feedback.
+  """
+  cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
+  print "Executing curl:", cmd
   retcode = subprocess.call(cmd)
 
 def download_file_nowget(url, fn, cookies_file):
@@ -319,6 +331,8 @@ def parseArgs():
     action='store', default=None, help='only download lectures which contain this regex (default: disabled)')
   parser.add_argument('-w', '--wget_bin', dest='wget_bin',
     action='store', default=None, help='wget binary if it should be used for downloading')
+  parser.add_argument('--curl_bin', dest='curl_bin',
+    action='store', default=None, help='curl binary if it should be used for downloading')
   parser.add_argument('-o', '--overwrite', dest='overwrite',
     action='store_true', default=False,
     help='whether existing files should be overwritten (default: False)')
@@ -355,6 +369,7 @@ def download_class(args, class_name):
   sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
   download_lectures(
     args.wget_bin,
+    args.curl_bin,
     args.cookies_file or tmp_cookie_file,
     class_name,
     sections,
