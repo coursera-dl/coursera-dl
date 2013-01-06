@@ -159,7 +159,7 @@ def parse_syllabus(page, cookies_file):
   sections = []
   soup = BeautifulSoup(page)
   # traverse sections
-  for stag in soup.findAll(attrs={'class':'course-item-list-header contracted'}):
+  for stag in soup.findAll(attrs={'class':re.compile('^course-item-list-header')}):
     assert stag.contents[0] != None, "couldn't find section"
     section_name = clean_filename(stag.contents[0].contents[1])
     print section_name
