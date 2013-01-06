@@ -138,6 +138,7 @@ def clean_filename(s):
   # strip paren portions which contain trailing time length (...)
   s = re.sub("\([^\(]*$", "", s)
   s = s.strip().replace(':','-').replace(' ', '_')
+  s = s.replace('nbsp','')
   valid_chars = "-_.()%s%s" % (string.ascii_letters, string.digits)
   return ''.join(c for c in s if c in valid_chars)
 
@@ -158,13 +159,13 @@ def parse_syllabus(page, cookies_file):
   sections = []
   soup = BeautifulSoup(page)
   # traverse sections
-  for stag in soup.findAll(attrs={'class':'list_header'}):
+  for stag in soup.findAll(attrs={'class':re.compile('^course-item-list-header')}):
     assert stag.contents[0] != None, "couldn't find section"
-    section_name = clean_filename(stag.contents[0])
+    section_name = clean_filename(stag.contents[0].contents[1])
     print section_name
     lectures = [] # resources for 1 lecture
     # traverse resources (e.g., video, ppt, ..)
-    for vtag in stag.parent.nextSibling.findAll('li'):
+    for vtag in stag.nextSibling.findAll('li'):
       assert vtag.a.contents[0], "couldn't get lecture name"
       vname = clean_filename(vtag.a.contents[0])
       print "  ", vname
@@ -287,20 +288,24 @@ def download_file_nowget(url, fn, cookies_file):
   'Native' python downloader -- slower than wget.
   """
   print "Downloading %s -> %s" % (url, fn)
-  urlfile = get_opener(cookies_file).open(url)
-  chunk_sz = 1048576
-  bytesread = 0
-  f = open(fn, "wb")
-  while True:
-    data = urlfile.read(chunk_sz)
-    if not data:
-      print "."
-      break
-    f.write(data)
-    bytesread += len(data)
-    print "\r%d bytes read" % bytesread,
-    sys.stdout.flush()
-  urlfile.close()
+  try:
+    urlfile = get_opener(cookies_file).open(url)
+  except urllib2.HTTPError:
+    print "Probably the file is missing from the AWS repository... skipping it."
+  else:
+    chunk_sz = 1048576
+    bytesread = 0
+    f = open(fn, "wb")
+    while True:
+	data = urlfile.read(chunk_sz)
+        if not data:
+          print "."
+          break
+        f.write(data)
+        bytesread += len(data)
+        print "\r%d bytes read" % bytesread,
+        sys.stdout.flush()
+    urlfile.close()
 
 def parseArgs():
   parser = argparse.ArgumentParser(description='Download Coursera.org lecture material and resources.')
