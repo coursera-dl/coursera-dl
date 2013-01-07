@@ -9,7 +9,8 @@ import os.path
 from collections import defaultdict
 from coursera import coursera_dl 
 
-TEST_SYLLABUS_FILE = os.path.join(os.path.dirname(__file__), "2012-syllabus-format.html")
+TEST_SYLLABUS_FILE = \
+  os.path.join(os.path.dirname(__file__), "2013-nlp-syllabus.html")
 
 
 class TestSyllabusParsing(unittest.TestCase):
@@ -20,9 +21,9 @@ class TestSyllabusParsing(unittest.TestCase):
   def test_parse(self):
     result = coursera_dl.parse_syllabus(self.syllabus_page, None)
     # test sections
-    self.assertEqual(len(result), 5)
+    self.assertEqual(len(result), 23)
     # test lectures
-    self.assertEqual(sum([len(x[1]) for x in result]), 23)
+    self.assertEqual(sum([len(x[1]) for x in result]), 102)
 
   
 if __name__ == "__main__":
