@@ -369,9 +369,8 @@ def parseArgs():
   return args
 
 def download_class(args, class_name):
-  #if args.username:
-  #  tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
-  tmp_cookie_file = None
+  if args.username:
+    tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
   page = get_syllabus(class_name, args.cookies_file or tmp_cookie_file, args.local_page)
   sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
   download_lectures(
@@ -388,8 +387,8 @@ def download_class(args, class_name):
     args.path,
     args.verbose_dirs
   )
-  #if not args.cookies_file:
-  #  os.unlink(tmp_cookie_file)
+  if not args.cookies_file:
+    os.unlink(tmp_cookie_file)
 
 def main():
   args = parseArgs()
