@@ -49,7 +49,7 @@ def write_cookie_file(className, username, password):
   Automatically generate a cookie file for the coursera site.
   """
   try:
-    (hn,fn) = tempfile.mkstemp()
+    (hn, fn) = tempfile.mkstemp()
     cj = cookielib.MozillaCookieJar(fn)
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
 
@@ -79,7 +79,7 @@ def load_cookies_file(cookies_file):
   """
   cookies = StringIO.StringIO()
   NETSCAPE_HEADER = "# Netscape HTTP Cookie File"
-  cookies.write(NETSCAPE_HEADER);
+  cookies.write(NETSCAPE_HEADER)
   cookies.write(open(cookies_file, 'r').read())
   cookies.flush()
   cookies.seek(0)
@@ -242,7 +242,7 @@ def download_lectures(
       if not os.path.exists(sec):
           mkdir_p(sec)
       # write lecture resources
-      for format,url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
+      for format, url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
         lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, format))
         print lecfn
         if overwrite or not os.path.exists(lecfn):
