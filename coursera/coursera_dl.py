@@ -262,7 +262,7 @@ def download_file(url, fn, cookies_file, wget_bin, curl_bin):
       download_file_curl(curl_bin, url, fn, cookies_file)
     else:
       download_file_nowget(url, fn, cookies_file)
-  except KeyboardInterrupt as e:
+  except KeyboardInterrupt:
     print "\nKeyboard Interrupt -- Removing partial file:", fn
     os.remove(fn)
     sys.exit()
@@ -274,7 +274,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
   """
   cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
   print "Executing wget:", cmd
-  retcode = subprocess.call(cmd)
+  subprocess.call(cmd)
 
 def download_file_curl(curl_bin, url, fn, cookies_file):
   """
@@ -283,7 +283,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   """
   cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
   print "Executing curl:", cmd
-  retcode = subprocess.call(cmd)
+  subprocess.call(cmd)
 
 def download_file_nowget(url, fn, cookies_file):
   """
