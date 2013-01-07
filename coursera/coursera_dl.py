@@ -60,7 +60,7 @@ def write_cookie_file(className, username, password):
     req = urllib2.Request(ref, data)
 
     opener.open(req)
-  except Exception, e:
+  except Exception as e:
     if '404' in str(e):
       print 'No lectures with that name are available'
       exit(0)
@@ -262,7 +262,7 @@ def download_file(url, fn, cookies_file, wget_bin, curl_bin):
       download_file_curl(curl_bin, url, fn, cookies_file)
     else:
       download_file_nowget(url, fn, cookies_file)
-  except KeyboardInterrupt, e:
+  except KeyboardInterrupt as e:
     print "\nKeyboard Interrupt -- Removing partial file:", fn
     os.remove(fn)
     sys.exit()
