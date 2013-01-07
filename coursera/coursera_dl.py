@@ -12,8 +12,9 @@ Examples:
 Author:
   John Lehmann (first last at geemail dotcom or @jplehmann)
 
-Contributions are welcome, but please try to make them platform independent
-and backward compatible.
+Contributions are welcome, but please add new unit tests to test your changes
+and/or features.  Also, please try to make changes platform independent and
+backward compatible.
 """
 
 import argparse
