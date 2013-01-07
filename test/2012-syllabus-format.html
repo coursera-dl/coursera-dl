@@ -1,0 +1,807 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+<meta charset="utf-8" />
+<title>Video Listing</title>
+
+<link rel="stylesheet" href="https://www.coursera.org/assets/core/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://www.coursera.org/assets/core/css/main.css" />
+<link rel="stylesheet" href="https://spark-public.s3.amazonaws.com/nlp/static/css/main.css" />
+<link rel="stylesheet" href="https://www.coursera.org/assets/core/css/font-awesome.css" />
+<script type="text/javascript" src="https://www.coursera.org/assets/core/js/jquery.js"></script>
+<script type="text/javascript" src="https://www.coursera.org/assets/core/js/json.js"></script>
+<script type="text/javascript" src="https://www.coursera.org/assets/core/js/hc_fix.js"></script>
+<script src="https://www.coursera.org/assets/core/js/bootstrap/bootstrap-modal.js" type="text/javascript"></script>
+<script src="https://www.coursera.org/assets/core/js/modal_focus.js" type="text/javascript"></script>
+<script src="https://www.coursera.org/assets/core/js/bind_modal_focus.js" type="text/javascript"></script>
+<script src="https://www.coursera.org/assets/core/js/get_query_parameters.js"></script>
+<script src="https://www.coursera.org/assets/app/generic/js/list_accordian.js"></script>
+<link rel="stylesheet" href="https://www.coursera.org/assets/app/generic/css/item_list.css" />
+<link rel="stylesheet" href="https://www.coursera.org/assets/core/css/jquery_ui/jquery_ui.css" />
+<script src="https://www.coursera.org/assets/core/js/jquery_ui.js"></script>
+<link rel="stylesheet" href="https://www.coursera.org/assets/app/lecture/css/lecture_dialog.css" />
+<link rel="stylesheet" href="https://www.coursera.org/assets/app/lecture/css/lecture_list.css?version=20120209" />
+<script src="https://www.coursera.org/assets/app/lecture/js/lecture_list_functions.js?view_url=https://www.coursera.org/nlp/lecture/view&version=20120213"></script>
+<script src="https://www.coursera.org/assets/app/lecture/js/jquery.fancybox-1.3.4.pack.js"></script>
+<link rel="stylesheet" href="https://www.coursera.org/assets/app/lecture/css/jquery.fancybox-1.3.4.css" />
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-28377374-1']);
+  _gaq.push(['_setDomainName', 'coursera.org']);
+  _gaq.push(['_setAllowLinker', true]);  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script><link rel="icon" href="https://spark-public.s3.amazonaws.com/nlp/static/images/favicon.ico" />
+
+</head>
+
+<body>
+
+    <a href="#page-content" class="hidden">Skip Navigation</a>
+
+	
+<div class="topbar">
+    <div class="topbar-inner">
+        <div class="container-fluid"
+                          >
+            <a target="_new" href="http://www.coursera.org/" class="brand">
+				Coursera				<span style="background-color:#387690;padding-top:100px" class="label warning">Beta</span>
+			</a>
+            <ul class="nav secondary-nav">
+                                                    <li style="padding: 10px 10px 11px; color:#BFBFBF; font-size:14px; border-right: solid 1px #333">John Lehmann</li>
+                    <li><a href="https://www.coursera.org/nlp/class/preferences">Preferences</a></li>
+                    <li><a href="http://www.coursera.org/">All Courses</a></li>
+
+                                        
+                    
+                    <li><a href="https://www.coursera.org/nlp/class/aboutus">About</a></li>
+                    <li><a href="https://www.coursera.org/nlp/auth/feedback">Contact Us</a></li>
+                    <li><a href="https://www.coursera.org/nlp/auth/logout">Logout</a></li>
+                            </ul>
+        </div>
+    </div>
+</div>
+
+
+    <div id="banner-top">
+    	<div id="course-logo-text">
+        	<a href="https://www.coursera.org/nlp/class/index">
+        		<img border="0" alt="Natural Language Processing" src="https://spark-public.s3.amazonaws.com/nlp/static/images/course-logo-text.png" />
+        	</a>
+        </div>
+    	<div id="banner-course-info">
+        	<div class="course-instructor-name">Dan Jurafsky, <span style="font-weight:normal">Professor of Linguistics</span><br />
+Chris Manning, <span style="font-weight:normal">Associate Professor  of Computer Science</span></div>
+            <div class="course-time"></div>
+        </div>
+    </div>
+    
+        <div class="container-fluid">
+        <div class="sidebar page-sidebar" id="page-sidebar">
+            <ul style="list-style-type:none;margin-left:0px;">
+		<li>
+        <a href="https://www.coursera.org/nlp/class/index"  >
+            <p class="navbar_item navbar_home">Home            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/wiki/view?page=syllabus"  >
+            <p class="navbar_item navbar_wiki">Syllabus            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/wiki/view?page=courselogistics"  >
+            <p class="navbar_item navbar_wiki">Course Logistics            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/wiki/view?page=FAQlist"  >
+            <p class="navbar_item navbar_wiki">FAQ List            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/"  >
+            <p class="navbar_item navbar_">            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/quiz/index"  >
+            <p class="navbar_item navbar_quiz">Problem Sets            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/assignment/index"  >
+            <p class="navbar_item navbar_assignment">Programming Assignments            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/lecture/index"  >
+            <p class="navbar_item navbar_lecture">Video Lectures            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/wiki/view?page=lectureslides"  >
+            <p class="navbar_item navbar_lecture">Lecture Slides            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/forum/index"  >
+            <p class="navbar_item navbar_forum">Discussion Forums            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/"  >
+            <p class="navbar_item navbar_">            </p>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.coursera.org/nlp/wiki/view?page=aboutus"  >
+            <p class="navbar_item navbar_wiki">About Us            </p>
+        </a>
+    </li>
+	</ul>
+        </div>
+        <div class="content page-content" id="page-content">
+            <div style="float: left;">
+    <h2 style="padding-bottom:12px">Video Lectures</h2>
+</div>
+
+
+<div class="item_list">
+<a href="#" class="list_header_link contracted"><h3 class="list_header">Course Introduction</h3> <span class="list_header_state hidden">(collapsed, click to expand)</span></a><ul class="item_section_list"><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=124 " rel="lecture-link" class="lecture-link">
+Course Introduction (14:11)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2Fintro.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2Fintro.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=124_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=124">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li></ul><a href="#" class="list_header_link contracted"><h3 class="list_header">Basic Text Processing</h3> <span class="list_header_state hidden">(collapsed, click to expand)</span></a><ul class="item_section_list"><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=125 " rel="lecture-link" class="lecture-link">
+Regular Expressions (11:25)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-regexp.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-regexp.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=125_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=125">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=13 " rel="lecture-link" class="lecture-link">
+Regular Expressions in Practical NLP (6:04)</a>
+<div class="item_resource">
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=13_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=13">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=127 " rel="lecture-link" class="lecture-link">
+Word Tokenization (14:26)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-wordtok.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-wordtok.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=127_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=127">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=126 " rel="lecture-link" class="lecture-link">
+Word Normalization and Stemming (11:47)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-normalization.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-normalization.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=126_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=126">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=5 " rel="lecture-link" class="lecture-link">
+Sentence Segmentation (5:31)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-sentsegment.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-02-sentsegment.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=5_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=5">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li></ul><a href="#" class="list_header_link contracted"><h3 class="list_header">Edit Distance</h3> <span class="list_header_state hidden">(collapsed, click to expand)</span></a><ul class="item_section_list"><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=6 " rel="lecture-link" class="lecture-link">
+Defining Minimum Edit Distance (7:04)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-defineMinEdit.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-defineMinEdit.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=6_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=6">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=7 " rel="lecture-link" class="lecture-link">
+Computing Minimum Edit Distance (5:54)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2Fslides%2F01-03-computingmineditdistance.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-computingmineditdistance.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=7_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=7">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=8 " rel="lecture-link" class="lecture-link">
+Backtrace for Computing Alignments (5:55)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-backtrace.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-backtrace.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=8_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=8">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=9 " rel="lecture-link" class="lecture-link">
+Weighted Minimum Edit Distance (2:47)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-weighted.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-weighted.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=9_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=9">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=10 " rel="lecture-link" class="lecture-link">
+Minimum Edit Distance in Computational Biology (9:29)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-combio.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F01-03-combio.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=10_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=10">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li></ul><a href="#" class="list_header_link contracted"><h3 class="list_header">Language Modeling</h3> <span class="list_header_state hidden">(collapsed, click to expand)</span></a><ul class="item_section_list"><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=14 " rel="lecture-link" class="lecture-link">
+Introduction to N-grams (8:41)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-ngramIntro.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-ngramIntro.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=14_de&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=14">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=128 " rel="lecture-link" class="lecture-link">
+Estimating N-gram Probabilities (9:38)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-estimNgramProbs.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-estimNgramProbs.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=128_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=128">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=129 " rel="lecture-link" class="lecture-link">
+Evaluation and Perplexity (11:09)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-EvalandPerplex.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-EvalandPerplex.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=129_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=129">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=17 " rel="lecture-link" class="lecture-link">
+Generalization and Zeros (5:15)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-generalization.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-generalization.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=17_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=17">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=18 " rel="lecture-link" class="lecture-link">
+Smoothing: Add-One (6:30)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-smoothingAddone.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-smoothingAddone.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=18_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=18">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=19 " rel="lecture-link" class="lecture-link">
+Interpolation (10:25)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-interpBackoff.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-interpBackoff.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=19_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=19">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=32 " rel="lecture-link" class="lecture-link">
+Good-Turing Smoothing (15:35)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-advGoodTuringSmooth.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-advGoodTuringSmooth.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=32_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=32">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=20 " rel="lecture-link" class="lecture-link">
+Kneser-Ney Smoothing (8:59)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-advKnesNeySmooth.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-01-advKnesNeySmooth.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=20_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=20">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li></ul><a href="#" class="list_header_link contracted"><h3 class="list_header">Spelling Correction</h3> <span class="list_header_state hidden">(collapsed, click to expand)</span></a><ul class="item_section_list"><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=21 " rel="lecture-link" class="lecture-link">
+The Spelling Correction Task (5:39)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-spellCorrectionTask.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-spellCorrectionTask.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=21_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=21">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=22 " rel="lecture-link" class="lecture-link">
+The Noisy Channel Model of Spelling (19:30)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-noisychannel.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-noisychannel.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=22_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=22">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=23 " rel="lecture-link" class="lecture-link">
+Real-Word Spelling Correction (9:19)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-realWorldSpellCorrect.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-realWorldSpellCorrect.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=23_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=23">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li><li class="item_row viewed"><a href="https://www.coursera.org/nlp/lecture/view?lecture_id=24 " rel="lecture-link" class="lecture-link">
+State of the Art Systems (7:10)</a>
+<div class="item_resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-StateoftheArtSystems.pptx">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/ppt.png" 
+                 alt="PPT (ppt)"
+                 title="PPT (ppt)"
+            >
+        </a>
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/nlp/slides%2F02-02-StateoftheArtSystems.pdf">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/pdf.png" 
+                 alt="PDF (pdf)"
+                 title="PDF (pdf)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/subtitles?q=24_en&format=txt">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/txt.png" 
+                 alt="subtitles (txt)"
+                 title="subtitles (txt)"
+            >
+        </a>
+        <a target="_new" href="https://www.coursera.org/nlp/lecture/download.mp4?lecture_id=24">
+            <img src="https://www.coursera.org/assets/core/images/filetype_icons/download.png" 
+                 alt="download lecture (use right-click and save as) (download)"
+                 title="download lecture (use right-click and save as) (download)"
+            >
+        </a>
+</div>
+</li></ul></div>
+<script>
+    var fancyboxImageURL = 'https://www.coursera.org/assets/app/lecture/css/fancybox.png';
+</script>
+        </div>
+    </div>
+            <div class="hidden">
+        This page features MathJax technology to render mathematical formulae.
+        If you are using a screen reader, please visit <a href="http://www.dessci.com/en/products/mathplayer/">MathPlayer</a> to download the plugin for your browser. Please note that this is an Internet Explorer-only plugin at this time.
+    </div>
+</body>
+
+</html>
+

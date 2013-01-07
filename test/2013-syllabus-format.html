@@ -1,0 +1,2057 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8" />
+<title>Video Listing | Functional Programming Principles in Scala</title>
+<link rel="stylesheet" href="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/css/spark.main.css" />
+
+<link rel="stylesheet" href="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/core/css/jquery_ui/jquery_ui.css" />
+
+<link rel="icon" href="https://spark-public.s3.amazonaws.com/progfun/static/images/favicon.ico" />
+
+</head>
+
+<body>
+    <a href="#course-page-content" class="hidden">Skip Navigation</a>
+    <div class="hidden">
+        This page features MathJax technology to render mathematical formulae.
+        If you are using a screen reader, please visit <a href="http://www.dessci.com/en/products/mathplayer/">MathPlayer</a> to download the plugin for your browser. Please note that this is an Internet Explorer-only plugin at this time.
+    </div>
+
+    <h1 class="hidden">Functional Programming Principles in Scala</h1>
+
+    
+<div class="course-topbar container-fluid">
+
+    <div class="row-fluid">
+        
+        <div class="span3">
+          <a href="https://www.coursera.org/" class="course-topbar-logo"></a>
+        </div>
+
+        <div class="course-topbar-nav-container span9" style="float:right;">
+            <h2 class="hidden">Top Navigation Bar</h2>
+
+            <ul class="course-topbar-nav-list">
+                <li class="course-topbar-nav-list-item"><a href="https://www.coursera.org/courses/" target="_new">Courses</a></li>
+
+                
+                <li class="course-topbar-nav-list-item" data-popup="#course-topbar-aboutus" data-popup-bind-open="mouseenter" data-popup-direction="se" data-popup-close style="cursor:pointer;">
+                    <a>About <i class="icon-caret-down"></i></a>
+                </li>
+
+                                
+                <li class="course-topbar-nav-list-item" data-popup="#course-topbar-my" data-popup-bind-open="mouseenter" data-popup-close style="cursor:pointer;" data-popup-direction="se">
+                    <a data-user-id="10645">John Lehmann <i class="icon-caret-down"></i></a>
+                </li>
+                
+                            </ul>
+        </div>
+    </div>
+
+    <div id="course-topbar-aboutus" class="course-topbar-sublist">
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/jobs" target="_new">Jobs</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/team" target="_new">Team</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/contact" target="_new">Contact Us</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/" target="_new">About Us</a>
+    </div>
+
+    <div id="course-topbar-my" class="course-topbar-sublist">
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/" target="_new">Courses</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/account/profile" target="_new">Profile</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/account/records" target="_new">Course Records</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/account/settings" target="_new">Settings</a>
+        <a class="course-topbar-sublist-item" href="https://class.coursera.org/progfun-2012-001/class/preferences">Course Preferences</a>
+        <a class="course-topbar-sublist-item" href="https://class.coursera.org/progfun-2012-001/auth/logout">Logout</a>
+    </div>
+
+</div>
+
+
+
+<div class="course-topbanner" style="background:#2f2f2f repeat-x url('https://s3.amazonaws.com/coursera/universities/epfl/top-banner-background.png')">
+    <div class="course-topbanner-logo-container">
+        <a href="https://class.coursera.org/progfun-2012-001/class/index">
+            <div>
+                <div>
+                    <img src="https://s3.amazonaws.com/coursera/universities/epfl/top-banner.png" />
+                </div>
+                <div class="course-topbanner-logo-image" style="position:absolute;top:47px;left:17px;height:68px;width:120px;">
+                    <div style="background-position:-5px 0px;background-size:130px;height:68px;width:120px;background-image:url('https://s3.amazonaws.com/coursera/topics/progfun/small-icon.hover.png')">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="course-topbanner-logo-name" style="position:absolute;top:87px;left:155px;">
+                <span>Functional Programming Principles in Scala</span>
+            </div>
+        </a>
+    </div>
+    <div class="course-topbanner-info">
+        <div class="course-topbanner-instructor">Martin Odersky</div>
+        <div class="course-topbanner-time"></div>
+    </div>
+</div>
+    
+        <div class="container-fluid" style="position:relative;">
+        <div class="row-fluid">
+            <div id="course-page-sidebar">
+                <div class="course-navbar-container">
+<h2 class="hidden">Side Navigation Bar</h2>
+<ul class="course-navbar-list">
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/class/index"  >
+				
+				Home							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/lecture/index"  >
+				
+				Video Lectures							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=LearningResources"  >
+				
+				Learning Resources							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/assignment/index"  >
+				
+				Assignments							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/forum/index"  >
+				
+				Discussion Forums							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=ToolsSetup"  >
+				
+				Tools Setup							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=SbtTutorial"  >
+				
+				Sbt Tutorial							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=EclipseTutorial"  >
+				
+				Eclipse Tutorial							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=ScalaTutorial"  >
+				
+				Scala Tutorial							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=ScalaStyleGuide"  >
+				
+				Scala Style Guide							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=AssignmentFeedback"  >
+				
+				Assignment Feedback							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=CheatSheet"  >
+				
+				Scala Cheat Sheet							</a>
+						</li>
+	
+		
+	<li class="course-navbar-item">
+								<a href="https://class.coursera.org/progfun-2012-001/wiki/view?page=GradingPolicy"  >
+				
+				Grading Policy							</a>
+						</li>
+	
+	
+		<li class="course-navbar-item">
+		<a href="https://share.coursera.org/wiki/index.php/progfun:Main" target="_blank">
+			
+			Course Wiki
+			<span class="icon-share"></span>
+		</a>
+	</li>
+	</ul>
+
+</div>            </div>
+            <div id="course-page-content">
+                <div class="course-lectures-list">
+  <h2 style="padding-bottom:12px">Video Lectures</h2>
+
+  <div><!-- Lecture List Preamble Here --></div>
+
+    
+  <div class="course-item-list">
+<div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Getting Started</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="27"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=27"
+   href="https://class.coursera.org/progfun-2012-001/lecture/27"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Course Introduction (2:44)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=27_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Course Introduction (2:44)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=27_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Course Introduction (2:44)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=27"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Course Introduction (2:44)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="23"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=23"
+   href="https://class.coursera.org/progfun-2012-001/lecture/23"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Tools Setup for Linux (12:24)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=23_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Tools Setup for Linux (12:24)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=23_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Tools Setup for Linux (12:24)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=23"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Tools Setup for Linux (12:24)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="25"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=25"
+   href="https://class.coursera.org/progfun-2012-001/lecture/25"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Tools Setup for Mac OS X (12:17)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=25_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Tools Setup for Mac OS X (12:17)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=25_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Tools Setup for Mac OS X (12:17)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=25"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Tools Setup for Mac OS X (12:17)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="21"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=21"
+   href="https://class.coursera.org/progfun-2012-001/lecture/21"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Tools Setup for Windows (10:37)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=21_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Tools Setup for Windows (10:37)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=21_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Tools Setup for Windows (10:37)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=21"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Tools Setup for Windows (10:37)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="29"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=29"
+   href="https://class.coursera.org/progfun-2012-001/lecture/29"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Tutorial: Working on the Programming Assignments (8:47)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=29_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Tutorial: Working on the Programming Assignments (8:47)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=29_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Tutorial: Working on the Programming Assignments (8:47)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=29"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Tutorial: Working on the Programming Assignments (8:47)</div>
+        </a>
+</div>
+</li></ul><div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Week 1: Functions & Evaluations</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="8"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=8"
+   href="https://class.coursera.org/progfun-2012-001/lecture/8"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 1.1 - Programming Paradigms (14:32)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek1-1.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 1.1 - Programming Paradigms (14:32)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=8_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 1.1 - Programming Paradigms (14:32)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=8_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 1.1 - Programming Paradigms (14:32)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=8"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 1.1 - Programming Paradigms (14:32)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="3"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=3"
+   href="https://class.coursera.org/progfun-2012-001/lecture/3"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 1.2 - Elements of Programming (14:25)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek1-2.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 1.2 - Elements of Programming (14:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=3_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 1.2 - Elements of Programming (14:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=3_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 1.2 - Elements of Programming (14:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=3"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 1.2 - Elements of Programming (14:25)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="4"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=4"
+   href="https://class.coursera.org/progfun-2012-001/lecture/4"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 1.3 - Evaluation Strategies and Termination (4:22)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek1-3.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 1.3 - Evaluation Strategies and Termination (4:22)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=4_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 1.3 - Evaluation Strategies and Termination (4:22)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=4_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 1.3 - Evaluation Strategies and Termination (4:22)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=4"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 1.3 - Evaluation Strategies and Termination (4:22)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="5"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=5"
+   href="https://class.coursera.org/progfun-2012-001/lecture/5"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 1.4 - Conditionals and Value Definitions (8:49)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek1-4.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 1.4 - Conditionals and Value Definitions (8:49)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=5_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 1.4 - Conditionals and Value Definitions (8:49)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=5_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 1.4 - Conditionals and Value Definitions (8:49)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=5"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 1.4 - Conditionals and Value Definitions (8:49)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="6"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=6"
+   href="https://class.coursera.org/progfun-2012-001/lecture/6"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 1.5 - Example: square roots with Newton's method (11:25)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek1-5.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 1.5 - Example: square roots with Newton's method (11:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=6_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 1.5 - Example: square roots with Newton's method (11:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=6_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 1.5 - Example: square roots with Newton's method (11:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=6"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 1.5 - Example: square roots with Newton's method (11:25)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="7"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=7"
+   href="https://class.coursera.org/progfun-2012-001/lecture/7"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 1.6 - Blocks and Lexical Scope (8:00)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek1-6.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 1.6 - Blocks and Lexical Scope (8:00)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=7_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 1.6 - Blocks and Lexical Scope (8:00)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=7_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 1.6 - Blocks and Lexical Scope (8:00)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=7"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 1.6 - Blocks and Lexical Scope (8:00)</div>
+        </a>
+</div>
+</li></ul><div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Week 2: Higher Order Functions</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="33"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=33"
+   href="https://class.coursera.org/progfun-2012-001/lecture/33"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 2.1 - Tail Recursion (12:32)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek2-1.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Lecture 2.1 - Tail Recursion" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Lecture 2.1 - Tail Recursion for Lecture 2.1 - Tail Recursion (12:32)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=33_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 2.1 - Tail Recursion (12:32)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=33_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 2.1 - Tail Recursion (12:32)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=33"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 2.1 - Tail Recursion (12:32)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="35"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=35"
+   href="https://class.coursera.org/progfun-2012-001/lecture/35"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 2.2 - Higher-Order Functions (10:18)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek2-2.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 2.2 - Higher-Order Functions (10:18)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=35_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 2.2 - Higher-Order Functions (10:18)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=35_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 2.2 - Higher-Order Functions (10:18)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=35"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 2.2 - Higher-Order Functions (10:18)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="37"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=37"
+   href="https://class.coursera.org/progfun-2012-001/lecture/37"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 2.3 - Currying (14:58)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek2-3.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Lecture 2.3 - Currying" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Lecture 2.3 - Currying for Lecture 2.3 - Currying (14:58)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=37_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 2.3 - Currying (14:58)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=37_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 2.3 - Currying (14:58)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=37"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 2.3 - Currying (14:58)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="39"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=39"
+   href="https://class.coursera.org/progfun-2012-001/lecture/39"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 2.4 - Example: Finding Fixed Points (10:46)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek2-4.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Lecture 2.4 - Example: Finding Fixed Points" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Lecture 2.4 - Example: Finding Fixed Points for Lecture 2.4 - Example: Finding Fixed Points (10:46)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=39_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 2.4 - Example: Finding Fixed Points (10:46)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=39_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 2.4 - Example: Finding Fixed Points (10:46)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=39"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 2.4 - Example: Finding Fixed Points (10:46)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="41"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=41"
+   href="https://class.coursera.org/progfun-2012-001/lecture/41"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 2.5 - Scala Syntax Summary (4:13)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek2-5.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Lecture 2.5 - Scala Syntax Summary" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Lecture 2.5 - Scala Syntax Summary for Lecture 2.5 - Scala Syntax Summary (4:13)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=41_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 2.5 - Scala Syntax Summary (4:13)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=41_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 2.5 - Scala Syntax Summary (4:13)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=41"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 2.5 - Scala Syntax Summary (4:13)</div>
+        </a>
+</div>
+</li></ul><div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Week 3: Data and Abstraction</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="43"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=43"
+   href="https://class.coursera.org/progfun-2012-001/lecture/43"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 3.1 - Functions and Data (11:50)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek3-1.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 3.1 - Functions and Data (11:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=43_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 3.1 - Functions and Data (11:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=43_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 3.1 - Functions and Data (11:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=43"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 3.1 - Functions and Data (11:50)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="47"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=47"
+   href="https://class.coursera.org/progfun-2012-001/lecture/47"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 3.2 - More Fun With Rationals (15:08)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek3-2.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 3.2 - More Fun With Rationals (15:08)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=47_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 3.2 - More Fun With Rationals (15:08)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=47_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 3.2 - More Fun With Rationals (15:08)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=47"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 3.2 - More Fun With Rationals (15:08)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="49"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=49"
+   href="https://class.coursera.org/progfun-2012-001/lecture/49"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 3.3 - Evaluation and Operators (16:25)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek3-3.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 3.3 - Evaluation and Operators (16:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=49_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 3.3 - Evaluation and Operators (16:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=49_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 3.3 - Evaluation and Operators (16:25)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=49"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 3.3 - Evaluation and Operators (16:25)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="51"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=51"
+   href="https://class.coursera.org/progfun-2012-001/lecture/51"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 3.4 - Class Hierarchies (25:50)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek3-4.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 3.4 - Class Hierarchies (25:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=51_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 3.4 - Class Hierarchies (25:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=51_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 3.4 - Class Hierarchies (25:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=51"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 3.4 - Class Hierarchies (25:50)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="53"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=53"
+   href="https://class.coursera.org/progfun-2012-001/lecture/53"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 3.5 - How Classes Are Organized (20:30)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek3-5.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 3.5 - How Classes Are Organized (20:30)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=53_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 3.5 - How Classes Are Organized (20:30)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=53_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 3.5 - How Classes Are Organized (20:30)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=53"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 3.5 - How Classes Are Organized (20:30)</div>
+        </a>
+</div>
+</li></ul><div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Week 4: Types and Pattern Matching</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="75"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=75"
+   href="https://class.coursera.org/progfun-2012-001/lecture/75"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 4.1 - Polymorphism (21:09)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek4-1.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 4.1 - Polymorphism (21:09)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=75_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 4.1 - Polymorphism (21:09)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=75_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 4.1 - Polymorphism (21:09)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=75"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 4.1 - Polymorphism (21:09)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="77"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=77"
+   href="https://class.coursera.org/progfun-2012-001/lecture/77"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 4.2 - Objects Everywhere (19:07)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek4-2.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 4.2 - Objects Everywhere (19:07)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=77_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 4.2 - Objects Everywhere (19:07)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=77_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 4.2 - Objects Everywhere (19:07)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=77"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 4.2 - Objects Everywhere (19:07)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="79"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=79"
+   href="https://class.coursera.org/progfun-2012-001/lecture/79"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 4.3 - Functions as Objects (8:04)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek4-3.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 4.3 - Functions as Objects (8:04)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=79_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 4.3 - Functions as Objects (8:04)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=79_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 4.3 - Functions as Objects (8:04)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=79"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 4.3 - Functions as Objects (8:04)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="81"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=81"
+   href="https://class.coursera.org/progfun-2012-001/lecture/81"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 4.4 - Subtyping and Generics (15:02)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek4-4.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 4.4 - Subtyping and Generics (15:02)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=81_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 4.4 - Subtyping and Generics (15:02)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=81_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 4.4 - Subtyping and Generics (15:02)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=81"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 4.4 - Subtyping and Generics (15:02)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="83"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=83"
+   href="https://class.coursera.org/progfun-2012-001/lecture/83"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 4.5 - Variance (Optional) (21:33)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek4-5.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 4.5 - Variance (Optional) (21:33)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=83_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 4.5 - Variance (Optional) (21:33)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=83_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 4.5 - Variance (Optional) (21:33)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=83"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 4.5 - Variance (Optional) (21:33)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="85"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=85"
+   href="https://class.coursera.org/progfun-2012-001/lecture/85"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 4.6 - Decomposition (16:57)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek4-6.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 4.6 - Decomposition (16:57)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=85_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 4.6 - Decomposition (16:57)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=85_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 4.6 - Decomposition (16:57)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=85"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 4.6 - Decomposition (16:57)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="87"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=87"
+   href="https://class.coursera.org/progfun-2012-001/lecture/87"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 4.7 - Pattern Matching (19:36)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek4-7.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 4.7 - Pattern Matching (19:36)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=87_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 4.7 - Pattern Matching (19:36)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=87_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 4.7 - Pattern Matching (19:36)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=87"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 4.7 - Pattern Matching (19:36)</div>
+        </a>
+</div>
+</li></ul><div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Week 5: Lists</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="71"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=71"
+   href="https://class.coursera.org/progfun-2012-001/lecture/71"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.1 - Lists (16:20)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-1.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.1 - Lists (16:20)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=71_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.1 - Lists (16:20)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=71_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.1 - Lists (16:20)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=71"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.1 - Lists (16:20)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="73"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=73"
+   href="https://class.coursera.org/progfun-2012-001/lecture/73"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.2 - More Functions on Lists (13:04)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-2.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.2 - More Functions on Lists (13:04)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=73_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.2 - More Functions on Lists (13:04)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=73_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.2 - More Functions on Lists (13:04)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=73"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.2 - More Functions on Lists (13:04)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="89"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=89"
+   href="https://class.coursera.org/progfun-2012-001/lecture/89"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.3 - Pairs and Tuples (10:45)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-3.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.3 - Pairs and Tuples (10:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=89_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.3 - Pairs and Tuples (10:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=89_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.3 - Pairs and Tuples (10:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=89"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.3 - Pairs and Tuples (10:45)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="91"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=91"
+   href="https://class.coursera.org/progfun-2012-001/lecture/91"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.4 - Implicit Parameters (11:08)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-4.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.4 - Implicit Parameters (11:08)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=91_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.4 - Implicit Parameters (11:08)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=91_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.4 - Implicit Parameters (11:08)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=91"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.4 - Implicit Parameters (11:08)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="93"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=93"
+   href="https://class.coursera.org/progfun-2012-001/lecture/93"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.5 - Higher-Order List Functions (14:53)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-5.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.5 - Higher-Order List Functions (14:53)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=93_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.5 - Higher-Order List Functions (14:53)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=93_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.5 - Higher-Order List Functions (14:53)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=93"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.5 - Higher-Order List Functions (14:53)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="95"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=95"
+   href="https://class.coursera.org/progfun-2012-001/lecture/95"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.6 - Reduction of Lists (15:35)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-6.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.6 - Reduction of Lists (15:35)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=95_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.6 - Reduction of Lists (15:35)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=95_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.6 - Reduction of Lists (15:35)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=95"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.6 - Reduction of Lists (15:35)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="97"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=97"
+   href="https://class.coursera.org/progfun-2012-001/lecture/97"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.7 - Reasoning About Concat (13:00)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-7.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.7 - Reasoning About Concat (13:00)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=97_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.7 - Reasoning About Concat (13:00)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=97_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.7 - Reasoning About Concat (13:00)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=97"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.7 - Reasoning About Concat (13:00)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="101"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=101"
+   href="https://class.coursera.org/progfun-2012-001/lecture/101"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 5.8 - A Larger Equational Proof on Lists (9:53)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek5-8.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 5.8 - A Larger Equational Proof on Lists (9:53)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=101_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 5.8 - A Larger Equational Proof on Lists (9:53)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=101_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 5.8 - A Larger Equational Proof on Lists (9:53)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=101"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 5.8 - A Larger Equational Proof on Lists (9:53)</div>
+        </a>
+</div>
+</li></ul><div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Week 6: Collections</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="103"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=103"
+   href="https://class.coursera.org/progfun-2012-001/lecture/103"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 6.1 - Other Collections (20:45)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek6-1.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 6.1 - Other Collections (20:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=103_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 6.1 - Other Collections (20:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=103_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 6.1 - Other Collections (20:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=103"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 6.1 - Other Collections (20:45)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="105"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=105"
+   href="https://class.coursera.org/progfun-2012-001/lecture/105"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 6.2 - Combinatorial Search and For-Expressions (13:12)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek6-2.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 6.2 - Combinatorial Search and For-Expressions (13:12)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=105_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 6.2 - Combinatorial Search and For-Expressions (13:12)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=105_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 6.2 - Combinatorial Search and For-Expressions (13:12)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=105"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 6.2 - Combinatorial Search and For-Expressions (13:12)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="107"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=107"
+   href="https://class.coursera.org/progfun-2012-001/lecture/107"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 6.3 - Combinatorial Search Example (16:54)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek6-3.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 6.3 - Combinatorial Search Example (16:54)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=107_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 6.3 - Combinatorial Search Example (16:54)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=107_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 6.3 - Combinatorial Search Example (16:54)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=107"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 6.3 - Combinatorial Search Example (16:54)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="109"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=109"
+   href="https://class.coursera.org/progfun-2012-001/lecture/109"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 6.4 - Queries with For (7:50)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek6-4.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 6.4 - Queries with For (7:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=109_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 6.4 - Queries with For (7:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=109_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 6.4 - Queries with For (7:50)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=109"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 6.4 - Queries with For (7:50)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="111"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=111"
+   href="https://class.coursera.org/progfun-2012-001/lecture/111"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 6.5 - Translation of For (11:23)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek6-5.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 6.5 - Translation of For (11:23)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=111_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 6.5 - Translation of For (11:23)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=111_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 6.5 - Translation of For (11:23)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=111"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 6.5 - Translation of For (11:23)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="113"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=113"
+   href="https://class.coursera.org/progfun-2012-001/lecture/113"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 6.6 - Maps (22:39)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="http://spark-public.s3.amazonaws.com/progfun/lecture_slides/week6-6.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 6.6 - Maps (22:39)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=113_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 6.6 - Maps (22:39)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=113_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 6.6 - Maps (22:39)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=113"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 6.6 - Maps (22:39)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="115"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=115"
+   href="https://class.coursera.org/progfun-2012-001/lecture/115"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 6.7 - Putting the Pieces Together (20:35)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek6-7.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 6.7 - Putting the Pieces Together (20:35)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=115_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 6.7 - Putting the Pieces Together (20:35)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=115_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 6.7 - Putting the Pieces Together (20:35)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=115"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 6.7 - Putting the Pieces Together (20:35)</div>
+        </a>
+</div>
+</li></ul><div class="course-item-list-header contracted"><h3><span class="icon-chevron-right" style="width:18px;display:inline-block;"></span> &nbsp;Week 7: Lazy Evaluation</h3> <span class="hidden">(collapsed, click to expand)</span></div><ul class="course-item-list-section-list"><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="117"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=117"
+   href="https://class.coursera.org/progfun-2012-001/lecture/117"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 7.1 - Structural Induction on Trees (15:10)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek7-1.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 7.1 - Structural Induction on Trees (15:10)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=117_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 7.1 - Structural Induction on Trees (15:10)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=117_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 7.1 - Structural Induction on Trees (15:10)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=117"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 7.1 - Structural Induction on Trees (15:10)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="119"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=119"
+   href="https://class.coursera.org/progfun-2012-001/lecture/119"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 7.2 - Streams (12:12)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek7-2.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 7.2 - Streams (12:12)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=119_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 7.2 - Streams (12:12)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=119_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 7.2 - Streams (12:12)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=119"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 7.2 - Streams (12:12)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="121"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=121"
+   href="https://class.coursera.org/progfun-2012-001/lecture/121"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 7.3 - Lazy Evaluation (11:38)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek7-3.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 7.3 - Lazy Evaluation (11:38)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=121_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 7.3 - Lazy Evaluation (11:38)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=121_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 7.3 - Lazy Evaluation (11:38)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=121"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 7.3 - Lazy Evaluation (11:38)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="123"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=123"
+   href="https://class.coursera.org/progfun-2012-001/lecture/123"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 7.4 - Computing with Infinite Sequences (9:01)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek7-4.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 7.4 - Computing with Infinite Sequences (9:01)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=123_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 7.4 - Computing with Infinite Sequences (9:01)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=123_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 7.4 - Computing with Infinite Sequences (9:01)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=123"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 7.4 - Computing with Infinite Sequences (9:01)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="125"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=125"
+   href="https://class.coursera.org/progfun-2012-001/lecture/125"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 7.5 - Case Study: the Water Pouring Problem (31:45)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek7-5.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 7.5 - Case Study: the Water Pouring Problem (31:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=125_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 7.5 - Case Study: the Water Pouring Problem (31:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=125_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 7.5 - Case Study: the Water Pouring Problem (31:45)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=125"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 7.5 - Case Study: the Water Pouring Problem (31:45)</div>
+        </a>
+</div>
+</li><li class="viewed"><span class="icon-ok"></span><span class="hidden">Completed</span><a data-lecture-id="127"
+   data-modal-iframe="https://class.coursera.org/progfun-2012-001/lecture/view?lecture_id=127"
+   href="https://class.coursera.org/progfun-2012-001/lecture/127"
+   data-modal=".course-modal-frame"
+   rel="lecture-link"
+   class="lecture-link">
+Lecture 7.6 - Course Conclusion (5:34)</a>
+<div class="course-lecture-item-resource">
+        <a target="_new" href="https://d19vezwu8eufl6.cloudfront.net/progfun/lecture_slides%2Fweek7-6.pdf"
+           data-placement="top" rel="tooltip" 
+           title="Slides" >
+           <i class="icon-file resource" ></i>
+           <div class="hidden">Slides for Lecture 7.6 - Course Conclusion (5:34)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=127_en&format=txt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (text)" >
+           <i class="icon-align-justify resource" ></i>
+           <div class="hidden">Subtitles (text) for Lecture 7.6 - Course Conclusion (5:34)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/subtitles?q=127_en&format=srt"
+           data-placement="top" rel="tooltip" 
+           title="Subtitles (srt)" >
+           <i class="icon-list resource" ></i>
+           <div class="hidden">Subtitles (srt) for Lecture 7.6 - Course Conclusion (5:34)</div>
+        </a>
+        <a target="_new" href="https://class.coursera.org/progfun-2012-001/lecture/download.mp4?lecture_id=127"
+           data-placement="top" rel="tooltip" 
+           title="Video (MP4)" >
+           <i class="icon-download-alt resource" ></i>
+           <div class="hidden">Video (MP4) for Lecture 7.6 - Course Conclusion (5:34)</div>
+        </a>
+</div>
+</li></ul></div>
+</div>
+
+<div class="course-modal-frame" data-modal-overlay-class="course-modal-overlay-dark" data-modal-position="absolute" data-modal-position-top="50px">
+  <div style="position:absolute;top:-25px;height:25px;right:0px;color:white;cursor:pointer;" data-modal-close>
+    Close
+  </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+        
+        <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/spark.js"></script>
+    
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/core/js/profiles.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/core/js/modal_focus.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/core/js/get_query_parameters.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/app/generic/js/item_list.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/app/generic/js/navbar.js" type="text/javascript"></script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-28377374-1']);
+  _gaq.push(['_setDomainName', 'coursera.org']);
+  _gaq.push(['_setAllowLinker', true]);  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+  window._204 = window._204 || [];
+  window._204.push({key:"pageview", val:{}});
+
+  (function()
+  {
+    var a = document.createElement('script'); a.type = 'text/javascript'; a.async = true;
+    a.src = 'https://eventing.coursera.org/204.min.js?client=spark&user=10645';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(a, s);
+  })();
+
+</script>
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  config: ["MMLorHTML.js"],
+  
+  styleSheets: [],
+  styles: {},
+
+  jax: ["input/TeX"],
+  
+  extensions: ["tex2jax.js"],
+
+  preJax: null,
+  postJax: null,
+
+  preRemoveClass: "MathJax_Preview",
+
+  showProcessingMessages: true,
+
+  messageStyle: "none",
+  
+  displayAlign: "center",
+  displayIndent: "0em",
+  
+  delayStartupUntil: "none",
+
+  skipStartupTypeset: false,
+  
+  elements: [],
+  
+  tex2jax: {
+	    inlineMath: [
+	                 ['$$','$$'],      // uncomment this for standard TeX math delimiters
+	                 ['\\(','\\)']
+	                 ],
+
+	                 displayMath: [
+	                 ['\\[','\\]']
+	                 ],
+
+    skipTags: ["script","noscript","style","textarea","pre","code"],
+    ignoreClass: "tex2jax_ignore",
+    processClass: "tex2jax_process",
+    processEscapes: false,
+    processEnvironments: true,
+    preview: "TeX"
+    
+  },
+  
+  mml2jax: {
+    preview: "alttext"
+    
+  },
+  
+  jsMath2jax: {
+    preview: "TeX"
+    
+  },
+
+  TeX: {
+    TagSide: "right",
+    TagIndent: ".8em",
+    MultLineWidth: "85%",
+    Macros: {},
+
+    extensions: ["AMSmath.js", "AMSsymbols.js"]
+    
+  },
+
+  //============================================================================
+  //
+  //  These parameters control the MathML inupt jax.
+  //
+  MathML: {
+    //
+    //  This specifies whether to use TeX spacing or MathML spacing when the
+    //  HTML-CSS output jax is used.
+    //
+    useMathMLspacing: false
+  },
+  
+  //============================================================================
+  //
+  //  These parameters control the HTML-CSS output jax.
+  //
+  "HTML-CSS": {
+    
+    scale: 100,
+    
+    availableFonts: ["STIX","TeX"],
+    
+    preferredFont: "TeX",
+    
+    webFont: "TeX",
+    
+    imageFont: "TeX",
+    
+    undefinedFamily: "STIXGeneral,'Arial Unicode MS',serif",
+      
+    showMathMenu: true,
+
+    styles: {},
+    
+    tooltip: {
+      delayPost: 600,          // milliseconds delay before tooltip is posted after mouseover
+      delayClear: 600,         // milliseconds delay before tooltip is cleared after mouseout
+      offsetX: 10, offsetY: 5  // pixels to offset tooltip from mouse position
+    }
+  },
+  
+  //============================================================================
+  //
+  //  These parameters control the NativeMML output jax.
+  //
+  NativeMML: {
+
+    scale: 100,
+
+    showMathMenu: true,
+    showMathMenuMSIE: true,
+
+    styles: {}
+  },
+  
+  MathMenu: {
+    delay: 400,
+    
+    helpURL: "http://www.mathjax.org/help/user/",
+
+    showRenderer: true,
+    showFontMenu: false,
+    showContext:  false,
+
+    windowSettings: {
+      status: "no", toolbar: "no", locationbar: "no", menubar: "no",
+      directories: "no", personalbar: "no", resizable: "yes", scrollbars: "yes",
+      width: 100, height: 50
+    },
+    
+    styles: {}
+    
+  },
+
+  MMLorHTML: {
+    prefer: {
+      MSIE:    "MML",
+      Firefox: "MML",
+      Opera:   "HTML",
+      other:   "HTML"
+    }
+  }
+});
+</script>
+<script type="text/javascript">
+(function () {
+
+  function loadMathJax() {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://d2265nx4vomwra.cloudfront.net/2.1/MathJax.js";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  }
+
+  window.loadOrRefreshMathJax = function(domId) {
+    if (window.MathJax) {
+      if (domId) {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, domId]);
+      } else {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+      }
+    } else {
+      loadMathJax();
+    }
+  }
+})();
+</script>
+    
+    <script type="text/javascript">
+        function hideMaintenanceMessage() {
+            $('#maintenance_message').hide();
+            document.cookie = "spark_maintmsghide_2=1;expires=0;path=/;";
+        }
+    </script>
+
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/core/js/jquery_ui.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/core/js/jquery.history.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/js/lib/bootstrap.tooltip.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/core/js/get_query_parameters.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/app/lecture/js/lecture_list_functions.js?view_url=https://class.coursera.org/progfun-2012-001/lecture/view"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/fe369001c29f93e866b461f0bf115a194415dc88/spark/app/generic/js/video_modal.js"></script>
+
+</body>
+
+</html>
