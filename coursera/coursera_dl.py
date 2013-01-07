@@ -129,6 +129,7 @@ def get_syllabus(class_name, cookies_file, local_page=False):
       open(local_page, 'w').write(page)
   else:
     page = open(local_page).read()
+    print "Read (%d bytes) from local file" % (len(page))
   return page
 
 def clean_filename(s):
@@ -368,8 +369,9 @@ def parseArgs():
   return args
 
 def download_class(args, class_name):
-  if args.username:
-    tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
+  #if args.username:
+  #  tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
+  tmp_cookie_file = None
   page = get_syllabus(class_name, args.cookies_file or tmp_cookie_file, args.local_page)
   sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
   download_lectures(
@@ -386,8 +388,8 @@ def download_class(args, class_name):
     args.path,
     args.verbose_dirs
   )
-  if not args.cookies_file:
-    os.unlink(tmp_cookie_file)
+  #if not args.cookies_file:
+  #  os.unlink(tmp_cookie_file)
 
 def main():
   args = parseArgs()
