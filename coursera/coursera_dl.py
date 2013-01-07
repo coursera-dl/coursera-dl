@@ -49,7 +49,7 @@ def write_cookie_file(className, username, password):
   Automatically generate a cookie file for the coursera site.
   """
   try:
-    (hn,fn) = tempfile.mkstemp()
+    (hn, fn) = tempfile.mkstemp()
     cj = cookielib.MozillaCookieJar(fn)
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
 
@@ -60,7 +60,7 @@ def write_cookie_file(className, username, password):
     req = urllib2.Request(ref, data)
 
     opener.open(req)
-  except Exception, e:
+  except Exception as e:
     if '404' in str(e):
       print 'No lectures with that name are available'
       exit(0)
@@ -79,7 +79,7 @@ def load_cookies_file(cookies_file):
   """
   cookies = StringIO.StringIO()
   NETSCAPE_HEADER = "# Netscape HTTP Cookie File"
-  cookies.write(NETSCAPE_HEADER);
+  cookies.write(NETSCAPE_HEADER)
   cookies.write(open(cookies_file, 'r').read())
   cookies.flush()
   cookies.seek(0)
@@ -150,8 +150,8 @@ def get_anchor_format(a):
   """
   # (. or format=) then (file_extension) then (? or $)
   # e.g. "...format=txt" or "...download.mp4?..."
-  format = re.search("(?:\.|format=)(\w+)(?:\?.*)?$", a)
-  return format.group(1) if format else None
+  fmt = re.search("(?:\.|format=)(\w+)(?:\?.*)?$", a)
+  return fmt.group(1) if fmt else None
 
 def parse_syllabus(page, cookies_file):
   """
@@ -162,7 +162,7 @@ def parse_syllabus(page, cookies_file):
   soup = BeautifulSoup(page)
   # traverse sections
   for stag in soup.findAll(attrs={'class':re.compile('^course-item-list-header')}):
-    assert stag.contents[0] != None, "couldn't find section"
+    assert stag.contents[0] is not None, "couldn't find section"
     section_name = clean_filename(stag.contents[0].contents[1])
     print section_name
     lectures = [] # resources for 1 lecture
@@ -174,9 +174,9 @@ def parse_syllabus(page, cookies_file):
       lecture = {}
       for a in vtag.findAll('a'):
         href = a['href']
-        format = get_anchor_format(href)
-        print "    ", format, href
-        if format: lecture[format] = href
+        fmt = get_anchor_format(href)
+        print "    ", fmt, href
+        if fmt: lecture[fmt] = href
 
       # Special case: we possibly have hidden video links---thanks to the
       # University of Washington for that.
@@ -184,9 +184,9 @@ def parse_syllabus(page, cookies_file):
         for a in vtag.findAll('a'):
           if a.get('data-lecture-view-link'):
             href = grab_hidden_video_url(a['data-lecture-view-link'], cookies_file)
-            format = 'mp4'
-            print "    ", format, href
-            lecture[format] = href
+            fmt = 'mp4'
+            print "    ", fmt, href
+            lecture[fmt] = href
 
       lectures.append((vname, lecture))
     sections.append((section_name, lectures))
@@ -228,8 +228,8 @@ def download_lectures(
       sec = class_name.upper() + "_" + sec
     return sec
 
-  def format_resource(num, name, format):
-    return "%02d_%s.%s" % (num, name, format)
+  def format_resource(num, name, fmt):
+    return "%02d_%s.%s" % (num, name, fmt)
 
   for (secnum, (section, lectures)) in enumerate(sections):
     if section_filter and not re.search(section_filter, section):
@@ -242,8 +242,8 @@ def download_lectures(
       if not os.path.exists(sec):
           mkdir_p(sec)
       # write lecture resources
-      for format,url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
-        lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, format))
+      for fmt, url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
+        lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, fmt))
         print lecfn
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
@@ -262,7 +262,7 @@ def download_file(url, fn, cookies_file, wget_bin, curl_bin):
       download_file_curl(curl_bin, url, fn, cookies_file)
     else:
       download_file_nowget(url, fn, cookies_file)
-  except KeyboardInterrupt, e:
+  except KeyboardInterrupt:
     print "\nKeyboard Interrupt -- Removing partial file:", fn
     os.remove(fn)
     sys.exit()
@@ -274,7 +274,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
   """
   cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
   print "Executing wget:", cmd
-  retcode = subprocess.call(cmd)
+  subprocess.call(cmd)
 
 def download_file_curl(curl_bin, url, fn, cookies_file):
   """
@@ -283,7 +283,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   """
   cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
   print "Executing curl:", cmd
-  retcode = subprocess.call(cmd)
+  subprocess.call(cmd)
 
 def download_file_nowget(url, fn, cookies_file):
   """
