@@ -19,11 +19,22 @@ class TestSyllabusParsing(unittest.TestCase):
     self.syllabus_page= open(TEST_SYLLABUS_FILE).read()
 
   def test_parse(self):
-    result = coursera_dl.parse_syllabus(self.syllabus_page, None)
-    # test sections
-    self.assertEqual(len(result), 23)
-    # test lectures
-    self.assertEqual(sum([len(x[1]) for x in result]), 102)
+    sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+
+    # section count
+    self.assertEqual(len(sections), 23)
+
+    # lecture count
+    lectures = [lec for sec in sections for lec in sec[1]]
+    self.assertEqual(len(lectures), 102)
+
+    # resource count
+    resources = [res for lec in lectures for res in lec[1].items()]
+    self.assertEqual(len(resources), 502)
+
+    # mp4 count
+    mp4s = [res for res in resources if res[0] == "mp4"]
+    self.assertEqual(len(mp4s), 102)
 
   
 if __name__ == "__main__":
