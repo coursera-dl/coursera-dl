@@ -61,6 +61,8 @@ On Mac OSX using MacPort, the following may be used:
     > install py-beautifulsoup
     > install py-argparse
     > install py24-distribute  # for "py-setuptools", the obsolete name
+
+If you are using pip, you can directly install all the dependancies from the requirements file using `pip install -r requirements.txt`.
   
 2\. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org  
