@@ -68,16 +68,15 @@ If you are using pip, you can directly install all the dependencies from the req
 e.g. http://saas-class.org  
 
 3\. Run the script to download the materials by providing your Coursera
-username, password (or a `~/.netrc` file) and the class name.
+username, password (or a `~/.netrc` file), the class names
 
-    General:                     coursera-dl saas -u <user> -p <pass>
-    With .netrc (see below):     coursera-dl saas -n
-    Filter by section name:      coursera-dl saas -u <user> -p <pass> -sf "Chapter_Four"
-    Filter by lecture name:      coursera-dl saas -u <user> -p <pass> -lf "3.1_"
-    Download only ppt files:     coursera-dl progfun-2012-001 -u <user> -p <pass> -f "ppt"
-    Use a ~/.netrc file:         coursera-dl progfun-2012-001 -n
-    Specify download path:       coursera-dl progfun-2012-001 -n --path=C:\Coursera\Classes\
-    Download multiple classes:   coursera-dl progfun-2012-001 -n --add-class=hetero-2012-001 --add-class=thinkagain-2012-001
+    General:                     coursera-dl -u <user> -p <pass> saas
+    Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp ml
+    Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" saas
+    Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
+    Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
+    Use a ~/.netrc file:         coursera-dl -n saas
+    Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
 
 On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to
 specifying both your username and password every time on the command

@@ -44,6 +44,9 @@ def get_syllabus_url(className):
 def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
 
+class ClassNotFoundException(BaseException):
+  pass
+
 def write_cookie_file(className, username, password):
   """
   Automatically generate a cookie file for the coursera site.
@@ -62,8 +65,7 @@ def write_cookie_file(className, username, password):
     opener.open(req)
   except Exception as e:
     if '404' in str(e):
-      print 'No lectures with that name are available'
-      exit(0)
+      raise ClassNotFoundException(className)
 
   cj.save()
   opener.close()
@@ -312,8 +314,8 @@ def download_file_nowget(url, fn, cookies_file):
 def parseArgs():
   parser = argparse.ArgumentParser(description='Download Coursera.org lecture material and resources.')
   # positional
-  parser.add_argument('class_name', action='store',
-    help='name of the class (e.g. "nlp")')
+  parser.add_argument('class_names', action='store', nargs='+',
+    help='name(s) of the class(es) (e.g. "nlp")')
   # required
   group = parser.add_mutually_exclusive_group(required=True)
 
@@ -372,8 +374,11 @@ def parseArgs():
 def download_class(args, class_name):
   if args.username:
     tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
+  # get the syllabus listing
   page = get_syllabus(class_name, args.cookies_file or tmp_cookie_file, args.local_page)
+  # parse it
   sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
+  # obtain the resources
   download_lectures(
     args.wget_bin,
     args.curl_bin,
@@ -393,10 +398,13 @@ def download_class(args, class_name):
 
 def main():
   args = parseArgs()
-  download_class(args, args.class_name)
-  for class_name in args.add_class:
-    print "Downloading additional class: %s" % class_name
-    download_class(args, class_name)
+  for class_name in args.class_names:
+    try:
+      print "Downloading class: %s" % class_name
+      download_class(args, class_name)
+    except ClassNotFoundException as cnf:
+      print "Could not find class:", cnf
+
 
 if __name__ == "__main__":
   main()
