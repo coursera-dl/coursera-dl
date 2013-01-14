@@ -209,6 +209,7 @@ def mkdir_p(path):
 def download_lectures(
   wget_bin,
   curl_bin,
+  aria2_bin,
   cookies_file,
   class_name,
   sections,
@@ -249,11 +250,11 @@ def download_lectures(
         print lecfn
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
-            download_file(url, lecfn, cookies_file, wget_bin, curl_bin)
+            download_file(url, lecfn, cookies_file, wget_bin, curl_bin, aria2_bin)
           else:
             open(lecfn, 'w').close()  # touch
 
-def download_file(url, fn, cookies_file, wget_bin, curl_bin):
+def download_file(url, fn, cookies_file, wget_bin, curl_bin, aria2_bin):
   """
   Downloads file and removes current file if aborted by user.
   """
@@ -262,6 +263,8 @@ def download_file(url, fn, cookies_file, wget_bin, curl_bin):
       download_file_wget(wget_bin, url, fn, cookies_file)
     elif curl_bin:
       download_file_curl(curl_bin, url, fn, cookies_file)
+    elif aria2_bin:
+      download_file_aria2(aria2_bin, url, fn, cookies_file)
     else:
       download_file_nowget(url, fn, cookies_file)
   except KeyboardInterrupt:
@@ -285,6 +288,18 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   """
   cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
   print "Executing curl:", cmd
+  subprocess.call(cmd)
+
+def download_file_aria2(aria2_bin, url, fn, cookies_file):
+  """
+  Downloads a file using aria2.  Could possibly use python to stream files
+  to disk, but aria2 is robust. Unfortunately, it does not give a nice
+  visual feedback, bug gets the job done much faster than the alternatives.
+  """
+  cmd = [aria2_bin, url, "-o", fn, "--load-cookies", cookies_file,
+         "--check-certificate=false", "--log-level=info",
+         "--max-connection-per-server=4", "--min-split-size=1M"]
+  print "Executing aria2:", cmd
   subprocess.call(cmd)
 
 def download_file_nowget(url, fn, cookies_file):
@@ -342,6 +357,8 @@ def parseArgs():
     action='store', default=None, help='wget binary if it should be used for downloading')
   parser.add_argument('--curl_bin', dest='curl_bin',
     action='store', default=None, help='curl binary if it should be used for downloading')
+  parser.add_argument('--aria2_bin', dest='aria2_bin',
+    action='store', default=None, help='aria2 binary if it should be used for downloading')
   parser.add_argument('-o', '--overwrite', dest='overwrite',
     action='store_true', default=False,
     help='whether existing files should be overwritten (default: False)')
@@ -382,6 +399,7 @@ def download_class(args, class_name):
   download_lectures(
     args.wget_bin,
     args.curl_bin,
+    args.aria2_bin,
     args.cookies_file or tmp_cookie_file,
     class_name,
     sections,
