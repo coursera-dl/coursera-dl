@@ -298,7 +298,7 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
   visual feedback, bug gets the job done much faster than the alternatives.
   """
   cmd = [aria2_bin, url, "-o", fn, "--load-cookies", cookies_file,
-         "--check-certificate=false", "--log-level=info",
+         "--check-certificate=false", "--log-level=notice",
          "--max-connection-per-server=4", "--min-split-size=1M"]
   logging.debug("Executing aria2: %s", cmd)
   subprocess.call(cmd)
