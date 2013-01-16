@@ -194,7 +194,8 @@ def parse_syllabus(page, cookies_file):
         href = a['href']
         fmt = get_anchor_format(href)
         logging.info("    %s %s", fmt, href)
-        if fmt: lecture[fmt] = href
+        if fmt:
+          lecture[fmt] = href
 
       # Special case: we possibly have hidden video links---thanks to the
       # University of Washington for that.
@@ -358,9 +359,11 @@ def download_file_nowget(url, fn, cookies_file):
 def parseArgs():
   parser = argparse.ArgumentParser(
     description='Download Coursera.org lecture material and resources.')
+
   # positional
   parser.add_argument('class_names', action='store', nargs='+',
     help='name(s) of the class(es) (e.g. "nlp")')
+
   # required
   group = parser.add_mutually_exclusive_group(required=True)
 
@@ -419,24 +422,30 @@ def parseArgs():
     action='append', default=[],
     help='additional classes to get')
   args = parser.parse_args()
+
   # turn list of strings into list
   args.file_formats = args.file_formats.split()
+
   # check arguments
   if args.cookies_file and not os.path.exists(args.cookies_file):
     logging.error("Cookies file not found: %s", args.cookies_file)
     sys.exit(1)
+
   if args.username and not args.password and not args.netrc:
     args.password = getpass.getpass("Coursera password for %s: " % args.username)
+
   if args.netrc:
     auths = netrc.netrc().authenticators('coursera-dl')
     args.username = auths[0]
     args.password = auths[2]
+
   if args.debug:
     logging.basicConfig(level=logging.DEBUG)
   elif args.quiet:
     logging.basicConfig(level=logging.ERROR)
   else:
     logging.basicConfig(level=logging.INFO)
+
   return args
 
 
@@ -469,6 +478,7 @@ def download_class(args, class_name):
     args.path,
     args.verbose_dirs
   )
+
   if not args.cookies_file:
     os.unlink(tmp_cookie_file)
 
