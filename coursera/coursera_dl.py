@@ -106,7 +106,6 @@ def get_page(url, cookies_file):
   Download an HTML page using the cookiejar.
   """
   opener = get_opener(cookies_file)
-  #return opener.open(url).read()
   ret = opener.open(url).read()
   opener.close()
   return ret
