@@ -48,6 +48,7 @@ def get_syllabus_url(className):
   """
   return "http://class.coursera.org/%s/lecture/index" % className
 
+
 def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
 
@@ -78,6 +79,7 @@ def write_cookie_file(className, username, password):
 
   return fn
 
+
 def load_cookies_file(cookies_file):
   """
   Loads the cookies file. I am pre-pending the file with the special
@@ -92,6 +94,7 @@ def load_cookies_file(cookies_file):
   cookies.seek(0)
   return cookies
 
+
 def get_opener(cookies_file):
   """
   Use cookie file to create a url opener.
@@ -104,6 +107,7 @@ def get_opener(cookies_file):
   cj._really_load(cookies, "StringIO.cookies", False, False)
   return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
+
 def get_page(url, cookies_file):
   """
   Download an HTML page using the cookiejar.
@@ -112,6 +116,7 @@ def get_page(url, cookies_file):
   ret = opener.open(url).read()
   opener.close()
   return ret
+
 
 def grab_hidden_video_url(href, cookies_file):
   """
@@ -122,6 +127,7 @@ def grab_hidden_video_url(href, cookies_file):
   soup = BeautifulSoup(page)
   l = soup.find('source', attrs={'type': 'video/mp4'})
   return l['src']
+
 
 def get_syllabus(class_name, cookies_file, local_page=False):
   """
@@ -139,6 +145,7 @@ def get_syllabus(class_name, cookies_file, local_page=False):
     logging.info("Read (%d bytes) from local file", len(page))
   return page
 
+
 def clean_filename(s):
   """
   Sanitize a string to be used as a filename.
@@ -150,6 +157,7 @@ def clean_filename(s):
   valid_chars = "-_.()%s%s" % (string.ascii_letters, string.digits)
   return ''.join(c for c in s if c in valid_chars)
 
+
 def get_anchor_format(a):
   """
   Extract the resource file-type format from the anchor
@@ -158,6 +166,7 @@ def get_anchor_format(a):
   # e.g. "...format=txt" or "...download.mp4?..."
   fmt = re.search("(?:\.|format=)(\w+)(?:\?.*)?$", a)
   return fmt.group(1) if fmt else None
+
 
 def parse_syllabus(page, cookies_file):
   """
@@ -202,6 +211,7 @@ def parse_syllabus(page, cookies_file):
     logging.error("Probably bad cookies file (or wrong class name)")
   return sections
 
+
 def mkdir_p(path):
     try:
         os.makedirs(path)
@@ -209,6 +219,7 @@ def mkdir_p(path):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
+
 
 def download_lectures(
   wget_bin,
@@ -258,6 +269,7 @@ def download_lectures(
           else:
             open(lecfn, 'w').close()  # touch
 
+
 def download_file(url, fn, cookies_file, wget_bin, curl_bin, aria2_bin):
   """
   Downloads file and removes current file if aborted by user.
@@ -276,6 +288,7 @@ def download_file(url, fn, cookies_file, wget_bin, curl_bin, aria2_bin):
     os.remove(fn)
     sys.exit()
 
+
 def download_file_wget(wget_bin, url, fn, cookies_file):
   """
   Downloads a file using wget.  Could possibly use python to stream files to
@@ -285,6 +298,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
   logging.debug("Executing wget: %s", cmd)
   subprocess.call(cmd)
 
+
 def download_file_curl(curl_bin, url, fn, cookies_file):
   """
   Downloads a file using curl.  Could possibly use python to stream files to
@@ -293,6 +307,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
   logging.debug("Executing curl: %s", cmd)
   subprocess.call(cmd)
+
 
 def download_file_aria2(aria2_bin, url, fn, cookies_file):
   """
@@ -305,6 +320,7 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
          "--max-connection-per-server=4", "--min-split-size=1M"]
   logging.debug("Executing aria2: %s", cmd)
   subprocess.call(cmd)
+
 
 def download_file_nowget(url, fn, cookies_file):
   """
@@ -329,6 +345,7 @@ def download_file_nowget(url, fn, cookies_file):
         print "\r%d bytes read" % bytesread,
         sys.stdout.flush()
     urlfile.close()
+
 
 def parseArgs():
   parser = argparse.ArgumentParser(description='Download Coursera.org lecture material and resources.')
@@ -403,6 +420,7 @@ def parseArgs():
     logging.basicConfig(level=logging.INFO)
   return args
 
+
 def download_class(args, class_name):
   if args.username:
     tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
@@ -428,6 +446,7 @@ def download_class(args, class_name):
   )
   if not args.cookies_file:
     os.unlink(tmp_cookie_file)
+
 
 def main():
   args = parseArgs()
