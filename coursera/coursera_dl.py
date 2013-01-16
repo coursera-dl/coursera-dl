@@ -399,7 +399,7 @@ def parseArgs():
     action='store_true', default=False,
     help='whether existing files should be overwritten (default: False)')
   parser.add_argument('-l', '--process_local_page', dest='local_page',
-    help='for debugging: uses or creates local cached version of syllabus page')
+    help='uses or creates local cached version of syllabus page')
   parser.add_argument('--skip-download', dest='skip_download',
     action='store_true', default=False,
     help='for debugging: skip actual downloading of files')
