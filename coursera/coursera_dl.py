@@ -21,6 +21,7 @@ import argparse
 import cookielib
 import errno
 import getpass
+import logging
 import netrc
 import os
 import re
@@ -127,13 +128,13 @@ def get_syllabus(class_name, cookies_file, local_page=False):
   if (not (local_page and os.path.exists(local_page))):
     url = get_syllabus_url(class_name)
     page = get_page(url, cookies_file)
-    print "Downloaded %s (%d bytes)" % (url, len(page))
+    logging.info("Downloaded %s (%d bytes)", url, len(page))
     # cache the page if we're in 'local' mode
     if (local_page):
       open(local_page, 'w').write(page)
   else:
     page = open(local_page).read()
-    print "Read (%d bytes) from local file" % (len(page))
+    logging.info("Read (%d bytes) from local file", len(page))
   return page
 
 def clean_filename(s):
@@ -167,18 +168,18 @@ def parse_syllabus(page, cookies_file):
   for stag in soup.findAll(attrs={'class':re.compile('^course-item-list-header')}):
     assert stag.contents[0] is not None, "couldn't find section"
     section_name = clean_filename(stag.contents[0].contents[1])
-    print section_name
+    logging.info(section_name)
     lectures = [] # resources for 1 lecture
     # traverse resources (e.g., video, ppt, ..)
     for vtag in stag.nextSibling.findAll('li'):
       assert vtag.a.contents[0], "couldn't get lecture name"
       vname = clean_filename(vtag.a.contents[0])
-      print "  ", vname
+      logging.info("  %s", vname)
       lecture = {}
       for a in vtag.findAll('a'):
         href = a['href']
         fmt = get_anchor_format(href)
-        print "    ", fmt, href
+        logging.info("    %s %s", fmt, href)
         if fmt: lecture[fmt] = href
 
       # Special case: we possibly have hidden video links---thanks to the
@@ -188,15 +189,15 @@ def parse_syllabus(page, cookies_file):
           if a.get('data-lecture-view-link'):
             href = grab_hidden_video_url(a['data-lecture-view-link'], cookies_file)
             fmt = 'mp4'
-            print "    ", fmt, href
+            logging.info("    %s %s", fmt, href)
             lecture[fmt] = href
 
       lectures.append((vname, lecture))
     sections.append((section_name, lectures))
-  print "Found %d sections and %d lectures on this page" % \
-    (len(sections), sum((len(s[1]) for s in sections)))
+  logging.info("Found %d sections and %d lectures on this page",
+    len(sections), sum((len(s[1]) for s in sections)))
   if (not len(sections)):
-    print "Probably bad cookies file (or wrong class name)"
+    logging.error("Probably bad cookies file (or wrong class name)")
   return sections
 
 def mkdir_p(path):
@@ -237,7 +238,7 @@ def download_lectures(
 
   for (secnum, (section, lectures)) in enumerate(sections):
     if section_filter and not re.search(section_filter, section):
-      #print "Skipping b/c of sf: ", section_filter, section
+      logging.debug("Skipping b/c of sf: %s %s", section_filter, section)
       continue
     sec = os.path.join(path, class_name, format_section(secnum+1, section))
     for (lecnum, (lecname, lecture)) in enumerate(lectures):
@@ -248,7 +249,7 @@ def download_lectures(
       # write lecture resources
       for fmt, url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
         lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, fmt))
-        print lecfn
+        logging.info(lecfn)
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
             download_file(url, lecfn, cookies_file, wget_bin, curl_bin, aria2_bin)
@@ -269,7 +270,7 @@ def download_file(url, fn, cookies_file, wget_bin, curl_bin, aria2_bin):
     else:
       download_file_nowget(url, fn, cookies_file)
   except KeyboardInterrupt:
-    print "\nKeyboard Interrupt -- Removing partial file:", fn
+    logging.info("Keyboard Interrupt -- Removing partial file: %s", fn)
     os.remove(fn)
     sys.exit()
 
@@ -279,7 +280,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
   disk, but wget is robust and gives nice visual feedback.
   """
   cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
-  print "Executing wget:", cmd
+  logging.debug("Executing wget: %s", cmd)
   subprocess.call(cmd)
 
 def download_file_curl(curl_bin, url, fn, cookies_file):
@@ -288,7 +289,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   disk, but curl is robust and gives nice visual feedback.
   """
   cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
-  print "Executing curl:", cmd
+  logging.debug("Executing curl: %s", cmd)
   subprocess.call(cmd)
 
 def download_file_aria2(aria2_bin, url, fn, cookies_file):
@@ -300,18 +301,18 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
   cmd = [aria2_bin, url, "-o", fn, "--load-cookies", cookies_file,
          "--check-certificate=false", "--log-level=info",
          "--max-connection-per-server=4", "--min-split-size=1M"]
-  print "Executing aria2:", cmd
+  logging.debug("Executing aria2: %s", cmd)
   subprocess.call(cmd)
 
 def download_file_nowget(url, fn, cookies_file):
   """
   'Native' python downloader -- slower than wget.
   """
-  print "Downloading %s -> %s" % (url, fn)
+  logging.info("Downloading %s -> %s", url, fn)
   try:
     urlfile = get_opener(cookies_file).open(url)
   except urllib2.HTTPError:
-    print "Probably the file is missing from the AWS repository... skipping it."
+    logging.warn("Probably the file is missing from the AWS repository... skipping it.")
   else:
     chunk_sz = 1048576
     bytesread = 0
@@ -372,13 +373,19 @@ def parseArgs():
   parser.add_argument('--verbose-dirs', dest='verbose_dirs',
     action='store_true', default=False,
     help='include class name in section directory name')
+  parser.add_argument('--debug', dest='debug',
+    action='store_true', default=False,
+    help='print lots of debug information')
+  parser.add_argument('--quiet', dest='quiet',
+    action='store_true', default=False,
+    help='omit as many messages as possible (only printing errors)')
   parser.add_argument('--add-class', dest='add_class', action='append', default=[], help='additional classes to get')
   args = parser.parse_args()
   # turn list of strings into list
   args.file_formats = args.file_formats.split()
   # check arguments
   if args.cookies_file and not os.path.exists(args.cookies_file):
-    print >> sys.stderr, "Cookies file not found: " + args.cookies_file
+    logging.error("Cookies file not found: %s", args.cookies_file)
     sys.exit(1)
   if args.username and not args.password and not args.netrc:
     args.password = getpass.getpass("Coursera password for %s: " % args.username)
@@ -386,6 +393,12 @@ def parseArgs():
     auths = netrc.netrc().authenticators('coursera-dl')
     args.username = auths[0]
     args.password = auths[2]
+  if args.debug:
+    logging.basicConfig(level=logging.DEBUG)
+  elif args.quiet:
+    logging.basicConfig(level=logging.ERROR)
+  else:
+    logging.basicConfig(level=logging.INFO)
   return args
 
 def download_class(args, class_name):
@@ -418,10 +431,10 @@ def main():
   args = parseArgs()
   for class_name in args.class_names:
     try:
-      print "Downloading class: %s" % class_name
+      logging.info("Downloading class: %s", class_name)
       download_class(args, class_name)
     except ClassNotFoundException as cnf:
-      print "Could not find class:", cnf
+      logging.error("Could not find class: %s", cnf)
 
 
 if __name__ == "__main__":
