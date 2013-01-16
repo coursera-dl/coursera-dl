@@ -158,8 +158,8 @@ def clean_filename(s):
   """
   # strip paren portions which contain trailing time length (...)
   s = re.sub("\([^\(]*$", "", s)
-  s = s.strip().replace(':','-').replace(' ', '_')
-  s = s.replace('nbsp','')
+  s = s.strip().replace(':', '-').replace(' ', '_')
+  s = s.replace('nbsp', '')
   valid_chars = "-_.()%s%s" % (string.ascii_letters, string.digits)
   return ''.join(c for c in s if c in valid_chars)
 
@@ -182,7 +182,7 @@ def parse_syllabus(page, cookies_file):
   sections = []
   soup = BeautifulSoup(page)
   # traverse sections
-  for stag in soup.findAll(attrs={'class':re.compile('^course-item-list-header')}):
+  for stag in soup.findAll(attrs={'class': re.compile('^course-item-list-header')}):
     assert stag.contents[0] is not None, "couldn't find section"
     section_name = clean_filename(stag.contents[0].contents[1])
     logging.info(section_name)
@@ -265,7 +265,7 @@ def download_lectures(
     if section_filter and not re.search(section_filter, section):
       logging.debug("Skipping b/c of sf: %s %s", section_filter, section)
       continue
-    sec = os.path.join(path, class_name, format_section(secnum+1, section))
+    sec = os.path.join(path, class_name, format_section(secnum + 1, section))
     for (lecnum, (lecname, lecture)) in enumerate(lectures):
       if lecture_filter and not re.search(lecture_filter, lecname):
         continue
@@ -274,7 +274,7 @@ def download_lectures(
       # write lecture resources
       for fmt, url in [i for i in lecture.items()
                        if ((i[0] in file_formats) or "all" in file_formats)]:
-        lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, fmt))
+        lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
         logging.info(lecfn)
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
