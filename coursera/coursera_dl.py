@@ -39,6 +39,9 @@ from BeautifulSoup import BeautifulSoup
 
 
 class ClassNotFoundException(BaseException):
+  """
+  Class to be thrown if a course is not found in coursera's site.
+  """
   pass
 
 
@@ -218,6 +221,9 @@ def parse_syllabus(page, cookies_file):
 
 
 def mkdir_p(path):
+    """
+    Create subdirectory hierarcy given in the paths argument.
+    """
     try:
         os.makedirs(path)
     except OSError as exc: # Python >2.5
@@ -357,6 +363,9 @@ def download_file_nowget(url, fn, cookies_file):
 
 
 def parseArgs():
+  """
+  Parse the arguments/options passed to the program on the command line.
+  """
   parser = argparse.ArgumentParser(
     description='Download Coursera.org lecture material and resources.')
 
@@ -450,6 +459,9 @@ def parseArgs():
 
 
 def download_class(args, class_name):
+  """
+  Download all requested resources from the class given in class_name.
+  """
   if args.username:
     tmp_cookie_file = write_cookie_file(class_name,
                                         args.username,
@@ -484,6 +496,9 @@ def download_class(args, class_name):
 
 
 def main():
+  """
+  Main entry point for execution as a program (instead of as a module).
+  """
   args = parseArgs()
   for class_name in args.class_names:
     try:
