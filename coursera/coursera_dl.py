@@ -37,6 +37,11 @@ from BeautifulSoup import BeautifulSoup
 # for OSX, bs4 is recommended
 #from bs4 import BeautifulSoup
 
+
+class ClassNotFoundException(BaseException):
+  pass
+
+
 def get_syllabus_url(className):
   """
   Return the Coursera index/syllabus URL.
@@ -46,8 +51,6 @@ def get_syllabus_url(className):
 def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
 
-class ClassNotFoundException(BaseException):
-  pass
 
 def write_cookie_file(className, username, password):
   """
