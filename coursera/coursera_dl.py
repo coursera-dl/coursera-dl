@@ -133,12 +133,12 @@ def get_syllabus(class_name, cookies_file, local_page=False):
   """
   Get the course listing webpage.
   """
-  if (not (local_page and os.path.exists(local_page))):
+  if not (local_page and os.path.exists(local_page)):
     url = get_syllabus_url(class_name)
     page = get_page(url, cookies_file)
     logging.info("Downloaded %s (%d bytes)", url, len(page))
     # cache the page if we're in 'local' mode
-    if (local_page):
+    if local_page:
       open(local_page, 'w').write(page)
   else:
     page = open(local_page).read()
@@ -207,7 +207,7 @@ def parse_syllabus(page, cookies_file):
     sections.append((section_name, lectures))
   logging.info("Found %d sections and %d lectures on this page",
     len(sections), sum((len(s[1]) for s in sections)))
-  if (not len(sections)):
+  if not len(sections):
     logging.error("Probably bad cookies file (or wrong class name)")
   return sections
 
