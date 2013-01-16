@@ -60,12 +60,15 @@ def write_cookie_file(className, username, password):
   try:
     (hn, fn) = tempfile.mkstemp()
     cj = cookielib.MozillaCookieJar(fn)
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
+                                  urllib2.HTTPHandler())
 
     req = urllib2.Request(get_auth_url(className))
     ref = opener.open(req).geturl()
 
-    data = urllib.urlencode({'email': username, 'password': password, 'login': 'Login'})
+    data = urllib.urlencode({'email': username,
+                             'password': password,
+                             'login': 'Login'})
     req = urllib2.Request(ref, data)
 
     opener.open(req)
@@ -198,7 +201,8 @@ def parse_syllabus(page, cookies_file):
       if 'mp4' not in lecture:
         for a in vtag.findAll('a'):
           if a.get('data-lecture-view-link'):
-            href = grab_hidden_video_url(a['data-lecture-view-link'], cookies_file)
+            href = grab_hidden_video_url(a['data-lecture-view-link'],
+                                         cookies_file)
             fmt = 'mp4'
             logging.info("    %s %s", fmt, href)
             lecture[fmt] = href
@@ -218,7 +222,8 @@ def mkdir_p(path):
     except OSError as exc: # Python >2.5
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
-        else: raise
+        else:
+          raise
 
 
 def download_lectures(
@@ -260,12 +265,14 @@ def download_lectures(
       if not os.path.exists(sec):
           mkdir_p(sec)
       # write lecture resources
-      for fmt, url in [i for i in lecture.items() if ((i[0] in file_formats) or "all" in file_formats)]:
+      for fmt, url in [i for i in lecture.items()
+                       if ((i[0] in file_formats) or "all" in file_formats)]:
         lecfn = os.path.join(sec, format_resource(lecnum+1, lecname, fmt))
         logging.info(lecfn)
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
-            download_file(url, lecfn, cookies_file, wget_bin, curl_bin, aria2_bin)
+            download_file(url, lecfn, cookies_file,
+                          wget_bin, curl_bin, aria2_bin)
           else:
             open(lecfn, 'w').close()  # touch
 
@@ -294,7 +301,8 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
   Downloads a file using wget.  Could possibly use python to stream files to
   disk, but wget is robust and gives nice visual feedback.
   """
-  cmd = [wget_bin, url, "-O", fn, "--load-cookies", cookies_file, "--no-check-certificate"]
+  cmd = [wget_bin, url, "-O", fn, "--load-cookies",
+         cookies_file, "--no-check-certificate"]
   logging.debug("Executing wget: %s", cmd)
   subprocess.call(cmd)
 
@@ -348,7 +356,8 @@ def download_file_nowget(url, fn, cookies_file):
 
 
 def parseArgs():
-  parser = argparse.ArgumentParser(description='Download Coursera.org lecture material and resources.')
+  parser = argparse.ArgumentParser(
+    description='Download Coursera.org lecture material and resources.')
   # positional
   parser.add_argument('class_names', action='store', nargs='+',
     help='name(s) of the class(es) (e.g. "nlp")')
@@ -369,17 +378,23 @@ def parseArgs():
 
   # optional
   parser.add_argument('-f', '--formats', dest='file_formats',
-    action='store', default="all", help='file format extensions to be downloaded in quotes space separated, e.g. "mp4 pdf" (default: special value "all")')
+    action='store', default="all",
+    help='file format extensions to be downloaded in quotes space separated, e.g. "mp4 pdf" (default: special value "all")')
   parser.add_argument('-sf', '--section_filter', dest='section_filter',
-    action='store', default=None, help='only download sections which contain this regex (default: disabled)')
+    action='store', default=None,
+    help='only download sections which contain this regex (default: disabled)')
   parser.add_argument('-lf', '--lecture_filter', dest='lecture_filter',
-    action='store', default=None, help='only download lectures which contain this regex (default: disabled)')
+    action='store', default=None,
+    help='only download lectures which contain this regex (default: disabled)')
   parser.add_argument('-w', '--wget_bin', dest='wget_bin',
-    action='store', default=None, help='wget binary if it should be used for downloading')
+    action='store', default=None,
+    help='wget binary if it should be used for downloading')
   parser.add_argument('--curl_bin', dest='curl_bin',
-    action='store', default=None, help='curl binary if it should be used for downloading')
+    action='store', default=None,
+    help='curl binary if it should be used for downloading')
   parser.add_argument('--aria2_bin', dest='aria2_bin',
-    action='store', default=None, help='aria2 binary if it should be used for downloading')
+    action='store', default=None,
+    help='aria2 binary if it should be used for downloading')
   parser.add_argument('-o', '--overwrite', dest='overwrite',
     action='store_true', default=False,
     help='whether existing files should be overwritten (default: False)')
@@ -388,7 +403,9 @@ def parseArgs():
   parser.add_argument('--skip-download', dest='skip_download',
     action='store_true', default=False,
     help='for debugging: skip actual downloading of files')
-  parser.add_argument('--path', dest='path', action='store', default='', help='path to save the file')
+  parser.add_argument('--path', dest='path',
+    action='store', default='',
+    help='path to save the file')
   parser.add_argument('--verbose-dirs', dest='verbose_dirs',
     action='store_true', default=False,
     help='include class name in section directory name')
@@ -398,7 +415,9 @@ def parseArgs():
   parser.add_argument('--quiet', dest='quiet',
     action='store_true', default=False,
     help='omit as many messages as possible (only printing errors)')
-  parser.add_argument('--add-class', dest='add_class', action='append', default=[], help='additional classes to get')
+  parser.add_argument('--add-class', dest='add_class',
+    action='append', default=[],
+    help='additional classes to get')
   args = parser.parse_args()
   # turn list of strings into list
   args.file_formats = args.file_formats.split()
@@ -423,11 +442,17 @@ def parseArgs():
 
 def download_class(args, class_name):
   if args.username:
-    tmp_cookie_file = write_cookie_file(class_name, args.username, args.password)
+    tmp_cookie_file = write_cookie_file(class_name,
+                                        args.username,
+                                        args.password)
   # get the syllabus listing
-  page = get_syllabus(class_name, args.cookies_file or tmp_cookie_file, args.local_page)
+  page = get_syllabus(class_name,
+                      args.cookies_file or tmp_cookie_file,
+                      args.local_page)
   # parse it
-  sections = parse_syllabus(page, args.cookies_file or tmp_cookie_file)
+  sections = parse_syllabus(page,
+                            args.cookies_file or tmp_cookie_file)
+
   # obtain the resources
   download_lectures(
     args.wget_bin,
