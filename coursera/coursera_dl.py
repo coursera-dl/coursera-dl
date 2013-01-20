@@ -20,6 +20,7 @@ backward compatible.
 import argparse
 import cookielib
 import errno
+import getpass
 import netrc
 import os
 import re
@@ -380,8 +381,7 @@ def parseArgs():
     print >> sys.stderr, "Cookies file not found: " + args.cookies_file
     sys.exit(1)
   if args.username and not args.password and not args.netrc:
-    print >> sys.stderr, "Password required when username is specified"
-    sys.exit(1)
+    args.password = getpass.getpass("Password for %s@coursera.org: " % args.username)
   if args.netrc:
     auths = netrc.netrc().authenticators('coursera-dl')
     args.username = auths[0]
