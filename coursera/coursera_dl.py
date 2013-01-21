@@ -381,7 +381,7 @@ def parseArgs():
     print >> sys.stderr, "Cookies file not found: " + args.cookies_file
     sys.exit(1)
   if args.username and not args.password and not args.netrc:
-    args.password = getpass.getpass("Password for %s@coursera.org: " % args.username)
+    args.password = getpass.getpass("Coursera password for %s: " % args.username)
   if args.netrc:
     auths = netrc.netrc().authenticators('coursera-dl')
     args.username = auths[0]
