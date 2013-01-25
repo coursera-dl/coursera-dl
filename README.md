@@ -17,7 +17,7 @@ Why is this helpful?  Before I was using *wget*, but I had the following problem
 3. Using a wget in a for loop picks up extra videos which are not
    posted/linked, and these are sometimes duplicates.
 
-*DownloadThemAll* can also work, but this provides better names.  
+*DownloadThemAll* can also work, but this provides better names.
 
 Inspired in part by [youtube-dl] by which I've downloaded many other good
 videos such as those from Khan Academy.
@@ -43,17 +43,16 @@ the class of interest.
 
 1\. Install any missing dependencies.
 
-  * [Beautiful Soup 3] or [Beautiful Soup 4]  
-  Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`  
-  Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`  
+  * [Beautiful Soup 3] or [Beautiful Soup 4]
+  Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`
+  Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`
   Mac OSX: `bs4` may be required instead.
-  When using `bs4`, be sure to modify the import at the top of the script.
-  Other: `easy_install BeautifulSoup`  
-  * [Argparse] (Not necessary if Python version >= 2.7)  
-  Ubuntu/Debian: `sudo apt-get install python-argparse`  
-  Other: `easy_install argparse`  
-  * [easy_install] (for the above)  
-  Ubuntu: `sudo apt-get install python-setuptools`  
+  Other: `easy_install BeautifulSoup`
+  * [Argparse] (Not necessary if Python version >= 2.7)
+  Ubuntu/Debian: `sudo apt-get install python-argparse`
+  Other: `easy_install argparse`
+  * [easy_install] (for the above)
+  Ubuntu: `sudo apt-get install python-setuptools`
 
 On Mac OSX using MacPort, the following may be used:
 
@@ -63,9 +62,9 @@ On Mac OSX using MacPort, the following may be used:
     > install py24-distribute  # for "py-setuptools", the obsolete name
 
 If you are using pip, you can directly install all the dependencies from the requirements file using `pip install -r requirements.txt`.
-  
+
 2\. Create a Coursera.org account and enroll in a class.
-e.g. http://saas-class.org  
+e.g. http://saas-class.org
 
 3\. Run the script to download the materials by providing your Coursera
 username, password (or a `~/.netrc` file), the class names
