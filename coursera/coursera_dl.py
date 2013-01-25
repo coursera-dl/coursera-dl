@@ -33,9 +33,11 @@ import tempfile
 import urllib
 import urllib2
 
-from BeautifulSoup import BeautifulSoup
-# for OSX, bs4 is recommended
-#from bs4 import BeautifulSoup
+try:
+    from BeautifulSoup import BeautifulSoup
+except ImportError:
+    # for OSX, bs4 is recommended
+    from bs4 import BeautifulSoup
 
 
 class ClassNotFoundException(BaseException):
