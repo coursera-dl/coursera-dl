@@ -1,7 +1,7 @@
 Coursera Downloader
 ===================
 
-[Coursera] is creating some fantastic, free educational classes (e.g.,
+[Coursera][1] is creating some fantastic, free educational classes (e.g.,
 algorithms, machine learning, natural language processing, SaaS).  This
 script allows one to batch download lecture resources (e.g., videos, ppt,
 etc) for a Coursera class.  Given a class name and related cookie file, it
@@ -9,7 +9,7 @@ scrapes the course listing page to get the week and class names, and then
 downloads the related materials into appropriately named files and
 directories.
 
-Why is this helpful?  Before I was using *wget*, but I had the following problems:
+Why is this helpful?  Before I was using [*wget*][2], but I had the following problems:
 
 1. Video names have a number in them, but this does not correspond to the
    actual order.  Manually renaming them is a pain.
@@ -19,7 +19,7 @@ Why is this helpful?  Before I was using *wget*, but I had the following problem
 
 *DownloadThemAll* can also work, but this provides better names.
 
-Inspired in part by [youtube-dl] by which I've downloaded many other good
+Inspired in part by [youtube-dl][3] by which I've downloaded many other good
 videos such as those from Khan Academy.
 
 
@@ -43,15 +43,15 @@ the class of interest.
 
 1\. Install any missing dependencies.
 
-  * [Beautiful Soup 3] or [Beautiful Soup 4]
+  * [Beautiful Soup 3][4] or [Beautiful Soup 4][5]
   Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`
   Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`
   Mac OSX: `bs4` may be required instead.
   Other: `easy_install BeautifulSoup`
-  * [Argparse] (Not necessary if Python version >= 2.7)
+  * [Argparse][6] *(Not necessary if Python version >= 2.7)*
   Ubuntu/Debian: `sudo apt-get install python-argparse`
   Other: `easy_install argparse`
-  * [easy_install] (for the above)
+  * [easy_install][7] *(for the above)*
   Ubuntu: `sudo apt-get install python-setuptools`
 
 On Mac OSX using MacPort, the following may be used:
@@ -80,7 +80,7 @@ username, password (or a `~/.netrc` file), the class names
 On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to
 specifying both your username and password every time on the command
 line. To use it, simply add a line like the one below to a file named
-`.netrc` in your home directory (or the [equivalent], if you are using
+`.netrc` in your home directory (or the [equivalent][8], if you are using
 Windows) with contents like:
 
     machine coursera-dl login <user> password <pass>
@@ -102,7 +102,7 @@ Troubleshooting
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
 * Previously one could export a Netscape-style cookies file with a browser
-  extension ([1], [2]) for use with the `-c` option, but this approach does
+  extension ([1][9], [2][10]) for use with the `-c` option, but this approach does
   not appear to work with recent classes. Use the `-u` and `-p` flags
   instead or use the `-n` flag.
 
@@ -114,20 +114,18 @@ Troubleshooting
 Contact
 -------
 
-Post bugs and issues on [github].  Send other comments to John Lehmann:
-first last at geemail dotcom or [@jplehmann]
+Post bugs and issues on [github][11]. Send other comments to John Lehmann:
+first last at geemail dotcom or [@jplehmann][12]
 
-[@jplehmann]: www.twitter.com/jplehmann
-[1]: https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
-[2]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
-[youtube-dl]: http://rg3.github.com/youtube-dl
-[Coursera]: http://www.coursera.org
-[Beautiful Soup 3]: http://www.crummy.com/software/BeautifulSoup/bs3
-[Beautiful Soup 4]: http://www.crummy.com/software/BeautifulSoup
-[Argparse]: http://pypi.python.org/pypi/argparse
-[wget]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
-[easy_install]: http://pypi.python.org/pypi/setuptools
-[github]: https://github.com/jplehmann/coursera/issues
-[workaround]: https://github.com/jplehmann/coursera/issues/6
-[here]: https://github.com/wiedi/coursera
-[equivalent]: http://stackoverflow.com/a/6031266/962311
+[1]: https://www.coursera.org
+[2]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
+[3]: https://rg3.github.com/youtube-dl
+[4]: http://www.crummy.com/software/BeautifulSoup/bs3
+[5]: http://www.crummy.com/software/BeautifulSoup
+[6]: http://pypi.python.org/pypi/argparse
+[7]: http://pypi.python.org/pypi/setuptools
+[8]: http://stackoverflow.com/a/6031266/962311
+[9]: https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
+[10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
+[11]: https://github.com/jplehmann/coursera/issues
+[12]: https://twitter.com/jplehmann
