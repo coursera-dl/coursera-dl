@@ -30,6 +30,7 @@ import StringIO
 import subprocess
 import sys
 import tempfile
+import time
 import urllib
 import urllib2
 
@@ -56,6 +57,43 @@ def get_syllabus_url(className):
 
 def get_auth_url(className):
   return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
+
+
+class BandwidthCalc(object):
+  def __init__(self):
+    self.nbytes         = 0
+    self.prev_time      = time.time()
+    self.prev_bw        = 0
+    self.prev_bw_length = 0
+
+  def received(self, data_length):
+    now          = time.time()
+    self.nbytes += data_length
+    time_delta   = now - self.prev_time
+    if time_delta > 1: # average over 1+ second
+      bw             = float(self.nbytes) / time_delta
+      self.prev_bw   = (self.prev_bw + 2 * bw) / 3
+      self.nbytes    = 0
+      self.prev_time = now
+
+  def __str__(self):
+    if self.prev_bw == 0:
+      bw = ""
+    elif self.prev_bw < 1000:
+      bw = " (%dB/s)" % (self.prev_bw)
+    elif self.prev_bw < 1000000:
+      bw = " (%.2fKB/s)" % (self.prev_bw/1000)
+    elif self.prev_bw < 1000000000:
+      bw = " (%.2fMB/s)" % (self.prev_bw/1000000)
+    else:
+      bw = " (%.2fGB/s)" % (self.prev_bw/1000000000)
+
+    length_diff = self.prev_bw_length - len(bw)
+    self.prev_bw_length = len(bw)
+    if length_diff > 0:
+      return "%s%s" % (bw, length_diff * ' ')
+    else:
+      return bw
 
 
 def write_cookie_file(className, username, password):
@@ -349,6 +387,7 @@ def download_file_nowget(url, fn, cookies_file):
   except urllib2.HTTPError:
     logging.warn("Probably the file is missing from the AWS repository... skipping it.")
   else:
+    bw = BandwidthCalc()
     chunk_sz = 1048576
     bytesread = 0
     f = open(fn, "wb")
@@ -357,9 +396,10 @@ def download_file_nowget(url, fn, cookies_file):
         if not data:
           print "."
           break
+        bw.received(len(data))
         f.write(data)
         bytesread += len(data)
-        print "\r%d bytes read" % bytesread,
+        print "\r%d bytes read%s" % (bytesread, bw),
         sys.stdout.flush()
     urlfile.close()
 
