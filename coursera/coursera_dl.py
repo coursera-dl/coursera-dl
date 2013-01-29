@@ -34,9 +34,10 @@ import urllib
 import urllib2
 
 try:
-    from bs4 import BeautifulSoup
-except ImportError:
     from BeautifulSoup import BeautifulSoup
+except ImportError:
+    # for OSX, bs4 is recommended
+    from bs4 import BeautifulSoup
 
 
 class ClassNotFoundException(BaseException):
