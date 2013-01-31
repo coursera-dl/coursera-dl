@@ -9,7 +9,8 @@ scrapes the course listing page to get the week and class names, and then
 downloads the related materials into appropriately named files and
 directories.
 
-Why is this helpful?  Before I was using [*wget*][2], but I had the following problems:
+Why is this helpful?  Before I was using [*wget*][2], but I had the
+following problems:
 
 1. Video names have a number in them, but this does not correspond to the
    actual order.  Manually renaming them is a pain.
@@ -61,7 +62,8 @@ On Mac OSX using MacPort, the following may be used:
     > install py-argparse
     > install py24-distribute  # for "py-setuptools", the obsolete name
 
-If you are using pip, you can directly install all the dependencies from the requirements file using `pip install -r requirements.txt`.
+If you are using pip, you can directly install all the dependencies from the
+requirements file using `pip install -r requirements.txt`.
 
 2\. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org
@@ -112,9 +114,9 @@ Troubleshooting
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
 * Previously one could export a Netscape-style cookies file with a browser
-  extension ([1][9], [2][10]) for use with the `-c` option, but this approach does
-  not appear to work with recent classes. Use the `-u` and `-p` flags
-  instead or use the `-n` flag.
+  extension ([1][9], [2][10]) for use with the `-c` option, but this
+  approach does not appear to work with recent classes. Use the `-u` and
+  `-p` flags instead or use the `-n` flag.
 
 * If results show 0 sections, you most likely have provided invalid
   credentials (username and/or password in the command line or in your
