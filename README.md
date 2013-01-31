@@ -97,6 +97,16 @@ any are needed.
 Troubleshooting
 ---------------
 
+* When reporting bugs against `coursera-dl`, please don't forget to include
+  enough information so that you can help us help you:
+  - Is the problem happening with the latest version of the script?
+  - What is the course that you are trying to access:
+  - What is the precise command line that you are using (feel free to hide
+    your username and password with asterisks, but leave all other
+    information untouched).
+  - What are the precise messages that you get? Please, copy and past them.
+    Don't reword the messages.
+
 * Make sure the classname you are using corresponds to the resource name used in
   the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
