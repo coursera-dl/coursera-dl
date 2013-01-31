@@ -32,7 +32,6 @@ import sys
 import tempfile
 import urllib
 import urllib2
-import platform
 
 try:
     from BeautifulSoup import BeautifulSoup
@@ -87,16 +86,6 @@ def write_cookie_file(className, username, password):
   os.close(hn)
 
   return fn
-
-def get_netrc_path(path=None):
-  """
-  Loads netrc file from given path or default location
-  """
-  if not path and platform.system() == 'Windows':
-    """ set some sane default on windows """
-    path = '%s\\_netrc' % (os.getenv('USERPROFILE'))
-
-  return path      
 
 
 def load_cookies_file(cookies_file):
@@ -332,7 +321,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   Downloads a file using curl.  Could possibly use python to stream files to
   disk, but curl is robust and gives nice visual feedback.
   """
-  cmd = [curl_bin, url, "-k", "-L", "-o", fn, "--cookie", cookies_file]
+  cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
   logging.debug("Executing curl: %s", cmd)
   subprocess.call(cmd)
 
@@ -386,13 +375,16 @@ def parseArgs():
   parser.add_argument('class_names', action='store', nargs='+',
     help='name(s) of the class(es) (e.g. "nlp")')
 
-  parser.add_argument('-c', '--cookies_file', dest='cookies_file',
+  # required
+  group = parser.add_mutually_exclusive_group(required=True)
+
+  group.add_argument('-c', '--cookies_file', dest='cookies_file',
     action='store', default=None, help='full path to the cookies.txt file')
-  parser.add_argument('-u', '--username', dest='username',
+  group.add_argument('-u', '--username', dest='username',
     action='store', default=None, help='coursera username')
-  parser.add_argument('-n', '--netrc', dest='netrc',
-    action='store', default=None,
-    help='use netrc for reading passwords, uses default location if no path specified')
+  group.add_argument('-n', '--netrc', dest='netrc',
+    action='store_true', default=False,
+    help='uset .netrc for reading passwords instead of specifying them on the command line (default: False)')
 
   # required if username selected above
   parser.add_argument('-p', '--password', dest='password',
@@ -450,18 +442,13 @@ def parseArgs():
     logging.error("Cookies file not found: %s", args.cookies_file)
     sys.exit(1)
 
-  if not args.cookies_file and not args.username:
-    path = get_netrc_path(args.netrc)
-    try:
-      auths = netrc.netrc(path).authenticators('coursera-dl')
-      args.username = auths[0]
-      args.password = auths[2]
-    except Exception as e:
-      logging.error("%s" % e)
-      sys.exit(1)
-
-  if args.username and not args.password:
+  if args.username and not args.password and not args.netrc:
     args.password = getpass.getpass("Coursera password for %s: " % args.username)
+
+  if args.netrc:
+    auths = netrc.netrc().authenticators('coursera-dl')
+    args.username = auths[0]
+    args.password = auths[2]
 
   if args.debug:
     logging.basicConfig(level=logging.DEBUG)
