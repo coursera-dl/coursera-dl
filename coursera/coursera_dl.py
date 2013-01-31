@@ -93,10 +93,16 @@ def get_netrc_path(path=None):
   Loads netrc file from given path or default location
   """
   if not path and platform.system() == 'Windows':
-    """ set some sane default on windows """
-    path = '%s\\_netrc' % (os.getenv('USERPROFILE'))
-
-  return path      
+    # set some sane default on windows
+    if os.path.isfile('_netrc'):
+      path = '_netrc'
+    else:
+      profilepath = os.getenv('USERPROFILE')
+      if profilepath:
+        path = '%s\\_netrc' % profilepath
+      else:
+        path = '\\_netrc'
+    return path
 
 
 def load_cookies_file(cookies_file):
@@ -332,7 +338,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   Downloads a file using curl.  Could possibly use python to stream files to
   disk, but curl is robust and gives nice visual feedback.
   """
-  cmd = [curl_bin, url, "-k", "-L", "-o", fn, "--cookie", cookies_file]
+  cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
   logging.debug("Executing curl: %s", cmd)
   subprocess.call(cmd)
 
