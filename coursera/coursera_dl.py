@@ -332,7 +332,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   Downloads a file using curl.  Could possibly use python to stream files to
   disk, but curl is robust and gives nice visual feedback.
   """
-  cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
+  cmd = [curl_bin, url, "-k", "-L", "-o", fn, "--cookie", cookies_file]
   logging.debug("Executing curl: %s", cmd)
   subprocess.call(cmd)
 
