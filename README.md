@@ -4,7 +4,7 @@ Coursera Downloader
 [Coursera][1] is creating some fantastic, free educational classes (e.g.,
 algorithms, machine learning, natural language processing, SaaS).  This
 script allows one to batch download lecture resources (e.g., videos, ppt,
-etc) for a Coursera class.  Given a class name and related cookie file, it
+etc) for a Coursera class.  Given a class name and account credentials, it
 scrapes the course listing page to get the week and class names, and then
 downloads the related materials into appropriately named files and
 directories.
