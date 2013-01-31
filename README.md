@@ -45,15 +45,15 @@ the class of interest.
 1\. Install any missing dependencies.
 
   * [Beautiful Soup 3][4] or [Beautiful Soup 4][5]
-  Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`
-  Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`
-  Mac OSX: `bs4` may be required instead.
-  Other: `easy_install BeautifulSoup`
+    - Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`
+    - Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`
+    - Mac OSX: `bs4` may be required instead.
+    - Other: `easy_install BeautifulSoup`
   * [Argparse][6] *(Not necessary if Python version >= 2.7)*
-  Ubuntu/Debian: `sudo apt-get install python-argparse`
-  Other: `easy_install argparse`
+    - Ubuntu/Debian: `sudo apt-get install python-argparse`
+    - Other: `easy_install argparse`
   * [easy_install][7] *(for the above)*
-  Ubuntu: `sudo apt-get install python-setuptools`
+    - Ubuntu: `sudo apt-get install python-setuptools`
 
 On Mac OSX using MacPort, the following may be used:
 
