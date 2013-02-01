@@ -473,11 +473,11 @@ def parseArgs():
     args.password = getpass.getpass("Coursera password for %s: " % args.username)
 
   if args.debug:
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format="%(name)s[%(funcName)s] %(message)s")
   elif args.quiet:
-    logging.basicConfig(level=logging.ERROR)
+    logging.basicConfig(level=logging.ERROR, format="%(name)s: %(message)s")
   else:
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
   return args
 
