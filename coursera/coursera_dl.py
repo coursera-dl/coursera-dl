@@ -215,7 +215,7 @@ def parse_syllabus(page, cookies_file):
       for a in vtag.findAll('a'):
         href = a['href']
         fmt = get_anchor_format(href)
-        logging.info("    %s %s", fmt, href)
+        logging.debug("    %s %s", fmt, href)
         if fmt:
           lecture[fmt] = href
 
@@ -227,7 +227,7 @@ def parse_syllabus(page, cookies_file):
             href = grab_hidden_video_url(a['data-lecture-view-link'],
                                          cookies_file)
             fmt = 'mp4'
-            logging.info("    %s %s", fmt, href)
+            logging.debug("    %s %s", fmt, href)
             lecture[fmt] = href
 
       lectures.append((vname, lecture))
@@ -294,13 +294,16 @@ def download_lectures(
       for fmt, url in [i for i in lecture.items()
                        if ((i[0] in file_formats) or "all" in file_formats)]:
         lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
-        logging.info(lecfn)
+
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
+            logging.info("Downloading: %s" % (lecfn))
             download_file(url, lecfn, cookies_file,
                           wget_bin, curl_bin, aria2_bin)
           else:
             open(lecfn, 'w').close()  # touch
+        else:
+          logging.info("%s already downloaded" % (lecfn))
 
 
 def download_file(url, fn, cookies_file, wget_bin, curl_bin, aria2_bin):
