@@ -1,0 +1,1121 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8" />
+<title> | Model Thinking</title>
+<link rel="stylesheet" href="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/css/spark.main.css" />
+<link rel="stylesheet" href="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/css/jquery_ui/jquery_ui.css" />
+
+<link rel="icon" href="https://spark-public.s3.amazonaws.com/modelthinking/static/images/favicon.ico" />
+
+</head>
+
+<body>
+    <a href="#course-page-content" class="hidden">Skip Navigation</a>
+    <div class="hidden">
+        This page features MathJax technology to render mathematical formulae.
+        If you are using a screen reader, please visit <a href="http://www.dessci.com/en/products/mathplayer/">MathPlayer</a> to download the plugin for your browser. Please note that this is an Internet Explorer-only plugin at this time.
+    </div>
+
+    <h1 class="hidden">Model Thinking</h1>
+
+    
+    
+<div class="course-topbar container-fluid">
+
+    <div class="row-fluid">
+        
+        <div class="span3">
+          <a href="https://www.coursera.org/" class="course-topbar-logo"></a>
+        </div>
+
+        <div class="course-topbar-nav-container span9" style="float:right;">
+            <h2 class="hidden">Top Navigation Bar</h2>
+
+            <ul class="course-topbar-nav-list">
+                <li class="course-topbar-nav-list-item"><a href="https://www.coursera.org/courses/" target="_new">Courses</a></li>
+
+                
+                <li class="course-topbar-nav-list-item" data-popup="#course-topbar-aboutus" data-popup-bind-open="mouseenter" data-popup-direction="se" data-popup-close style="cursor:pointer;">
+                    <a>About <i class="icon-caret-down"></i></a>
+                </li>
+
+                            </ul>
+        </div>
+    </div>
+
+    <div id="course-topbar-aboutus" class="course-topbar-sublist">
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/jobs" target="_new">Jobs</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/team" target="_new">Team</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/contact" target="_new">Contact Us</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/about/" target="_new">About Us</a>
+    </div>
+
+    <div id="course-topbar-my" class="course-topbar-sublist">
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/" target="_new">Courses</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/account/profile" target="_new">Profile</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/account/records" target="_new">Course Records</a>
+        <a class="course-topbar-sublist-item" href="https://www.coursera.org/account/settings" target="_new">Settings</a>
+        <a class="course-topbar-sublist-item" href="https://class.coursera.org/modelthinking/class/preferences">Course Preferences</a>
+        <a class="course-topbar-sublist-item" href="https://class.coursera.org/modelthinking/auth/logout">Logout</a>
+    </div>
+
+</div>
+
+
+
+<!-- facebook button -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- google plusone button -->
+<script>(function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();</script>
+
+<!-- twitter button -->
+<script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+
+
+
+<div class="course-topbanner" style="background:#2f2f2f repeat-x url('https://s3.amazonaws.com/coursera/universities/umich/top-banner-background.png')">
+    <div class="course-topbanner-logo-container">
+        <a href="https://class.coursera.org/modelthinking/class/index">
+            <div>
+                <div>
+                    <img src="https://s3.amazonaws.com/coursera/universities/umich/top-banner.png" />
+                </div>
+                <div class="course-topbanner-logo-image" style="position:absolute;top:47px;left:17px;height:68px;width:120px;">
+                    <div style="background-position:-5px 0px;background-size:130px;height:68px;width:120px;background-image:url('https://s3.amazonaws.com/coursera/topics/modelthinking/small-icon.hover.png')">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="course-topbanner-logo-name" style="position:absolute;top:87px;left:155px;">
+                <span>Model Thinking</span>
+            </div>
+        </a>
+    </div>
+    <div class="course-topbanner-info">
+        <div class="course-topbanner-instructor">Scott E Page</div>
+        <div class="course-topbanner-time">February 2012</div>
+    </div>
+</div>
+    
+        <div id="course-page-content" style="margin-left:5px; margin-top:0px;">
+        <div class="course-lectures-list">
+  <h2 style="padding-bottom:12px">Video Lectures</h2>
+
+  <div><!-- Lecture List Preamble Here --></div>
+
+    
+  <p style="margin-bottom:20px;">
+    Having trouble viewing lectures?
+    Try changing your player in <a target="_blank" href="https://class.coursera.org/modelthinking/class/preferences#course-preferences-lecture">course preferences</a>.
+  </p>
+
+  <div class="course-item-list">
+<div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Introduction: Why Model?</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="17"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=17"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/17"
+   rel="lecture-link"
+   class="lecture-link">
+Why Model?</a>
+</li><li class="unviewed"><a data-lecture-id="19"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=19"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/19"
+   rel="lecture-link"
+   class="lecture-link">
+Intelligent Citizens of the World</a>
+</li><li class="unviewed"><a data-lecture-id="6"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=6"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/6"
+   rel="lecture-link"
+   class="lecture-link">
+Thinking More Clearly </a>
+</li><li class="unviewed"><a data-lecture-id="8"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=8"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/8"
+   rel="lecture-link"
+   class="lecture-link">
+Using and Understanding Data</a>
+</li><li class="unviewed"><a data-lecture-id="18"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=18"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/18"
+   rel="lecture-link"
+   class="lecture-link">
+Using Models to Decide, Strategize, and Design</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Segregation and Peer Effects</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="15"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=15"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/15"
+   rel="lecture-link"
+   class="lecture-link">
+Sorting and Peer Effects Introduction</a>
+</li><li class="unviewed"><a data-lecture-id="16"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=16"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/16"
+   rel="lecture-link"
+   class="lecture-link">
+Schelling's Segregation Model</a>
+</li><li class="unviewed"><a data-lecture-id="9"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=9"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/9"
+   rel="lecture-link"
+   class="lecture-link">
+Measuring Segregation</a>
+</li><li class="unviewed"><a data-lecture-id="10"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=10"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/10"
+   rel="lecture-link"
+   class="lecture-link">
+Peer Effects</a>
+</li><li class="unviewed"><a data-lecture-id="11"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=11"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/11"
+   rel="lecture-link"
+   class="lecture-link">
+The Standing Ovation Model</a>
+</li><li class="unviewed"><a data-lecture-id="12"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=12"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/12"
+   rel="lecture-link"
+   class="lecture-link">
+The Identification Problem</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Aggregation</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="20"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=20"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/20"
+   rel="lecture-link"
+   class="lecture-link">
+Aggregation</a>
+</li><li class="unviewed"><a data-lecture-id="21"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=21"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/21"
+   rel="lecture-link"
+   class="lecture-link">
+Central Limit Theorem</a>
+</li><li class="unviewed"><a data-lecture-id="25"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=25"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/25"
+   rel="lecture-link"
+   class="lecture-link">
+Six Sigma</a>
+</li><li class="unviewed"><a data-lecture-id="22"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=22"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/22"
+   rel="lecture-link"
+   class="lecture-link">
+Game of Life</a>
+</li><li class="unviewed"><a data-lecture-id="23"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=23"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/23"
+   rel="lecture-link"
+   class="lecture-link">
+Cellular Automata</a>
+</li><li class="unviewed"><a data-lecture-id="24"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=24"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/24"
+   rel="lecture-link"
+   class="lecture-link">
+Preference Aggregation</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Decision Models</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="29"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=29"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/29"
+   rel="lecture-link"
+   class="lecture-link">
+Introduction to Decision Making</a>
+</li><li class="unviewed"><a data-lecture-id="28"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=28"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/28"
+   rel="lecture-link"
+   class="lecture-link">
+Multi-Criterion Decision Making</a>
+</li><li class="unviewed"><a data-lecture-id="31"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=31"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/31"
+   rel="lecture-link"
+   class="lecture-link">
+Spatial Choice Models</a>
+</li><li class="unviewed"><a data-lecture-id="30"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=30"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/30"
+   rel="lecture-link"
+   class="lecture-link">
+Probability: The Basics</a>
+</li><li class="unviewed"><a data-lecture-id="26"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=26"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/26"
+   rel="lecture-link"
+   class="lecture-link">
+Decision Trees</a>
+</li><li class="unviewed"><a data-lecture-id="27"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=27"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/27"
+   rel="lecture-link"
+   class="lecture-link">
+Value of Information</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Thinking Electrons: Modeling People</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="32"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=32"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/32"
+   rel="lecture-link"
+   class="lecture-link">
+Thinking Electrons: Modeling People</a>
+</li><li class="unviewed"><a data-lecture-id="33"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=33"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/33"
+   rel="lecture-link"
+   class="lecture-link">
+Rational Actor Models</a>
+</li><li class="unviewed"><a data-lecture-id="34"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=34"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/34"
+   rel="lecture-link"
+   class="lecture-link">
+Behavioral Models</a>
+</li><li class="unviewed"><a data-lecture-id="35"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=35"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/35"
+   rel="lecture-link"
+   class="lecture-link">
+Rule Based Models</a>
+</li><li class="unviewed"><a data-lecture-id="36"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=36"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/36"
+   rel="lecture-link"
+   class="lecture-link">
+When Does Behavior Matter?</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Categorical and Linear Models</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="37"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=37"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/37"
+   rel="lecture-link"
+   class="lecture-link">
+ Introduction to Linear Models</a>
+</li><li class="unviewed"><a data-lecture-id="38"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=38"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/38"
+   rel="lecture-link"
+   class="lecture-link">
+Categorical Models</a>
+</li><li class="unviewed"><a data-lecture-id="39"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=39"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/39"
+   rel="lecture-link"
+   class="lecture-link">
+Linear Models</a>
+</li><li class="unviewed"><a data-lecture-id="42"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=42"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/42"
+   rel="lecture-link"
+   class="lecture-link">
+ Fitting Lines to Data</a>
+</li><li class="unviewed"><a data-lecture-id="40"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=40"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/40"
+   rel="lecture-link"
+   class="lecture-link">
+ Reading Regression Output</a>
+</li><li class="unviewed"><a data-lecture-id="41"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=41"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/41"
+   rel="lecture-link"
+   class="lecture-link">
+ From Linear to Nonlinear</a>
+</li><li class="unviewed"><a data-lecture-id="43"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=43"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/43"
+   rel="lecture-link"
+   class="lecture-link">
+The Big Coefficient vs The New Reality</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Tipping Points</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="44"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=44"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/44"
+   rel="lecture-link"
+   class="lecture-link">
+Tipping Points</a>
+</li><li class="unviewed"><a data-lecture-id="45"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=45"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/45"
+   rel="lecture-link"
+   class="lecture-link">
+Percolation Models</a>
+</li><li class="unviewed"><a data-lecture-id="46"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=46"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/46"
+   rel="lecture-link"
+   class="lecture-link">
+ Contagion Models 1: Diffusion</a>
+</li><li class="unviewed"><a data-lecture-id="47"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=47"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/47"
+   rel="lecture-link"
+   class="lecture-link">
+ Contagion Models 2: SIS Model</a>
+</li><li class="unviewed"><a data-lecture-id="48"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=48"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/48"
+   rel="lecture-link"
+   class="lecture-link">
+Classifying Tipping Points</a>
+</li><li class="unviewed"><a data-lecture-id="72"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=72"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/72"
+   rel="lecture-link"
+   class="lecture-link">
+Measuring Tips</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Economic Growth</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="49"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=49"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/49"
+   rel="lecture-link"
+   class="lecture-link">
+Introduction To Growth</a>
+</li><li class="unviewed"><a data-lecture-id="50"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=50"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/50"
+   rel="lecture-link"
+   class="lecture-link">
+Exponential Growth</a>
+</li><li class="unviewed"><a data-lecture-id="51"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=51"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/51"
+   rel="lecture-link"
+   class="lecture-link">
+Basic Growth Model</a>
+</li><li class="unviewed"><a data-lecture-id="52"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=52"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/52"
+   rel="lecture-link"
+   class="lecture-link">
+ Solow Growth Model</a>
+</li><li class="unviewed"><a data-lecture-id="54"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=54"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/54"
+   rel="lecture-link"
+   class="lecture-link">
+WIll China Continue to Grow?</a>
+</li><li class="unviewed"><a data-lecture-id="53"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=53"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/53"
+   rel="lecture-link"
+   class="lecture-link">
+Why Do Some Countries Not Grow?</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Diversity and Innovation</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="55"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=55"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/55"
+   rel="lecture-link"
+   class="lecture-link">
+Problem Solving and Innovation</a>
+</li><li class="unviewed"><a data-lecture-id="56"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=56"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/56"
+   rel="lecture-link"
+   class="lecture-link">
+ Perspectives and Innovation</a>
+</li><li class="unviewed"><a data-lecture-id="57"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=57"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/57"
+   rel="lecture-link"
+   class="lecture-link">
+Heuristics</a>
+</li><li class="unviewed"><a data-lecture-id="58"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=58"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/58"
+   rel="lecture-link"
+   class="lecture-link">
+Teams and Problem Solving</a>
+</li><li class="unviewed"><a data-lecture-id="59"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=59"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/59"
+   rel="lecture-link"
+   class="lecture-link">
+ Recombination </a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Markov Processes</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="60"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=60"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/60"
+   rel="lecture-link"
+   class="lecture-link">
+ Markov Models</a>
+</li><li class="unviewed"><a data-lecture-id="61"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=61"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/61"
+   rel="lecture-link"
+   class="lecture-link">
+ A Simple Markov Model</a>
+</li><li class="unviewed"><a data-lecture-id="62"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=62"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/62"
+   rel="lecture-link"
+   class="lecture-link">
+Markov Model of Democratization</a>
+</li><li class="unviewed"><a data-lecture-id="63"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=63"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/63"
+   rel="lecture-link"
+   class="lecture-link">
+Markov Convergence Theorem</a>
+</li><li class="unviewed"><a data-lecture-id="64"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=64"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/64"
+   rel="lecture-link"
+   class="lecture-link">
+Exapting the Markov Model</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Lyapunov Functions</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="65"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=65"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/65"
+   rel="lecture-link"
+   class="lecture-link">
+Lyapunov Functions</a>
+</li><li class="unviewed"><a data-lecture-id="66"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=66"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/66"
+   rel="lecture-link"
+   class="lecture-link">
+The Organization of Cities</a>
+</li><li class="unviewed"><a data-lecture-id="67"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=67"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/67"
+   rel="lecture-link"
+   class="lecture-link">
+ Exchange Economies and Externalities</a>
+</li><li class="unviewed"><a data-lecture-id="68"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=68"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/68"
+   rel="lecture-link"
+   class="lecture-link">
+Time to Convergence and Optimality</a>
+</li><li class="unviewed"><a data-lecture-id="69"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=69"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/69"
+   rel="lecture-link"
+   class="lecture-link">
+Lyapunov: Fun and Deep</a>
+</li><li class="unviewed"><a data-lecture-id="70"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=70"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/70"
+   rel="lecture-link"
+   class="lecture-link">
+ Lyapunov or Markov</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Coordination and Culture</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="73"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=73"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/73"
+   rel="lecture-link"
+   class="lecture-link">
+Coordination and Culture</a>
+</li><li class="unviewed"><a data-lecture-id="76"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=76"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/76"
+   rel="lecture-link"
+   class="lecture-link">
+What Is Culture And Why Do We Care?</a>
+</li><li class="unviewed"><a data-lecture-id="77"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=77"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/77"
+   rel="lecture-link"
+   class="lecture-link">
+Pure Coordination Game</a>
+</li><li class="unviewed"><a data-lecture-id="74"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=74"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/74"
+   rel="lecture-link"
+   class="lecture-link">
+Emergence of Culture</a>
+</li><li class="unviewed"><a data-lecture-id="75"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=75"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/75"
+   rel="lecture-link"
+   class="lecture-link">
+Coordination and Consistency</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Path Dependence</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="78"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=78"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/78"
+   rel="lecture-link"
+   class="lecture-link">
+Path Dependence</a>
+</li><li class="unviewed"><a data-lecture-id="79"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=79"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/79"
+   rel="lecture-link"
+   class="lecture-link">
+Urn Models</a>
+</li><li class="unviewed"><a data-lecture-id="80"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=80"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/80"
+   rel="lecture-link"
+   class="lecture-link">
+Mathematics on Urn Models</a>
+</li><li class="unviewed"><a data-lecture-id="81"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=81"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/81"
+   rel="lecture-link"
+   class="lecture-link">
+Path Dependence and Chaos</a>
+</li><li class="unviewed"><a data-lecture-id="82"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=82"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/82"
+   rel="lecture-link"
+   class="lecture-link">
+Path Dependence and Increasing Returns</a>
+</li><li class="unviewed"><a data-lecture-id="83"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=83"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/83"
+   rel="lecture-link"
+   class="lecture-link">
+Path Dependent or Tipping Point</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Networks</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="84"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=84"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/84"
+   rel="lecture-link"
+   class="lecture-link">
+Networks</a>
+</li><li class="unviewed"><a data-lecture-id="85"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=85"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/85"
+   rel="lecture-link"
+   class="lecture-link">
+The Structure of Networks</a>
+</li><li class="unviewed"><a data-lecture-id="86"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=86"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/86"
+   rel="lecture-link"
+   class="lecture-link">
+The Logic of Network Formation</a>
+</li><li class="unviewed"><a data-lecture-id="87"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=87"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/87"
+   rel="lecture-link"
+   class="lecture-link">
+Network Function</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Randomness and Random Walks</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="88"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=88"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/88"
+   rel="lecture-link"
+   class="lecture-link">
+Randomness and Random Walk Models</a>
+</li><li class="unviewed"><a data-lecture-id="89"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=89"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/89"
+   rel="lecture-link"
+   class="lecture-link">
+Sources of Randomness</a>
+</li><li class="unviewed"><a data-lecture-id="90"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=90"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/90"
+   rel="lecture-link"
+   class="lecture-link">
+Skill and Luck</a>
+</li><li class="unviewed"><a data-lecture-id="91"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=91"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/91"
+   rel="lecture-link"
+   class="lecture-link">
+Random Walks</a>
+</li><li class="unviewed"><a data-lecture-id="92"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=92"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/92"
+   rel="lecture-link"
+   class="lecture-link">
+Random Walks and Wall Street</a>
+</li><li class="unviewed"><a data-lecture-id="93"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=93"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/93"
+   rel="lecture-link"
+   class="lecture-link">
+FInite Memory Random Walks</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Colonel Blotto</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="94"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=94"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/94"
+   rel="lecture-link"
+   class="lecture-link">
+Colonel Blotto Game</a>
+</li><li class="unviewed"><a data-lecture-id="95"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=95"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/95"
+   rel="lecture-link"
+   class="lecture-link">
+Blotto: No Best Strategy</a>
+</li><li class="unviewed"><a data-lecture-id="96"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=96"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/96"
+   rel="lecture-link"
+   class="lecture-link">
+Applications of Colonel Blotto</a>
+</li><li class="unviewed"><a data-lecture-id="97"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=97"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/97"
+   rel="lecture-link"
+   class="lecture-link">
+Blotto: Troop Advantages</a>
+</li><li class="unviewed"><a data-lecture-id="98"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=98"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/98"
+   rel="lecture-link"
+   class="lecture-link">
+Blotto and Competition</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Prisoners' Dilemma and Collective Action</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="99"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=99"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/99"
+   rel="lecture-link"
+   class="lecture-link">
+Intro: The Prisoners' Dilemma and Collective Action</a>
+</li><li class="unviewed"><a data-lecture-id="100"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=100"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/100"
+   rel="lecture-link"
+   class="lecture-link">
+The Prisoners' Dilemma Game</a>
+</li><li class="unviewed"><a data-lecture-id="101"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=101"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/101"
+   rel="lecture-link"
+   class="lecture-link">
+Seven Ways To Cooperation</a>
+</li><li class="unviewed"><a data-lecture-id="102"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=102"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/102"
+   rel="lecture-link"
+   class="lecture-link">
+Collective Action and Common Pool Resource Problems</a>
+</li><li class="unviewed"><a data-lecture-id="103"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=103"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/103"
+   rel="lecture-link"
+   class="lecture-link">
+No Panacea</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Mechanism Design</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="104"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=104"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/104"
+   rel="lecture-link"
+   class="lecture-link">
+Mechanism Design</a>
+</li><li class="unviewed"><a data-lecture-id="105"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=105"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/105"
+   rel="lecture-link"
+   class="lecture-link">
+Hidden Action and Hidden Information</a>
+</li><li class="unviewed"><a data-lecture-id="106"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=106"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/106"
+   rel="lecture-link"
+   class="lecture-link">
+Auctions</a>
+</li><li class="unviewed"><a data-lecture-id="107"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=107"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/107"
+   rel="lecture-link"
+   class="lecture-link">
+Public Projects</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Learning Models: Replicator Dynamics</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="108"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=108"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/108"
+   rel="lecture-link"
+   class="lecture-link">
+Replicator Dynamics</a>
+</li><li class="unviewed"><a data-lecture-id="109"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=109"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/109"
+   rel="lecture-link"
+   class="lecture-link">
+The Replicator Equation</a>
+</li><li class="unviewed"><a data-lecture-id="110"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=110"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/110"
+   rel="lecture-link"
+   class="lecture-link">
+Fisher's Theorem</a>
+</li><li class="unviewed"><a data-lecture-id="111"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=111"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/111"
+   rel="lecture-link"
+   class="lecture-link">
+Variation or Six Sigma</a>
+</li></ul><div class="course-item-list-header expanded"><h3><span class="icon-chevron-down" style="width:18px;display:inline-block;"></span> &nbsp;Prediction and the Many Model Thinker</h3> <span class="hidden">(expanded, click to collapse)</span></div><ul class="course-item-list-section-list"><li class="unviewed"><a data-lecture-id="112"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=112"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/112"
+   rel="lecture-link"
+   class="lecture-link">
+Prediction</a>
+</li><li class="unviewed"><a data-lecture-id="113"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=113"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/113"
+   rel="lecture-link"
+   class="lecture-link">
+Linear Models</a>
+</li><li class="unviewed"><a data-lecture-id="114"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=114"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/114"
+   rel="lecture-link"
+   class="lecture-link">
+Diversity Prediction Theorem</a>
+</li><li class="unviewed"><a data-lecture-id="115"
+   data-modal-iframe="https://class.coursera.org/modelthinking/lecture/preview_view?lecture_id=115"
+   data-modal=".course-modal-frame"
+   href="https://class.coursera.org/modelthinking/lecture/preview_view/115"
+   rel="lecture-link"
+   class="lecture-link">
+The Many Model Thinker</a>
+</li></ul></div>
+</div>
+
+<div class="course-modal-frame" data-modal-overlay-class="course-modal-overlay-dark" data-modal-position="absolute" data-modal-position-top="50px">
+  <div style="position:absolute;top:-25px;height:25px;right:0px;color:white;cursor:pointer;" data-modal-close>
+    Close
+  </div>
+</div>
+
+    </div>
+        
+        <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/spark.js"></script>
+    
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/js/profiles.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/js/modal_focus.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/js/get_query_parameters.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/js/signature_track.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/app/generic/js/item_list.js" type="text/javascript"></script>
+    <script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/app/generic/js/navbar.js" type="text/javascript"></script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-28377374-1']);
+  _gaq.push(['_setDomainName', 'coursera.org']);
+  _gaq.push(['_setAllowLinker', true]);  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+  window._204 = window._204 || [];
+  window._204.push({key:"pageview", val:{}});
+
+  (function()
+  {
+    var a = document.createElement('script'); a.type = 'text/javascript'; a.async = true;
+    a.src = 'https://eventing.coursera.org/204.min.js?client=spark&user=0';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(a, s);
+  })();
+
+</script>
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  config: ["MMLorHTML.js"],
+  
+  styleSheets: [],
+  styles: {},
+
+  jax: ["input/TeX"],
+  
+  extensions: ["tex2jax.js"],
+
+  preJax: null,
+  postJax: null,
+
+  preRemoveClass: "MathJax_Preview",
+
+  showProcessingMessages: true,
+
+  messageStyle: "none",
+  
+  displayAlign: "center",
+  displayIndent: "0em",
+  
+  delayStartupUntil: "none",
+
+  skipStartupTypeset: false,
+  
+  elements: [],
+  
+  tex2jax: {
+	    inlineMath: [
+	                 ['$$','$$'],      // uncomment this for standard TeX math delimiters
+	                 ['\\(','\\)']
+	                 ],
+
+	                 displayMath: [
+	                 ['\\[','\\]']
+	                 ],
+
+    skipTags: ["script","noscript","style","textarea","pre","code"],
+    ignoreClass: "tex2jax_ignore",
+    processClass: "tex2jax_process",
+    processEscapes: false,
+    processEnvironments: true,
+    preview: "TeX"
+    
+  },
+  
+  mml2jax: {
+    preview: "alttext"
+    
+  },
+  
+  jsMath2jax: {
+    preview: "TeX"
+    
+  },
+
+  TeX: {
+    TagSide: "right",
+    TagIndent: ".8em",
+    MultLineWidth: "85%",
+    Macros: {},
+
+    extensions: ["AMSmath.js", "AMSsymbols.js"]
+    
+  },
+
+  //============================================================================
+  //
+  //  These parameters control the MathML inupt jax.
+  //
+  MathML: {
+    //
+    //  This specifies whether to use TeX spacing or MathML spacing when the
+    //  HTML-CSS output jax is used.
+    //
+    useMathMLspacing: false
+  },
+  
+  //============================================================================
+  //
+  //  These parameters control the HTML-CSS output jax.
+  //
+  "HTML-CSS": {
+    
+    scale: 100,
+    
+    availableFonts: ["STIX","TeX"],
+    
+    preferredFont: "TeX",
+    
+    webFont: "TeX",
+    
+    imageFont: "TeX",
+    
+    undefinedFamily: "STIXGeneral,'Arial Unicode MS',serif",
+      
+    showMathMenu: true,
+
+    styles: {},
+    
+    tooltip: {
+      delayPost: 600,          // milliseconds delay before tooltip is posted after mouseover
+      delayClear: 600,         // milliseconds delay before tooltip is cleared after mouseout
+      offsetX: 10, offsetY: 5  // pixels to offset tooltip from mouse position
+    }
+  },
+  
+  //============================================================================
+  //
+  //  These parameters control the NativeMML output jax.
+  //
+  NativeMML: {
+
+    scale: 100,
+
+    showMathMenu: true,
+    showMathMenuMSIE: true,
+
+    styles: {}
+  },
+  
+  MathMenu: {
+    delay: 400,
+    
+    helpURL: "http://www.mathjax.org/help/user/",
+
+    showRenderer: true,
+    showFontMenu: false,
+    showContext:  false,
+
+    windowSettings: {
+      status: "no", toolbar: "no", locationbar: "no", menubar: "no",
+      directories: "no", personalbar: "no", resizable: "yes", scrollbars: "yes",
+      width: 100, height: 50
+    },
+    
+    styles: {}
+    
+  },
+
+  MMLorHTML: {
+    prefer: {
+      MSIE:    "MML",
+      Firefox: "MML",
+      Opera:   "HTML",
+      other:   "HTML"
+    }
+  }
+});
+</script>
+<script type="text/javascript">
+(function () {
+
+  function loadMathJax() {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://d2265nx4vomwra.cloudfront.net/2.1/MathJax.js";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  }
+
+  window.loadOrRefreshMathJax = function(domId) {
+    if (window.MathJax) {
+      if (domId) {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, domId]);
+      } else {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+      }
+    } else {
+      loadMathJax();
+    }
+  }
+})();
+</script>
+    
+    <script type="text/javascript">
+
+        function hideMaintenanceMessage() {
+            $('#maintenance_message').hide();
+            document.cookie = "spark_maintmsghide_2=1;expires=0;path=/;";
+        }
+
+        var site_base_url = "https://www.coursera.org/";
+        var spark_class_short_name = "modelthinking";
+        var spark_class_id = 30;
+        var spark_class_url = "/modelthinking";
+        var spark_signature_url = "https://class.coursera.org/modelthinking/signature/";
+
+        $(document).ready(function() {
+            //$('.course-assignment-deadline').eventLinker();
+        });
+
+    </script>
+
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/js/jquery_ui.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/js/jquery.history.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/js/lib/bootstrap.tooltip.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/core/js/get_query_parameters.js"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/app/lecture/js/lecture_list_functions.js?view_url=https://class.coursera.org/modelthinking/lecture/preview/view"></script>
+<script src="https://dt5zaw6a98blc.cloudfront.net/site-static/f367180ac90fc7bbca6d355e4fd015685be97336/spark/app/generic/js/video_modal.js"></script>
+
+</body>
+
+</html>
