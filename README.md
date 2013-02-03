@@ -72,7 +72,7 @@ e.g. http://saas-class.org
 username, password (or a `~/.netrc` file), the class names
 
     General:                     coursera-dl -u <user> -p <pass> saas
-    Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp ml
+    Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp proglang-2012-001
     Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" saas
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
     Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
