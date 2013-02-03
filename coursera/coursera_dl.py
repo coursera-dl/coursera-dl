@@ -49,17 +49,6 @@ class ClassNotFoundException(BaseException):
   pass
 
 
-def get_syllabus_url(className):
-  """
-  Return the Coursera index/syllabus URL.
-  """
-  return "http://class.coursera.org/%s/lecture/index" % className
-
-
-def get_auth_url(className):
-  return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
-
-
 class BandwidthCalc(object):
   def __init__(self):
     self.nbytes         = 0
@@ -95,6 +84,17 @@ class BandwidthCalc(object):
       return "%s%s" % (bw, length_diff * ' ')
     else:
       return bw
+
+
+def get_auth_url(className):
+  return "http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true" % className
+
+
+def get_syllabus_url(className):
+  """
+  Return the Coursera index/syllabus URL.
+  """
+  return "http://class.coursera.org/%s/lecture/index" % className
 
 
 def write_cookie_file(className, username, password):
