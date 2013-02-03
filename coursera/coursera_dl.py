@@ -32,6 +32,7 @@ import sys
 import tempfile
 import urllib
 import urllib2
+import platform
 
 try:
     from BeautifulSoup import BeautifulSoup
@@ -86,6 +87,22 @@ def write_cookie_file(className, username, password):
   os.close(hn)
 
   return fn
+
+def get_netrc_path(path=None):
+  """
+  Loads netrc file from given path or default location
+  """
+  if not path and platform.system() == 'Windows':
+    # set some sane default on windows
+    if os.path.isfile('_netrc'):
+      path = '_netrc'
+    else:
+      profilepath = os.getenv('USERPROFILE')
+      if profilepath:
+        path = '%s\\_netrc' % profilepath
+      else:
+        path = '\\_netrc'
+    return path
 
 
 def load_cookies_file(cookies_file):
@@ -198,7 +215,7 @@ def parse_syllabus(page, cookies_file):
       for a in vtag.findAll('a'):
         href = a['href']
         fmt = get_anchor_format(href)
-        logging.info("    %s %s", fmt, href)
+        logging.debug("    %s %s", fmt, href)
         if fmt:
           lecture[fmt] = href
 
@@ -210,7 +227,7 @@ def parse_syllabus(page, cookies_file):
             href = grab_hidden_video_url(a['data-lecture-view-link'],
                                          cookies_file)
             fmt = 'mp4'
-            logging.info("    %s %s", fmt, href)
+            logging.debug("    %s %s", fmt, href)
             lecture[fmt] = href
 
       lectures.append((vname, lecture))
@@ -277,13 +294,16 @@ def download_lectures(
       for fmt, url in [i for i in lecture.items()
                        if ((i[0] in file_formats) or "all" in file_formats)]:
         lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
-        logging.info(lecfn)
+
         if overwrite or not os.path.exists(lecfn):
           if not skip_download:
+            logging.info("Downloading: %s" % (lecfn))
             download_file(url, lecfn, cookies_file,
                           wget_bin, curl_bin, aria2_bin)
           else:
             open(lecfn, 'w').close()  # touch
+        else:
+          logging.info("%s already downloaded" % (lecfn))
 
 
 def download_file(url, fn, cookies_file, wget_bin, curl_bin, aria2_bin):
@@ -321,7 +341,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
   Downloads a file using curl.  Could possibly use python to stream files to
   disk, but curl is robust and gives nice visual feedback.
   """
-  cmd = [curl_bin, url, "-L", "-o", fn, "--cookie", cookies_file]
+  cmd = [curl_bin, url, "-k", "-#", "-L", "-o", fn, "--cookie", cookies_file]
   logging.debug("Executing curl: %s", cmd)
   subprocess.call(cmd)
 
@@ -375,16 +395,13 @@ def parseArgs():
   parser.add_argument('class_names', action='store', nargs='+',
     help='name(s) of the class(es) (e.g. "nlp")')
 
-  # required
-  group = parser.add_mutually_exclusive_group(required=True)
-
-  group.add_argument('-c', '--cookies_file', dest='cookies_file',
+  parser.add_argument('-c', '--cookies_file', dest='cookies_file',
     action='store', default=None, help='full path to the cookies.txt file')
-  group.add_argument('-u', '--username', dest='username',
+  parser.add_argument('-u', '--username', dest='username',
     action='store', default=None, help='coursera username')
-  group.add_argument('-n', '--netrc', dest='netrc',
-    action='store_true', default=False,
-    help='uset .netrc for reading passwords instead of specifying them on the command line (default: False)')
+  parser.add_argument('-n', '--netrc', dest='netrc',
+    action='store', default=None,
+    help='use netrc for reading passwords, uses default location if no path specified')
 
   # required if username selected above
   parser.add_argument('-p', '--password', dest='password',
@@ -442,20 +459,25 @@ def parseArgs():
     logging.error("Cookies file not found: %s", args.cookies_file)
     sys.exit(1)
 
-  if args.username and not args.password and not args.netrc:
+  if not args.cookies_file and not args.username:
+    path = get_netrc_path(args.netrc)
+    try:
+      auths = netrc.netrc(path).authenticators('coursera-dl')
+      args.username = auths[0]
+      args.password = auths[2]
+    except Exception as e:
+      logging.error("%s" % e)
+      sys.exit(1)
+
+  if args.username and not args.password:
     args.password = getpass.getpass("Coursera password for %s: " % args.username)
 
-  if args.netrc:
-    auths = netrc.netrc().authenticators('coursera-dl')
-    args.username = auths[0]
-    args.password = auths[2]
-
   if args.debug:
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format="%(name)s[%(funcName)s] %(message)s")
   elif args.quiet:
-    logging.basicConfig(level=logging.ERROR)
+    logging.basicConfig(level=logging.ERROR, format="%(name)s: %(message)s")
   else:
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
   return args
 
