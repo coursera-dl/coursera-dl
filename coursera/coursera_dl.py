@@ -26,6 +26,7 @@ import getpass
 import logging
 import netrc
 import os
+import platform
 import re
 import string
 import StringIO
@@ -35,7 +36,6 @@ import tempfile
 import time
 import urllib
 import urllib2
-import platform
 
 try:
     from BeautifulSoup import BeautifulSoup
