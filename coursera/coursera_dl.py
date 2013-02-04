@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 For downloading lecture resources such as videos for Coursera classes. Given
 a class name, username and password, it scrapes the coarse listing page to
