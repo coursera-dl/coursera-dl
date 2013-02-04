@@ -40,7 +40,6 @@ import urllib2
 try:
     from BeautifulSoup import BeautifulSoup
 except ImportError:
-    # for OSX, bs4 is recommended
     from bs4 import BeautifulSoup
 
 
@@ -285,7 +284,7 @@ def mkdir_p(path):
     """
     try:
         os.makedirs(path)
-    except OSError as exc: # Python >2.5
+    except OSError as exc:
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else:
