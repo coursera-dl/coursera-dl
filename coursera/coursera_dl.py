@@ -95,6 +95,10 @@ class BandwidthCalc(object):
 
 
 def get_auth_url(className):
+    """
+    Return the URL for authentication of the class given by className.
+    """
+
     return 'http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true' \
         % className
 
