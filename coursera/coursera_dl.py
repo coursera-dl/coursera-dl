@@ -223,9 +223,11 @@ def get_syllabus(class_name, cookies_file, local_page=False):
 
         # cache the page if we're in 'local' mode
         if local_page:
-            open(local_page, 'w').write(page)
+            with open(local_page, 'w') as f:
+                f.write(page)
     else:
-        page = open(local_page).read()
+        with open(local_page) as f:
+            page = f.read()
         logging.info('Read (%d bytes) from local file', len(page))
 
     return page
