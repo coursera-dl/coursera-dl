@@ -399,7 +399,8 @@ def download_file(
     aria2_bin,
     ):
     """
-    Downloads file and removes current file if aborted by user.
+    Decides which download method to use for a given file. When the download
+    is aborted by the user, the partially downloaded file is also removed.
     """
 
     try:
