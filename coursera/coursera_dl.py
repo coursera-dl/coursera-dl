@@ -466,17 +466,17 @@ def download_file_nowget(url, fn, cookies_file):
         bw = BandwidthCalc()
         chunk_sz = 1048576
         bytesread = 0
-        f = open(fn, 'wb')
-        while True:
-            data = urlfile.read(chunk_sz)
-            if not data:
-                print '.'
-                break
-            bw.received(len(data))
-            f.write(data)
-            bytesread += len(data)
-            print '\r%d bytes read%s' % (bytesread, bw),
-            sys.stdout.flush()
+        with open(fn, 'wb') as f:
+            while True:
+                data = urlfile.read(chunk_sz)
+                if not data:
+                    print '.'
+                    break
+                bw.received(len(data))
+                f.write(data)
+                bytesread += len(data)
+                print '\r%d bytes read%s' % (bytesread, bw),
+                sys.stdout.flush()
         urlfile.close()
 
 
