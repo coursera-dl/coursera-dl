@@ -427,7 +427,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
     cmd = [wget_bin, url, '-O', fn, '--load-cookies', cookies_file,
            '--no-check-certificate']
     logging.debug('Executing wget: %s', cmd)
-    subprocess.call(cmd)
+    return subprocess.call(cmd)
 
 
 def download_file_curl(curl_bin, url, fn, cookies_file):
@@ -439,7 +439,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
     cmd = [curl_bin, url, '-k', '-#', '-L', '-o', fn, '--cookie',
            cookies_file]
     logging.debug('Executing curl: %s', cmd)
-    subprocess.call(cmd)
+    return subprocess.call(cmd)
 
 
 def download_file_aria2(aria2_bin, url, fn, cookies_file):
@@ -454,12 +454,15 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
            '--check-certificate=false', '--log-level=notice',
            '--max-connection-per-server=4', '--min-split-size=1M']
     logging.debug('Executing aria2: %s', cmd)
-    subprocess.call(cmd)
+    return subprocess.call(cmd)
 
 
 def download_file_nowget(url, fn, cookies_file):
     """
     'Native' python downloader -- slower than wget.
+
+    For consistency with subprocess.call, returns 0 to indicate success and
+    1 to indicate problems.
     """
 
     logging.info('Downloading %s -> %s', url, fn)
@@ -467,6 +470,7 @@ def download_file_nowget(url, fn, cookies_file):
         urlfile = get_opener(cookies_file).open(url)
     except urllib2.HTTPError:
         logging.warn('Probably the file is missing from the AWS repository... skipping it.')
+        return 1
     else:
         bw = BandwidthCalc()
         chunk_sz = 1048576
@@ -483,6 +487,7 @@ def download_file_nowget(url, fn, cookies_file):
                 print '\r%d bytes read%s' % (bytesread, bw),
                 sys.stdout.flush()
         urlfile.close()
+        return 0
 
 
 def parseArgs():
