@@ -1,4 +1,3 @@
-*.pyc
-*.pyo
+*.py[co]
 *~
 .DS_Store
