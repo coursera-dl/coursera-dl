@@ -95,6 +95,10 @@ class BandwidthCalc(object):
 
 
 def get_auth_url(className):
+    """
+    Return the URL for authentication of the class given by className.
+    """
+
     return 'http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true' \
         % className
 
@@ -223,9 +227,11 @@ def get_syllabus(class_name, cookies_file, local_page=False):
 
         # cache the page if we're in 'local' mode
         if local_page:
-            open(local_page, 'w').write(page)
+            with open(local_page, 'w') as f:
+                f.write(page)
     else:
-        page = open(local_page).read()
+        with open(local_page) as f:
+            page = f.read()
         logging.info('Read (%d bytes) from local file', len(page))
 
     return page
@@ -393,7 +399,8 @@ def download_file(
     aria2_bin,
     ):
     """
-    Downloads file and removes current file if aborted by user.
+    Decides which download method to use for a given file. When the download
+    is aborted by the user, the partially downloaded file is also removed.
     """
 
     try:
@@ -420,7 +427,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
     cmd = [wget_bin, url, '-O', fn, '--load-cookies', cookies_file,
            '--no-check-certificate']
     logging.debug('Executing wget: %s', cmd)
-    subprocess.call(cmd)
+    return subprocess.call(cmd)
 
 
 def download_file_curl(curl_bin, url, fn, cookies_file):
@@ -432,7 +439,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
     cmd = [curl_bin, url, '-k', '-#', '-L', '-o', fn, '--cookie',
            cookies_file]
     logging.debug('Executing curl: %s', cmd)
-    subprocess.call(cmd)
+    return subprocess.call(cmd)
 
 
 def download_file_aria2(aria2_bin, url, fn, cookies_file):
@@ -447,12 +454,15 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
            '--check-certificate=false', '--log-level=notice',
            '--max-connection-per-server=4', '--min-split-size=1M']
     logging.debug('Executing aria2: %s', cmd)
-    subprocess.call(cmd)
+    return subprocess.call(cmd)
 
 
 def download_file_nowget(url, fn, cookies_file):
     """
     'Native' python downloader -- slower than wget.
+
+    For consistency with subprocess.call, returns 0 to indicate success and
+    1 to indicate problems.
     """
 
     logging.info('Downloading %s -> %s', url, fn)
@@ -460,22 +470,24 @@ def download_file_nowget(url, fn, cookies_file):
         urlfile = get_opener(cookies_file).open(url)
     except urllib2.HTTPError:
         logging.warn('Probably the file is missing from the AWS repository... skipping it.')
+        return 1
     else:
         bw = BandwidthCalc()
         chunk_sz = 1048576
         bytesread = 0
-        f = open(fn, 'wb')
-        while True:
-            data = urlfile.read(chunk_sz)
-            if not data:
-                print '.'
-                break
-            bw.received(len(data))
-            f.write(data)
-            bytesread += len(data)
-            print '\r%d bytes read%s' % (bytesread, bw),
-            sys.stdout.flush()
+        with open(fn, 'wb') as f:
+            while True:
+                data = urlfile.read(chunk_sz)
+                if not data:
+                    print '.'
+                    break
+                bw.received(len(data))
+                f.write(data)
+                bytesread += len(data)
+                print '\r%d bytes read%s' % (bytesread, bw),
+                sys.stdout.flush()
         urlfile.close()
+        return 0
 
 
 def parseArgs():
