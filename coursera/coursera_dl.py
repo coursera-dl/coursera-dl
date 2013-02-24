@@ -261,7 +261,7 @@ def get_anchor_format(a):
     return (fmt.group(1) if fmt else None)
 
 
-def parse_syllabus(page, cookies_file):
+def parse_syllabus(page, cookies_file, reverse=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -310,8 +310,12 @@ def parse_syllabus(page, cookies_file):
     logging.info('Found %d sections and %d lectures on this page',
                  len(sections), sum(len(s[1]) for s in sections))
 
+    if sections and reverse:
+        sections = sections[::-1]
+
     if not len(sections):
         logging.error('Probably bad cookies file (or wrong class name)')
+
 
     return sections
 
@@ -606,6 +610,13 @@ def parseArgs():
                         action='append',
                         default=[],
                         help='additional classes to get')
+    parser.add_argument('-r',
+                        '--reverse',
+                        dest='reverse',
+                        action='store_true',
+                        default=False,
+                        help='Download sections in reversed order')
+
     args = parser.parse_args()
 
     # turn list of strings into list
@@ -658,7 +669,8 @@ def download_class(args, class_name):
 
     # parse it
     sections = parse_syllabus(page, args.cookies_file
-                              or tmp_cookie_file)
+                              or tmp_cookie_file,
+                              args.reverse)
 
     # obtain the resources
     download_lectures(
