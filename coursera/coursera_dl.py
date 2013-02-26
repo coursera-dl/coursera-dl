@@ -311,7 +311,7 @@ def parse_syllabus(page, cookies_file, reverse=False):
                  len(sections), sum(len(s[1]) for s in sections))
 
     if sections and reverse:
-        sections = sections[::-1]
+        sections.reverse()
 
     if not len(sections):
         logging.error('Probably bad cookies file (or wrong class name)')
