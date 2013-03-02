@@ -337,6 +337,7 @@ def download_lectures(
     wget_bin,
     curl_bin,
     aria2_bin,
+    axel_bin,
     cookies_file,
     class_name,
     sections,
@@ -386,7 +387,7 @@ def download_lectures(
                     if not skip_download:
                         logging.info('Downloading: %s' % lecfn)
                         download_file(url, lecfn, cookies_file, wget_bin,
-                                      curl_bin, aria2_bin)
+                                      curl_bin, aria2_bin, axel_bin)
                     else:
                         open(lecfn, 'w').close()  # touch
                 else:
@@ -400,6 +401,7 @@ def download_file(
     wget_bin,
     curl_bin,
     aria2_bin,
+    axel_bin,
     ):
     """
     Decides which download method to use for a given file. When the download
@@ -413,6 +415,8 @@ def download_file(
             download_file_curl(curl_bin, url, fn, cookies_file)
         elif aria2_bin:
             download_file_aria2(aria2_bin, url, fn, cookies_file)
+        elif axel_bin:
+            download_file_axel(axel_bin, url, fn, cookies_file)
         else:
             download_file_nowget(url, fn, cookies_file)
     except KeyboardInterrupt:
@@ -457,6 +461,23 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
            '--check-certificate=false', '--log-level=notice',
            '--max-connection-per-server=4', '--min-split-size=1M']
     logging.debug('Executing aria2: %s', cmd)
+    return subprocess.call(cmd)
+
+
+def download_file_axel(axel_bin, url, fn, cookies_file):
+    """
+    Downloads a file using axel.  Could possibly use python to stream files
+    to disk, but axel is robust and it both gives nice visual feedback and
+    get the job done fast.
+    """
+    
+    cj = cookielib.MozillaCookieJar(cookies_file)
+    cj.load()
+    cookies_header = "Cookie: " + "; ".join(i.name + '=' + i.value for i in list(cj))
+
+    cmd = [axel_bin, url, '-o', fn, '--header', cookies_header,
+           '--num-connections=4', '--alternate']
+    logging.debug('Executing axel: %s', cmd)
     return subprocess.call(cmd)
 
 
@@ -569,6 +590,11 @@ def parseArgs():
                         action='store',
                         default=None,
                         help='aria2 binary if it should be used for downloading')
+    parser.add_argument('--axel_bin',
+                        dest='axel_bin',
+                        action='store',
+                        default=None,
+                        help='axel binary if it should be used for downloading')
     parser.add_argument('-o',
                         '--overwrite',
                         dest='overwrite',
@@ -675,6 +701,7 @@ def download_class(args, class_name):
         args.wget_bin,
         args.curl_bin,
         args.aria2_bin,
+        args.axel_bin,
         args.cookies_file or tmp_cookie_file,
         class_name,
         sections,
