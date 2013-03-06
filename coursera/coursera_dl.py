@@ -470,10 +470,11 @@ def download_file_axel(axel_bin, url, fn, cookies_file):
     to disk, but axel is robust and it both gives nice visual feedback and
     get the job done fast.
     """
-    
+
     cj = cookielib.MozillaCookieJar(cookies_file)
     cj.load()
-    cookies_header = "Cookie: " + "; ".join(i.name + '=' + i.value for i in list(cj))
+    cookies_header = "Cookie: " + "; ".join(i.name + '=' + i.value
+                                            for i in list(cj))
 
     cmd = [axel_bin, url, '-o', fn, '--header', cookies_header,
            '--num-connections=4', '--alternate']
@@ -493,7 +494,8 @@ def download_file_nowget(url, fn, cookies_file):
     try:
         urlfile = get_opener(cookies_file).open(url)
     except urllib2.HTTPError:
-        logging.warn('Probably the file is missing from the AWS repository... skipping it.')
+        logging.warn('Probably the file is missing from the AWS repository...'
+                     ' skipping it.')
         return 1
     else:
         bw = BandwidthCalc()
@@ -546,7 +548,8 @@ def parseArgs():
                         nargs='?',
                         action='store',
                         default=None,
-                        help='use netrc for reading passwords, uses default location if no path specified')
+                        help='use netrc for reading passwords, uses default'
+                             ' location if no path specified')
 
     # required if username selected above
     parser.add_argument('-p',
@@ -562,19 +565,23 @@ def parseArgs():
                         dest='file_formats',
                         action='store',
                         default='all',
-                        help='file format extensions to be downloaded in quotes space separated, e.g. "mp4 pdf" (default: special value "all")')
+                        help='file format extensions to be downloaded in'
+                             ' quotes space separated, e.g. "mp4 pdf" '
+                             '(default: special value "all")')
     parser.add_argument('-sf',
                         '--section_filter',
                         dest='section_filter',
                         action='store',
                         default=None,
-                        help='only download sections which contain this regex (default: disabled)')
+                        help='only download sections which contain this'
+                             ' regex (default: disabled)')
     parser.add_argument('-lf',
                         '--lecture_filter',
                         dest='lecture_filter',
                         action='store',
                         default=None,
-                        help='only download lectures which contain this regex (default: disabled)')
+                        help='only download lectures which contain this regex'
+                             ' (default: disabled)')
     parser.add_argument('-w',
                         '--wget_bin',
                         dest='wget_bin',
