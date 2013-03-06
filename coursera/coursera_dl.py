@@ -543,6 +543,7 @@ def parseArgs():
     parser.add_argument('-n',
                         '--netrc',
                         dest='netrc',
+                        nargs='?',
                         action='store',
                         default=None,
                         help='use netrc for reading passwords, uses default location if no path specified')
