@@ -157,7 +157,7 @@ def get_netrc_path(path=None):
                 path = '%s\\_netrc' % profilepath
             else:
                 path = '\\_netrc'
-        return path
+    return path
 
 
 def load_cookies_file(cookies_file):
