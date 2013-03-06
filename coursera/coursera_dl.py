@@ -385,13 +385,13 @@ def download_lectures(
 
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
-                        logging.info('Downloading: %s' % lecfn)
+                        logging.info('Downloading: %s', lecfn)
                         download_file(url, lecfn, cookies_file, wget_bin,
                                       curl_bin, aria2_bin, axel_bin)
                     else:
                         open(lecfn, 'w').close()  # touch
                 else:
-                    logging.info('%s already downloaded' % lecfn)
+                    logging.info('%s already downloaded', lecfn)
 
 
 def download_file(
