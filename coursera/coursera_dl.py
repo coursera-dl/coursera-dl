@@ -666,7 +666,7 @@ def parseArgs():
             auths = netrc.netrc(path).authenticators('coursera-dl')
             args.username = auths[0]
             args.password = auths[2]
-        except Exception as e:
+        except (IOError, TypeError, netrc.NetrcParseError) as e:
             logging.error(str(e))
             sys.exit(1)
 
