@@ -131,7 +131,7 @@ def write_cookie_file(className, username, password):
         req = urllib2.Request(ref, data)
 
         opener.open(req)
-    except Exception as e:
+    except urllib2.HTTPError as e:
         if '404' in str(e):
             raise ClassNotFoundException(className)
 
