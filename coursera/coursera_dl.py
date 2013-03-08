@@ -132,7 +132,7 @@ def write_cookie_file(className, username, password):
 
         opener.open(req)
     except urllib2.HTTPError as e:
-        if '404' in str(e):
+        if e.code == 404:
             raise ClassNotFoundException(className)
 
     cj.save()
