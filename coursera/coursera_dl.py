@@ -3,7 +3,7 @@
 
 """
 For downloading lecture resources such as videos for Coursera classes. Given
-a class name, username and password, it scrapes the coarse listing page to
+a class name, username and password, it scrapes the course listing page to
 get the section (week) and lecture names, and then downloads the related
 materials into appropriately named files and directories.
 
