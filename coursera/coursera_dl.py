@@ -179,7 +179,7 @@ def down_the_wabbit_hole(className, cookies_file):
     """
     Get the session cookie
     """
-    auth_redirector_url = str('https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, urllib.quote_plus(get_syllabus_url(className))))
+    auth_redirector_url = 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, urllib.quote_plus(get_syllabus_url(className)))
 
     global session
     cj = get_cookie_jar(cookies_file)
@@ -484,7 +484,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
     """
 
     cmd = [wget_bin, url, '-O', fn, '--no-cookies', '--header',
-           str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
+           "Cookie: csrf_token=%s; session=%s" % (csrftoken, session),
            '--no-check-certificate']
     logging.debug('Executing wget: %s', cmd)
     return subprocess.call(cmd)
@@ -497,7 +497,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
     """
 
     cmd = [curl_bin, url, '-k', '-#', '-L', '-o', fn, '--cookie',
-           str("csrf_token=%s; session=%s" % (csrftoken, session))]
+           "csrf_token=%s; session=%s" % (csrftoken, session)]
     logging.debug('Executing curl: %s', cmd)
     return subprocess.call(cmd)
 
@@ -511,7 +511,7 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
     """
 
     cmd = [aria2_bin, url, '-o', fn, '--header',
-           str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
+           "Cookie: csrf_token=%s; session=%s" % (csrftoken, session),
            '--check-certificate=false', '--log-level=notice',
            '--max-connection-per-server=4', '--min-split-size=1M']
     logging.debug('Executing aria2: %s', cmd)
