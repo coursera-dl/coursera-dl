@@ -42,6 +42,9 @@ try:
 except ImportError:
     from bs4 import BeautifulSoup
 
+csrftoken = ''
+session = ''
+
 
 class ClassNotFoundException(BaseException):
     """
@@ -99,36 +102,58 @@ def get_auth_url(className):
     Return the URL for authentication of the class given by className.
     """
 
-    return 'http://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true' \
+    return 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true' \
         % className
 
+def get_new_auth_url():
+    return 'https://www.coursera.org/maestro/api/user/login'
 
 def get_syllabus_url(className):
     """
     Return the Coursera index/syllabus URL.
     """
 
-    return 'http://class.coursera.org/%s/lecture/index' % className
+    return 'https://class.coursera.org/%s/lecture/index' % className
 
 
 def write_cookie_file(className, username, password):
     """
     Automatically generate a cookie file for the coursera site.
     """
-
     try:
+        global csrftoken
+        global session
         hn, fn = tempfile.mkstemp()
+        cookies = cookielib.LWPCookieJar()
+        handlers = [
+            urllib2.HTTPHandler(),
+            urllib2.HTTPSHandler(),
+            urllib2.HTTPCookieProcessor(cookies)
+        ]
+        opener = urllib2.build_opener(*handlers)
+
+        req = urllib2.Request(get_syllabus_url(className))
+        res = opener.open(req)
+
+        for cookie in cookies:
+            if cookie.name == 'csrf_token':
+                csrftoken = cookie.value
+                break
+        opener.close()
+
+        # Now make a call to the authenticator url:
         cj = cookielib.MozillaCookieJar(fn)
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
-                                      urllib2.HTTPHandler())
+                                      urllib2.HTTPHandler(),
+                                      urllib2.HTTPSHandler())
 
-        req = urllib2.Request(get_auth_url(className))
-        ref = opener.open(req).geturl()
+        opener.addheaders.append(('Cookie', 'csrftoken=%s' % csrftoken))
+        opener.addheaders.append(('Referer', 'https://www.coursera.org'))
+        opener.addheaders.append(('X-CSRFToken', csrftoken))
+        req = urllib2.Request(get_new_auth_url())
 
-        data = urllib.urlencode({'email': username,
-                                 'password': password,
-                                 'login': 'Login'})
-        req = urllib2.Request(ref, data)
+        data = urllib.urlencode({'email_address': username,'password': password})
+        req.add_data(data)
 
         opener.open(req)
     except urllib2.HTTPError as e:
@@ -138,9 +163,28 @@ def write_cookie_file(className, username, password):
     cj.save()
     opener.close()
     os.close(hn)
-
     return fn
 
+def down_the_wabbit_hole(className, cookies_file):
+    """
+    Get the session cookie
+    """
+    auth_redirector_url = str('https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, urllib.quote_plus(get_syllabus_url(className))))
+    
+    global session
+    cj = get_cookie_jar(cookies_file)
+
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler(),
+                                      urllib2.HTTPSHandler())
+
+    req = urllib2.Request(auth_redirector_url)
+    opener.open(req)
+
+    for cookie in cj:
+            if cookie.name == 'session':
+                session = cookie.value
+                break
+    opener.close()
 
 def get_netrc_path(path=None):
     """
@@ -175,21 +219,26 @@ def load_cookies_file(cookies_file):
     cookies.seek(0)
     return cookies
 
-
-def get_opener(cookies_file):
-    """
-    Use cookie file to create a url opener.
-    """
-
+def get_cookie_jar(cookies_file):
     cj = cookielib.MozillaCookieJar()
     cookies = load_cookies_file(cookies_file)
 
     # nasty hack: cj.load() requires a filename not a file, but if I use
     # stringio, that file doesn't exist. I used NamedTemporaryFile before,
     # but encountered problems on Windows.
-
     cj._really_load(cookies, 'StringIO.cookies', False, False)
-    return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+
+    return cj
+
+def get_opener(cookies_file):
+    """
+    Use cookie file to create a url opener.
+    """
+
+    cj = get_cookie_jar(cookies_file)
+    
+    return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler(),
+                                      urllib2.HTTPSHandler())
 
 
 def get_page(url, cookies_file):
@@ -197,8 +246,14 @@ def get_page(url, cookies_file):
     Download an HTML page using the cookiejar.
     """
 
-    opener = get_opener(cookies_file)
-    ret = opener.open(url).read()
+    opener = urllib2.build_opener(urllib2.HTTPHandler(), urllib2.HTTPSHandler())
+    req = urllib2.Request(url)
+
+    opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' % (csrftoken, session)))
+    ret = opener.open(req).read()
+
+    # opener = get_opener(cookies_file)
+    # ret = opener.open(url).read()
     opener.close()
     return ret
 
@@ -222,6 +277,7 @@ def get_syllabus(class_name, cookies_file, local_page=False):
 
     if not (local_page and os.path.exists(local_page)):
         url = get_syllabus_url(class_name)
+        down_the_wabbit_hole(class_name, cookies_file)
         page = get_page(url, cookies_file)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
 
@@ -431,7 +487,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
     to disk, but wget is robust and gives nice visual feedback.
     """
 
-    cmd = [wget_bin, url, '-O', fn, '--load-cookies', cookies_file,
+    cmd = [wget_bin, url, '-O', fn, '--no-cookies', '--header', str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
            '--no-check-certificate']
     logging.debug('Executing wget: %s', cmd)
     return subprocess.call(cmd)
@@ -444,7 +500,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
     """
 
     cmd = [curl_bin, url, '-k', '-#', '-L', '-o', fn, '--cookie',
-           cookies_file]
+           str("csrf_token=%s; session=%s" % (csrftoken, session))]
     logging.debug('Executing curl: %s', cmd)
     return subprocess.call(cmd)
 
@@ -457,7 +513,7 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
     alternatives.
     """
 
-    cmd = [aria2_bin, url, '-o', fn, '--load-cookies', cookies_file,
+    cmd = [aria2_bin, url, '-o', fn, '--header', str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
            '--check-certificate=false', '--log-level=notice',
            '--max-connection-per-server=4', '--min-split-size=1M']
     logging.debug('Executing aria2: %s', cmd)
@@ -492,7 +548,9 @@ def download_file_nowget(url, fn, cookies_file):
 
     logging.info('Downloading %s -> %s', url, fn)
     try:
-        urlfile = get_opener(cookies_file).open(url)
+        opener = get_opener(cookies_file)
+        opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' % (csrftoken, session)))
+        urlfile = opener.open(url)
     except urllib2.HTTPError:
         logging.warn('Probably the file is missing from the AWS repository...'
                      ' skipping it.')
