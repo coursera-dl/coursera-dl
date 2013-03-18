@@ -105,8 +105,10 @@ def get_auth_url(className):
     return 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true' \
         % className
 
+
 def get_new_auth_url():
     return 'https://www.coursera.org/maestro/api/user/login'
+
 
 def get_syllabus_url(className):
     """
@@ -152,7 +154,8 @@ def write_cookie_file(className, username, password):
         opener.addheaders.append(('X-CSRFToken', csrftoken))
         req = urllib2.Request(get_new_auth_url())
 
-        data = urllib.urlencode({'email_address': username,'password': password})
+        data = urllib.urlencode({'email_address': username,
+                                 'password': password})
         req.add_data(data)
 
         opener.open(req)
@@ -165,17 +168,19 @@ def write_cookie_file(className, username, password):
     os.close(hn)
     return fn
 
+
 def down_the_wabbit_hole(className, cookies_file):
     """
     Get the session cookie
     """
     auth_redirector_url = str('https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, urllib.quote_plus(get_syllabus_url(className))))
-    
+
     global session
     cj = get_cookie_jar(cookies_file)
 
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler(),
-                                      urllib2.HTTPSHandler())
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
+                                  urllib2.HTTPHandler(),
+                                  urllib2.HTTPSHandler())
 
     req = urllib2.Request(auth_redirector_url)
     opener.open(req)
@@ -185,6 +190,7 @@ def down_the_wabbit_hole(className, cookies_file):
                 session = cookie.value
                 break
     opener.close()
+
 
 def get_netrc_path(path=None):
     """
@@ -219,6 +225,7 @@ def load_cookies_file(cookies_file):
     cookies.seek(0)
     return cookies
 
+
 def get_cookie_jar(cookies_file):
     cj = cookielib.MozillaCookieJar()
     cookies = load_cookies_file(cookies_file)
@@ -230,15 +237,17 @@ def get_cookie_jar(cookies_file):
 
     return cj
 
+
 def get_opener(cookies_file):
     """
     Use cookie file to create a url opener.
     """
 
     cj = get_cookie_jar(cookies_file)
-    
-    return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler(),
-                                      urllib2.HTTPSHandler())
+
+    return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
+                                urllib2.HTTPHandler(),
+                                urllib2.HTTPSHandler())
 
 
 def get_page(url, cookies_file):
@@ -328,7 +337,7 @@ def parse_syllabus(page, cookies_file, reverse=False):
 
     # traverse sections
     for stag in soup.findAll(attrs={'class':
-                                        re.compile('^course-item-list-header')}):
+                                    re.compile('^course-item-list-header')}):
         assert stag.contents[0] is not None, "couldn't find section"
         section_name = clean_filename(stag.contents[0].contents[1])
         logging.info(section_name)
@@ -389,22 +398,21 @@ def mkdir_p(path):
             raise
 
 
-def download_lectures(
-    wget_bin,
-    curl_bin,
-    aria2_bin,
-    axel_bin,
-    cookies_file,
-    class_name,
-    sections,
-    file_formats,
-    overwrite=False,
-    skip_download=False,
-    section_filter=None,
-    lecture_filter=None,
-    path='',
-    verbose_dirs=False,
-    ):
+def download_lectures(wget_bin,
+                      curl_bin,
+                      aria2_bin,
+                      axel_bin,
+                      cookies_file,
+                      class_name,
+                      sections,
+                      file_formats,
+                      overwrite=False,
+                      skip_download=False,
+                      section_filter=None,
+                      lecture_filter=None,
+                      path='',
+                      verbose_dirs=False,
+                      ):
     """
     Downloads lecture resources described by sections.
     """
@@ -450,15 +458,14 @@ def download_lectures(
                     logging.info('%s already downloaded', lecfn)
 
 
-def download_file(
-    url,
-    fn,
-    cookies_file,
-    wget_bin,
-    curl_bin,
-    aria2_bin,
-    axel_bin,
-    ):
+def download_file(url,
+                  fn,
+                  cookies_file,
+                  wget_bin,
+                  curl_bin,
+                  aria2_bin,
+                  axel_bin,
+                  ):
     """
     Decides which download method to use for a given file. When the download
     is aborted by the user, the partially downloaded file is also removed.
@@ -487,7 +494,8 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
     to disk, but wget is robust and gives nice visual feedback.
     """
 
-    cmd = [wget_bin, url, '-O', fn, '--no-cookies', '--header', str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
+    cmd = [wget_bin, url, '-O', fn, '--no-cookies', '--header',
+           str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
            '--no-check-certificate']
     logging.debug('Executing wget: %s', cmd)
     return subprocess.call(cmd)
@@ -513,7 +521,8 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
     alternatives.
     """
 
-    cmd = [aria2_bin, url, '-o', fn, '--header', str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
+    cmd = [aria2_bin, url, '-o', fn, '--header',
+           str("Cookie: csrf_token=%s; session=%s" % (csrftoken, session)),
            '--check-certificate=false', '--log-level=notice',
            '--max-connection-per-server=4', '--min-split-size=1M']
     logging.debug('Executing aria2: %s', cmd)
@@ -549,7 +558,8 @@ def download_file_nowget(url, fn, cookies_file):
     logging.info('Downloading %s -> %s', url, fn)
     try:
         opener = get_opener(cookies_file)
-        opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' % (csrftoken, session)))
+        opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' %
+                                  (csrftoken, session)))
         urlfile = opener.open(url)
     except urllib2.HTTPError:
         logging.warn('Probably the file is missing from the AWS repository...'
@@ -763,22 +773,21 @@ def download_class(args, class_name):
                               or tmp_cookie_file, args.reverse)
 
     # obtain the resources
-    download_lectures(
-        args.wget_bin,
-        args.curl_bin,
-        args.aria2_bin,
-        args.axel_bin,
-        args.cookies_file or tmp_cookie_file,
-        class_name,
-        sections,
-        args.file_formats,
-        args.overwrite,
-        args.skip_download,
-        args.section_filter,
-        args.lecture_filter,
-        args.path,
-        args.verbose_dirs,
-        )
+    download_lectures(args.wget_bin,
+                      args.curl_bin,
+                      args.aria2_bin,
+                      args.axel_bin,
+                      args.cookies_file or tmp_cookie_file,
+                      class_name,
+                      sections,
+                      args.file_formats,
+                      args.overwrite,
+                      args.skip_download,
+                      args.section_filter,
+                      args.lecture_filter,
+                      args.path,
+                      args.verbose_dirs,
+                      )
 
     if not args.cookies_file:
         os.unlink(tmp_cookie_file)
