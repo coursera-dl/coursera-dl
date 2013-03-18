@@ -11,6 +11,9 @@ Examples:
   coursera-dl -u <user> -p <passwd> saas
   coursera-dl -u <user> -p <passwd> -l listing.html -o saas --skip-download
 
+For further documentation and examples, visit the project's home at:
+  https://github.com/jplehmann/coursera
+
 Author:
   John Lehmann (first last at geemail dotcom or @jplehmann)
 
