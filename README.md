@@ -1,9 +1,6 @@
 Coursera Downloader
 ===================
 
-### NOTE: The script is temporarily broken due to a site change by Coursera on 3/15/2013. If you'd like to help update the authentication logic, go [here].
-
-<br>
 [Coursera][1] is creating some fantastic, free educational classes (e.g.,
 algorithms, machine learning, natural language processing, SaaS).  This
 script allows one to batch download lecture resources (e.g., videos, ppt,
@@ -144,6 +141,3 @@ first last at geemail dotcom or [@jplehmann][12]
 [10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [11]: https://github.com/jplehmann/coursera/issues
 [12]: https://twitter.com/jplehmann
-
-[here]: https://github.com/jplehmann/coursera/issues/74
-
