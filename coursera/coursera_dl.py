@@ -218,14 +218,14 @@ def get_netrc_path(path=None):
 
 def load_cookies_file(cookies_file):
     """
-    Loads the cookies file. I am pre-pending the file with the special
-    Netscape header because the cookie loader is being very particular about
-    this string.
+    Loads the cookies file.
+
+    We pre-pend the file with the special Netscape header because the cookie
+    loader is very particular about this string.
     """
 
     cookies = StringIO.StringIO()
-    NETSCAPE_HEADER = '# Netscape HTTP Cookie File'
-    cookies.write(NETSCAPE_HEADER)
+    cookies.write('# Netscape HTTP Cookie File')
     cookies.write(open(cookies_file, 'r').read())
     cookies.flush()
     cookies.seek(0)
