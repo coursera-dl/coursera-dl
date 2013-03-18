@@ -267,18 +267,6 @@ def get_page(url, cookies_file):
     return ret
 
 
-def grab_hidden_video_url(href, cookies_file):
-    """
-    Follow some extra redirects to grab hidden video URLs (like those from
-    University of Washington).
-    """
-
-    page = get_page(href, cookies_file)
-    soup = BeautifulSoup(page)
-    l = soup.find('source', attrs={'type': 'video/mp4'})
-    return l['src']
-
-
 def get_syllabus(class_name, cookies_file, local_page=False):
     """
     Get the course listing webpage.
@@ -357,16 +345,11 @@ def parse_syllabus(page, cookies_file, reverse=False):
                 if fmt:
                     lecture[fmt] = href
 
-            # Special case: we possibly have hidden video links---thanks to
-            # the University of Washington for that.
+            # We don't seem to have hidden videos anymore.  University of
+            # Washington is now using Coursera's standards, AFAICS.  We
+            # raise an exception, to be warned by our users, just in case.
             if 'mp4' not in lecture:
-                for a in vtag.findAll('a'):
-                    if a.get('data-lecture-view-link'):
-                        href = grab_hidden_video_url(a['data-lecture-view-link'],
-                                                     cookies_file)
-                        fmt = 'mp4'
-                        logging.debug('    %s %s', fmt, href)
-                        lecture[fmt] = href
+                raise ClassNotFoundException("Missing/hidden videos?")
 
             lectures.append((vname, lecture))
 
