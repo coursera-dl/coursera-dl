@@ -192,9 +192,9 @@ def down_the_wabbit_hole(className, cookies_file):
     opener.open(req)
 
     for cookie in cj:
-            if cookie.name == 'session':
-                session = cookie.value
-                break
+        if cookie.name == 'session':
+            session = cookie.value
+            break
     opener.close()
 
 
