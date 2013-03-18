@@ -48,7 +48,7 @@ except ImportError:
 
 csrftoken = ''
 session = ''
-
+NEW_AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 
 class ClassNotFoundException(BaseException):
     """
@@ -101,19 +101,6 @@ class BandwidthCalc(object):
             return bw
 
 
-def get_auth_url(className):
-    """
-    Return the URL for authentication of the class given by className.
-    """
-
-    return 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=&minimal=true' \
-        % className
-
-
-def get_new_auth_url():
-    return 'https://www.coursera.org/maestro/api/user/login'
-
-
 def get_syllabus_url(className):
     """
     Return the Coursera index/syllabus URL.
@@ -153,14 +140,22 @@ def write_cookie_file(className, username, password):
                                       urllib2.HTTPHandler(),
                                       urllib2.HTTPSHandler())
 
-        opener.addheaders.append(('Cookie', 'csrftoken=%s' % csrftoken))
-        opener.addheaders.append(('Referer', 'https://www.coursera.org'))
-        opener.addheaders.append(('X-CSRFToken', csrftoken))
-        req = urllib2.Request(get_new_auth_url())
+        # Preparation of headers and of data that we will send in a POST
+        # request.
+        std_headers = {
+            'Cookie': ('csrftoken=%s' % csrftoken),
+            'Referer': 'https://www.coursera.org',
+            'X-CSRFToken': csrftoken,
+            }
 
-        data = urllib.urlencode({'email_address': username,
-                                 'password': password})
-        req.add_data(data)
+        auth_data = {
+            'email_address': username,
+            'password': password
+            }
+
+        formatted_data = urllib.urlencode(auth_data)
+
+        req = urllib2.Request(NEW_AUTH_URL, formatted_data, std_headers)
 
         opener.open(req)
     except urllib2.HTTPError as e:
