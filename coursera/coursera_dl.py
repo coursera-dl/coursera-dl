@@ -25,6 +25,7 @@ backward compatible.
 
 import argparse
 import cookielib
+import datetime
 import errno
 import getpass
 import logging
@@ -399,7 +400,9 @@ def download_lectures(wget_bin,
                       ):
     """
     Downloads lecture resources described by sections.
+    Returns True if the class appears completed.
     """
+    last_update = None
 
     def format_section(num, section):
         sec = '%02d_%s' % (num, section)
@@ -438,8 +441,20 @@ def download_lectures(wget_bin,
                                       curl_bin, aria2_bin, axel_bin)
                     else:
                         open(lecfn, 'w').close()  # touch
+                    last_update = time.time()
                 else:
                     logging.info('%s already downloaded', lecfn)
+                    # if this file hasn't been modified in a long time,
+                    # record that time
+                    last_update = max(last_update, os.path.getmtime(lecfn))
+
+    # if we haven't updated any files in 1 month, we're probably
+    # done with this course
+    if last_update:
+        if time.time() - last_update > datetime.timedelta(days=30).total_seconds():
+            logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
+            return True
+    return False
 
 
 def download_file(url,
@@ -742,6 +757,7 @@ def parseArgs():
 def download_class(args, class_name):
     """
     Download all requested resources from the class given in class_name.
+    Returns True if the class appears completed.
     """
 
     if args.username:
@@ -757,7 +773,8 @@ def download_class(args, class_name):
                               or tmp_cookie_file, args.reverse)
 
     # obtain the resources
-    download_lectures(args.wget_bin,
+    completed = download_lectures(
+                      args.wget_bin,
                       args.curl_bin,
                       args.aria2_bin,
                       args.axel_bin,
@@ -776,6 +793,8 @@ def download_class(args, class_name):
     if not args.cookies_file:
         os.unlink(tmp_cookie_file)
 
+    return completed
+
 
 def main():
     """
@@ -783,12 +802,18 @@ def main():
     """
 
     args = parseArgs()
+    completed_classes = []
+
     for class_name in args.class_names:
         try:
             logging.info('Downloading class: %s', class_name)
-            download_class(args, class_name)
+            if download_class(args, class_name):
+                completed_classes.append(class_name)
         except ClassNotFoundException as cnf:
             logging.error('Could not find class: %s', cnf)
+
+    if completed_classes:
+        logging.info("Classes which appear completed: " + " ".join(completed_classes))
 
 
 if __name__ == '__main__':
