@@ -69,7 +69,7 @@ requirements file using `pip install -r requirements.txt`.
 e.g. http://saas-class.org
 
 3\. Run the script to download the materials by providing your Coursera
-username, password (or a `~/.netrc` file), the class names
+account (e.g., email address), password (or a `~/.netrc` file), the class names
 
     General:                     coursera-dl -u <user> -p <pass> saas
     Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp proglang-2012-001
