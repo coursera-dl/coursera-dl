@@ -78,6 +78,10 @@ account (e.g., email address), password (or a `~/.netrc` file), the class names
     Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
     Use a ~/.netrc file:         coursera-dl -n saas
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
+    
+    Maintain a list of classes in a dir:
+      Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
+      Update:                  coursera-dl -n --path CURRENT `ls CURRENT`
 
 On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to
 specifying both your username and password every time on the command
