@@ -396,6 +396,7 @@ def download_lectures(wget_bin,
                       lecture_filter=None,
                       path='',
                       verbose_dirs=False,
+                      hooks=[]
                       ):
     """
     Downloads lecture resources described by sections.
@@ -440,6 +441,8 @@ def download_lectures(wget_bin,
                         open(lecfn, 'w').close()  # touch
                 else:
                     logging.info('%s already downloaded', lecfn)
+        for hook in hooks:
+            os.system("cd \"%s\"; %s" % (sec, hook))
 
 
 def download_file(url,
@@ -701,6 +704,11 @@ def parseArgs():
                         action='store_true',
                         default=False,
                         help='download sections in reverse order')
+    parser.add_argument('--hook',
+                        dest='hooks',
+                        action='append',
+                        default=[],
+                        help='hooks to run when finished')
 
     args = parser.parse_args()
 
@@ -771,6 +779,7 @@ def download_class(args, class_name):
                       args.lecture_filter,
                       args.path,
                       args.verbose_dirs,
+                      args.hooks
                       )
 
     if not args.cookies_file:
