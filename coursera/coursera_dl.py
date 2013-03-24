@@ -719,6 +719,17 @@ def parseArgs():
 
     args = parser.parse_args()
 
+    # Initialize the logging system first so that other functions can use it right away
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(name)s[%(funcName)s] %(message)s')
+    elif args.quiet:
+        logging.basicConfig(level=logging.ERROR,
+                            format='%(name)s: %(message)s')
+    else:
+        logging.basicConfig(level=logging.INFO,
+                            format='%(message)s')
+
     # turn list of strings into list
     args.file_formats = args.file_formats.split()
 
@@ -741,15 +752,6 @@ def parseArgs():
         args.password = getpass.getpass('Coursera password for %s: '
                                         % args.username)
 
-    if args.debug:
-        logging.basicConfig(level=logging.DEBUG,
-                            format='%(name)s[%(funcName)s] %(message)s')
-    elif args.quiet:
-        logging.basicConfig(level=logging.ERROR,
-                            format='%(name)s: %(message)s')
-    else:
-        logging.basicConfig(level=logging.INFO,
-                            format='%(message)s')
 
     return args
 
