@@ -1,16 +1,16 @@
 Coursera Downloader
 ===================
 
-[Coursera][1] is creating some fantastic, free educational classes (e.g.,
-algorithms, machine learning, natural language processing, SaaS).  This
-script allows one to batch download lecture resources (e.g., videos, ppt,
-etc) for a Coursera class.  Given a class name and account credentials, it
-scrapes the course listing page to get the week and class names, and then
-downloads the related materials into appropriately named files and
-directories.
+[Coursera][1] is arguably the leader in *massive open online courses* (MOOC) 
+with a selection of more than 300 classes\[[1][13]\].
 
-Why is this helpful?  Before I was using [*wget*][2], but I had the
-following problems:
+This script allows one to batch download lecture resources (e.g., videos, ppt,
+etc) for Coursera classes.  Given one or more class names and account credentials, 
+it obtains week and class names from the *lectures* page, and then downloads 
+the related materials into appropriately named files and directories.
+
+Why is this helpful?  A utility like [`wget`][2] can work, but has the
+following limitations:
 
 1. Video names have a number in them, but this does not correspond to the
    actual order.  Manually renaming them is a pain.
@@ -18,10 +18,11 @@ following problems:
 3. Using a wget in a for loop picks up extra videos which are not
    posted/linked, and these are sometimes duplicates.
 
-*DownloadThemAll* can also work, but this provides better names.
+*DownloadThemAll* is another possiblity, but this script provides more features such
+as appropriately named files.
 
-Inspired in part by [youtube-dl][3] by which I've downloaded many other good
-videos such as those from Khan Academy.
+This work was originally inspired in part by [youtube-dl][3] by which 
+I've downloaded many other good videos such as those from Khan Academy.
 
 
 Features
@@ -145,3 +146,4 @@ first last at geemail dotcom or [@jplehmann][12]
 [10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [11]: https://github.com/jplehmann/coursera/issues
 [12]: https://twitter.com/jplehmann
+[13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
