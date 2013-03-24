@@ -2,7 +2,8 @@ Coursera Downloader
 ===================
 
 [Coursera][1] is arguably the leader in *massive open online courses* (MOOC) 
-with a selection of more than 300 classes\[[1][13]\].
+with a selection of more than 300 classes from 62 different institutions [as of
+February 2013][13].
 
 This script allows one to batch download lecture resources (e.g., videos, ppt,
 etc) for Coursera classes.  Given one or more class names and account credentials, 
