@@ -2,10 +2,13 @@ Coursera Downloader
 ===================
 
 [Coursera][1] is arguably the leader in *massive open online courses* (MOOC) 
-with a selection of more than 300 classes from 62 different institutions [as of
-February 2013][13].
+with a selection of more than 300 classes from 62 different institutions [as of 
+February 2013][13]. Generous contributions by educators and institutions are 
+making excellent education available to many who could not afford it otherwise. 
+There are even non-profits with "feet on the ground" in remote areas of the
+world who are helping spread the wealth (see the feedback below from [Tunapanda][14]).
 
-This script allows one to batch download lecture resources (e.g., videos, ppt,
+This script makes it easier to batch download lecture resources (e.g., videos, ppt,
 etc) for Coursera classes.  Given one or more class names and account credentials, 
 it obtains week and class names from the *lectures* page, and then downloads 
 the related materials into appropriately named files and directories.
@@ -107,13 +110,13 @@ Troubleshooting
 
 * When reporting bugs against `coursera-dl`, please don't forget to include
   enough information so that you can help us help you:
-  - Is the problem happening with the latest version of the script?
-  - What is the course that you are trying to access:
-  - What is the precise command line that you are using (feel free to hide
-    your username and password with asterisks, but leave all other
-    information untouched).
-  - What are the precise messages that you get? Please, copy and past them.
-    Don't reword the messages.
+    * Is the problem happening with the latest version of the script?
+    * What is the course that you are trying to access:
+    * What is the precise command line that you are using (feel free to hide
+      your username and password with asterisks, but leave all other
+      information untouched).
+    * What are the precise messages that you get? Please, copy and past them.
+      Don't reword the messages.
 
 * Make sure the classname you are using corresponds to the resource name used in
   the URL for that class:
@@ -127,6 +130,37 @@ Troubleshooting
 * If results show 0 sections, you most likely have provided invalid
   credentials (username and/or password in the command line or in your
   `.netrc` file).
+
+
+Feedback
+--------
+
+I enjoy getting feedback. Here are a few of the comments I've received:
+
+* "Thanks for the good job! Knowledge will flood the World a little more thanks
+  to your script!"
+  <br>Guillaume V. 11/8/2012
+  
+* "Just wanted to send you props for your Python script to download Coursera
+  courses. I've been using it in Kenya for my non-profit to get online courses
+  to places where internet is really expensive and unreliable. Mostly kids here
+  can't afford high school, and downloading one of these classes by the usual
+  means would cost more than the average family earns in one week. Thanks!"
+  <br>Jay L., [Tunapanda][14] 3/20/2013
+
+  
+* "I am a big fan of Coursera and attend lots of different courses. Time
+  constraints don't allow me to attend all the courses I want at the same time.
+  I came across your script, and I am very happily using it!  Great stuff and
+  thanks for making this available on Github - well done!"
+  <br>William G.  2/18/2013
+  
+* "This script is awesome! I was painstakingly downloading each and every video
+  and ppt by hand -- looked into wget but ran into wildcard issues with HTML,
+  and then.. I came across your script.  Can't tell you how many hours you've
+  just saved me :) If you're ever in Paris / Stockholm, it is absolutely
+  mandatory that I buy you a beer :)"
+  <br>Razvan T. 11/26/2012
 
 
 Contact
@@ -148,3 +182,4 @@ first last at geemail dotcom or [@jplehmann][12]
 [11]: https://github.com/jplehmann/coursera/issues
 [12]: https://twitter.com/jplehmann
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
+[14]: http://www.tunapanda.org
