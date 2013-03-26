@@ -451,10 +451,17 @@ def download_lectures(wget_bin,
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
     if last_update:
-        if time.time() - last_update > datetime.timedelta(days=30).total_seconds():
+        if time.time() - last_update > total_seconds(datetime.timedelta(days=30)):
             logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
             return True
     return False
+
+
+def total_seconds(td):
+  """ Compute total seconds for a timedelta.
+  Added for backward compatibility, pre 2.7.
+  """
+  return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
 
 
 def download_file(url,
