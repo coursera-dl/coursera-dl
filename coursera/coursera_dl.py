@@ -41,6 +41,7 @@ import tempfile
 import time
 import urllib
 import urllib2
+from collections import OrderedDict
 
 try:
     from BeautifulSoup import BeautifulSoup
@@ -194,23 +195,98 @@ def down_the_wabbit_hole(className, cookies_file):
     opener.close()
 
 
-def get_netrc_path(path=None):
+def get_config_paths(config_name, user_specified_path=None):
     """
-    Loads netrc file from given path or default location
+    Returns a list of config files paths to try in order, given config file
+    name and possibly a user-specified path
     """
 
-    if not path and platform.system() == 'Windows':
-        # set some sane default on windows
-        if os.path.isfile('_netrc'):
-            path = '_netrc'
-        else:
-            profilepath = os.getenv('USERPROFILE')
-            if profilepath:
-                path = '%s\\_netrc' % profilepath
+    # For Windows platforms, there are several paths that can be tried to
+    # retrieve the netrc file. There is, however, no "standard way" of doing
+    # things.
+    # A brief recap of the situation (all file paths are written in Unix
+    # convention) :
+    # 1. By default, Windows does not define a $HOME path. However, some people
+    # might define one manually, and many command-line tools imported from Unix
+    # will search the $HOME environment variable first. This includes MSYSGit
+    # tools (bash, ssh, ...) and emacs.
+    # 2. Windows defines two 'user paths' : $USERPROFILE, and the
+    # concatenation of the two variables $HOMEDRIVE and $HOMEPATH. Both of
+    # these paths point by default to the same location, e.g. C:\Users\Username
+    # 3. $USERPROFILE cannot be changed, however $HOMEDRIVE and $HOMEPATH can
+    # be changed. They are originally intended to be the equivalent of the
+    # $HOME path, but there are many known issues with them
+    # 4. As for the name of the file itself, most of the tools ported from
+    # Unix will use the standard '.dotfile' scheme, but some of these will
+    # instead use "_dotfile". Of the latter, the two notable exceptions are
+    # vim, which will first try '_vimrc' before '.vimrc' (but it will try both)
+    # and git, which will require the user to name its netrc file '_netrc'.
+    #
+    # Relevant links :
+    # http://markmail.org/message/i33ldu4xl5aterrr
+    # http://markmail.org/message/wbzs4gmtvkbewgxi
+    # http://stackoverflow.com/questions/6031214/
+    #
+    # Because the whole thing is a mess, I suggest we tried various sensible
+    # defaults until we succeed or have depleted all possibilites.
+    if user_specified_path is None and platform.system() == 'Windows':
+        # a useful helper function that converts None to theempty string
+        getenv_or_empty = lambda s: os.getenv(s) or ""
+
+        env_vars = [["HOME"],
+                    ["HOMEDRIVE", "HOMEPATH"],
+                    ["USERPROFILE"],
+                    ["SYSTEMDRIVE"]]
+
+        env_dirs = []
+        for v in env_vars:
+            dir = ''.join(map(getenv_or_empty, v))
+            if not dir:
+                logging.debug('Environment var(s) %s not defined, skipping', v)
             else:
-                path = '\\_netrc'
-    return path
+                env_dirs.append(dir)
+        additional_dirs = ["C:", ""]
 
+        all_dirs = env_dirs + additional_dirs
+
+        leading_chars = [".", "_"]
+
+        # OrderedDict.fromkeys allows us to removes duplicates while preserving
+        # the order of the paths
+        res = list(OrderedDict.fromkeys([''.join([dir, os.sep, lc, config_name])
+                                        for dir in all_dirs
+                                        for lc in leading_chars]))
+
+        print res
+
+    # if user_specified_path equals None, netrc will try by default HOME/.netrc
+    else:
+        res = [user_specified_path]
+
+    return res
+
+def authenticate_through_netrc(user_specified_path=None):
+    """
+    Returns the tuple user / password given a path for the .netrc file
+    """
+    res = None
+    errors = []
+    paths_to_try = get_config_paths("netrc", user_specified_path)
+    for p in paths_to_try:
+        try:
+            logging.debug('Trying netrc file %s', p)
+            auths = netrc.netrc(p).authenticators('coursera-dl')
+            res = (auths[0], auths[2])
+            break
+        except (IOError, TypeError, netrc.NetrcParseError) as e:
+            errors.append(e)
+
+    if res is None:
+        for e in errors:
+            logging.error(str(e))
+        sys.exit(1)
+
+    return res
 
 def load_cookies_file(cookies_file):
     """
@@ -726,28 +802,7 @@ def parseArgs():
 
     args = parser.parse_args()
 
-    # turn list of strings into list
-    args.file_formats = args.file_formats.split()
-
-    # check arguments
-    if args.cookies_file and not os.path.exists(args.cookies_file):
-        logging.error('Cookies file not found: %s', args.cookies_file)
-        sys.exit(1)
-
-    if not args.cookies_file and not args.username:
-        path = get_netrc_path(args.netrc)
-        try:
-            auths = netrc.netrc(path).authenticators('coursera-dl')
-            args.username = auths[0]
-            args.password = auths[2]
-        except (IOError, TypeError, netrc.NetrcParseError) as e:
-            logging.error(str(e))
-            sys.exit(1)
-
-    if args.username and not args.password:
-        args.password = getpass.getpass('Coursera password for %s: '
-                                        % args.username)
-
+    # Initialize the logging system first so that other functions can use it right away
     if args.debug:
         logging.basicConfig(level=logging.DEBUG,
                             format='%(name)s[%(funcName)s] %(message)s')
@@ -757,6 +812,22 @@ def parseArgs():
     else:
         logging.basicConfig(level=logging.INFO,
                             format='%(message)s')
+
+    # turn list of strings into list
+    args.file_formats = args.file_formats.split()
+
+    # check arguments
+    if args.cookies_file and not os.path.exists(args.cookies_file):
+        logging.error('Cookies file not found: %s', args.cookies_file)
+        sys.exit(1)
+
+    if not args.cookies_file and not args.username:
+        args.username, args.password = authenticate_through_netrc(args.netrc)
+
+    if args.username and not args.password:
+        args.password = getpass.getpass('Coursera password for %s: '
+                                        % args.username)
+
 
     return args
 
