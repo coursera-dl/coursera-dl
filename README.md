@@ -1,6 +1,8 @@
 Coursera Downloader
 ===================
 
+[![Build Status](https://travis-ci.org/jplehmann/coursera.png?branch=master)](https://travis-ci.org/jplehmann/coursera)
+
 [Coursera][1] is arguably the leader in *massive open online courses* (MOOC) 
 with a selection of more than 300 classes from 62 different institutions [as of 
 February 2013][13]. Generous contributions by educators and institutions are 
