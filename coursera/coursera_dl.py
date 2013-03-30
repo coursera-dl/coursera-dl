@@ -127,7 +127,7 @@ def write_cookie_file(className, username, password):
         opener = urllib2.build_opener(*handlers)
 
         req = urllib2.Request(get_syllabus_url(className))
-        res = opener.open(req)
+        opener.open(req)
 
         for cookie in cookies:
             if cookie.name == 'csrf_token':
