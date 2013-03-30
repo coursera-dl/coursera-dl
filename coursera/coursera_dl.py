@@ -236,39 +236,39 @@ def get_config_paths(config_name, user_specified_path=None):
     #
     # Because the whole thing is a mess, I suggest we tried various sensible
     # defaults until we succeed or have depleted all possibilites.
-    if user_specified_path is None and platform.system() == 'Windows':
-        # a useful helper function that converts None to theempty string
-        getenv_or_empty = lambda s: os.getenv(s) or ""
 
-        env_vars = [["HOME"],
-                    ["HOMEDRIVE", "HOMEPATH"],
-                    ["USERPROFILE"],
-                    ["SYSTEMDRIVE"]]
+    if user_specified_path is not None:
+        return [user_specified_path]
 
-        env_dirs = []
-        for v in env_vars:
-            dir = ''.join(map(getenv_or_empty, v))
-            if not dir:
-                logging.debug('Environment var(s) %s not defined, skipping', v)
-            else:
-                env_dirs.append(dir)
-        additional_dirs = ["C:", ""]
+    if platform.system() != 'Windows':
+        return [None]
 
-        all_dirs = env_dirs + additional_dirs
+    # a useful helper function that converts None to theempty string
+    getenv_or_empty = lambda s: os.getenv(s) or ""
 
-        leading_chars = [".", "_"]
+    # Now, we only treat the case of Windows
+    env_vars = [["HOME"],
+                ["HOMEDRIVE", "HOMEPATH"],
+                ["USERPROFILE"],
+                ["SYSTEMDRIVE"]]
 
-        # OrderedDict.fromkeys allows us to removes duplicates while preserving
-        # the order of the paths
-        res = list(OrderedDict.fromkeys([''.join([dir, os.sep, lc, config_name])
-                                        for dir in all_dirs
-                                        for lc in leading_chars]))
+    env_dirs = []
+    for v in env_vars:
+        dir = ''.join(map(getenv_or_empty, v))
+        if not dir:
+            logging.debug('Environment var(s) %s not defined, skipping', v)
+        else:
+            env_dirs.append(dir)
 
-        print res
+    additional_dirs = ["C:", ""]
 
-    # if user_specified_path equals None, netrc will try by default HOME/.netrc
-    else:
-        res = [user_specified_path]
+    all_dirs = env_dirs + additional_dirs
+
+    leading_chars = [".", "_"]
+
+    res = [''.join([dir, os.sep, lc, config_name])
+           for dir in all_dirs
+           for lc in leading_chars]
 
     return res
 
