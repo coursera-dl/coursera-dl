@@ -41,7 +41,6 @@ import tempfile
 import time
 import urllib
 import urllib2
-from collections import OrderedDict
 
 try:
     from BeautifulSoup import BeautifulSoup
