@@ -51,6 +51,7 @@ csrftoken = ''
 session = ''
 NEW_AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 
+
 class ClassNotFoundException(BaseException):
     """
     Class to be thrown if a course is not found in coursera's site.
@@ -271,6 +272,7 @@ def get_config_paths(config_name, user_specified_path=None):
 
     return res
 
+
 def authenticate_through_netrc(user_specified_path=None):
     """
     Returns the tuple user / password given a path for the .netrc file
@@ -293,6 +295,7 @@ def authenticate_through_netrc(user_specified_path=None):
         sys.exit(1)
 
     return res
+
 
 def load_cookies_file(cookies_file):
     """
@@ -833,7 +836,6 @@ def parseArgs():
     if args.username and not args.password:
         args.password = getpass.getpass('Coursera password for %s: '
                                         % args.username)
-
 
     return args
 
