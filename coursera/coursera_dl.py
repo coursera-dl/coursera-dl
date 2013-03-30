@@ -204,23 +204,30 @@ def get_config_paths(config_name, user_specified_path=None):
     # For Windows platforms, there are several paths that can be tried to
     # retrieve the netrc file. There is, however, no "standard way" of doing
     # things.
+    #
     # A brief recap of the situation (all file paths are written in Unix
-    # convention) :
-    # 1. By default, Windows does not define a $HOME path. However, some people
-    # might define one manually, and many command-line tools imported from Unix
-    # will search the $HOME environment variable first. This includes MSYSGit
-    # tools (bash, ssh, ...) and emacs.
-    # 2. Windows defines two 'user paths' : $USERPROFILE, and the
+    # convention):
+    #
+    # 1. By default, Windows does not define a $HOME path. However, some
+    # people might define one manually, and many command-line tools imported
+    # from Unix will search the $HOME environment variable first. This
+    # includes MSYSGit tools (bash, ssh, ...) and emacs.
+    #
+    # 2. Windows defines two 'user paths': $USERPROFILE, and the
     # concatenation of the two variables $HOMEDRIVE and $HOMEPATH. Both of
-    # these paths point by default to the same location, e.g. C:\Users\Username
-    # 3. $USERPROFILE cannot be changed, however $HOMEDRIVE and $HOMEPATH can
-    # be changed. They are originally intended to be the equivalent of the
-    # $HOME path, but there are many known issues with them
+    # these paths point by default to the same location, e.g.
+    # C:\Users\Username
+    #
+    # 3. $USERPROFILE cannot be changed, however $HOMEDRIVE and $HOMEPATH
+    # can be changed. They are originally intended to be the equivalent of
+    # the $HOME path, but there are many known issues with them
+    #
     # 4. As for the name of the file itself, most of the tools ported from
     # Unix will use the standard '.dotfile' scheme, but some of these will
     # instead use "_dotfile". Of the latter, the two notable exceptions are
-    # vim, which will first try '_vimrc' before '.vimrc' (but it will try both)
-    # and git, which will require the user to name its netrc file '_netrc'.
+    # vim, which will first try '_vimrc' before '.vimrc' (but it will try
+    # both) and git, which will require the user to name its netrc file
+    # '_netrc'.
     #
     # Relevant links :
     # http://markmail.org/message/i33ldu4xl5aterrr
