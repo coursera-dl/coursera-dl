@@ -644,13 +644,8 @@ def download_file_axel(axel_bin, url, fn, cookies_file):
     get the job done fast.
     """
 
-    cj = cookielib.MozillaCookieJar(cookies_file)
-    cj.load()
-    cookies_header = "Cookie: " + "; ".join(i.name + '=' + i.value
-                                            for i in list(cj))
-
-    cmd = [axel_bin, url, '-o', fn, '--header', cookies_header,
-           '--num-connections=4', '--alternate']
+    cmd = [axel_bin, '-H', "Cookie: csrf_token=%s; session=%s" % (csrftoken, session),
+           '-o', fn, '-n', '4', '-a', url]
     logging.debug('Executing axel: %s', cmd)
     return subprocess.call(cmd)
 
