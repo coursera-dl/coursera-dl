@@ -69,7 +69,7 @@ NEW_AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 
 class ClassNotFoundException(BaseException):
     """
-    Class to be thrown if a course is not found in coursera's site.
+    Class to be thrown if a course is not found in Coursera's site.
     """
 
     pass
@@ -128,7 +128,7 @@ def get_syllabus_url(className):
 
 def write_cookie_file(className, username, password):
     """
-    Automatically generate a cookie file for the coursera site.
+    Automatically generate a cookie file for the Coursera site.
     """
     try:
         global csrftoken
@@ -226,7 +226,7 @@ def get_config_paths(config_name, user_specified_path=None):
     # 1. By default, Windows does not define a $HOME path. However, some
     # people might define one manually, and many command-line tools imported
     # from Unix will search the $HOME environment variable first. This
-    # includes MSYSGit tools (bash, ssh, ...) and emacs.
+    # includes MSYSGit tools (bash, ssh, ...) and Emacs.
     #
     # 2. Windows defines two 'user paths': $USERPROFILE, and the
     # concatenation of the two variables $HOMEDRIVE and $HOMEPATH. Both of
@@ -250,7 +250,7 @@ def get_config_paths(config_name, user_specified_path=None):
     # http://stackoverflow.com/questions/6031214/
     #
     # Because the whole thing is a mess, I suggest we tried various sensible
-    # defaults until we succeed or have depleted all possibilites.
+    # defaults until we succeed or have depleted all possibilities.
 
     if user_specified_path is not None:
         return [user_specified_path]
@@ -258,7 +258,7 @@ def get_config_paths(config_name, user_specified_path=None):
     if platform.system() != 'Windows':
         return [None]
 
-    # a useful helper function that converts None to theempty string
+    # a useful helper function that converts None to the empty string
     getenv_or_empty = lambda s: os.getenv(s) or ""
 
     # Now, we only treat the case of Windows
@@ -471,7 +471,7 @@ def parse_syllabus(page, cookies_file, reverse=False):
 
 def mkdir_p(path):
     """
-    Create subdirectory hierarcy given in the paths argument.
+    Create subdirectory hierarchy given in the paths argument.
     """
 
     try:
