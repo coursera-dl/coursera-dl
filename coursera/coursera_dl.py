@@ -14,9 +14,9 @@ Examples:
 For further documentation and examples, visit the project's home at:
   https://github.com/jplehmann/coursera
 
-Author:
-  John Lehmann (first last at geemail dotcom or @jplehmann)
-  Rogério Brito (r lastname at ime usp br)
+Authors and copyright:
+    © 2012-2013, John Lehmann (first last at geemail dotcom or @jplehmann)
+    © 2012-2013, Rogério Brito (r lastname at ime usp br)
 
 Contributions are welcome, but please add new unit tests to test your changes
 and/or features.  Also, please try to make changes platform independent and
