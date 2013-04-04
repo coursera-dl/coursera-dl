@@ -581,13 +581,13 @@ def download_file(url,
 
     try:
         if wget_bin:
-            download_file_wget(wget_bin, url, fn, cookies_file)
+            download_file_wget(wget_bin, url, fn)
         elif curl_bin:
-            download_file_curl(curl_bin, url, fn, cookies_file)
+            download_file_curl(curl_bin, url, fn)
         elif aria2_bin:
-            download_file_aria2(aria2_bin, url, fn, cookies_file)
+            download_file_aria2(aria2_bin, url, fn)
         elif axel_bin:
-            download_file_axel(axel_bin, url, fn, cookies_file)
+            download_file_axel(axel_bin, url, fn)
         else:
             download_file_nowget(url, fn, cookies_file)
     except KeyboardInterrupt:
@@ -596,7 +596,7 @@ def download_file(url,
         sys.exit()
 
 
-def download_file_wget(wget_bin, url, fn, cookies_file):
+def download_file_wget(wget_bin, url, fn):
     """
     Downloads a file using wget.  Could possibly use python to stream files
     to disk, but wget is robust and gives nice visual feedback.
@@ -609,7 +609,7 @@ def download_file_wget(wget_bin, url, fn, cookies_file):
     return subprocess.call(cmd)
 
 
-def download_file_curl(curl_bin, url, fn, cookies_file):
+def download_file_curl(curl_bin, url, fn):
     """
     Downloads a file using curl.  Could possibly use python to stream files
     to disk, but curl is robust and gives nice visual feedback.
@@ -621,7 +621,7 @@ def download_file_curl(curl_bin, url, fn, cookies_file):
     return subprocess.call(cmd)
 
 
-def download_file_aria2(aria2_bin, url, fn, cookies_file):
+def download_file_aria2(aria2_bin, url, fn):
     """
     Downloads a file using aria2.  Could possibly use python to stream files
     to disk, but aria2 is robust. Unfortunately, it does not give a nice
@@ -637,7 +637,7 @@ def download_file_aria2(aria2_bin, url, fn, cookies_file):
     return subprocess.call(cmd)
 
 
-def download_file_axel(axel_bin, url, fn, cookies_file):
+def download_file_axel(axel_bin, url, fn):
     """
     Downloads a file using axel.  Could possibly use python to stream files
     to disk, but axel is robust and it both gives nice visual feedback and
