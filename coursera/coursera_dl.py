@@ -502,7 +502,7 @@ def download_lectures(wget_bin,
     Downloads lecture resources described by sections.
     Returns True if the class appears completed.
     """
-    last_update = None
+    last_update = -1
 
     def format_section(num, section):
         sec = '%02d_%s' % (num, section)
@@ -546,11 +546,11 @@ def download_lectures(wget_bin,
                     logging.info('%s already downloaded', lecfn)
                     # if this file hasn't been modified in a long time,
                     # record that time
-                    last_update = max(last_update, int(os.path.getmtime(lecfn)))
+                    last_update = max(last_update, os.path.getmtime(lecfn))
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
-    if last_update:
+    if last_update >= 0:
         if time.time() - last_update > total_seconds(datetime.timedelta(days=30)):
             logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
             return True
