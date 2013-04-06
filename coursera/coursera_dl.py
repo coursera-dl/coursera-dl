@@ -563,7 +563,7 @@ def total_seconds(td):
 
     Added for backward compatibility, pre 2.7.
     """
-    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
+    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
 
 
 def download_file(url,
