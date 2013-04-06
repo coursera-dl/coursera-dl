@@ -546,7 +546,7 @@ def download_lectures(wget_bin,
                     logging.info('%s already downloaded', lecfn)
                     # if this file hasn't been modified in a long time,
                     # record that time
-                    last_update = max(last_update, os.path.getmtime(lecfn))
+                    last_update = max(last_update, int(os.path.getmtime(lecfn)))
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
