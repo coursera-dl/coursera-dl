@@ -191,7 +191,8 @@ def down_the_wabbit_hole(className, cookies_file):
     """
     Get the session cookie
     """
-    auth_redirector_url = 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, urllib.quote_plus(get_syllabus_url(className)))
+    quoted_class_url = urllib.quote_plus(get_syllabus_url(className))
+    auth_redirector_url = 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, quoted_class_url)
 
     global session
     cj = get_cookie_jar(cookies_file)
