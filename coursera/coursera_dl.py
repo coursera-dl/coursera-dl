@@ -67,7 +67,7 @@ session = ''
 NEW_AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 
 
-class ClassNotFoundException(BaseException):
+class ClassNotFound(BaseException):
     """
     Class to be thrown if a course is not found in Coursera's site.
     """
@@ -177,7 +177,7 @@ def write_cookie_file(className, username, password):
         opener.open(req)
     except urllib2.HTTPError as e:
         if e.code == 404:
-            raise ClassNotFoundException(className)
+            raise ClassNotFound(className)
         else:
             raise
 
@@ -451,7 +451,7 @@ def parse_syllabus(page, cookies_file, reverse=False):
             # Washington is now using Coursera's standards, AFAICS.  We
             # raise an exception, to be warned by our users, just in case.
             if 'mp4' not in lecture:
-                raise ClassNotFoundException("Missing/hidden videos?")
+                raise ClassNotFound("Missing/hidden videos?")
 
             lectures.append((vname, lecture))
 
@@ -907,7 +907,7 @@ def main():
             logging.info('Downloading class: %s', class_name)
             if download_class(args, class_name):
                 completed_classes.append(class_name)
-        except ClassNotFoundException as cnf:
+        except ClassNotFound as cnf:
             logging.error('Could not find class: %s', cnf)
 
     if completed_classes:
