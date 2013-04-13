@@ -64,7 +64,7 @@ except ImportError:
 
 csrftoken = ''
 session = ''
-NEW_AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
+AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 
 
 class ClassNotFound(BaseException):
@@ -172,7 +172,7 @@ def write_cookie_file(className, username, password):
 
         formatted_data = urllib.urlencode(auth_data)
 
-        req = urllib2.Request(NEW_AUTH_URL, formatted_data, std_headers)
+        req = urllib2.Request(AUTH_URL, formatted_data, std_headers)
 
         opener.open(req)
     except urllib2.HTTPError as e:
