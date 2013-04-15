@@ -660,32 +660,46 @@ def download_file_nowget(url, fn, cookies_file):
     """
 
     logging.info('Downloading %s -> %s', url, fn)
-    try:
-        opener = get_opener(cookies_file)
-        opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' %
+    
+    attempts_count = 0
+    error_msg = ''
+    while (attempts_count < 5):
+        try:
+            opener = get_opener(cookies_file)
+            opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' %
                                   (csrftoken, session)))
-        urlfile = opener.open(url)
-    except urllib2.HTTPError:
-        logging.warn('Probably the file is missing from the AWS repository...'
-                     ' skipping it.')
+            urlfile = opener.open(url)
+        except urllib2.HTTPError,e:
+            logging.warn('Probably the file is missing from the AWS repository...'
+                         ' waiting.')
+            error_msg = e.reason + ' ' + str(e.code)
+            wait_interval = 2**(attempts_count+1)
+            print 'Error to downloading, will retry in %s seconds ...' % wait_interval
+            time.sleep(wait_interval)
+            attempts_count+=1
+            continue
+        else:
+            bw = BandwidthCalc()
+            chunk_sz = 1048576
+            bytesread = 0
+            with open(fn, 'wb') as f:
+                while True:
+                    data = urlfile.read(chunk_sz)
+                    if not data:
+                        print '.'
+                        break
+                    bw.received(len(data))
+                    f.write(data)
+                    bytesread += len(data)
+                    print '\r%d bytes read%s' % (bytesread, bw),
+                    sys.stdout.flush()
+            urlfile.close()
+            return 0
+
+    if attempts_count==5:
+        logging.warn('Skipping, can\'t download file ...')
+        print error_msg
         return 1
-    else:
-        bw = BandwidthCalc()
-        chunk_sz = 1048576
-        bytesread = 0
-        with open(fn, 'wb') as f:
-            while True:
-                data = urlfile.read(chunk_sz)
-                if not data:
-                    print '.'
-                    break
-                bw.received(len(data))
-                f.write(data)
-                bytesread += len(data)
-                print '\r%d bytes read%s' % (bytesread, bw),
-                sys.stdout.flush()
-        urlfile.close()
-        return 0
 
 
 def parseArgs():
