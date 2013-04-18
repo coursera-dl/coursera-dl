@@ -362,7 +362,11 @@ def get_page(url, cookies_file):
     req = urllib2.Request(url)
 
     opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' % (csrftoken, session)))
-    ret = opener.open(req).read()
+    try:
+        ret = opener.open(req).read()
+    except urllib2.HTTPError as e:
+        logging.error("Error %s getting page %s", str(e), url)
+        ret = ''
 
     # opener = get_opener(cookies_file)
     # ret = opener.open(url).read()
