@@ -377,6 +377,11 @@ def get_page(url, cookies_file):
 def get_syllabus(class_name, cookies_file, local_page=False):
     """
     Get the course listing webpage.
+
+    If we are instructed to use a local page and it already exists, then
+    that page is used instead of performing a download.  If we are
+    instructed to use a local page and it does not exist, then we download
+    the page and save a copy of it for future use.
     """
 
     if not (local_page and os.path.exists(local_page)):
@@ -412,7 +417,7 @@ def clean_filename(s):
 
 def get_anchor_format(a):
     """
-    Extract the resource file-type format from the anchor
+    Extract the resource file-type format from the anchor.
     """
 
     # (. or format=) then (file_extension) then (? or $)
