@@ -408,7 +408,7 @@ def clean_filename(s):
     """
 
     # strip paren portions which contain trailing time length (...)
-    s = re.sub("\([^\(]*$", '', s)
+    s = re.sub(r"\([^\(]*$", '', s)
     s = s.strip().replace(':', '-').replace(' ', '_')
     s = s.replace('nbsp', '')
     valid_chars = '-_.()%s%s' % (string.ascii_letters, string.digits)
@@ -422,7 +422,7 @@ def get_anchor_format(a):
 
     # (. or format=) then (file_extension) then (? or $)
     # e.g. "...format=txt" or "...download.mp4?..."
-    fmt = re.search("(?:\.|format=)(\w+)(?:\?.*)?$", a)
+    fmt = re.search(r"(?:\.|format=)(\w+)(?:\?.*)?$", a)
     return (fmt.group(1) if fmt else None)
 
 
