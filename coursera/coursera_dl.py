@@ -353,7 +353,7 @@ def get_opener(cookies_file):
                                 urllib2.HTTPSHandler())
 
 
-def get_page(url, cookies_file):
+def get_page(url):
     """
     Download an HTML page using the cookiejar.
     """
@@ -387,7 +387,7 @@ def get_syllabus(class_name, cookies_file, local_page=False):
     if not (local_page and os.path.exists(local_page)):
         url = get_syllabus_url(class_name)
         down_the_wabbit_hole(class_name, cookies_file)
-        page = get_page(url, cookies_file)
+        page = get_page(url)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
 
         # cache the page if we're in 'local' mode
