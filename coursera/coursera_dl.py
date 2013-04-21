@@ -570,6 +570,7 @@ def download_lectures(wget_bin,
                       path='',
                       verbose_dirs=False,
                       preview=False,
+                      combined_section_lectures_nums=False,
                       ):
     """
     Downloads lecture resources described by sections.
@@ -585,6 +586,9 @@ def download_lectures(wget_bin,
 
     def format_resource(num, name, fmt):
         return '%02d_%s.%s' % (num, name, fmt)
+    
+    def format_combine_number_resource(secnum, lecnum, lecname, fmt):
+        return '%02d_%02d_%s.%s' % (secnum, lecnum, lecname, fmt)
 
     for (secnum, (section, lectures)) in enumerate(sections):
         if section_filter and not re.search(section_filter, section):
@@ -604,7 +608,11 @@ def download_lectures(wget_bin,
             for fmt, url in [i for i in lecture.items() if i[0]
                              in file_formats or 'all'
                              in file_formats]:
-                lecfn = os.path.join(sec, format_resource(lecnum + 1,
+		if combined_section_lectures_nums:
+			lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1, lecnum + 1,
+                                                          lecname, fmt))
+		else:
+			lecfn = os.path.join(sec, format_resource(lecnum + 1,
                                                           lecname, fmt))
 
                 if overwrite or not os.path.exists(lecfn):
@@ -918,6 +926,11 @@ def parseArgs():
                         action='store_true',
                         default=False,
                         help='download sections in reverse order')
+    parser.add_argument('--combined-section-lectures-nums',
+                        dest='combined_section_lectures_nums',
+                        action='store_true',
+                        default=False,
+                        help='include lecture and section name in final files')
 
     args = parser.parse_args()
 
@@ -984,6 +997,7 @@ def download_class(args, class_name):
                       args.path,
                       args.verbose_dirs,
                       args.preview,
+                      args.combined_section_lectures_nums,
                       )
 
     if not args.cookies_file:
