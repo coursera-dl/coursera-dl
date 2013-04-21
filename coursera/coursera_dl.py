@@ -608,12 +608,11 @@ def download_lectures(wget_bin,
             for fmt, url in [i for i in lecture.items() if i[0]
                              in file_formats or 'all'
                              in file_formats]:
-		if combined_section_lectures_nums:
-			lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1, lecnum + 1,
-                                                          lecname, fmt))
-		else:
-			lecfn = os.path.join(sec, format_resource(lecnum + 1,
-                                                          lecname, fmt))
+                if combined_section_lectures_nums:
+                   lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1, 
+                                                         lecnum + 1, lecname, fmt))
+                else:
+                   lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
 
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
