@@ -118,15 +118,15 @@ class BandwidthCalc(object):
             return bw
 
 
-def get_syllabus_url(className):
+def get_syllabus_url(className, preview):
     """
     Return the Coursera index/syllabus URL.
     """
+    classType = 'preview' if preview else 'index'
+    return 'https://class.coursera.org/%s/lecture/%s' % (className, classType)
 
-    return 'https://class.coursera.org/%s/lecture/index' % className
 
-
-def write_cookie_file(className, username, password):
+def write_cookie_file(className, username, password, preview):
     """
     Automatically generate a cookie file for the Coursera site.
     """
@@ -142,7 +142,8 @@ def write_cookie_file(className, username, password):
         ]
         opener = urllib2.build_opener(*handlers)
 
-        req = urllib2.Request(get_syllabus_url(className))
+
+        req = urllib2.Request(get_syllabus_url(className, preview))
         opener.open(req)
 
         for cookie in cookies:
@@ -187,11 +188,11 @@ def write_cookie_file(className, username, password):
     return fn
 
 
-def down_the_wabbit_hole(className, cookies_file):
+def down_the_wabbit_hole(className, cookies_file, preview):
     """
     Get the session cookie
     """
-    quoted_class_url = urllib.quote_plus(get_syllabus_url(className))
+    quoted_class_url = urllib.quote_plus(get_syllabus_url(className, preview))
     auth_redirector_url = 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, quoted_class_url)
 
     global session
@@ -374,7 +375,7 @@ def get_page(url):
     return ret
 
 
-def get_syllabus(class_name, cookies_file, local_page=False):
+def get_syllabus(class_name, cookies_file, local_page=False, preview=False):
     """
     Get the course listing webpage.
 
@@ -385,8 +386,8 @@ def get_syllabus(class_name, cookies_file, local_page=False):
     """
 
     if not (local_page and os.path.exists(local_page)):
-        url = get_syllabus_url(class_name)
-        down_the_wabbit_hole(class_name, cookies_file)
+        url = get_syllabus_url(class_name, preview)
+        down_the_wabbit_hole(class_name, cookies_file, preview)
         page = get_page(url)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
 
@@ -426,6 +427,25 @@ def get_anchor_format(a):
     return (fmt.group(1) if fmt else None)
 
 
+def add_lecture_id(a):
+    """
+    Get the url of the video page
+    """
+
+    delim = a.rfind('/')
+    return '%s?lecture_id=%s' % (a[:delim], a[delim+1:])
+
+
+def get_video(url):
+    """
+    Parses a Coursera video page
+    """
+   
+    page = get_page(url)
+    soup = BeautifulSoup(page)
+    return soup.find(attrs={'type':re.compile('^video/mp4')})['src'] 
+
+
 def parse_syllabus(page, cookies_file, reverse=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
@@ -449,6 +469,7 @@ def parse_syllabus(page, cookies_file, reverse=False):
             vname = clean_filename(vtag.a.contents[0])
             logging.info('  %s', vname)
             lecture = {}
+            lecturePage = ''
 
             for a in vtag.findAll('a'):
                 href = a['href']
@@ -456,12 +477,17 @@ def parse_syllabus(page, cookies_file, reverse=False):
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
                     lecture[fmt] = href
+		else:
+		    lecturePage = add_lecture_id(href)
 
             # We don't seem to have hidden videos anymore.  University of
             # Washington is now using Coursera's standards, AFAICS.  We
             # raise an exception, to be warned by our users, just in case.
             if 'mp4' not in lecture:
-                raise ClassNotFound("Missing/hidden videos?")
+                if lecturePage:
+                    lecture['mp4'] = get_video(lecturePage)
+                else:
+                    raise ClassNotFound("Missing/hidden videos?")
 
             lectures.append((vname, lecture))
 
@@ -507,6 +533,7 @@ def download_lectures(wget_bin,
                       lecture_filter=None,
                       path='',
                       verbose_dirs=False,
+                      preview=False,
                       ):
     """
     Downloads lecture resources described by sections.
@@ -741,6 +768,12 @@ def parseArgs():
                         help='coursera password')
 
     # optional
+    parser.add_argument('-b',
+                        '--preview',
+                        dest='preview',
+                        action='store_true',
+                        default=False,
+                        help='get preview videos. (Default: False)')
     parser.add_argument('-f',
                         '--formats',
                         dest='file_formats',
@@ -870,11 +903,11 @@ def download_class(args, class_name):
 
     if args.username:
         tmp_cookie_file = write_cookie_file(class_name, args.username,
-                                            args.password)
+                                            args.password, args.preview)
 
     # get the syllabus listing
     page = get_syllabus(class_name, args.cookies_file
-                        or tmp_cookie_file, args.local_page)
+                        or tmp_cookie_file, args.local_page, args.preview)
 
     # parse it
     sections = parse_syllabus(page, args.cookies_file
@@ -896,6 +929,7 @@ def download_class(args, class_name):
                       args.lecture_filter,
                       args.path,
                       args.verbose_dirs,
+                      args.preview,
                       )
 
     if not args.cookies_file:
