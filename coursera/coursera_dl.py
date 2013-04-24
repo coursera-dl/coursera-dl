@@ -477,8 +477,8 @@ def parse_syllabus(page, cookies_file, reverse=False):
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
                     lecture[fmt] = href
-		else:
-		    lecturePage = add_lecture_id(href)
+                else:
+                    lecturePage = add_lecture_id(href)
 
             # We don't seem to have hidden videos anymore.  University of
             # Washington is now using Coursera's standards, AFAICS.  We
