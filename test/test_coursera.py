@@ -6,7 +6,6 @@ Test functionality of coursera module.
 import unittest
 import os
 import os.path
-from collections import defaultdict
 from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
