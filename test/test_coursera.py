@@ -15,10 +15,9 @@ TEST_SYLLABUS_FILE = \
 
 class TestSyllabusParsing(unittest.TestCase):
 
-    def setUp(self):
+    def test_parse(self):
         self.syllabus_page = open(TEST_SYLLABUS_FILE).read()
 
-    def test_parse(self):
         sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
 
         # section count
