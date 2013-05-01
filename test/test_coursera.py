@@ -39,25 +39,25 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(mp4s), 102)
 
 
-    def test_parse_preview(self):
-        self.syllabus_page = open(TEST_PREVIEW_FILE).read()
+    # def test_parse_preview(self):
+    #     self.syllabus_page = open(TEST_PREVIEW_FILE).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+    #     sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
 
-        # section count
-        self.assertEqual(len(sections), 20)
+    #     # section count
+    #     self.assertEqual(len(sections), 20)
 
-        # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), 106)
+    #     # lecture count
+    #     lectures = [lec for sec in sections for lec in sec[1]]
+    #     self.assertEqual(len(lectures), 106)
 
-        # resource count
-        resources = [res for lec in lectures for res in lec[1].items()]
-        self.assertEqual(len(resources), 106)
+    #     # resource count
+    #     resources = [res for lec in lectures for res in lec[1].items()]
+    #     self.assertEqual(len(resources), 106)
 
-        # mp4 count
-        mp4s = [res for res in resources if res[0] == "mp4"]
-        self.assertEqual(len(mp4s), 106)
+    #     # mp4 count
+    #     mp4s = [res for res in resources if res[0] == "mp4"]
+    #     self.assertEqual(len(mp4s), 106)
 
 
 if __name__ == "__main__":
