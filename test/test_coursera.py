@@ -7,37 +7,35 @@ import unittest
 import os
 import os.path
 from collections import defaultdict
-from coursera import coursera_dl 
+from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
-  os.path.join(os.path.dirname(__file__), "2013-nlp-syllabus.html")
+    os.path.join(os.path.dirname(__file__), "2013-nlp-syllabus.html")
 
 
 class TestSyllabusParsing(unittest.TestCase):
-  
-  def setUp(self):
-    self.syllabus_page= open(TEST_SYLLABUS_FILE).read()
 
-  def test_parse(self):
-    sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+    def setUp(self):
+        self.syllabus_page = open(TEST_SYLLABUS_FILE).read()
 
-    # section count
-    self.assertEqual(len(sections), 23)
+    def test_parse(self):
+        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
 
-    # lecture count
-    lectures = [lec for sec in sections for lec in sec[1]]
-    self.assertEqual(len(lectures), 102)
+        # section count
+        self.assertEqual(len(sections), 23)
 
-    # resource count
-    resources = [res for lec in lectures for res in lec[1].items()]
-    self.assertEqual(len(resources), 502)
+        # lecture count
+        lectures = [lec for sec in sections for lec in sec[1]]
+        self.assertEqual(len(lectures), 102)
 
-    # mp4 count
-    mp4s = [res for res in resources if res[0] == "mp4"]
-    self.assertEqual(len(mp4s), 102)
+        # resource count
+        resources = [res for lec in lectures for res in lec[1].items()]
+        self.assertEqual(len(resources), 502)
 
-  
+        # mp4 count
+        mp4s = [res for res in resources if res[0] == "mp4"]
+        self.assertEqual(len(mp4s), 102)
+
+
 if __name__ == "__main__":
-  unittest.main()
-
-
+    unittest.main()
