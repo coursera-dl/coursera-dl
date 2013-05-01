@@ -3,9 +3,10 @@
 Test functionality of coursera module.
 """
 
-import unittest
 import os
 import os.path
+import unittest
+
 from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
