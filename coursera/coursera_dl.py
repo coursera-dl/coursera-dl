@@ -440,10 +440,10 @@ def get_video(url):
     """
     Parses a Coursera video page
     """
-   
+
     page = get_page(url)
     soup = BeautifulSoup(page)
-    return soup.find(attrs={'type':re.compile('^video/mp4')})['src'] 
+    return soup.find(attrs={'type':re.compile('^video/mp4')})['src']
 
 
 def parse_syllabus(page, cookies_file, reverse=False):
@@ -696,7 +696,7 @@ def download_file_nowget(url, fn, cookies_file):
     """
 
     logging.info('Downloading %s -> %s', url, fn)
-    
+
     attempts_count = 0
     error_msg = ''
     while (attempts_count < 5):

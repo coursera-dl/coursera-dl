@@ -3,16 +3,16 @@ Coursera Downloader
 
 [![Build Status](https://travis-ci.org/jplehmann/coursera.png?branch=master)](https://travis-ci.org/jplehmann/coursera)
 
-[Coursera][1] is arguably the leader in *massive open online courses* (MOOC) 
-with a selection of more than 300 classes from 62 different institutions [as of 
-February 2013][13]. Generous contributions by educators and institutions are 
-making excellent education available to many who could not afford it otherwise. 
+[Coursera][1] is arguably the leader in *massive open online courses* (MOOC)
+with a selection of more than 300 classes from 62 different institutions [as of
+February 2013][13]. Generous contributions by educators and institutions are
+making excellent education available to many who could not afford it otherwise.
 There are even non-profits with "feet on the ground" in remote areas of the
 world who are helping spread the wealth (see the feedback below from [Tunapanda][14]).
 
 This script makes it easier to batch download lecture resources (e.g., videos, ppt,
-etc) for Coursera classes.  Given one or more class names and account credentials, 
-it obtains week and class names from the *lectures* page, and then downloads 
+etc) for Coursera classes.  Given one or more class names and account credentials,
+it obtains week and class names from the *lectures* page, and then downloads
 the related materials into appropriately named files and directories.
 
 Why is this helpful?  A utility like [`wget`][2] can work, but has the
@@ -27,7 +27,7 @@ following limitations:
 *DownloadThemAll* is another possiblity, but this script provides more features such
 as appropriately named files.
 
-This work was originally inspired in part by [youtube-dl][3] by which 
+This work was originally inspired in part by [youtube-dl][3] by which
 I've downloaded many other good videos such as those from Khan Academy.
 
 
@@ -135,7 +135,7 @@ Troubleshooting
   `.netrc` file).
 
 * For courses that have not started yet, but have had a previous iteration
-  sometimes a preview is available, containing all the classes from the 
+  sometimes a preview is available, containing all the classes from the
   last course. These files can be downloaded by passing the -b parameter.
 
 Feedback
