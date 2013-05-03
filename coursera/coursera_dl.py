@@ -485,7 +485,10 @@ def parse_syllabus(page, cookies_file, reverse=False):
             # raise an exception, to be warned by our users, just in case.
             if 'mp4' not in lecture:
                 if lecturePage:
-                    lecture['mp4'] = get_video(lecturePage)
+                    try:
+                        lecture['mp4'] = get_video(lecturePage)
+                    except TypeError:
+                        logging.warn('Could not get resource: %s', lecturePage)
                 else:
                     raise ClassNotFound("Missing/hidden videos?")
 
