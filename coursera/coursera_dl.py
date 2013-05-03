@@ -707,7 +707,7 @@ def download_file_nowget(url, fn, cookies_file):
             opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' %
                                   (csrftoken, session)))
             urlfile = opener.open(url)
-        except urllib2.HTTPError,e:
+        except urllib2.HTTPError as e:
             logging.warn('Probably the file is missing from the AWS repository...'
                          ' waiting.')
             error_msg = e.reason + ' ' + str(e.code)
