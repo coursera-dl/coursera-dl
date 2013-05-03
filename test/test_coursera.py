@@ -15,6 +15,9 @@ TEST_SYLLABUS_FILE = \
 TEST_PREVIEW_FILE = \
     os.path.join(os.path.dirname(__file__), "2013-preview.html")
 
+TEST_LINKS_TO_WIKIPEDIA = \
+    os.path.join(os.path.dirname(__file__), "links-to-wikipedia.html")
+
 
 class TestSyllabusParsing(unittest.TestCase):
 
@@ -37,6 +40,27 @@ class TestSyllabusParsing(unittest.TestCase):
         # mp4 count
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 102)
+
+
+    def test_links_to_wikipedia(self):
+        self.syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
+
+        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+
+        # section count
+        self.assertEqual(len(sections), 5)
+
+        # lecture count
+        lectures = [lec for sec in sections for lec in sec[1]]
+        self.assertEqual(len(lectures), 37)
+
+        # resource count
+        resources = [res for lec in lectures for res in lec[1].items()]
+        self.assertEqual(len(resources), 158)
+
+        # mp4 count
+        mp4s = [res for res in resources if res[0] == "mp4"]
+        self.assertEqual(len(mp4s), 36)
 
 
     # def test_parse_preview(self):
