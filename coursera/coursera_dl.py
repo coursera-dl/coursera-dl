@@ -142,7 +142,6 @@ def write_cookie_file(className, username, password, preview):
         ]
         opener = urllib2.build_opener(*handlers)
 
-
         req = urllib2.Request(get_syllabus_url(className, preview))
         opener.open(req)
 
@@ -443,7 +442,7 @@ def get_video(url):
 
     page = get_page(url)
     soup = BeautifulSoup(page)
-    return soup.find(attrs={'type':re.compile('^video/mp4')})['src']
+    return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
 def parse_syllabus(page, cookies_file, reverse=False):
@@ -712,10 +711,10 @@ def download_file_nowget(url, fn, cookies_file):
             logging.warn('Probably the file is missing from the AWS repository...'
                          ' waiting.')
             error_msg = e.reason + ' ' + str(e.code)
-            wait_interval = 2**(attempts_count+1)
+            wait_interval = 2 ** (attempts_count + 1)
             print 'Error to downloading, will retry in %s seconds ...' % wait_interval
             time.sleep(wait_interval)
-            attempts_count+=1
+            attempts_count += 1
             continue
         else:
             bw = BandwidthCalc()
@@ -735,7 +734,7 @@ def download_file_nowget(url, fn, cookies_file):
             urlfile.close()
             return 0
 
-    if attempts_count==5:
+    if attempts_count == 5:
         logging.warn('Skipping, can\'t download file ...')
         print error_msg
         return 1
