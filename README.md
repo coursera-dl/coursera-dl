@@ -51,18 +51,26 @@ the class of interest.
 
 1\. Install any missing dependencies.
 
-  * [Beautiful Soup 3][4] or [Beautiful Soup 4][5]
-    - Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`
-    - Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`
-    - Mac OSX: `bs4` may be required instead.
-    - Other: `easy_install BeautifulSoup`
+  * [Beautiful Soup 3][4]
+    - Ubuntu/Debian: `sudo apt-get install python-beautifulsoup`
+    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup`
+    - Other: `easy_install beautifulsoup`
+  * [Beautiful Soup 4][5]: An alternative to Beautiful Soup 3. See also
+    html5lib below.
+    - Ubuntu/Debian: `sudo apt-get install python-bs4`
+    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
+    - Other: `easy_install beautifulsoup4`
   * [Argparse][6]: Only necessary if using Python 2.6.
     - Ubuntu/Debian: `sudo apt-get install python-argparse`
     - Other: `easy_install argparse`
   * [easy_install][7]: Only necessary if not using prepackaged dependencies.
     - Ubuntu/Debian: `sudo apt-get install python-setuptools`
+  * [html5lib][15]: Recommended if using Beautiful Soup 4.
+    - Ubuntu/Debian: `sudo apt-get install python-html5lib`
+    - Mac OSX + MacPorts: `sudo port install py-html5lib`
+    - Other: `easy_install html5lib`
 
-On Mac OSX using MacPort, the following may be used:
+On Mac OSX using MacPorts, the following may be used:
 
     port
     > install py-beautifulsoup
@@ -138,6 +146,14 @@ Troubleshooting
   sometimes a preview is available, containing all the classes from the
   last course. These files can be downloaded by passing the -b parameter.
 
+* If you are using Beautiful Soup 4, make sure you have installed
+  html5lib:
+
+        $ python
+        >>> import html5lib
+        >>> print(html5lib.__version__)
+        0.95-dev
+
 Feedback
 --------
 
@@ -191,3 +207,4 @@ first last at geemail dotcom or [@jplehmann][12]
 [12]: https://twitter.com/jplehmann
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
 [14]: http://www.tunapanda.org
+[15]: https://github.com/html5lib/html5lib-python
