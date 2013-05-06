@@ -60,7 +60,13 @@ import urllib2
 try:
     from BeautifulSoup import BeautifulSoup
 except ImportError:
-    from bs4 import BeautifulSoup
+    from bs4 import BeautifulSoup as BeautifulSoup_
+    # Use html5lib for parsing if available
+    try:
+        import html5lib
+        BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
+    except ImportError:
+        BeautifulSoup = BeautifulSoup_
 
 csrftoken = ''
 session = ''
