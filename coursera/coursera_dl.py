@@ -489,26 +489,23 @@ def parse_syllabus(page, cookies_file, reverse=False):
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
                     lecture[fmt] = href
-                else:
-                    # Special case: find preview URLs
-                    lecture_page = transform_preview_url(href)
-                    if lecture_page:
-                        try:
-                            lecture['mp4'] = get_video(lecture_page)
-                        except TypeError:
-                            logging.warn('Could not get resource: %s', lecture_page)
+                    continue
+
+                # Special case: find preview URLs
+                lecture_page = transform_preview_url(href)
 
             # We don't seem to have hidden videos anymore.  University of
             # Washington is now using Coursera's standards, AFAICS.  We
             # raise an exception, to be warned by our users, just in case.
             if 'mp4' not in lecture:
-                if lecturePage:
+                if lecture_page:
                     try:
-                        lecture['mp4'] = get_video(lecturePage)
+                        lecture['mp4'] = get_video(lecture_page)
                     except TypeError:
-                        logging.warn('Could not get resource: %s', lecturePage)
+                        logging.warn('Could not get resource: %s', lecture_page)
                 else:
-                    raise ClassNotFound("Missing/hidden videos?")
+                    logging.warn('Could not get resource: %s', lecture_page)
+
 
             lectures.append((vname, lecture))
 
