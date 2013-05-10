@@ -432,14 +432,21 @@ def get_anchor_format(a):
     return (fmt.group(1) if fmt else None)
 
 
-def add_lecture_id(a):
+def transform_preview_url(a):
     """
-    Get the url of the video page
+    Given a preview lecture URL, transform it into a regular video URL.
+
+    If the given URL is not a preview URL, we simply return None.
     """
 
-    delim = a.rfind('/')
-    return '%s?lecture_id=%s' % (a[:delim], a[delim+1:])
-
+    # Example URLs
+    # "https://class.coursera.org/modelthinking/lecture/preview_view/8"
+    # "https://class.coursera.org/nlp/lecture/view?lecture_id=124"
+    mobj = re.search(r'preview_view/(\d+)$', a)
+    if mobj:
+        return re.sub(r'preview_view/(\d+)$', r'view?lecture_id=\1', a)
+    else:
+        return None
 
 def get_video(url):
     """
@@ -474,7 +481,7 @@ def parse_syllabus(page, cookies_file, reverse=False):
             vname = clean_filename(vtag.a.contents[0])
             logging.info('  %s', vname)
             lecture = {}
-            lecturePage = ''
+            lecture_page = None
 
             for a in vtag.findAll('a'):
                 href = a['href']
@@ -483,7 +490,13 @@ def parse_syllabus(page, cookies_file, reverse=False):
                 if fmt:
                     lecture[fmt] = href
                 else:
-                    lecturePage = add_lecture_id(href)
+                    # Special case: find preview URLs
+                    lecture_page = transform_preview_url(href)
+                    if lecture_page:
+                        try:
+                            lecture['mp4'] = get_video(lecture_page)
+                        except TypeError:
+                            logging.warn('Could not get resource: %s', lecture_page)
 
             # We don't seem to have hidden videos anymore.  University of
             # Washington is now using Coursera's standards, AFAICS.  We
