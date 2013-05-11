@@ -13,7 +13,7 @@ TEST_SYLLABUS_FILE = \
     os.path.join(os.path.dirname(__file__), "regular-syllabus.html")
 
 TEST_PREVIEW_FILE = \
-    os.path.join(os.path.dirname(__file__), "2013-preview.html")
+    os.path.join(os.path.dirname(__file__), "preview.html")
 
 TEST_LINKS_TO_WIKIPEDIA = \
     os.path.join(os.path.dirname(__file__), "links-to-wikipedia.html")
