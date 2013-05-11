@@ -10,7 +10,7 @@ import unittest
 from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
-    os.path.join(os.path.dirname(__file__), "2013-nlp-syllabus.html")
+    os.path.join(os.path.dirname(__file__), "regular-syllabus.html")
 
 TEST_PREVIEW_FILE = \
     os.path.join(os.path.dirname(__file__), "2013-preview.html")
