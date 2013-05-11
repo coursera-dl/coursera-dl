@@ -471,7 +471,7 @@ def get_video(url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(page, cookies_file, reverse=False):
+def parse_syllabus(page, reverse=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -957,8 +957,7 @@ def download_class(args, class_name):
                         or tmp_cookie_file, args.local_page, args.preview)
 
     # parse it
-    sections = parse_syllabus(page, args.cookies_file
-                              or tmp_cookie_file, args.reverse)
+    sections = parse_syllabus(page, args.reverse)
 
     # obtain the resources
     completed = download_lectures(
