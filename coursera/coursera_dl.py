@@ -276,11 +276,11 @@ def get_config_paths(config_name, user_specified_path=None):
 
     env_dirs = []
     for v in env_vars:
-        dir = ''.join(map(getenv_or_empty, v))
-        if not dir:
+        directory = ''.join(map(getenv_or_empty, v))
+        if not directory:
             logging.debug('Environment var(s) %s not defined, skipping', v)
         else:
-            env_dirs.append(dir)
+            env_dirs.append(directory)
 
     additional_dirs = ["C:", ""]
 
@@ -288,8 +288,8 @@ def get_config_paths(config_name, user_specified_path=None):
 
     leading_chars = [".", "_"]
 
-    res = [''.join([dir, os.sep, lc, config_name])
-           for dir in all_dirs
+    res = [''.join([directory, os.sep, lc, config_name])
+           for directory in all_dirs
            for lc in leading_chars]
 
     return res
@@ -459,6 +459,7 @@ def transform_preview_url(a):
         return re.sub(r'preview_view/(\d+)$', r'view?lecture_id=\1', a)
     else:
         return None
+
 
 def get_video(url):
     """
