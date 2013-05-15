@@ -516,8 +516,8 @@ def parse_syllabus(page, reverse=False):
             # the University of Washington for that.
             if 'mp4' not in lecture:
                 for a in vtag.findAll('a'):
-                    if a.get('data-lecture-view-link'):
-                        href = grab_hidden_video_url(a['data-lecture-view-link'])
+                    if a.get('data-modal-iframe'):
+                        href = grab_hidden_video_url(a['data-modal-iframe'])
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
                         lecture[fmt] = href
