@@ -389,7 +389,8 @@ def grab_hidden_video_url(href):
     page = get_page(href)
     soup = BeautifulSoup(page)
     l = soup.find('source', attrs={'type': 'video/mp4'})
-    return l['src']
+    if l!=None:
+        return l['src']
 
 
 def get_syllabus(class_name, cookies_file, local_page=False, preview=False):
@@ -520,7 +521,8 @@ def parse_syllabus(page, reverse=False):
                         href = grab_hidden_video_url(a['data-modal-iframe'])
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
-                        lecture[fmt] = href
+                        if href!=None:
+                            lecture[fmt] = href
 
             lectures.append((vname, lecture))
 
