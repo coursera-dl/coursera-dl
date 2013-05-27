@@ -18,6 +18,9 @@ TEST_PREVIEW_FILE = \
 TEST_LINKS_TO_WIKIPEDIA = \
     os.path.join(os.path.dirname(__file__), "links-to-wikipedia.html")
 
+TEST_SECTIONS_NOT_TO_MISS = \
+    os.path.join(os.path.dirname(__file__), "sections-not-to-be-missed.html")
+
 
 class TestSyllabusParsing(unittest.TestCase):
 
@@ -85,6 +88,27 @@ class TestSyllabusParsing(unittest.TestCase):
         # mp4 count
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 106)
+
+
+    def test_sections_missed(self):
+        self.syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
+
+        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+
+        # section count
+        self.assertEqual(len(sections), 9)
+
+        # lecture count
+        lectures = [lec for sec in sections for lec in sec[1]]
+        self.assertEqual(len(lectures), 61)
+
+        # resource count
+        resources = [res for lec in lectures for res in lec[1].items()]
+        self.assertEqual(len(resources), 224)
+
+        # mp4 count
+        mp4s = [res for res in resources if res[0] == "mp4"]
+        self.assertEqual(len(mp4s), 61)
 
 
 if __name__ == "__main__":
