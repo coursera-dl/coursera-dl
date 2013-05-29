@@ -522,6 +522,13 @@ def parse_syllabus(page, reverse=False):
                         logging.debug('    %s %s', fmt, href)
                         lecture[fmt] = href
 
+		    #special case: uwhpsc style
+		    elif a.get('data-modal-iframe'):
+                        href = grab_hidden_video_url(a['data-modal-iframe'])
+                        fmt = 'mp4'
+                        logging.debug('    %s %s', fmt, href)
+                        lecture[fmt] = href
+
             lectures.append((vname, lecture))
 
         sections.append((section_name, lectures))
