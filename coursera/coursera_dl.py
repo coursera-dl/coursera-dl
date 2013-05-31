@@ -999,6 +999,8 @@ def main():
             logging.info('Downloading class: %s', class_name)
             if download_class(args, class_name):
                 completed_classes.append(class_name)
+        except urllib2.HTTPError as e:
+            logging.error('Could not download class: %s', e)
         except ClassNotFound as cnf:
             logging.error('Could not find class: %s', cnf)
 

@@ -18,6 +18,9 @@ TEST_PREVIEW_FILE = \
 TEST_LINKS_TO_WIKIPEDIA = \
     os.path.join(os.path.dirname(__file__), "links-to-wikipedia.html")
 
+TEST_SECTIONS_NOT_TO_MISS = \
+    os.path.join(os.path.dirname(__file__), "sections-not-to-be-missed.html")
+
 
 class TestSyllabusParsing(unittest.TestCase):
 
@@ -68,6 +71,8 @@ class TestSyllabusParsing(unittest.TestCase):
     # not begin with `test`.
     def xtest_parse_preview(self):
         self.syllabus_page = open(TEST_PREVIEW_FILE).read()
+<<<<<<< HEAD
+=======
 
         sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
 
@@ -85,6 +90,44 @@ class TestSyllabusParsing(unittest.TestCase):
         # mp4 count
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 106)
+
+
+    def test_sections_missed(self):
+        self.syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
+>>>>>>> 300d77cf0a195cb796b982e421f780917dc89683
+
+        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+
+        # section count
+<<<<<<< HEAD
+        self.assertEqual(len(sections), 20)
+
+        # lecture count
+        lectures = [lec for sec in sections for lec in sec[1]]
+        self.assertEqual(len(lectures), 106)
+
+        # resource count
+        resources = [res for lec in lectures for res in lec[1].items()]
+        self.assertEqual(len(resources), 106)
+
+        # mp4 count
+        mp4s = [res for res in resources if res[0] == "mp4"]
+        self.assertEqual(len(mp4s), 106)
+=======
+        self.assertEqual(len(sections), 9)
+
+        # lecture count
+        lectures = [lec for sec in sections for lec in sec[1]]
+        self.assertEqual(len(lectures), 61)
+
+        # resource count
+        resources = [res for lec in lectures for res in lec[1].items()]
+        self.assertEqual(len(resources), 224)
+
+        # mp4 count
+        mp4s = [res for res in resources if res[0] == "mp4"]
+        self.assertEqual(len(mp4s), 61)
+>>>>>>> 300d77cf0a195cb796b982e421f780917dc89683
 
 
 if __name__ == "__main__":
