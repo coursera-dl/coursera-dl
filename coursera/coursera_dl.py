@@ -512,17 +512,17 @@ def parse_syllabus(page, reverse=False):
                         lecture['mp4'] = get_video(lecture_page)
                     except TypeError:
                         logging.warn('Could not get resource: %s', lecture_page)
-
+	    
             # Special case: we possibly have hidden video links---thanks to
             # the University of Washington for that.
             if 'mp4' not in lecture:
-                for a in vtag.findAll('a'):
-                    if a.get('data-modal-iframe'):
-                        href = grab_hidden_video_url(a['data-modal-iframe'])
-                        fmt = 'mp4'
-                        logging.debug('    %s %s', fmt, href)
+		for a in vtag.findAll('a'):
+		    if a.get('data-modal-iframe'):
+			href = grab_hidden_video_url(a['data-modal-iframe'])
+			fmt = 'mp4'
+			logging.debug('    %s %s', fmt, href)
 			if href is not None:
-                            lecture[fmt] = href
+	                    lecture[fmt] = href
 
             lectures.append((vname, lecture))
 
