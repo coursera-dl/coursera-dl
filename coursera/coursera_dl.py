@@ -744,7 +744,12 @@ def download_file_nowget(url, fn, cookies_file):
         except urllib2.HTTPError as e:
             logging.warn('Probably the file is missing from the AWS repository...'
                          ' waiting.')
-            error_msg = e.reason + ' ' + str(e.code)
+            
+            if hasattr(e, 'reason'):
+				error_msg = e.reason + ' ' + str(e.code)
+            else:
+            	error_msg = 'HTTP Error '+str(e.code)
+            	
             wait_interval = 2 ** (attempts_count + 1)
             print 'Error to downloading, will retry in %s seconds ...' % wait_interval
             time.sleep(wait_interval)
