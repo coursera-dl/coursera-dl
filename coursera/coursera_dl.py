@@ -746,7 +746,7 @@ def download_file_nowget(url, fn, cookies_file):
                          ' waiting.')
             
             if hasattr(e, 'reason'):
-				error_msg = e.reason + ' ' + str(e.code)
+            	error_msg = e.reason + ' ' + str(e.code)
             else:
             	error_msg = 'HTTP Error '+str(e.code)
             	
