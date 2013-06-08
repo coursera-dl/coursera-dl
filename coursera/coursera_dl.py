@@ -586,7 +586,7 @@ def download_lectures(wget_bin,
 
     def format_resource(num, name, fmt):
         return '%02d_%s.%s' % (num, name, fmt)
-    
+
     def format_combine_number_resource(secnum, lecnum, lecname, fmt):
         return '%02d_%02d_%s.%s' % (secnum, lecnum, lecname, fmt)
 
@@ -609,10 +609,10 @@ def download_lectures(wget_bin,
                              in file_formats or 'all'
                              in file_formats]:
                 if combined_section_lectures_nums:
-                   lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1, 
+                    lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1,
                                                          lecnum + 1, lecname, fmt))
                 else:
-                   lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
+                    lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
 
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
@@ -751,12 +751,12 @@ def download_file_nowget(url, fn, cookies_file):
         except urllib2.HTTPError as e:
             logging.warn('Probably the file is missing from the AWS repository...'
                          ' waiting.')
-            
+
             if hasattr(e, 'reason'):
-            	error_msg = e.reason + ' ' + str(e.code)
+                error_msg = e.reason + ' ' + str(e.code)
             else:
-            	error_msg = 'HTTP Error '+str(e.code)
-            	
+                error_msg = 'HTTP Error ' + str(e.code)
+
             wait_interval = 2 ** (attempts_count + 1)
             print 'Error to downloading, will retry in %s seconds ...' % wait_interval
             time.sleep(wait_interval)
