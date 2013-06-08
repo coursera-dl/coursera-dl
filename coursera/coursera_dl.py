@@ -523,7 +523,8 @@ def parse_syllabus(page, reverse=False):
                         href = grab_hidden_video_url(a['data-modal-iframe'])
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
-                        if href is not None: lecture[fmt] = href
+                        if href is not None:
+                            lecture[fmt] = href
 
             lectures.append((vname, lecture))
 
