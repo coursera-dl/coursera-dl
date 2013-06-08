@@ -3,16 +3,16 @@ Coursera Downloader
 
 [![Build Status](https://travis-ci.org/jplehmann/coursera.png?branch=master)](https://travis-ci.org/jplehmann/coursera)
 
-[Coursera][1] is arguably the leader in *massive open online courses* (MOOC) 
-with a selection of more than 300 classes from 62 different institutions [as of 
-February 2013][13]. Generous contributions by educators and institutions are 
-making excellent education available to many who could not afford it otherwise. 
+[Coursera][1] is arguably the leader in *massive open online courses* (MOOC)
+with a selection of more than 300 classes from 62 different institutions [as of
+February 2013][13]. Generous contributions by educators and institutions are
+making excellent education available to many who could not afford it otherwise.
 There are even non-profits with "feet on the ground" in remote areas of the
 world who are helping spread the wealth (see the feedback below from [Tunapanda][14]).
 
 This script makes it easier to batch download lecture resources (e.g., videos, ppt,
-etc) for Coursera classes.  Given one or more class names and account credentials, 
-it obtains week and class names from the *lectures* page, and then downloads 
+etc) for Coursera classes.  Given one or more class names and account credentials,
+it obtains week and class names from the *lectures* page, and then downloads
 the related materials into appropriately named files and directories.
 
 Why is this helpful?  A utility like [`wget`][2] can work, but has the
@@ -27,7 +27,7 @@ following limitations:
 *DownloadThemAll* is another possiblity, but this script provides more features such
 as appropriately named files.
 
-This work was originally inspired in part by [youtube-dl][3] by which 
+This work was originally inspired in part by [youtube-dl][3] by which
 I've downloaded many other good videos such as those from Khan Academy.
 
 
@@ -51,18 +51,26 @@ the class of interest.
 
 1\. Install any missing dependencies.
 
-  * [Beautiful Soup 3][4] or [Beautiful Soup 4][5]
-    - Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`
-    - Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`
-    - Mac OSX: `bs4` may be required instead.
-    - Other: `easy_install BeautifulSoup`
+  * [Beautiful Soup 3][4]
+    - Ubuntu/Debian: `sudo apt-get install python-beautifulsoup`
+    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup`
+    - Other: `easy_install beautifulsoup`
+  * [Beautiful Soup 4][5]: An alternative to Beautiful Soup 3. See also
+    html5lib below.
+    - Ubuntu/Debian: `sudo apt-get install python-bs4`
+    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
+    - Other: `easy_install beautifulsoup4`
   * [Argparse][6]: Only necessary if using Python 2.6.
     - Ubuntu/Debian: `sudo apt-get install python-argparse`
     - Other: `easy_install argparse`
   * [easy_install][7]: Only necessary if not using prepackaged dependencies.
     - Ubuntu/Debian: `sudo apt-get install python-setuptools`
+  * [html5lib][15]: Recommended if using Beautiful Soup 4.
+    - Ubuntu/Debian: `sudo apt-get install python-html5lib`
+    - Mac OSX + MacPorts: `sudo port install py-html5lib`
+    - Other: `easy_install html5lib`
 
-On Mac OSX using MacPort, the following may be used:
+On Mac OSX using MacPorts, the following may be used:
 
     port
     > install py-beautifulsoup
@@ -84,6 +92,7 @@ account (e.g., email address), password (or a `~/.netrc` file), the class names
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
     Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
     Use a ~/.netrc file:         coursera-dl -n saas
+    Get the preview classes:     coursera-dl -b saas
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
     
     Maintain a list of classes in a dir:
@@ -133,6 +142,17 @@ Troubleshooting
   credentials (username and/or password in the command line or in your
   `.netrc` file).
 
+* For courses that have not started yet, but have had a previous iteration
+  sometimes a preview is available, containing all the classes from the
+  last course. These files can be downloaded by passing the -b parameter.
+
+* If you are using Beautiful Soup 4, make sure you have installed
+  html5lib:
+
+        $ python
+        >>> import html5lib
+        >>> print(html5lib.__version__)
+        0.95-dev
 
 Feedback
 --------
@@ -164,6 +184,8 @@ I enjoy getting feedback. Here are a few of the comments I've received:
   mandatory that I buy you a beer :)"
   <br>Razvan T. 11/26/2012
 
+* "Thanks a lot! :)"
+  <br>Viktor V. 24/04/2013
 
 Contact
 -------
@@ -185,3 +207,4 @@ first last at geemail dotcom or [@jplehmann][12]
 [12]: https://twitter.com/jplehmann
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
 [14]: http://www.tunapanda.org
+[15]: https://github.com/html5lib/html5lib-python

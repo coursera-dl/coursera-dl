@@ -60,7 +60,13 @@ import urllib2
 try:
     from BeautifulSoup import BeautifulSoup
 except ImportError:
-    from bs4 import BeautifulSoup
+    from bs4 import BeautifulSoup as BeautifulSoup_
+    # Use html5lib for parsing if available
+    try:
+        import html5lib
+        BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
+    except ImportError:
+        BeautifulSoup = BeautifulSoup_
 
 csrftoken = ''
 session = ''
@@ -118,15 +124,15 @@ class BandwidthCalc(object):
             return bw
 
 
-def get_syllabus_url(className):
+def get_syllabus_url(className, preview):
     """
     Return the Coursera index/syllabus URL.
     """
+    classType = 'preview' if preview else 'index'
+    return 'https://class.coursera.org/%s/lecture/%s' % (className, classType)
 
-    return 'https://class.coursera.org/%s/lecture/index' % className
 
-
-def write_cookie_file(className, username, password):
+def write_cookie_file(className, username, password, preview):
     """
     Automatically generate a cookie file for the Coursera site.
     """
@@ -142,7 +148,7 @@ def write_cookie_file(className, username, password):
         ]
         opener = urllib2.build_opener(*handlers)
 
-        req = urllib2.Request(get_syllabus_url(className))
+        req = urllib2.Request(get_syllabus_url(className, preview))
         opener.open(req)
 
         for cookie in cookies:
@@ -187,11 +193,11 @@ def write_cookie_file(className, username, password):
     return fn
 
 
-def down_the_wabbit_hole(className, cookies_file):
+def down_the_wabbit_hole(className, cookies_file, preview):
     """
     Get the session cookie
     """
-    quoted_class_url = urllib.quote_plus(get_syllabus_url(className))
+    quoted_class_url = urllib.quote_plus(get_syllabus_url(className, preview))
     auth_redirector_url = 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, quoted_class_url)
 
     global session
@@ -270,11 +276,11 @@ def get_config_paths(config_name, user_specified_path=None):
 
     env_dirs = []
     for v in env_vars:
-        dir = ''.join(map(getenv_or_empty, v))
-        if not dir:
+        directory = ''.join(map(getenv_or_empty, v))
+        if not directory:
             logging.debug('Environment var(s) %s not defined, skipping', v)
         else:
-            env_dirs.append(dir)
+            env_dirs.append(directory)
 
     additional_dirs = ["C:", ""]
 
@@ -282,8 +288,8 @@ def get_config_paths(config_name, user_specified_path=None):
 
     leading_chars = [".", "_"]
 
-    res = [''.join([dir, os.sep, lc, config_name])
-           for dir in all_dirs
+    res = [''.join([directory, os.sep, lc, config_name])
+           for directory in all_dirs
            for lc in leading_chars]
 
     return res
@@ -374,7 +380,22 @@ def get_page(url):
     return ret
 
 
-def get_syllabus(class_name, cookies_file, local_page=False):
+def grab_hidden_video_url(href):
+    """
+    Follow some extra redirects to grab hidden video URLs (like those from
+    University of Washington).
+    """
+
+    page = get_page(href)
+    soup = BeautifulSoup(page)
+    l = soup.find('source', attrs={'type': 'video/mp4'})
+    if l is not None:
+        return l['src']
+    else:
+        return None
+
+
+def get_syllabus(class_name, cookies_file, local_page=False, preview=False):
     """
     Get the course listing webpage.
 
@@ -385,8 +406,8 @@ def get_syllabus(class_name, cookies_file, local_page=False):
     """
 
     if not (local_page and os.path.exists(local_page)):
-        url = get_syllabus_url(class_name)
-        down_the_wabbit_hole(class_name, cookies_file)
+        url = get_syllabus_url(class_name, preview)
+        down_the_wabbit_hole(class_name, cookies_file, preview)
         page = get_page(url)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
 
@@ -426,7 +447,34 @@ def get_anchor_format(a):
     return (fmt.group(1) if fmt else None)
 
 
-def parse_syllabus(page, cookies_file, reverse=False):
+def transform_preview_url(a):
+    """
+    Given a preview lecture URL, transform it into a regular video URL.
+
+    If the given URL is not a preview URL, we simply return None.
+    """
+
+    # Example URLs
+    # "https://class.coursera.org/modelthinking/lecture/preview_view/8"
+    # "https://class.coursera.org/nlp/lecture/view?lecture_id=124"
+    mobj = re.search(r'preview_view/(\d+)$', a)
+    if mobj:
+        return re.sub(r'preview_view/(\d+)$', r'view?lecture_id=\1', a)
+    else:
+        return None
+
+
+def get_video(url):
+    """
+    Parses a Coursera video page
+    """
+
+    page = get_page(url)
+    soup = BeautifulSoup(page)
+    return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
+
+
+def parse_syllabus(page, reverse=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -449,6 +497,7 @@ def parse_syllabus(page, cookies_file, reverse=False):
             vname = clean_filename(vtag.a.contents[0])
             logging.info('  %s', vname)
             lecture = {}
+            lecture_page = None
 
             for a in vtag.findAll('a'):
                 href = a['href']
@@ -456,12 +505,25 @@ def parse_syllabus(page, cookies_file, reverse=False):
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
                     lecture[fmt] = href
+                    continue
 
-            # We don't seem to have hidden videos anymore.  University of
-            # Washington is now using Coursera's standards, AFAICS.  We
-            # raise an exception, to be warned by our users, just in case.
+                # Special case: find preview URLs
+                lecture_page = transform_preview_url(href)
+                if lecture_page:
+                    try:
+                        lecture['mp4'] = get_video(lecture_page)
+                    except TypeError:
+                        logging.warn('Could not get resource: %s', lecture_page)
+
+            # Special case: we possibly have hidden video links---thanks to
+            # the University of Washington for that.
             if 'mp4' not in lecture:
-                raise ClassNotFound("Missing/hidden videos?")
+                for a in vtag.findAll('a'):
+                    if a.get('data-modal-iframe'):
+                        href = grab_hidden_video_url(a['data-modal-iframe'])
+                        fmt = 'mp4'
+                        logging.debug('    %s %s', fmt, href)
+                        if href is not None: lecture[fmt] = href
 
             lectures.append((vname, lecture))
 
@@ -508,6 +570,7 @@ def download_lectures(wget_bin,
                       path='',
                       verbose_dirs=False,
 		      combined_section_lectures_nums=False,
+                      preview=False,
                       ):
     """
     Downloads lecture resources described by sections.
@@ -676,32 +739,51 @@ def download_file_nowget(url, fn, cookies_file):
     """
 
     logging.info('Downloading %s -> %s', url, fn)
-    try:
-        opener = get_opener(cookies_file)
-        opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' %
+
+    attempts_count = 0
+    error_msg = ''
+    while (attempts_count < 5):
+        try:
+            opener = get_opener(cookies_file)
+            opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' %
                                   (csrftoken, session)))
-        urlfile = opener.open(url)
-    except urllib2.HTTPError:
-        logging.warn('Probably the file is missing from the AWS repository...'
-                     ' skipping it.')
+            urlfile = opener.open(url)
+        except urllib2.HTTPError as e:
+            logging.warn('Probably the file is missing from the AWS repository...'
+                         ' waiting.')
+            
+            if hasattr(e, 'reason'):
+            	error_msg = e.reason + ' ' + str(e.code)
+            else:
+            	error_msg = 'HTTP Error '+str(e.code)
+            	
+            wait_interval = 2 ** (attempts_count + 1)
+            print 'Error to downloading, will retry in %s seconds ...' % wait_interval
+            time.sleep(wait_interval)
+            attempts_count += 1
+            continue
+        else:
+            bw = BandwidthCalc()
+            chunk_sz = 1048576
+            bytesread = 0
+            with open(fn, 'wb') as f:
+                while True:
+                    data = urlfile.read(chunk_sz)
+                    if not data:
+                        print '.'
+                        break
+                    bw.received(len(data))
+                    f.write(data)
+                    bytesread += len(data)
+                    print '\r%d bytes read%s' % (bytesread, bw),
+                    sys.stdout.flush()
+            urlfile.close()
+            return 0
+
+    if attempts_count == 5:
+        logging.warn('Skipping, can\'t download file ...')
+        print error_msg
         return 1
-    else:
-        bw = BandwidthCalc()
-        chunk_sz = 1048576
-        bytesread = 0
-        with open(fn, 'wb') as f:
-            while True:
-                data = urlfile.read(chunk_sz)
-                if not data:
-                    print '.'
-                    break
-                bw.received(len(data))
-                f.write(data)
-                bytesread += len(data)
-                print '\r%d bytes read%s' % (bytesread, bw),
-                sys.stdout.flush()
-        urlfile.close()
-        return 0
 
 
 def parseArgs():
@@ -748,6 +830,12 @@ def parseArgs():
                         help='coursera password')
 
     # optional
+    parser.add_argument('-b',
+                        '--preview',
+                        dest='preview',
+                        action='store_true',
+                        default=False,
+                        help='get preview videos. (Default: False)')
     parser.add_argument('-f',
                         '--formats',
                         dest='file_formats',
@@ -882,15 +970,14 @@ def download_class(args, class_name):
 
     if args.username:
         tmp_cookie_file = write_cookie_file(class_name, args.username,
-                                            args.password)
+                                            args.password, args.preview)
 
     # get the syllabus listing
     page = get_syllabus(class_name, args.cookies_file
-                        or tmp_cookie_file, args.local_page)
+                        or tmp_cookie_file, args.local_page, args.preview)
 
     # parse it
-    sections = parse_syllabus(page, args.cookies_file
-                              or tmp_cookie_file, args.reverse)
+    sections = parse_syllabus(page, args.reverse)
 
     # obtain the resources
     completed = download_lectures(
@@ -909,6 +996,7 @@ def download_class(args, class_name):
                       args.path,
                       args.verbose_dirs,
                       args.combined_section_lectures_nums,
+                      args.preview,
                       )
 
     if not args.cookies_file:
@@ -930,6 +1018,8 @@ def main():
             logging.info('Downloading class: %s', class_name)
             if download_class(args, class_name):
                 completed_classes.append(class_name)
+        except urllib2.HTTPError as e:
+            logging.error('Could not download class: %s', e)
         except ClassNotFound as cnf:
             logging.error('Could not find class: %s', cnf)
 
