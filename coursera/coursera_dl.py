@@ -71,6 +71,9 @@ except ImportError:
 csrftoken = ''
 session = ''
 AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
+CLASS_URL = 'https://class.coursera.org/{class_name}'
+AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
+                    '/auth/auth_redirector?type=login&subtype=normal'
 
 # Monkey patch cookielib.Cookie.__init__.
 # Reason: The expires value may be a decimal string,
@@ -170,10 +173,10 @@ def get_syllabus_url(className, preview):
     Return the Coursera index/syllabus URL.
     """
     classType = 'preview' if preview else 'index'
-    return 'https://class.coursera.org/%s/lecture/%s' % (className, classType)
+    return CLASS_URL.format(class_name=className) + '/lecture/' + classType
 
 
-def write_cookie_file(className, username, password, preview):
+def write_cookie_file(className, username, password):
     """
     Automatically generate a cookie file for the Coursera site.
     """
@@ -187,7 +190,7 @@ def write_cookie_file(className, username, password, preview):
         ]
         opener = urllib2.build_opener(*handlers)
 
-        req = urllib2.Request(get_syllabus_url(className, preview))
+        req = urllib2.Request(CLASS_URL.format(class_name=className))
         opener.open(req)
 
         csrftoken = None
@@ -236,14 +239,11 @@ def write_cookie_file(className, username, password, preview):
     return fn
 
 
-def down_the_wabbit_hole(className, cj, preview):
+def down_the_wabbit_hole(className, cj):
     """
     Authenticate on class.coursera.org
     """
-    quoted_class_url = urllib.quote_plus(get_syllabus_url(className, preview))
-    url = 'https://class.coursera.org/%s/auth/auth_redirector' \
-          '?type=login&subtype=normal&email=&visiting=%s'
-    auth_redirector_url = url % (className, quoted_class_url)
+    auth_redirector_url = AUTH_REDIRECT_URL.format(class_name=className)
 
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
                                   urllib2.HTTPHandler(),
@@ -254,7 +254,7 @@ def down_the_wabbit_hole(className, cj, preview):
     opener.close()
 
 
-def set_session_and_csrftoken(className, cookies_file, preview):
+def set_session_and_csrftoken(className, cookies_file):
     """
     Set the global variables
     """
@@ -273,7 +273,7 @@ def set_session_and_csrftoken(className, cookies_file, preview):
     if not (csrftoken and session):
         # Get the class.coursera.org cookies. Remember that we need
         # the cookies from www.coursera.org!
-        down_the_wabbit_hole(className, cj, preview)
+        down_the_wabbit_hole(className, cj)
 
         extract_session_and_csrftoken_from_cookiejar(className, cj)
 
@@ -1075,11 +1075,11 @@ def download_class(args, class_name):
 
     if args.username:
         tmp_cookie_file = write_cookie_file(class_name, args.username,
-                                            args.password, args.preview)
+                                            args.password)
 
     cookies_file = args.cookies_file or tmp_cookie_file
 
-    set_session_and_csrftoken(class_name, cookies_file, args.preview)
+    set_session_and_csrftoken(class_name, cookies_file)
 
     # get the syllabus listing
     page = get_syllabus(class_name, cookies_file,
