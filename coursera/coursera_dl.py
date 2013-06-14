@@ -56,7 +56,6 @@ import sys
 import tempfile
 import time
 import urllib
-import urllib2
 
 try:
     from BeautifulSoup import BeautifulSoup
