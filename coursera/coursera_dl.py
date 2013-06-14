@@ -72,10 +72,51 @@ csrftoken = ''
 session = ''
 AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 
+# Monkey patch cookielib.Cookie.__init__.
+# Reason: The expires value may be a decimal string,
+# but the Cookie class uses int() ...
+__orginal_init__ = cookielib.Cookie.__init__
+
+
+def __fixed_init__(self, version, name, value,
+                   port, port_specified,
+                   domain, domain_specified, domain_initial_dot,
+                   path, path_specified,
+                   secure,
+                   expires,
+                   discard,
+                   comment,
+                   comment_url,
+                   rest,
+                   rfc2109=False,
+                   ):
+    expires = float(expires)
+    __orginal_init__(self, version, name, value,
+                     port, port_specified,
+                     domain, domain_specified, domain_initial_dot,
+                     path, path_specified,
+                     secure,
+                     expires,
+                     discard,
+                     comment,
+                     comment_url,
+                     rest,
+                     rfc2109=False,)
+
+cookielib.Cookie.__init__ = __fixed_init__
+
 
 class ClassNotFound(BaseException):
     """
     Class to be thrown if a course is not found in Coursera's site.
+    """
+
+    pass
+
+
+class AuthenticationFailed(BaseException):
+    """
+    Class to be thrown if we cannot authenticate on Coursera's site.
     """
 
     pass
@@ -137,8 +178,6 @@ def write_cookie_file(className, username, password, preview):
     Automatically generate a cookie file for the Coursera site.
     """
     try:
-        global csrftoken
-        global session
         hn, fn = tempfile.mkstemp()
         cookies = cookielib.LWPCookieJar()
         handlers = [
@@ -151,11 +190,15 @@ def write_cookie_file(className, username, password, preview):
         req = urllib2.Request(get_syllabus_url(className, preview))
         opener.open(req)
 
+        csrftoken = None
         for cookie in cookies:
             if cookie.name == 'csrf_token':
                 csrftoken = cookie.value
                 break
         opener.close()
+
+        if not csrftoken:
+            raise AuthenticationFailed('Did not recieve csrf_token cookie.')
 
         # Now make a call to the authenticator url:
         cj = cookielib.MozillaCookieJar(fn)
@@ -193,15 +236,14 @@ def write_cookie_file(className, username, password, preview):
     return fn
 
 
-def down_the_wabbit_hole(className, cookies_file, preview):
+def down_the_wabbit_hole(className, cj, preview):
     """
-    Get the session cookie
+    Authenticate on class.coursera.org
     """
     quoted_class_url = urllib.quote_plus(get_syllabus_url(className, preview))
-    auth_redirector_url = 'https://class.coursera.org/%s/auth/auth_redirector?type=login&subtype=normal&email=&visiting=%s' % (className, quoted_class_url)
-
-    global session
-    cj = get_cookie_jar(cookies_file)
+    url = 'https://class.coursera.org/%s/auth/auth_redirector' \
+          '?type=login&subtype=normal&email=&visiting=%s'
+    auth_redirector_url = url % (className, quoted_class_url)
 
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
                                   urllib2.HTTPHandler(),
@@ -209,12 +251,52 @@ def down_the_wabbit_hole(className, cookies_file, preview):
 
     req = urllib2.Request(auth_redirector_url)
     opener.open(req)
-
-    for cookie in cj:
-        if cookie.name == 'session':
-            session = cookie.value
-            break
     opener.close()
+
+
+def set_session_and_csrftoken(className, cookies_file, preview):
+    """
+    Set the global variables
+    """
+    global csrftoken
+    global session
+
+    # At this moment we should have the following cookies on www.coursera.org:
+    #     maestro_login_flag, sessionid, maestro_login
+    # To access the class pages we need two cookies on class.coursera.org:
+    #     csrf_token, session
+    cj = get_cookie_jar(cookies_file)
+
+    # First, check if we have the class.coursera.org cookies.
+    extract_session_and_csrftoken_from_cookiejar(className, cj)
+
+    if not (csrftoken and session):
+        # Get the class.coursera.org cookies. Remember that we need
+        # the cookies from www.coursera.org!
+        down_the_wabbit_hole(className, cj, preview)
+
+        extract_session_and_csrftoken_from_cookiejar(className, cj)
+
+        if not (csrftoken and session):
+            raise AuthenticationFailed('Did not find csrf_token or session cookie.')
+
+    logging.info('Found authentication cookies.')
+
+
+def extract_session_and_csrftoken_from_cookiejar(className, cj):
+    """
+    Extract the class.coursera.org cookies from the cookiejar.
+    """
+    global csrftoken
+    global session
+
+    path = "/" + className
+    for cookie in cj:
+        if cookie.domain == 'class.coursera.org' and cookie.path == path:
+            if cookie.name == 'session':
+                session = cookie.value
+            if cookie.name == 'csrf_token':
+                csrftoken = cookie.value
 
 
 def get_config_paths(config_name, user_specified_path=None):
@@ -329,7 +411,7 @@ def load_cookies_file(cookies_file):
 
     cookies = StringIO.StringIO()
     cookies.write('# Netscape HTTP Cookie File')
-    cookies.write(open(cookies_file, 'r').read())
+    cookies.write(open(cookies_file, 'rU').read())
     cookies.flush()
     cookies.seek(0)
     return cookies
@@ -407,7 +489,6 @@ def get_syllabus(class_name, cookies_file, local_page=False, preview=False):
 
     if not (local_page and os.path.exists(local_page)):
         url = get_syllabus_url(class_name, preview)
-        down_the_wabbit_hole(class_name, cookies_file, preview)
         page = get_page(url)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
 
@@ -975,13 +1056,23 @@ def download_class(args, class_name):
     Returns True if the class appears completed.
     """
 
+    global csrftoken
+    global session
+
+    csrftoken = ''
+    session = ''
+
     if args.username:
         tmp_cookie_file = write_cookie_file(class_name, args.username,
                                             args.password, args.preview)
 
+    cookies_file = args.cookies_file or tmp_cookie_file
+
+    set_session_and_csrftoken(class_name, cookies_file, args.preview)
+
     # get the syllabus listing
-    page = get_syllabus(class_name, args.cookies_file
-                        or tmp_cookie_file, args.local_page, args.preview)
+    page = get_syllabus(class_name, cookies_file,
+                        args.local_page, args.preview)
 
     # parse it
     sections = parse_syllabus(page, args.reverse)
@@ -992,7 +1083,7 @@ def download_class(args, class_name):
                       args.curl_bin,
                       args.aria2_bin,
                       args.axel_bin,
-                      args.cookies_file or tmp_cookie_file,
+                      cookies_file,
                       class_name,
                       sections,
                       args.file_formats,
@@ -1029,6 +1120,8 @@ def main():
             logging.error('Could not download class: %s', e)
         except ClassNotFound as cnf:
             logging.error('Could not find class: %s', cnf)
+        except AuthenticationFailed as af:
+            logging.error('Could not authenticate: %s', af)
 
     if completed_classes:
         logging.info("Classes which appear completed: " + " ".join(completed_classes))
