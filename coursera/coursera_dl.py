@@ -48,6 +48,7 @@ import netrc
 import os
 import platform
 import re
+import requests
 import string
 import StringIO
 import subprocess
