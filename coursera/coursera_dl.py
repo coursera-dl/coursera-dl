@@ -168,15 +168,15 @@ class BandwidthCalc(object):
             return bw
 
 
-def get_syllabus_url(className, preview):
+def get_syllabus_url(class_name, preview):
     """
     Return the Coursera index/syllabus URL.
     """
     classType = 'preview' if preview else 'index'
-    return CLASS_URL.format(class_name=className) + '/lecture/' + classType
+    return CLASS_URL.format(class_name=class_name) + '/lecture/' + classType
 
 
-def write_cookie_file(className, username, password):
+def write_cookie_file(class_name, username, password):
     """
     Automatically generate a cookie file for the Coursera site.
     """
@@ -190,7 +190,7 @@ def write_cookie_file(className, username, password):
         ]
         opener = urllib2.build_opener(*handlers)
 
-        req = urllib2.Request(CLASS_URL.format(class_name=className))
+        req = urllib2.Request(CLASS_URL.format(class_name=class_name))
         opener.open(req)
 
         csrftoken = None
@@ -229,7 +229,7 @@ def write_cookie_file(className, username, password):
         opener.open(req)
     except urllib2.HTTPError as e:
         if e.code == 404:
-            raise ClassNotFound(className)
+            raise ClassNotFound(class_name)
         else:
             raise
 
@@ -239,11 +239,11 @@ def write_cookie_file(className, username, password):
     return fn
 
 
-def down_the_wabbit_hole(className, cj):
+def down_the_wabbit_hole(class_name, cj):
     """
     Authenticate on class.coursera.org
     """
-    auth_redirector_url = AUTH_REDIRECT_URL.format(class_name=className)
+    auth_redirector_url = AUTH_REDIRECT_URL.format(class_name=class_name)
 
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
                                   urllib2.HTTPHandler(),
@@ -254,7 +254,7 @@ def down_the_wabbit_hole(className, cj):
     opener.close()
 
 
-def set_session_and_csrftoken(className, cookies_file):
+def set_session_and_csrftoken(class_name, cookies_file):
     """
     Set the global variables
     """
@@ -268,14 +268,14 @@ def set_session_and_csrftoken(className, cookies_file):
     cj = get_cookie_jar(cookies_file)
 
     # First, check if we have the class.coursera.org cookies.
-    extract_session_and_csrftoken_from_cookiejar(className, cj)
+    extract_session_and_csrftoken_from_cookiejar(class_name, cj)
 
     if not (csrftoken and session):
         # Get the class.coursera.org cookies. Remember that we need
         # the cookies from www.coursera.org!
-        down_the_wabbit_hole(className, cj)
+        down_the_wabbit_hole(class_name, cj)
 
-        extract_session_and_csrftoken_from_cookiejar(className, cj)
+        extract_session_and_csrftoken_from_cookiejar(class_name, cj)
 
         if not (csrftoken and session):
             raise AuthenticationFailed('Did not find csrf_token or session cookie.')
@@ -283,14 +283,14 @@ def set_session_and_csrftoken(className, cookies_file):
     logging.info('Found authentication cookies.')
 
 
-def extract_session_and_csrftoken_from_cookiejar(className, cj):
+def extract_session_and_csrftoken_from_cookiejar(class_name, cj):
     """
     Extract the class.coursera.org cookies from the cookiejar.
     """
     global csrftoken
     global session
 
-    path = "/" + className
+    path = "/" + class_name
     for cookie in cj:
         if cookie.domain == 'class.coursera.org' and cookie.path == path:
             if cookie.name == 'session':
