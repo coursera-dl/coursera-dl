@@ -1056,6 +1056,12 @@ def download_class(args, class_name):
     Returns True if the class appears completed.
     """
 
+    global csrftoken
+    global session
+
+    csrftoken = ''
+    session = ''
+
     if args.username:
         tmp_cookie_file = write_cookie_file(class_name, args.username,
                                             args.password, args.preview)
