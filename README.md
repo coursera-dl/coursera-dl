@@ -154,6 +154,15 @@ Troubleshooting
         >>> print(html5lib.__version__)
         0.95-dev
 
+* If you get an error like `Could not find class: <CLASS_NAME>`:
+    * Verify that the name of the course is correct. Current class
+      names in coursera are composed by a short course name e.g. class
+      and the current version of the course e.g. class-001, class-002,
+      etc.
+    * Second, verify that you are enrolled in the course. You won't be
+      able to access the course materials if you are not officially
+      enrolled and agreed to the honor course via the website.
+
 Feedback
 --------
 
