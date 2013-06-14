@@ -133,8 +133,10 @@ Troubleshooting
   the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
-* One can export a Netscape-style cookies file with a browser
-  extension ([1][9], [2][10]) and use it with the `-c` option. This comes in handy when the authentication via password is not working (the authentication process changes now and then).
+* Previously one could export a Netscape-style cookies file with a browser
+  extension ([1][9], [2][10]) for use with the `-c` option, but this
+  approach does not appear to work with recent classes. Use the `-u` and
+  `-p` flags instead or use the `-n` flag.
 
 * If results show 0 sections, you most likely have provided invalid
   credentials (username and/or password in the command line or in your
