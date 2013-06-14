@@ -70,3 +70,9 @@ class CookiesFileTestCase(unittest.TestCase):
 
 		self.assertFalse(coursera_dl.do_we_have_enough_cookies(cj, 'class-001'))
 
+
+	def test_make_cookie_values(self):
+		cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+
+		values = 'csrf_token=csrfclass001, session=sessionclass1'
+		self.assertEquals(coursera_dl.make_cookie_values(cj, 'class-001'), values)

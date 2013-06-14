@@ -297,6 +297,20 @@ def do_we_have_enough_cookies(cj, class_name):
            and cj.get('csrf_token', domain=domain, path=path)
 
 
+def make_cookie_values(cj, class_name):
+    """
+    Makes a string of cookie keys and values.
+    Can be used to set a Cookie header.
+    """
+    path = "/" + class_name;
+
+    cookies = [c.name + '=' + c.value 
+               for c in cj
+               if c.domain == "class.coursera.org"
+                   and c.path == path]
+
+    return ', '.join(cookies)
+
 
 def get_config_paths(config_name, user_specified_path=None):
     """
