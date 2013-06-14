@@ -605,10 +605,16 @@ def download_lectures(wget_bin,
             if not os.path.exists(sec):
                 mkdir_p(sec)
 
+            # Select formats to download
+            lectures_to_get = []
+            for i in lecture.items():
+                if i[0] in file_formats or 'all' in file_formats:
+                    lectures_to_get.append(i)
+                else:
+                    logging.debug('Skipping b/c format %s not in %s', i[0], file_formats)
+
             # write lecture resources
-            for fmt, url in [i for i in lecture.items() if i[0]
-                             in file_formats or 'all'
-                             in file_formats]:
+            for fmt, url in lectures_to_get:
                 if combined_section_lectures_nums:
                     lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1,
                                                          lecnum + 1, lecname, fmt))
