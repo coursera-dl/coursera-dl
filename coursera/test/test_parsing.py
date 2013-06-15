@@ -25,9 +25,9 @@ TEST_SECTIONS_NOT_TO_MISS = \
 class TestSyllabusParsing(unittest.TestCase):
 
     def test_parse(self):
-        self.syllabus_page = open(TEST_SYLLABUS_FILE).read()
+        syllabus_page = open(TEST_SYLLABUS_FILE).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 23)
@@ -46,9 +46,9 @@ class TestSyllabusParsing(unittest.TestCase):
 
 
     def test_links_to_wikipedia(self):
-        self.syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
+        syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 5)
@@ -70,9 +70,9 @@ class TestSyllabusParsing(unittest.TestCase):
     # testing this also on Python 2.6, we simply rename the test method to
     # not begin with `test`.
     def xtest_parse_preview(self):
-        self.syllabus_page = open(TEST_PREVIEW_FILE).read()
+        syllabus_page = open(TEST_PREVIEW_FILE).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 20)
@@ -91,9 +91,9 @@ class TestSyllabusParsing(unittest.TestCase):
 
 
     def test_sections_missed(self):
-        self.syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
+        syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 9)
