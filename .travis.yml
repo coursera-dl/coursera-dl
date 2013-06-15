@@ -5,4 +5,4 @@ python:
 # command to install dependencies
 install: "pip install -r requirements.txt --use-mirrors"
 # command to run tests
-script: "python -m unittest test.test_coursera"
+script: nosetests

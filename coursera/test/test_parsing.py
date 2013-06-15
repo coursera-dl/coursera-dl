@@ -10,24 +10,43 @@ import unittest
 from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
-    os.path.join(os.path.dirname(__file__), "regular-syllabus.html")
+    os.path.join(os.path.dirname(__file__), "fixtures", "regular-syllabus.html")
 
 TEST_PREVIEW_FILE = \
-    os.path.join(os.path.dirname(__file__), "preview.html")
+    os.path.join(os.path.dirname(__file__), "fixtures","preview.html")
 
 TEST_LINKS_TO_WIKIPEDIA = \
-    os.path.join(os.path.dirname(__file__), "links-to-wikipedia.html")
+    os.path.join(os.path.dirname(__file__), "fixtures","links-to-wikipedia.html")
 
 TEST_SECTIONS_NOT_TO_MISS = \
-    os.path.join(os.path.dirname(__file__), "sections-not-to-be-missed.html")
+    os.path.join(os.path.dirname(__file__), "fixtures","sections-not-to-be-missed.html")
 
 
 class TestSyllabusParsing(unittest.TestCase):
 
-    def test_parse(self):
-        self.syllabus_page = open(TEST_SYLLABUS_FILE).read()
+    def setUp(self):
+        # Mock coursera_dl.grab_hidden_video_url to prevent http requests
+        self.__grab_hidden_video_url = coursera_dl.grab_hidden_video_url
+        def new_grab_hidden_video_url(href):
+            return None
+        coursera_dl.grab_hidden_video_url = new_grab_hidden_video_url
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        # Mock coursera_dl.get_video to prevent http requests
+        self.__get_video = coursera_dl.get_video
+        def new_get_video(href):
+            return None
+        coursera_dl.get_video = new_get_video
+
+
+    def tearDown(self):
+        coursera_dl.grab_hidden_video_url = self.__grab_hidden_video_url
+        coursera_dl.get_video = self.__get_video
+
+
+    def test_parse(self):
+        syllabus_page = open(TEST_SYLLABUS_FILE).read()
+
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 23)
@@ -46,9 +65,9 @@ class TestSyllabusParsing(unittest.TestCase):
 
 
     def test_links_to_wikipedia(self):
-        self.syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
+        syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 5)
@@ -66,13 +85,10 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(mp4s), 36)
 
 
-    # Python 2.7 accepts @unittest.skip("Too much bandwidth"), but as we are
-    # testing this also on Python 2.6, we simply rename the test method to
-    # not begin with `test`.
-    def xtest_parse_preview(self):
-        self.syllabus_page = open(TEST_PREVIEW_FILE).read()
+    def test_parse_preview(self):
+        syllabus_page = open(TEST_PREVIEW_FILE).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 20)
@@ -91,9 +107,9 @@ class TestSyllabusParsing(unittest.TestCase):
 
 
     def test_sections_missed(self):
-        self.syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
+        syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
 
-        sections = coursera_dl.parse_syllabus(self.syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 9)
