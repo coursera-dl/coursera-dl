@@ -1,1 +1,1 @@
-python -m unittest test.test_coursera
+python -m unittest coursera.test.test_coursera
