@@ -24,6 +24,25 @@ TEST_SECTIONS_NOT_TO_MISS = \
 
 class TestSyllabusParsing(unittest.TestCase):
 
+    def setUp(self):
+        # Mock coursera_dl.grab_hidden_video_url to prevent http requests
+        self.__grab_hidden_video_url = coursera_dl.grab_hidden_video_url
+        def new_grab_hidden_video_url(href):
+            return None
+        coursera_dl.grab_hidden_video_url = new_grab_hidden_video_url
+
+        # Mock coursera_dl.get_video to prevent http requests
+        self.__get_video = coursera_dl.get_video
+        def new_get_video(href):
+            return None
+        coursera_dl.get_video = new_get_video
+
+
+    def tearDown(self):
+        coursera_dl.grab_hidden_video_url = self.__grab_hidden_video_url
+        coursera_dl.get_video = self.__get_video
+
+
     def test_parse(self):
         syllabus_page = open(TEST_SYLLABUS_FILE).read()
 
@@ -66,10 +85,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(mp4s), 36)
 
 
-    # Python 2.7 accepts @unittest.skip("Too much bandwidth"), but as we are
-    # testing this also on Python 2.6, we simply rename the test method to
-    # not begin with `test`.
-    def xtest_parse_preview(self):
+    def test_parse_preview(self):
         syllabus_page = open(TEST_PREVIEW_FILE).read()
 
         sections = coursera_dl.parse_syllabus(syllabus_page, None)
