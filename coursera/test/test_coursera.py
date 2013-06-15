@@ -10,16 +10,16 @@ import unittest
 from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
-    os.path.join(os.path.dirname(__file__), "regular-syllabus.html")
+    os.path.join(os.path.dirname(__file__), "fixtures", "regular-syllabus.html")
 
 TEST_PREVIEW_FILE = \
-    os.path.join(os.path.dirname(__file__), "preview.html")
+    os.path.join(os.path.dirname(__file__), "fixtures","preview.html")
 
 TEST_LINKS_TO_WIKIPEDIA = \
-    os.path.join(os.path.dirname(__file__), "links-to-wikipedia.html")
+    os.path.join(os.path.dirname(__file__), "fixtures","links-to-wikipedia.html")
 
 TEST_SECTIONS_NOT_TO_MISS = \
-    os.path.join(os.path.dirname(__file__), "sections-not-to-be-missed.html")
+    os.path.join(os.path.dirname(__file__), "fixtures","sections-not-to-be-missed.html")
 
 
 class TestSyllabusParsing(unittest.TestCase):
