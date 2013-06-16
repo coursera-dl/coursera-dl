@@ -240,19 +240,17 @@ def write_cookie_file(class_name, username, password):
     return fn
 
 
-def down_the_wabbit_hole(class_name, cj):
+def down_the_wabbit_hole(session, class_name):
     """
     Authenticate on class.coursera.org
     """
+
     auth_redirector_url = AUTH_REDIRECT_URL.format(class_name=class_name)
-
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
-                                  urllib2.HTTPHandler(),
-                                  urllib2.HTTPSHandler())
-
-    req = urllib2.Request(auth_redirector_url)
-    opener.open(req)
-    opener.close()
+    r = session.get(auth_redirector_url)
+    try:
+        r.raise_for_status()
+    except requests.exceptions.HTTPError:
+        raise AuthenticationFailed('Cannot login on class.coursera.org.')
 
 
 def set_session_and_csrftoken(class_name, cookies_file):
