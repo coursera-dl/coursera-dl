@@ -433,38 +433,20 @@ def get_cookie_jar(cookies_file):
 
     return cj
 
-
-def get_opener(cookies_file):
+def get_page(session, url):
     """
-    Use cookie file to create a url opener.
-    """
-
-    cj = get_cookie_jar(cookies_file)
-
-    return urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
-                                urllib2.HTTPHandler(),
-                                urllib2.HTTPSHandler())
-
-
-def get_page(url):
-    """
-    Download an HTML page using the cookiejar.
+    Download an HTML page using the requests session.
     """
 
-    opener = urllib2.build_opener(urllib2.HTTPHandler(), urllib2.HTTPSHandler())
-    req = urllib2.Request(url)
-
-    opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' % (csrftoken, session)))
+    r = session.get(url)
+    
     try:
-        ret = opener.open(req).read()
-    except urllib2.HTTPError as e:
-        logging.error("Error %s getting page %s", str(e), url)
-        ret = ''
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        logging.error("Error getting page %s", url)
+        raise
 
-    # opener = get_opener(cookies_file)
-    # ret = opener.open(url).read()
-    opener.close()
-    return ret
+    return r.text
 
 
 def grab_hidden_video_url(href):
@@ -482,7 +464,7 @@ def grab_hidden_video_url(href):
         return None
 
 
-def get_syllabus(class_name, cookies_file, local_page=False, preview=False):
+def get_syllabus(session, class_name, local_page=False, preview=False):
     """
     Get the course listing webpage.
 
@@ -494,7 +476,7 @@ def get_syllabus(class_name, cookies_file, local_page=False, preview=False):
 
     if not (local_page and os.path.exists(local_page)):
         url = get_syllabus_url(class_name, preview)
-        page = get_page(url)
+        page = get_page(session, url)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
 
         # cache the page if we're in 'local' mode
@@ -1083,8 +1065,7 @@ def download_class(args, class_name):
     get_authentication_cookies(session, class_name)
 
     # get the syllabus listing
-    page = get_syllabus(class_name, cookies_file,
-                        args.local_page, args.preview)
+    page = get_syllabus(session, class_name, args.local_page, args.preview)
 
     # parse it
     sections = parse_syllabus(page, args.reverse)
