@@ -401,6 +401,26 @@ def authenticate_through_netrc(user_specified_path=None):
 
     return res
 
+def find_cookies_for_class(cookies_file, class_name):
+    """
+    Return a RequestsCookieJar containing the cookies for 
+    www.coursera.org and class.coursera.org found in the given cookies_file.
+    """
+
+    path = "/" + class_name;
+    def cookies_filter(c):
+        return c.domain == "www.coursera.org" \
+               or (c.domain == "class.coursera.org" and c.path == path)    
+
+    cj = get_cookie_jar(cookies_file)
+    cookies_list = filter(cookies_filter, cj)
+
+    new_cj = requests.cookies.RequestsCookieJar()
+    for c in cookies_list:
+        new_cj.set_cookie(c)
+
+    return new_cj
+
 
 def load_cookies_file(cookies_file):
     """

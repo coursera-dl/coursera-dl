@@ -31,3 +31,30 @@ class CookiesFileTestCase(unittest.TestCase):
 		from cookielib import MozillaCookieJar
 		cj = coursera_dl.get_cookie_jar(CHROME_COOKIES)
 		self.assertTrue(isinstance(cj, MozillaCookieJar))
+
+
+	def test_find_cookies_for_class(self):
+		import requests
+		cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+		self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
+
+		self.assertEquals(len(cj), 7)
+
+		domains = cj.list_domains()
+		self.assertEquals(len(domains), 2)
+		self.assertTrue('www.coursera.org' in domains)
+		self.assertTrue('class.coursera.org' in domains)
+
+		paths = cj.list_paths()
+		self.assertEquals(len(paths), 2)
+		self.assertTrue('/' in paths)
+		self.assertTrue('/class-001' in paths)
+
+
+	def test_did_not_find_cookies_for_class(self):
+		import requests
+		cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES_WITHOUT_COURSERA, 'class-001')
+		self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
+
+		self.assertEquals(len(cj), 0)
+
