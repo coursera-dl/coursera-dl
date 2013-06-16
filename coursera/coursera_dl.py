@@ -69,8 +69,6 @@ except ImportError:
     except ImportError:
         BeautifulSoup = BeautifulSoup_
 
-csrftoken = ''
-session = ''
 AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
 AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
@@ -255,6 +253,8 @@ def get_authentication_cookies(session, class_name):
             raise AuthenticationFailed('Did not find necessary cookies.')
 
     logging.info('Found authentication cookies.')
+
+    session.cookie_values = make_cookie_values(session.cookies, class_name)
 
 
 def do_we_have_enough_cookies(cj, class_name):
@@ -454,7 +454,6 @@ def grab_hidden_video_url(href):
     Follow some extra redirects to grab hidden video URLs (like those from
     University of Washington).
     """
-
     page = get_page(href)
     soup = BeautifulSoup(page)
     l = soup.find('source', attrs={'type': 'video/mp4'})
@@ -624,11 +623,11 @@ def mkdir_p(path):
             raise
 
 
-def download_lectures(wget_bin,
+def download_lectures(session,
+                      wget_bin,
                       curl_bin,
                       aria2_bin,
                       axel_bin,
-                      cookies_file,
                       class_name,
                       sections,
                       file_formats,
@@ -693,7 +692,7 @@ def download_lectures(wget_bin,
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
                         logging.info('Downloading: %s', lecfn)
-                        download_file(url, lecfn, cookies_file, wget_bin,
+                        download_file(session, url, lecfn, wget_bin,
                                       curl_bin, aria2_bin, axel_bin)
                     else:
                         open(lecfn, 'w').close()  # touch
@@ -727,9 +726,9 @@ def total_seconds(td):
     return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
 
 
-def download_file(url,
+def download_file(session,
+                  url,
                   fn,
-                  cookies_file,
                   wget_bin,
                   curl_bin,
                   aria2_bin,
@@ -742,47 +741,47 @@ def download_file(url,
 
     try:
         if wget_bin:
-            download_file_wget(wget_bin, url, fn)
+            download_file_wget(wget_bin, url, fn, session.cookie_values)
         elif curl_bin:
-            download_file_curl(curl_bin, url, fn)
+            download_file_curl(curl_bin, url, fn, session.cookie_values)
         elif aria2_bin:
-            download_file_aria2(aria2_bin, url, fn)
+            download_file_aria2(aria2_bin, url, fn, session.cookie_values)
         elif axel_bin:
-            download_file_axel(axel_bin, url, fn)
+            download_file_axel(axel_bin, url, fn, session.cookie_values)
         else:
-            download_file_nowget(url, fn, cookies_file)
+            download_file_nowget(session, url, fn)
     except KeyboardInterrupt:
         logging.info('Keyboard Interrupt -- Removing partial file: %s', fn)
         os.remove(fn)
         sys.exit()
 
 
-def download_file_wget(wget_bin, url, fn):
+def download_file_wget(wget_bin, url, fn, cookie_values):
     """
     Downloads a file using wget.  Could possibly use python to stream files
     to disk, but wget is robust and gives nice visual feedback.
     """
 
     cmd = [wget_bin, url, '-O', fn, '--no-cookies', '--header',
-           "Cookie: csrf_token=%s; session=%s" % (csrftoken, session),
+           "Cookie: " + cookie_values,
            '--no-check-certificate']
     logging.debug('Executing wget: %s', cmd)
     return subprocess.call(cmd)
 
 
-def download_file_curl(curl_bin, url, fn):
+def download_file_curl(curl_bin, url, fn, cookie_values):
     """
     Downloads a file using curl.  Could possibly use python to stream files
     to disk, but curl is robust and gives nice visual feedback.
     """
 
-    cmd = [curl_bin, url, '-k', '-#', '-L', '-o', fn, '--cookie',
-           "csrf_token=%s; session=%s" % (csrftoken, session)]
+    cmd = [curl_bin, url, '-k', '-#', '-L', '-o', fn,
+           '--cookie', cookie_values]
     logging.debug('Executing curl: %s', cmd)
     return subprocess.call(cmd)
 
 
-def download_file_aria2(aria2_bin, url, fn):
+def download_file_aria2(aria2_bin, url, fn, cookie_values):
     """
     Downloads a file using aria2.  Could possibly use python to stream files
     to disk, but aria2 is robust. Unfortunately, it does not give a nice
@@ -791,27 +790,27 @@ def download_file_aria2(aria2_bin, url, fn):
     """
 
     cmd = [aria2_bin, url, '-o', fn, '--header',
-           "Cookie: csrf_token=%s; session=%s" % (csrftoken, session),
+           "Cookie: " + cookie_values,
            '--check-certificate=false', '--log-level=notice',
            '--max-connection-per-server=4', '--min-split-size=1M']
     logging.debug('Executing aria2: %s', cmd)
     return subprocess.call(cmd)
 
 
-def download_file_axel(axel_bin, url, fn):
+def download_file_axel(axel_bin, url, fn, cookie_values):
     """
     Downloads a file using axel.  Could possibly use python to stream files
     to disk, but axel is robust and it both gives nice visual feedback and
     get the job done fast.
     """
 
-    cmd = [axel_bin, '-H', "Cookie: csrf_token=%s; session=%s" % (csrftoken, session),
+    cmd = [axel_bin, '-H', "Cookie: " + cookie_values,
            '-o', fn, '-n', '4', '-a', url]
     logging.debug('Executing axel: %s', cmd)
     return subprocess.call(cmd)
 
 
-def download_file_nowget(url, fn, cookies_file):
+def download_file_nowget(session, url, fn):
     """
     'Native' python downloader -- slower than wget.
 
@@ -824,42 +823,39 @@ def download_file_nowget(url, fn, cookies_file):
     attempts_count = 0
     error_msg = ''
     while (attempts_count < 5):
-        try:
-            opener = get_opener(cookies_file)
-            opener.addheaders.append(('Cookie', 'csrf_token=%s;session=%s' %
-                                  (csrftoken, session)))
-            urlfile = opener.open(url)
-        except urllib2.HTTPError as e:
+        r = session.get(url, stream=True)
+
+        if (r.status_code is not 200):
             logging.warn('Probably the file is missing from the AWS repository...'
                          ' waiting.')
 
-            if hasattr(e, 'reason'):
-                error_msg = e.reason + ' ' + str(e.code)
+            if r.reason:
+                error_msg = r.reason + ' ' + str(r.status_code)
             else:
-                error_msg = 'HTTP Error ' + str(e.code)
+                error_msg = 'HTTP Error ' + str(r.status_code)
 
             wait_interval = 2 ** (attempts_count + 1)
             print 'Error to downloading, will retry in %s seconds ...' % wait_interval
             time.sleep(wait_interval)
             attempts_count += 1
             continue
-        else:
-            bw = BandwidthCalc()
-            chunk_sz = 1048576
-            bytesread = 0
-            with open(fn, 'wb') as f:
-                while True:
-                    data = urlfile.read(chunk_sz)
-                    if not data:
-                        print '.'
-                        break
-                    bw.received(len(data))
-                    f.write(data)
-                    bytesread += len(data)
-                    print '\r%d bytes read%s' % (bytesread, bw),
-                    sys.stdout.flush()
-            urlfile.close()
-            return 0
+
+        bw = BandwidthCalc()
+        chunk_sz = 1048576
+        bytesread = 0
+        with open(fn, 'wb') as f:
+            while True:
+                data = r.raw.read(chunk_sz)
+                if not data:
+                    print '.'
+                    break
+                bw.received(len(data))
+                f.write(data)
+                bytesread += len(data)
+                print '\r%d bytes read%s' % (bytesread, bw),
+                sys.stdout.flush()
+        r.close()
+        return 0
 
     if attempts_count == 5:
         logging.warn('Skipping, can\'t download file ...')
@@ -1072,11 +1068,11 @@ def download_class(args, class_name):
 
     # obtain the resources
     completed = download_lectures(
+                      session,
                       args.wget_bin,
                       args.curl_bin,
                       args.aria2_bin,
                       args.axel_bin,
-                      cookies_file,
                       class_name,
                       sections,
                       args.file_formats,
@@ -1090,9 +1086,6 @@ def download_class(args, class_name):
                       args.combined_section_lectures_nums,
                       args.hooks
                       )
-
-    if not args.cookies_file:
-        os.unlink(tmp_cookie_file)
 
     return completed
 
