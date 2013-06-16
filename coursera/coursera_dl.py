@@ -253,34 +253,30 @@ def down_the_wabbit_hole(session, class_name):
         raise AuthenticationFailed('Cannot login on class.coursera.org.')
 
 
-def set_session_and_csrftoken(class_name, cookies_file):
+def get_authentication_cookies(session, class_name):
     """
-    Set the global variables
+    Get the necessary cookies to authenticate on class.coursera.org.
+    
+    At this moment we should have the following cookies on www.coursera.org:
+        maestro_login_flag, sessionid, maestro_login
+    To access the class pages we need two cookies on class.coursera.org:
+        csrf_token, session
     """
-    global csrftoken
-    global session
 
-    # At this moment we should have the following cookies on www.coursera.org:
-    #     maestro_login_flag, sessionid, maestro_login
-    # To access the class pages we need two cookies on class.coursera.org:
-    #     csrf_token, session
-    cj = get_cookie_jar(cookies_file)
+    # First, check if we already have the class.coursera.org cookies.
+    enough = do_we_have_enough_cookies(session.cookies, class_name)
 
-    # First, check if we have the class.coursera.org cookies.
-    extract_session_and_csrftoken_from_cookiejar(class_name, cj)
-
-    if not (csrftoken and session):
+    if not enough:
         # Get the class.coursera.org cookies. Remember that we need
         # the cookies from www.coursera.org!
-        down_the_wabbit_hole(class_name, cj)
+        down_the_wabbit_hole(session, class_name)
 
-        extract_session_and_csrftoken_from_cookiejar(class_name, cj)
+        enough = do_we_have_enough_cookies(session.cookies, class_name)
 
-        if not (csrftoken and session):
-            raise AuthenticationFailed('Did not find csrf_token or session cookie.')
+        if not enough:
+            raise AuthenticationFailed('Did not find necessary cookies.')
 
     logging.info('Found authentication cookies.')
-
 
 
 def do_we_have_enough_cookies(cj, class_name):
@@ -1098,19 +1094,13 @@ def download_class(args, class_name):
     Returns True if the class appears completed.
     """
 
-    global csrftoken
-    global session
+    session = requests.Session()
 
-    csrftoken = ''
-    session = ''
+    if args.cookies_file:
+        cookies = find_cookies_for_class(args.cookies_file, class_name)
+        session.cookies.update(cookies)
 
-    if args.username:
-        tmp_cookie_file = write_cookie_file(class_name, args.username,
-                                            args.password)
-
-    cookies_file = args.cookies_file or tmp_cookie_file
-
-    set_session_and_csrftoken(class_name, cookies_file)
+    get_authentication_cookies(session, class_name)
 
     # get the syllabus listing
     page = get_syllabus(class_name, cookies_file,

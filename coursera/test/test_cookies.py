@@ -19,6 +19,18 @@ FIREFOX_COOKIES_WITHOUT_COURSERA = \
     os.path.join(os.path.dirname(__file__), "fixtures", "firefox_cookies_without_coursera.txt")
 
 
+class MockResponse:
+	def raise_for_status(self):
+		pass
+
+class MockSession:
+	def __init__(self):
+		self.called = False
+
+	def get(self, url):
+		self.called = True
+		return MockResponse()
+
 class CookiesFileTestCase(unittest.TestCase):
 
 	def test_get_cookiejar_from_firefox_cookies(self):
@@ -76,3 +88,21 @@ class CookiesFileTestCase(unittest.TestCase):
 
 		values = 'csrf_token=csrfclass001, session=sessionclass1'
 		self.assertEquals(coursera_dl.make_cookie_values(cj, 'class-001'), values)
+
+	def test_get_authentication_cookies_does_not_call_down_the_wabbit_hole(self):
+		cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+		s = MockSession()
+		s.cookies = cj
+		
+		coursera_dl.get_authentication_cookies(s, 'class-001')
+		self.assertFalse(s.called)
+
+
+	def test_get_authentication_cookies_raises_exception(self):
+		cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES_WITHOUT_COURSERA, 'class-001')
+		s = MockSession()
+		s.cookies = cj
+		
+		self.assertRaises(coursera_dl.AuthenticationFailed,
+						  coursera_dl.get_authentication_cookies, s, 'class-001')
+
