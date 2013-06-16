@@ -448,12 +448,12 @@ def get_page(session, url):
     return r.text
 
 
-def grab_hidden_video_url(href):
+def grab_hidden_video_url(session, href):
     """
     Follow some extra redirects to grab hidden video URLs (like those from
     University of Washington).
     """
-    page = get_page(href)
+    page = get_page(session, href)
     soup = BeautifulSoup(page)
     l = soup.find('source', attrs={'type': 'video/mp4'})
     if l is not None:
@@ -530,17 +530,17 @@ def transform_preview_url(a):
         return None
 
 
-def get_video(url):
+def get_video(session, url):
     """
     Parses a Coursera video page
     """
 
-    page = get_page(url)
+    page = get_page(session, url)
     soup = BeautifulSoup(page)
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(page, reverse=False):
+def parse_syllabus(session, page, reverse=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -577,7 +577,7 @@ def parse_syllabus(page, reverse=False):
                 lecture_page = transform_preview_url(href)
                 if lecture_page:
                     try:
-                        lecture['mp4'] = get_video(lecture_page)
+                        lecture['mp4'] = get_video(session, lecture_page)
                     except TypeError:
                         logging.warn('Could not get resource: %s', lecture_page)
 
@@ -586,7 +586,7 @@ def parse_syllabus(page, reverse=False):
             if 'mp4' not in lecture:
                 for a in vtag.findAll('a'):
                     if a.get('data-modal-iframe'):
-                        href = grab_hidden_video_url(a['data-modal-iframe'])
+                        href = grab_hidden_video_url(session, a['data-modal-iframe'])
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
                         if href is not None:
@@ -1063,7 +1063,7 @@ def download_class(args, class_name):
     page = get_syllabus(session, class_name, args.local_page, args.preview)
 
     # parse it
-    sections = parse_syllabus(page, args.reverse)
+    sections = parse_syllabus(session, page, args.reverse)
 
     # obtain the resources
     completed = download_lectures(

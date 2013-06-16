@@ -41,7 +41,7 @@ class TestSyllabusParsing(unittest.TestCase):
 
         # Mock coursera_dl.grab_hidden_video_url
         self.__grab_hidden_video_url = coursera_dl.grab_hidden_video_url
-        def new_grab_hidden_video_url(href):
+        def new_grab_hidden_video_url(session, href):
             """
             Mock function to prevent network requests.
             """
@@ -50,7 +50,7 @@ class TestSyllabusParsing(unittest.TestCase):
 
         # Mock coursera_dl.get_video
         self.__get_video = coursera_dl.get_video
-        def new_get_video(href):
+        def new_get_video(session, href):
             """
             Mock function to prevent network requests.
             """
@@ -69,7 +69,7 @@ class TestSyllabusParsing(unittest.TestCase):
     def test_parse(self):
         syllabus_page = open(TEST_SYLLABUS_FILE).read()
 
-        sections = coursera_dl.parse_syllabus(syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 23)
@@ -90,7 +90,7 @@ class TestSyllabusParsing(unittest.TestCase):
     def test_links_to_wikipedia(self):
         syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
 
-        sections = coursera_dl.parse_syllabus(syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 5)
@@ -111,7 +111,7 @@ class TestSyllabusParsing(unittest.TestCase):
     def test_parse_preview(self):
         syllabus_page = open(TEST_PREVIEW_FILE).read()
 
-        sections = coursera_dl.parse_syllabus(syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 20)
@@ -132,7 +132,7 @@ class TestSyllabusParsing(unittest.TestCase):
     def test_sections_missed(self):
         syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
 
-        sections = coursera_dl.parse_syllabus(syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
         # section count
         self.assertEqual(len(sections), 9)
