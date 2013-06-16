@@ -177,67 +177,45 @@ def get_syllabus_url(class_name, preview):
     return CLASS_URL.format(class_name=class_name) + '/lecture/' + classType
 
 
-def write_cookie_file(class_name, username, password):
+def login(session, class_name, username, password):
     """
-    Automatically generate a cookie file for the Coursera site.
+    Login on www.coursera.org with the given credentials.
     """
+
+    # Hit class url to obtain csrf_token
+    class_url = CLASS_URL.format(class_name=class_name)
+    r = requests.get(class_url, allow_redirects=False)
+
     try:
-        hn, fn = tempfile.mkstemp()
-        cookies = cookielib.LWPCookieJar()
-        handlers = [
-            urllib2.HTTPHandler(),
-            urllib2.HTTPSHandler(),
-            urllib2.HTTPCookieProcessor(cookies)
-        ]
-        opener = urllib2.build_opener(*handlers)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError:
+        raise ClassNotFound(className)
 
-        req = urllib2.Request(CLASS_URL.format(class_name=class_name))
-        opener.open(req)
+    csrftoken = r.cookies.get('csrf_token')
 
-        csrftoken = None
-        for cookie in cookies:
-            if cookie.name == 'csrf_token':
-                csrftoken = cookie.value
-                break
-        opener.close()
+    if not csrftoken:
+        raise AuthenticationFailed('Did not recieve csrf_token cookie.')
 
-        if not csrftoken:
-            raise AuthenticationFailed('Did not recieve csrf_token cookie.')
+    # Now make a call to the authenticator url.
+    headers = {
+        'Cookie': 'csrftoken=' + csrftoken,
+        'Referer': 'https://www.coursera.org',
+        'X-CSRFToken': csrftoken,
+    }
 
-        # Now make a call to the authenticator url:
-        cj = cookielib.MozillaCookieJar(fn)
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj),
-                                      urllib2.HTTPHandler(),
-                                      urllib2.HTTPSHandler())
+    data = {
+        'email_address': username,
+        'password': password
+    }
 
-        # Preparation of headers and of data that we will send in a POST
-        # request.
-        std_headers = {
-            'Cookie': ('csrftoken=%s' % csrftoken),
-            'Referer': 'https://www.coursera.org',
-            'X-CSRFToken': csrftoken,
-            }
+    r = session.post(AUTH_URL, data=data,
+               headers=headers, allow_redirects=False)
+    try:
+        r.raise_for_status()
+    except requests.exceptions.HTTPError:
+        raise AuthenticationFailed('Cannot login on www.coursera.org.')
 
-        auth_data = {
-            'email_address': username,
-            'password': password
-            }
-
-        formatted_data = urllib.urlencode(auth_data)
-
-        req = urllib2.Request(AUTH_URL, formatted_data, std_headers)
-
-        opener.open(req)
-    except urllib2.HTTPError as e:
-        if e.code == 404:
-            raise ClassNotFound(class_name)
-        else:
-            raise
-
-    cj.save()
-    opener.close()
-    os.close(hn)
-    return fn
+    logging.info('Logged in on www.coursera.org.')
 
 
 def down_the_wabbit_hole(session, class_name):
@@ -1099,6 +1077,8 @@ def download_class(args, class_name):
     if args.cookies_file:
         cookies = find_cookies_for_class(args.cookies_file, class_name)
         session.cookies.update(cookies)
+    else:
+        login(session, class_name, args.username, args.password)
 
     get_authentication_cookies(session, class_name)
 
@@ -1149,7 +1129,7 @@ def main():
             logging.info('Downloading class: %s', class_name)
             if download_class(args, class_name):
                 completed_classes.append(class_name)
-        except urllib2.HTTPError as e:
+        except requests.exceptions.HTTPError as e:
             logging.error('Could not download class: %s', e)
         except ClassNotFound as cnf:
             logging.error('Could not find class: %s', cnf)
