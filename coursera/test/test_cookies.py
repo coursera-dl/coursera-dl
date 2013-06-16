@@ -58,3 +58,15 @@ class CookiesFileTestCase(unittest.TestCase):
 
 		self.assertEquals(len(cj), 0)
 
+
+	def test_we_have_enough_cookies(self):
+		cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+
+		self.assertTrue(coursera_dl.do_we_have_enough_cookies(cj, 'class-001'))
+
+
+	def test_we_dont_have_enough_cookies(self):
+		cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES_WITHOUT_COURSERA, 'class-001')
+
+		self.assertFalse(coursera_dl.do_we_have_enough_cookies(cj, 'class-001'))
+

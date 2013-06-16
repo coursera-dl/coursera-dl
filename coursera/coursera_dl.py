@@ -284,20 +284,18 @@ def set_session_and_csrftoken(class_name, cookies_file):
     logging.info('Found authentication cookies.')
 
 
-def extract_session_and_csrftoken_from_cookiejar(class_name, cj):
-    """
-    Extract the class.coursera.org cookies from the cookiejar.
-    """
-    global csrftoken
-    global session
 
+def do_we_have_enough_cookies(cj, class_name):
+    """
+    Checks whether we have all the required cookies
+    to authenticate on class.coursera.org.
+    """
+    domain = 'class.coursera.org'
     path = "/" + class_name
-    for cookie in cj:
-        if cookie.domain == 'class.coursera.org' and cookie.path == path:
-            if cookie.name == 'session':
-                session = cookie.value
-            if cookie.name == 'csrf_token':
-                csrftoken = cookie.value
+
+    return cj.get('session', domain=domain, path=path) \
+           and cj.get('csrf_token', domain=domain, path=path)
+
 
 
 def get_config_paths(config_name, user_specified_path=None):
