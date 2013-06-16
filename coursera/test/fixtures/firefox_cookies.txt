@@ -1,0 +1,19 @@
+# Netscape HTTP Cookie File
+# http://www.netscape.com/newsref/std/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+github.com	FALSE	/	FALSE	1371001812	_gauges_unique_hour	1
+github.com	FALSE	/	FALSE	1371084612	_gauges_unique_day	1
+github.com	FALSE	/	FALSE	1373676612	_gauges_unique_month	1
+www.coursera.org	FALSE	/	FALSE	1401754753	__204u	fake
+www.coursera.org	FALSE	/	FALSE	1373588364	maestro_login_flag	1
+www.coursera.org	FALSE	/	FALSE	1372205964	sessionid	fake
+www.coursera.org	FALSE	/	FALSE	1373588364	maestro_login	fake
+class.coursera.org	FALSE	/	FALSE	1401754774	__204u	fake
+class.coursera.org	FALSE	/class-002	FALSE	1373594799	csrf_token	csrfclass002
+class.coursera.org	FALSE	/class-00Z	FALSE	1373594799	session	sessionclass002
+www.coursera.org	FALSE	/	TRUE	42843133365	maestro_user	fake
+.coursera.org	TRUE	/	FALSE	1434228385	__utma	fake
+class.coursera.org	FALSE	/class-001	FALSE	1373748385	csrf_token	csrfclass001
+class.coursera.org	FALSE	/class-001	FALSE	1373748385	session	sessionclass1
+disqus.com	FALSE	/	FALSE	1366621292	__jid	fake
