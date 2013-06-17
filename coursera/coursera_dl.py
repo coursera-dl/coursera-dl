@@ -206,7 +206,7 @@ def login(session, class_name, username, password):
     }
 
     r = session.post(AUTH_URL, data=data,
-               headers=headers, allow_redirects=False)
+                     headers=headers, allow_redirects=False)
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -231,7 +231,7 @@ def down_the_wabbit_hole(session, class_name):
 def get_authentication_cookies(session, class_name):
     """
     Get the necessary cookies to authenticate on class.coursera.org.
-    
+
     At this moment we should have the following cookies on www.coursera.org:
         maestro_login_flag, sessionid, maestro_login
     To access the class pages we need two cookies on class.coursera.org:
@@ -265,7 +265,7 @@ def do_we_have_enough_cookies(cj, class_name):
     path = "/" + class_name
 
     return cj.get('session', domain=domain, path=path) \
-           and cj.get('csrf_token', domain=domain, path=path)
+        and cj.get('csrf_token', domain=domain, path=path)
 
 
 def make_cookie_values(cj, class_name):
@@ -273,12 +273,12 @@ def make_cookie_values(cj, class_name):
     Makes a string of cookie keys and values.
     Can be used to set a Cookie header.
     """
-    path = "/" + class_name;
+    path = "/" + class_name
 
-    cookies = [c.name + '=' + c.value 
+    cookies = [c.name + '=' + c.value
                for c in cj
                if c.domain == "class.coursera.org"
-                   and c.path == path]
+               and c.path == path]
 
     return ', '.join(cookies)
 
@@ -384,16 +384,18 @@ def authenticate_through_netrc(user_specified_path=None):
 
     return res
 
+
 def find_cookies_for_class(cookies_file, class_name):
     """
-    Return a RequestsCookieJar containing the cookies for 
+    Return a RequestsCookieJar containing the cookies for
     www.coursera.org and class.coursera.org found in the given cookies_file.
     """
 
-    path = "/" + class_name;
+    path = "/" + class_name
+
     def cookies_filter(c):
         return c.domain == "www.coursera.org" \
-               or (c.domain == "class.coursera.org" and c.path == path)    
+            or (c.domain == "class.coursera.org" and c.path == path)
 
     cj = get_cookie_jar(cookies_file)
     cookies_list = filter(cookies_filter, cj)
@@ -432,13 +434,14 @@ def get_cookie_jar(cookies_file):
 
     return cj
 
+
 def get_page(session, url):
     """
     Download an HTML page using the requests session.
     """
 
     r = session.get(url)
-    
+
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -1067,24 +1070,23 @@ def download_class(args, class_name):
 
     # obtain the resources
     completed = download_lectures(
-                      session,
-                      args.wget_bin,
-                      args.curl_bin,
-                      args.aria2_bin,
-                      args.axel_bin,
-                      class_name,
-                      sections,
-                      args.file_formats,
-                      args.overwrite,
-                      args.skip_download,
-                      args.section_filter,
-                      args.lecture_filter,
-                      args.path,
-                      args.verbose_dirs,
-                      args.preview,
-                      args.combined_section_lectures_nums,
-                      args.hooks
-                      )
+        session,
+        args.wget_bin,
+        args.curl_bin,
+        args.aria2_bin,
+        args.axel_bin,
+        class_name,
+        sections,
+        args.file_formats,
+        args.overwrite,
+        args.skip_download,
+        args.section_filter,
+        args.lecture_filter,
+        args.path,
+        args.verbose_dirs,
+        args.preview,
+        args.combined_section_lectures_nums,
+        args.hooks)
 
     return completed
 
