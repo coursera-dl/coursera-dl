@@ -718,6 +718,7 @@ def download_lectures(wget_bin,
                     last_update = max(last_update, os.path.getmtime(lecfn))
 
         for hook in hooks:
+            logging.info('Running hook %s for section %s.', hook, sec)
             os.chdir(sec)
             subprocess.call(hook)
 
