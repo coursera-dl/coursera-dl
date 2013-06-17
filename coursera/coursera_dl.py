@@ -653,6 +653,7 @@ def download_lectures(wget_bin,
                       verbose_dirs=False,
                       preview=False,
                       combined_section_lectures_nums=False,
+                      hooks=[]
                       ):
     """
     Downloads lecture resources described by sections.
@@ -715,6 +716,9 @@ def download_lectures(wget_bin,
                     # if this file hasn't been modified in a long time,
                     # record that time
                     last_update = max(last_update, os.path.getmtime(lecfn))
+
+        for hook in hooks:
+            os.system("cd \"%s\"; %s" % (sec, hook))
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
@@ -1018,6 +1022,11 @@ def parseArgs():
                         action='store_true',
                         default=False,
                         help='include lecture and section name in final files')
+    parser.add_argument('--hook',
+                        dest='hooks',
+                        action='append',
+                        default=[],
+                        help='hooks to run when finished')
 
     args = parser.parse_args()
 
@@ -1095,6 +1104,7 @@ def download_class(args, class_name):
                       args.verbose_dirs,
                       args.preview,
                       args.combined_section_lectures_nums,
+                      args.hooks
                       )
 
     if not args.cookies_file:
