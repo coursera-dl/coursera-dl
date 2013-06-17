@@ -29,20 +29,39 @@ TEST_SECTIONS_NOT_TO_MISS = \
 class TestSyllabusParsing(unittest.TestCase):
 
     def setUp(self):
-        # Mock coursera_dl.grab_hidden_video_url to prevent http requests
+        """
+        As setup, we mock some methods that would, otherwise, create repeateadly
+        many web requests.
+
+        More specifically, we mock:
+
+        * the search for hidden videos
+        * the actual download of videos
+        """
+
+        # Mock coursera_dl.grab_hidden_video_url
         self.__grab_hidden_video_url = coursera_dl.grab_hidden_video_url
         def new_grab_hidden_video_url(href):
+            """
+            Mock function to prevent network requests.
+            """
             return None
         coursera_dl.grab_hidden_video_url = new_grab_hidden_video_url
 
-        # Mock coursera_dl.get_video to prevent http requests
+        # Mock coursera_dl.get_video
         self.__get_video = coursera_dl.get_video
         def new_get_video(href):
+            """
+            Mock function to prevent network requests.
+            """
             return None
         coursera_dl.get_video = new_get_video
 
 
     def tearDown(self):
+        """
+        We unmock the methods mocked in set up.
+        """
         coursera_dl.grab_hidden_video_url = self.__grab_hidden_video_url
         coursera_dl.get_video = self.__get_video
 
