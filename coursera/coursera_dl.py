@@ -280,7 +280,7 @@ def make_cookie_values(cj, class_name):
                if c.domain == "class.coursera.org"
                and c.path == path]
 
-    return ', '.join(cookies)
+    return '; '.join(cookies)
 
 
 def get_config_paths(config_name, user_specified_path=None):
