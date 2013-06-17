@@ -718,7 +718,8 @@ def download_lectures(wget_bin,
                     last_update = max(last_update, os.path.getmtime(lecfn))
 
         for hook in hooks:
-            os.system("cd \"%s\"; %s" % (sec, hook))
+            os.chdir(sec)
+            subprocess.call(hook)
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
