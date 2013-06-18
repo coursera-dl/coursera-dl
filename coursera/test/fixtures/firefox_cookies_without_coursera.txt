@@ -1,0 +1,7 @@
+# Netscape HTTP Cookie File
+# http://www.netscape.com/newsref/std/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+github.com	FALSE	/	FALSE	1371001812	_gauges_unique_hour	1
+github.com	FALSE	/	FALSE	1371084612	_gauges_unique_day	1
+github.com	FALSE	/	FALSE	1373676612	_gauges_unique_month	1
