@@ -3,7 +3,6 @@
 Test syllabus parsing.
 """
 
-import os
 import os.path
 import unittest
 
