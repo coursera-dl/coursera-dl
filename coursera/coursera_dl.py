@@ -937,35 +937,56 @@ def parseArgs():
                         default=None,
                         help='only download lectures which contain this regex'
                              ' (default: disabled)')
-    parser.add_argument('-w',
-                        '--wget',
-                        dest='wget_bin',
+    parser.add_argument('--wget',
+                        dest='wget',
                         action='store',
                         nargs='?',
                         const='wget',
                         default=None,
                         help='use wget for downloading, optionally specify wget bin')
     parser.add_argument('--curl',
-                        dest='curl_bin',
+                        dest='curl',
                         action='store',
                         nargs='?',
                         const='curl',
                         default=None,
                         help='use curl for downloading, optionally specify curl bin')
     parser.add_argument('--aria2',
-                        dest='aria2_bin',
+                        dest='aria2',
                         action='store',
                         nargs='?',
                         const='aria2c',
                         default=None,
                         help='use aria2 for downloading, optionally specify aria2 bin')
     parser.add_argument('--axel',
-                        dest='axel_bin',
+                        dest='axel',
                         action='store',
                         nargs='?',
                         const='axel',
                         default=None,
                         help='use axel for downloading, optionally specify axel bin')
+    # We keep the wget_bin, ... options for backwards compatibility.
+    parser.add_argument('-w',
+                        '--wget_bin',
+                        dest='wget_bin',
+                        action='store',
+                        default=None,
+                        help='DEPRECATED, use --wget')
+    parser.add_argument('--curl_bin',
+                        dest='curl_bin',
+                        action='store',
+                        default=None,
+                        help='DEPRECATED, use --curl')
+    parser.add_argument('--aria2_bin',
+                        dest='aria2_bin',
+                        action='store',
+                        default=None,
+                        help='DEPRECATED, use --aria2')
+    parser.add_argument('--axel_bin',
+                        dest='axel_bin',
+                        action='store',
+                        default=None,
+                        help='DEPRECATED, use --axel')
     parser.add_argument('-o',
                         '--overwrite',
                         dest='overwrite',
@@ -1079,10 +1100,10 @@ def download_class(args, class_name):
     # obtain the resources
     completed = download_lectures(
         session,
-        args.wget_bin,
-        args.curl_bin,
-        args.aria2_bin,
-        args.axel_bin,
+        args.wget or args.wget_bin,
+        args.curl or args.curl_bin,
+        args.aria2 or args.aria2_bin,
+        args.axel or args.axel_bin,
         class_name,
         sections,
         args.file_formats,
@@ -1121,6 +1142,12 @@ def main():
 
     if completed_classes:
         logging.info("Classes which appear completed: " + " ".join(completed_classes))
+
+    for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
+        if getattr(args, bin):
+            logging.error('The --%s option is deprecated, please use --%s',
+                bin, bin[:-4])
+            sys.exit(1)
 
 
 if __name__ == '__main__':
