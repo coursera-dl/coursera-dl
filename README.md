@@ -46,7 +46,7 @@ Features
 Directions
 ----------
 
-Requires Python 2.6 (or newer) and a free Coursera account enrolled in
+Requires Python 2 (2.6 or newer) and a free Coursera account enrolled in
 the class of interest.
 
 1\. Install any missing dependencies.
