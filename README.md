@@ -131,7 +131,9 @@ Troubleshooting
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
 * One can export a Netscape-style cookies file with a browser
-  extension ([1][9], [2][10]) and use it with the `-c` option. This comes in handy when the authentication via password is not working (the authentication process changes now and then).
+  extension ([1][9], [2][10]) and use it with the `-c` option. This comes in
+  handy when the authentication via password is not working (the
+  authentication process changes now and then).
 
 * If results show 0 sections, you most likely have provided invalid
   credentials (username and/or password in the command line or in your
