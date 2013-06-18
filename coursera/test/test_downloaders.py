@@ -9,8 +9,13 @@ from coursera import downloaders
 
 class ExternalDownloaderTestCase(unittest.TestCase):
 
-    def test_bin_not_found(self):
+    def test_bin_not_specified(self):
         self.assertRaises(RuntimeError, downloaders.ExternalDownloader)
+
+    def test_bin_not_found_raises_exception(self):
+        d = downloaders.ExternalDownloader(bin='no_way_this_exists')
+        d._create_command = lambda x, y: ['no_way_this_exists']
+        self.assertRaises(OSError, d._start_download, 'url', 'filename')
 
     def test_bin_is_set(self):
         d = downloaders.ExternalDownloader(bin='test')

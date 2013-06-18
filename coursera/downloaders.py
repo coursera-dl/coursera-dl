@@ -81,7 +81,12 @@ class ExternalDownloader(Downloader):
     def _start_download(self, url, filename):
         command = self._create_command(url, filename)
         logging.debug('Executing %s: %s', self.bin, command)
-        subprocess.call(command)
+        try:
+            subprocess.call(command)
+        except OSError as e:
+            msg = "{0}. Are you sure that '{1}' is the right bin?".format(
+                e, self.bin)
+            raise OSError(msg)
 
 
 class WgetDownloader(ExternalDownloader):
