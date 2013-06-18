@@ -938,26 +938,34 @@ def parseArgs():
                         help='only download lectures which contain this regex'
                              ' (default: disabled)')
     parser.add_argument('-w',
-                        '--wget_bin',
+                        '--wget',
                         dest='wget_bin',
                         action='store',
+                        nargs='?',
+                        const='wget',
                         default=None,
-                        help='wget binary if it should be used for downloading')
-    parser.add_argument('--curl_bin',
+                        help='use wget for downloading, optionally specify wget bin')
+    parser.add_argument('--curl',
                         dest='curl_bin',
                         action='store',
+                        nargs='?',
+                        const='curl',
                         default=None,
-                        help='curl binary if it should be used for downloading')
-    parser.add_argument('--aria2_bin',
+                        help='use curl for downloading, optionally specify curl bin')
+    parser.add_argument('--aria2',
                         dest='aria2_bin',
                         action='store',
+                        nargs='?',
+                        const='aria2c',
                         default=None,
-                        help='aria2 binary if it should be used for downloading')
-    parser.add_argument('--axel_bin',
+                        help='use aria2 for downloading, optionally specify aria2 bin')
+    parser.add_argument('--axel',
                         dest='axel_bin',
                         action='store',
+                        nargs='?',
+                        const='axel',
                         default=None,
-                        help='axel binary if it should be used for downloading')
+                        help='use axel for downloading, optionally specify axel bin')
     parser.add_argument('-o',
                         '--overwrite',
                         dest='overwrite',
