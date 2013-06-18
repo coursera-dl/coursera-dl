@@ -65,8 +65,6 @@ the Honor of Code of the particular couses that you want to use with
   * [Argparse][6]: Only necessary if using Python 2.6.
     - Ubuntu/Debian: `sudo apt-get install python-argparse`
     - Other: `easy_install argparse`
-  * [easy_install][7]: Only necessary if not using prepackaged dependencies.
-    - Ubuntu/Debian: `sudo apt-get install python-setuptools`
   * [html5lib][15]: Recommended if using Beautiful Soup 4.
     - Ubuntu/Debian: `sudo apt-get install python-html5lib`
     - Mac OSX + MacPorts: `sudo port install py-html5lib`
@@ -75,6 +73,8 @@ the Honor of Code of the particular couses that you want to use with
     - Ubuntu/Debian: `sudo apt-get install python-requests`
     - Mac OSX + MacPorts: `sudo port install requests`
     - Other: `easy_install requests`
+  * [easy_install][7]: Only necessary if not using prepackaged dependencies.
+    - Ubuntu/Debian: `sudo apt-get install python-setuptools`
 
 On Mac OSX using MacPorts, the following may be used:
 
