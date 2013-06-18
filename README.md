@@ -71,6 +71,10 @@ the Honor of Code of the particular couses that you want to use with
     - Ubuntu/Debian: `sudo apt-get install python-html5lib`
     - Mac OSX + MacPorts: `sudo port install py-html5lib`
     - Other: `easy_install html5lib`
+  * [requests][16]
+    - Ubuntu/Debian: `sudo apt-get install python-requests`
+    - Mac OSX + MacPorts: `sudo port install requests`
+    - Other: `easy_install requests`
 
 On Mac OSX using MacPorts, the following may be used:
 
@@ -216,3 +220,4 @@ first last at geemail dotcom or [@jplehmann][12]
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
 [14]: http://www.tunapanda.org
 [15]: https://github.com/html5lib/html5lib-python
+[16]: http://docs.python-requests.org/en/latest/
