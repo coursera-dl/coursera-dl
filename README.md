@@ -113,9 +113,6 @@ instead.  This is especially convenient, as typing usernames and passwords
 directly on the command line can get tiresome (even more if you happened to
 choose a "strong" password).
 
-\* if this works on Windows, please add additional instructions for it if
-any are needed.
-
 Troubleshooting
 ---------------
 
