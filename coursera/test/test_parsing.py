@@ -29,8 +29,8 @@ class TestSyllabusParsing(unittest.TestCase):
 
     def setUp(self):
         """
-        As setup, we mock some methods that would, otherwise, create repeateadly
-        many web requests.
+        As setup, we mock some methods that would, otherwise, create
+        repeateadly many web requests.
 
         More specifically, we mock:
 
@@ -40,6 +40,7 @@ class TestSyllabusParsing(unittest.TestCase):
 
         # Mock coursera_dl.grab_hidden_video_url
         self.__grab_hidden_video_url = coursera_dl.grab_hidden_video_url
+
         def new_grab_hidden_video_url(session, href):
             """
             Mock function to prevent network requests.
@@ -49,6 +50,7 @@ class TestSyllabusParsing(unittest.TestCase):
 
         # Mock coursera_dl.get_video
         self.__get_video = coursera_dl.get_video
+
         def new_get_video(session, href):
             """
             Mock function to prevent network requests.
