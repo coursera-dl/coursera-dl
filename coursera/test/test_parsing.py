@@ -3,7 +3,6 @@
 Test functionality of coursera module.
 """
 
-import os
 import os.path
 import unittest
 
