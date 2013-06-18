@@ -47,7 +47,9 @@ Directions
 ----------
 
 Requires Python 2 (2.6 or newer) and a free Coursera account enrolled in
-the class of interest.
+the class of interest.  Note: You must already have (manually) agreed to
+the Honor of Code of the particular couses that you want to use with
+`coursera-dl`.
 
 1\. Install any missing dependencies.
 
