@@ -237,3 +237,24 @@ class NativeDownloader(Downloader):
             logging.warn('Skipping, can\'t download file ...')
             logging.error(error_msg)
             return False
+
+
+def get_downloader(session, class_name, args):
+    """
+    Decides which downloader to use.
+    """
+
+    external = {
+        'wget': WgetDownloader,
+        'curl': CurlDownloader,
+        'aria2': Aria2Downloader,
+        'axel': AxelDownloader,
+    }
+
+    for bin, class_ in external.items():
+        if (getattr(args, bin)):
+            cookies_dict = session.cookies.get_dict(
+                domain="class.coursera.org", path='/' + class_name)
+            return class_(cookies_dict=cookies_dict, bin=getattr(args, bin))
+
+    return NativeDownloader(session)

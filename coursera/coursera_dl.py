@@ -67,50 +67,8 @@ from cookies import (
     get_cookies_for_class, make_cookie_values)
 from credentials import get_credentials, CredentialsError
 from define import CLASS_URL
+from downloaders import get_downloader
 from utils import clean_filename, get_anchor_format, mkdir_p, fix_url
-
-
-class BandwidthCalc(object):
-    """
-    Class for calculation of bandwidth for the "native" downloader.
-    """
-
-    def __init__(self):
-        self.nbytes = 0
-        self.prev_time = time.time()
-        self.prev_bw = 0
-        self.prev_bw_length = 0
-
-    def received(self, data_length):
-        now = time.time()
-        self.nbytes += data_length
-        time_delta = now - self.prev_time
-
-        if time_delta > 1:  # average over 1+ second
-            bw = float(self.nbytes) / time_delta
-            self.prev_bw = (self.prev_bw + 2 * bw) / 3
-            self.nbytes = 0
-            self.prev_time = now
-
-    def __str__(self):
-        if self.prev_bw == 0:
-            bw = ''
-        elif self.prev_bw < 1000:
-            bw = ' (%dB/s)' % self.prev_bw
-        elif self.prev_bw < 1000000:
-            bw = ' (%.2fKB/s)' % (self.prev_bw / 1000)
-        elif self.prev_bw < 1000000000:
-            bw = ' (%.2fMB/s)' % (self.prev_bw / 1000000)
-        else:
-            bw = ' (%.2fGB/s)' % (self.prev_bw / 1000000000)
-
-        length_diff = self.prev_bw_length - len(bw)
-        self.prev_bw_length = len(bw)
-
-        if length_diff > 0:
-            return '%s%s' % (bw, length_diff * ' ')
-        else:
-            return bw
 
 
 def get_syllabus_url(class_name, preview):
@@ -285,11 +243,7 @@ def parse_syllabus(session, page, reverse=False):
     return sections
 
 
-def download_lectures(session,
-                      wget_bin,
-                      curl_bin,
-                      aria2_bin,
-                      axel_bin,
+def download_lectures(downloader,
                       class_name,
                       sections,
                       file_formats,
@@ -358,8 +312,7 @@ def download_lectures(session,
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
                         logging.info('Downloading: %s', lecfn)
-                        download_file(session, url, lecfn, wget_bin,
-                                      curl_bin, aria2_bin, axel_bin)
+                        downloader.download(url, lecfn)
                     else:
                         open(lecfn, 'w').close()  # touch
                     last_update = time.time()
@@ -394,144 +347,6 @@ def total_seconds(td):
     """
     return (td.microseconds +
            (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
-
-
-def download_file(session,
-                  url,
-                  fn,
-                  wget_bin,
-                  curl_bin,
-                  aria2_bin,
-                  axel_bin,
-                  ):
-    """
-    Decides which download method to use for a given file. When the download
-    is aborted by the user, the partially downloaded file is also removed.
-    """
-
-    try:
-        if wget_bin:
-            download_file_wget(wget_bin, url, fn, session.cookie_values)
-        elif curl_bin:
-            download_file_curl(curl_bin, url, fn, session.cookie_values)
-        elif aria2_bin:
-            download_file_aria2(aria2_bin, url, fn, session.cookie_values)
-        elif axel_bin:
-            download_file_axel(axel_bin, url, fn, session.cookie_values)
-        else:
-            download_file_nowget(session, url, fn)
-    except KeyboardInterrupt:
-        logging.info('Keyboard Interrupt -- Removing partial file: %s', fn)
-        os.remove(fn)
-        sys.exit()
-
-
-def download_file_wget(wget_bin, url, fn, cookie_values):
-    """
-    Downloads a file using wget.  Could possibly use python to stream files
-    to disk, but wget is robust and gives nice visual feedback.
-    """
-
-    cmd = [wget_bin, url, '-O', fn, '--no-cookies', '--header',
-           "Cookie: " + cookie_values,
-           '--no-check-certificate']
-    logging.debug('Executing wget: %s', cmd)
-    return subprocess.call(cmd)
-
-
-def download_file_curl(curl_bin, url, fn, cookie_values):
-    """
-    Downloads a file using curl.  Could possibly use python to stream files
-    to disk, but curl is robust and gives nice visual feedback.
-    """
-
-    cmd = [curl_bin, url, '-k', '-#', '-L', '-o', fn,
-           '--cookie', cookie_values]
-    logging.debug('Executing curl: %s', cmd)
-    return subprocess.call(cmd)
-
-
-def download_file_aria2(aria2_bin, url, fn, cookie_values):
-    """
-    Downloads a file using aria2.  Could possibly use python to stream files
-    to disk, but aria2 is robust. Unfortunately, it does not give a nice
-    visual feedback, bug gets the job done much faster than the
-    alternatives.
-    """
-
-    cmd = [aria2_bin, url, '-o', fn, '--header',
-           "Cookie: " + cookie_values,
-           '--check-certificate=false', '--log-level=notice',
-           '--max-connection-per-server=4', '--min-split-size=1M']
-    logging.debug('Executing aria2: %s', cmd)
-    return subprocess.call(cmd)
-
-
-def download_file_axel(axel_bin, url, fn, cookie_values):
-    """
-    Downloads a file using axel.  Could possibly use python to stream files
-    to disk, but axel is robust and it both gives nice visual feedback and
-    get the job done fast.
-    """
-
-    cmd = [axel_bin, '-H', "Cookie: " + cookie_values,
-           '-o', fn, '-n', '4', '-a', url]
-    logging.debug('Executing axel: %s', cmd)
-    return subprocess.call(cmd)
-
-
-def download_file_nowget(session, url, fn):
-    """
-    'Native' python downloader -- slower than wget.
-
-    For consistency with subprocess.call, returns 0 to indicate success and
-    1 to indicate problems.
-    """
-
-    logging.info('Downloading %s -> %s', url, fn)
-
-    attempts_count = 0
-    error_msg = ''
-    while (attempts_count < 5):
-        r = session.get(url, stream=True)
-
-        if (r.status_code is not 200):
-            logging.warn('Probably the file is missing from the AWS repository'
-                         '... waiting.')
-
-            if r.reason:
-                error_msg = r.reason + ' ' + str(r.status_code)
-            else:
-                error_msg = 'HTTP Error ' + str(r.status_code)
-
-            wait_interval = 2 ** (attempts_count + 1)
-            print 'Error to downloading, will retry in {0} seconds ...'.format(
-                wait_interval)
-            time.sleep(wait_interval)
-            attempts_count += 1
-            continue
-
-        bw = BandwidthCalc()
-        chunk_sz = 1048576
-        bytesread = 0
-        with open(fn, 'wb') as f:
-            while True:
-                data = r.raw.read(chunk_sz)
-                if not data:
-                    print '.'
-                    break
-                bw.received(len(data))
-                f.write(data)
-                bytesread += len(data)
-                print '\r%d bytes read%s' % (bytesread, bw),
-                sys.stdout.flush()
-        r.close()
-        return 0
-
-    if attempts_count == 5:
-        logging.warn('Skipping, can\'t download file ...')
-        print error_msg
-        return 1
 
 
 def parseArgs():
@@ -786,13 +601,11 @@ def download_class(args, class_name):
     # parse it
     sections = parse_syllabus(session, page, args.reverse)
 
+    downloader = get_downloader(session, class_name, args)
+
     # obtain the resources
     completed = download_lectures(
-        session,
-        args.wget,
-        args.curl,
-        args.aria2,
-        args.axel,
+        downloader,
         class_name,
         sections,
         args.file_formats,
