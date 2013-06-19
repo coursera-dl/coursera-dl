@@ -98,7 +98,7 @@ account (e.g., email address), password (or a `~/.netrc` file), the class names
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
     Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
     Use a ~/.netrc file:         coursera-dl -n saas
-    Get the preview classes:     coursera-dl -b saas
+    Get the preview classes:     coursera-dl -n -b saas
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
     
     Maintain a list of classes in a dir:
