@@ -81,3 +81,16 @@ class ExternalDownloader(Downloader):
         logging.debug('Executing %s: %s', self.bin, command)
         subprocess.call(command)
 
+
+class WgetDownloader(ExternalDownloader):
+    """
+    Uses wget, which is robust and gives nice visual feedback.
+    """
+
+    bin = 'wget'
+
+    def _create_command(self, url, filename):
+        return [self.bin, url, '-O', filename, '--no-cookies', '--header',
+                "Cookie: " + self.cookie_values(),
+                '--no-check-certificate']
+

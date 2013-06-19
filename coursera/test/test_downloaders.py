@@ -35,3 +35,12 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         self.assertRaises(
             NotImplementedError,
             d._create_command, 'url', 'filename')
+
+    def test_wget(self):
+        d = downloaders.WgetDownloader(cookies_dict={'key': 'value'})
+        command = d._create_command('download_url', 'save_to')
+        self.assertEquals(command[0], 'wget')
+        self.assertTrue('download_url' in command)
+        self.assertTrue('save_to' in command)
+        self.assertTrue("Cookie: " + d.cookie_values() in command)
+
