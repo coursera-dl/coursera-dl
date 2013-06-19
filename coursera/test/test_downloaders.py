@@ -1,0 +1,37 @@
+"""
+Test the downloaders.
+"""
+
+import unittest
+
+from coursera import downloaders
+
+
+class ExternalDownloaderTestCase(unittest.TestCase):
+
+    def test_bin_not_found(self):
+        self.assertRaises(RuntimeError, downloaders.ExternalDownloader)
+
+    def test_bin_is_set(self):
+        d = downloaders.ExternalDownloader(bin='test')
+        self.assertEquals(d.bin, 'test')
+
+    def test_cookie_values(self):
+        cookies_dict = {
+            'csrf_token': 'csrfclass001',
+            'session': 'sessionclass1'
+        }
+        d = downloaders.ExternalDownloader(
+            cookies_dict=cookies_dict, bin="test")
+        values = 'csrf_token=csrfclass001; session=sessionclass1'
+        self.assertEquals(d.cookie_values(), values)
+
+    def test_cookie_values_is_empty(self):
+        d = downloaders.ExternalDownloader(bin="test")
+        self.assertEquals(d.cookie_values(), "")
+
+    def test_start_command_raises_exception(self):
+        d = downloaders.ExternalDownloader(bin='test')
+        self.assertRaises(
+            NotImplementedError,
+            d._create_command, 'url', 'filename')

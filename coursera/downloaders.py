@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 
 
 class Downloader(object):
@@ -38,3 +39,45 @@ class Downloader(object):
             except OSError:
                 pass
             raise e
+
+
+class ExternalDownloader(Downloader):
+    """
+    Downloads files with an extrnal downloader.
+
+    We could possibly use python to stream files to disk,
+    but this is slow compared to these external downloaders.
+
+    :param cookies_dict: Python dict of name-value pairs of cookies.
+    :param url: External downloader binary.
+    """
+
+    # External downloader binary
+    bin = None
+
+    def __init__(self, cookies_dict=None, bin=None):
+        self.cookies_dict = cookies_dict or {}
+        self.bin = bin or self.__class__.bin
+
+        if not self.bin:
+            raise RuntimeError("No bin specified")
+
+    def cookie_values(self):
+        """
+        Makes a string of cookie keys and values.
+        Can be used to set a Cookie header.
+        """
+
+        return '; '.join(k + '=' + v for (k, v) in self.cookies_dict.items())
+
+    def _create_command(self, url, filename):
+        """
+        Create command to execute in a subprocess.
+        """
+        raise NotImplementedError("Subclasses should implement this")
+
+    def _start_download(self, url, filename):
+        command = self._create_command(url, filename)
+        logging.debug('Executing %s: %s', self.bin, command)
+        subprocess.call(command)
+
