@@ -94,3 +94,15 @@ class WgetDownloader(ExternalDownloader):
                 "Cookie: " + self.cookie_values(),
                 '--no-check-certificate']
 
+
+class CurlDownloader(ExternalDownloader):
+    """
+    Uses curl, which is robust and gives nice visual feedback.
+    """
+
+    bin = 'curl'
+
+    def _create_command(self, url, filename):
+        return [self.bin, url, '-k', '-#', '-L', '-o', filename,
+                '--cookie', self.cookie_values()]
+
