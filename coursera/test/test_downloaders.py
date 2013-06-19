@@ -52,3 +52,11 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         self.assertTrue('save_to' in command)
         self.assertTrue(d.cookie_values() in command)
 
+    def test_arai2(self):
+        d = downloaders.Aria2Downloader(cookies_dict={'key': 'value'})
+        command = d._create_command('download_url', 'save_to')
+        self.assertEquals(command[0], 'aria2')
+        self.assertTrue('download_url' in command)
+        self.assertTrue('save_to' in command)
+        self.assertTrue("Cookie: " + d.cookie_values() in command)
+

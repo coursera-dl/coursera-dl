@@ -106,3 +106,19 @@ class CurlDownloader(ExternalDownloader):
         return [self.bin, url, '-k', '-#', '-L', '-o', filename,
                 '--cookie', self.cookie_values()]
 
+
+class Aria2Downloader(ExternalDownloader):
+    """
+    Uses aria2. Unfortunately, it does not give a nice
+    visual feedback, bug gets the job done much faster than the
+    alternatives.
+    """
+
+    bin = 'aria2'
+
+    def _create_command(self, url, filename):
+        return [self.bin, url, '-o', filename, '--header',
+                "Cookie: " + self.cookie_values(),
+                '--check-certificate=false', '--log-level=notice',
+                '--max-connection-per-server=4', '--min-split-size=1M']
+
