@@ -68,3 +68,28 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         self.assertTrue('save_to' in command)
         self.assertTrue("Cookie: " + d.cookie_values() in command)
 
+
+class NativeDownloaderTestCase(unittest.TestCase):
+
+    def test_all_attempts_have_failed(self):
+        import time
+
+        class IObject(object):
+            pass
+
+        class MockSession:
+
+            def get(self, url, stream=True):
+                object_ = IObject()
+                object_.status_code = 400
+                object_.reason = None
+                return object_
+
+        _sleep = time.sleep
+        time.sleep = lambda interval: 0
+
+        session = MockSession()
+        d = downloaders.NativeDownloader(session)
+        self.assertFalse(d._start_download('download_url', 'save_to'))
+
+        time.sleep = _sleep
