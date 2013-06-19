@@ -122,3 +122,16 @@ class Aria2Downloader(ExternalDownloader):
                 '--check-certificate=false', '--log-level=notice',
                 '--max-connection-per-server=4', '--min-split-size=1M']
 
+
+class AxelDownloader(ExternalDownloader):
+    """
+    Uses axel, which is robust and it both gives nice
+    visual feedback and get the job done fast.
+    """
+
+    bin = 'axel'
+
+    def _create_command(self, url, filename):
+        return [self.bin, '-H', "Cookie: " + self.cookie_values(),
+                '-o', filename, '-n', '4', '-a', url]
+
