@@ -110,3 +110,24 @@ def authenticate_through_netrc(path=None):
     error_messages = '\n'.join(str(e) for e in errors)
     raise CredentialsError(
         'Did not find valid netrc file:\n' + error_messages)
+
+
+def get_credentials(username=None, password=None, netrc=None):
+    """
+    Returns valid username, password tuple.
+    Raises CredentialsError if username or password is missing.
+    """
+    if netrc:
+        path = None if netrc is True else netrc
+        return authenticate_through_netrc(path)
+
+    if not username:
+        raise CredentialsError(
+            'Please provide a username with the -u option, '
+            'or a .netrc file with the -n option.')
+
+    if not password:
+        password = getpass.getpass(
+            'Coursera password for {0}: '.format(username))
+
+    return username, password
