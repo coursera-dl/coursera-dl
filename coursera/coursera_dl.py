@@ -41,6 +41,7 @@ Legalese:
 import argparse
 import cookielib
 import datetime
+from credentials import get_credentials, CredentialsError
 import errno
 import logging
 import os
@@ -818,7 +819,8 @@ def parseArgs():
                         dest='netrc',
                         nargs='?',
                         action='store',
-                        default=None,
+                        const=True,
+                        default=False,
                         help='use netrc for reading passwords, uses default'
                              ' location if no path specified')
 
@@ -993,12 +995,13 @@ def parseArgs():
         logging.error('Cookies file not found: %s', args.cookies_file)
         sys.exit(1)
 
-    if not args.cookies_file and not args.username:
-        args.username, args.password = authenticate_through_netrc(args.netrc)
-
-    if args.username and not args.password:
-        args.password = getpass.getpass('Coursera password for %s: '
-                                        % args.username)
+    if not args.cookies_file:
+        try:
+            args.username, args.password = get_credentials(
+                username=args.username, password=args.password, netrc=args.netrc)
+        except CredentialsError as e:
+            logging.error(e)
+            sys.exit(1)
 
     return args
 
