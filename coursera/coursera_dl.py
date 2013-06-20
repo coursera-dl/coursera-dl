@@ -1106,10 +1106,10 @@ def download_class(args, class_name):
     # obtain the resources
     completed = download_lectures(
         session,
-        args.wget or args.wget_bin,
-        args.curl or args.curl_bin,
-        args.aria2 or args.aria2_bin,
-        args.axel or args.axel_bin,
+        args.wget,
+        args.curl,
+        args.aria2,
+        args.axel,
         class_name,
         sections,
         args.file_formats,
