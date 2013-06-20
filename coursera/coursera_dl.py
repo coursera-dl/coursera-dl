@@ -171,9 +171,9 @@ def get_syllabus_url(class_name, preview):
     Return the Coursera index/syllabus URL, depending on if we want to only
     preview or if we are enrolled in the course.
     """
-    classType = 'preview' if preview else 'index'
-    page = CLASS_URL.format(class_name=class_name) + '/lecture/' + classType
-    logging.debug('Using %s mode with page: %s', classType, page)
+    class_type = 'preview' if preview else 'index'
+    page = CLASS_URL.format(class_name=class_name) + '/lecture/' + class_type
+    logging.debug('Using %s mode with page: %s', class_type, page)
 
     return page
 
