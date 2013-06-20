@@ -41,7 +41,6 @@ Legalese:
 import argparse
 import cookielib
 import datetime
-from credentials import get_credentials, CredentialsError
 import errno
 import logging
 import os
@@ -63,6 +62,10 @@ except ImportError:
         BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
     except ImportError:
         BeautifulSoup = BeautifulSoup_
+
+
+from credentials import get_credentials, CredentialsError
+
 
 AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
