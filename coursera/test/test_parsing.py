@@ -80,7 +80,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 102)
 
         # resource count
-        resources = [res for lec in lectures for res in lec[1].items()]
+        resources = [res for lec in lectures for res in list(lec[1].items())]
         self.assertEqual(len(resources), 502)
 
         # mp4 count
@@ -101,7 +101,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 37)
 
         # resource count
-        resources = [res for lec in lectures for res in lec[1].items()]
+        resources = [res for lec in lectures for res in list(lec[1].items())]
         self.assertEqual(len(resources), 158)
 
         # mp4 count
@@ -122,7 +122,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 106)
 
         # resource count
-        resources = [res for lec in lectures for res in lec[1].items()]
+        resources = [res for lec in lectures for res in list(lec[1].items())]
         self.assertEqual(len(resources), 106)
 
         # mp4 count
@@ -143,7 +143,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 61)
 
         # resource count
-        resources = [res for lec in lectures for res in lec[1].items()]
+        resources = [res for lec in lectures for res in list(lec[1].items())]
         self.assertEqual(len(resources), 224)
 
         # mp4 count
