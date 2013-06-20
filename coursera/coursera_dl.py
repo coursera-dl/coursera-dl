@@ -41,12 +41,10 @@ Legalese:
 import argparse
 import cookielib
 import datetime
+from credentials import get_credentials, CredentialsError
 import errno
-import getpass
 import logging
-import netrc
 import os
-import platform
 import re
 import requests
 import string
@@ -283,84 +281,6 @@ def make_cookie_values(cj, class_name):
                and c.path == path]
 
     return '; '.join(cookies)
-
-
-def get_config_paths(config_name, user_specified_path=None):
-    """
-    Returns a list of config files paths to try in order, given config file
-    name and possibly a user-specified path
-    """
-
-    # For Windows platforms, there are several paths that can be tried to
-    # retrieve the netrc file. There is, however, no "standard way" of doing
-    # things.
-    #
-    # A brief recap of the situation (all file paths are written in Unix
-    # convention):
-    #
-    # 1. By default, Windows does not define a $HOME path. However, some
-    # people might define one manually, and many command-line tools imported
-    # from Unix will search the $HOME environment variable first. This
-    # includes MSYSGit tools (bash, ssh, ...) and Emacs.
-    #
-    # 2. Windows defines two 'user paths': $USERPROFILE, and the
-    # concatenation of the two variables $HOMEDRIVE and $HOMEPATH. Both of
-    # these paths point by default to the same location, e.g.
-    # C:\Users\Username
-    #
-    # 3. $USERPROFILE cannot be changed, however $HOMEDRIVE and $HOMEPATH
-    # can be changed. They are originally intended to be the equivalent of
-    # the $HOME path, but there are many known issues with them
-    #
-    # 4. As for the name of the file itself, most of the tools ported from
-    # Unix will use the standard '.dotfile' scheme, but some of these will
-    # instead use "_dotfile". Of the latter, the two notable exceptions are
-    # vim, which will first try '_vimrc' before '.vimrc' (but it will try
-    # both) and git, which will require the user to name its netrc file
-    # '_netrc'.
-    #
-    # Relevant links :
-    # http://markmail.org/message/i33ldu4xl5aterrr
-    # http://markmail.org/message/wbzs4gmtvkbewgxi
-    # http://stackoverflow.com/questions/6031214/
-    #
-    # Because the whole thing is a mess, I suggest we tried various sensible
-    # defaults until we succeed or have depleted all possibilities.
-
-    if user_specified_path is not None:
-        return [user_specified_path]
-
-    if platform.system() != 'Windows':
-        return [None]
-
-    # a useful helper function that converts None to the empty string
-    getenv_or_empty = lambda s: os.getenv(s) or ""
-
-    # Now, we only treat the case of Windows
-    env_vars = [["HOME"],
-                ["HOMEDRIVE", "HOMEPATH"],
-                ["USERPROFILE"],
-                ["SYSTEMDRIVE"]]
-
-    env_dirs = []
-    for v in env_vars:
-        directory = ''.join(map(getenv_or_empty, v))
-        if not directory:
-            logging.debug('Environment var(s) %s not defined, skipping', v)
-        else:
-            env_dirs.append(directory)
-
-    additional_dirs = ["C:", ""]
-
-    all_dirs = env_dirs + additional_dirs
-
-    leading_chars = [".", "_"]
-
-    res = [''.join([directory, os.sep, lc, config_name])
-           for directory in all_dirs
-           for lc in leading_chars]
-
-    return res
 
 
 def authenticate_through_netrc(user_specified_path=None):
@@ -899,7 +819,8 @@ def parseArgs():
                         dest='netrc',
                         nargs='?',
                         action='store',
-                        default=None,
+                        const=True,
+                        default=False,
                         help='use netrc for reading passwords, uses default'
                              ' location if no path specified')
 
@@ -1074,12 +995,13 @@ def parseArgs():
         logging.error('Cookies file not found: %s', args.cookies_file)
         sys.exit(1)
 
-    if not args.cookies_file and not args.username:
-        args.username, args.password = authenticate_through_netrc(args.netrc)
-
-    if args.username and not args.password:
-        args.password = getpass.getpass('Coursera password for %s: '
-                                        % args.username)
+    if not args.cookies_file:
+        try:
+            args.username, args.password = get_credentials(
+                username=args.username, password=args.password, netrc=args.netrc)
+        except CredentialsError as e:
+            logging.error(e)
+            sys.exit(1)
 
     return args
 
