@@ -17,6 +17,14 @@ class CredentialsError(BaseException):
     pass
 
 
+def _getenv_or_empty(s):
+    """
+    Helper function that converts None gotten from the environment to the
+    empty string.
+    """
+    return os.getenv(s) or ""
+
+
 def get_config_paths(config_name):
     """
     Returns a list of config files paths to try in order, given config file
@@ -62,9 +70,6 @@ def get_config_paths(config_name):
     if platform.system() != 'Windows':
         return [None]
 
-    # a useful helper function that converts None to the empty string
-    getenv_or_empty = lambda s: os.getenv(s) or ""
-
     # Now, we only treat the case of Windows
     env_vars = [["HOME"],
                 ["HOMEDRIVE", "HOMEPATH"],
@@ -73,7 +78,7 @@ def get_config_paths(config_name):
 
     env_dirs = []
     for v in env_vars:
-        directory = ''.join(map(getenv_or_empty, v))
+        directory = ''.join(map(_getenv_or_empty, v))
         if not directory:
             logging.debug('Environment var(s) %s not defined, skipping', v)
         else:
