@@ -1060,6 +1060,12 @@ def parseArgs():
     # turn list of strings into list
     args.file_formats = args.file_formats.split()
 
+    for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
+        if getattr(args, bin):
+            logging.error('The --%s option is deprecated, please use --%s',
+                bin, bin[:-4])
+            sys.exit(1)
+
     # check arguments
     if args.cookies_file and not os.path.exists(args.cookies_file):
         logging.error('Cookies file not found: %s', args.cookies_file)
@@ -1142,12 +1148,6 @@ def main():
 
     if completed_classes:
         logging.info("Classes which appear completed: " + " ".join(completed_classes))
-
-    for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
-        if getattr(args, bin):
-            logging.error('The --%s option is deprecated, please use --%s',
-                bin, bin[:-4])
-            sys.exit(1)
 
 
 if __name__ == '__main__':
