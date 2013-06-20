@@ -53,9 +53,7 @@ import string
 import StringIO
 import subprocess
 import sys
-import tempfile
 import time
-import urllib
 
 try:
     from BeautifulSoup import BeautifulSoup
