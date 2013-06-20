@@ -645,7 +645,7 @@ def download_lectures(session,
                       verbose_dirs=False,
                       preview=False,
                       combined_section_lectures_nums=False,
-                      hooks=[]
+                      hooks=None
                       ):
     """
     Downloads lecture resources described by sections.
@@ -709,10 +709,11 @@ def download_lectures(session,
                     # record that time
                     last_update = max(last_update, os.path.getmtime(lecfn))
 
-        for hook in hooks:
-            logging.info('Running hook %s for section %s.', hook, sec)
-            os.chdir(sec)
-            subprocess.call(hook)
+        if hooks:
+            for hook in hooks:
+                logging.info('Running hook %s for section %s.', hook, sec)
+                os.chdir(sec)
+                subprocess.call(hook)
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
