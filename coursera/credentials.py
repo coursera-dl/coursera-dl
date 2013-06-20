@@ -77,10 +77,14 @@ def get_config_paths(config_name):
                 ["SYSTEMDRIVE"]]
 
     env_dirs = []
-    for v in env_vars:
-        directory = ''.join(map(_getenv_or_empty, v))
+    for var_list in env_vars:
+
+        var_values = [_getenv_or_empty(var) for var in var_list]
+
+        directory = ''.join(var_values)
         if not directory:
-            logging.debug('Environment var(s) %s not defined, skipping', v)
+            logging.debug('Environment var(s) %s not defined, skipping',
+                          var_list)
         else:
             env_dirs.append(directory)
 
