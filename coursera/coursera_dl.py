@@ -1083,13 +1083,17 @@ def download_class(args, class_name):
 
     session = requests.Session()
 
-    if args.cookies_file:
-        cookies = find_cookies_for_class(args.cookies_file, class_name)
-        session.cookies.update(cookies)
+    if args.preview:
+        # Todo, remove this.
+        session.cookie_values = 'dummy=dummy'
     else:
-        login(session, class_name, args.username, args.password)
+        if args.cookies_file:
+            cookies = find_cookies_for_class(args.cookies_file, class_name)
+            session.cookies.update(cookies)
+        else:
+            login(session, class_name, args.username, args.password)
 
-    get_authentication_cookies(session, class_name)
+        get_authentication_cookies(session, class_name)
 
     # get the syllabus listing
     page = get_syllabus(session, class_name, args.local_page, args.preview)
