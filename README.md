@@ -81,9 +81,11 @@ On Mac OSX using MacPorts, the following may be used:
     port
     > install py-beautifulsoup
     > install py-argparse
-    > install py24-distribute  # for "py-setuptools", the obsolete name
+    > install py-setuptools
 
-If you are using pip, you can directly install all the dependencies from the
+If you have the option, you may want to consider installing Python packages
+with [`pip`][17], as in it is the current [preferred method][18].  If you
+are using pip, you can directly install all the dependencies from the
 requirements file using `pip install -r requirements.txt`.
 
 2\. Create a Coursera.org account and enroll in a class.
@@ -221,3 +223,5 @@ first last at geemail dotcom or [@jplehmann][12]
 [14]: http://www.tunapanda.org
 [15]: https://github.com/html5lib/html5lib-python
 [16]: http://docs.python-requests.org/en/latest/
+[17]: http://www.pip-installer.org/en/latest/
+[18]: http://python-distribute.org/pip_distribute.png
