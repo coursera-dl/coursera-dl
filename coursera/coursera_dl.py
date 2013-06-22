@@ -45,12 +45,13 @@ import errno
 import logging
 import os
 import re
-import requests
 import string
 import StringIO
 import subprocess
 import sys
 import time
+
+import requests
 
 try:
     from BeautifulSoup import BeautifulSoup
