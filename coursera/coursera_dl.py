@@ -828,7 +828,6 @@ def parseArgs():
                         help='use netrc for reading passwords, uses default'
                              ' location if no path specified')
 
-    # required if username selected above
     parser.add_argument('-p',
                         '--password',
                         dest='password',
