@@ -1072,7 +1072,7 @@ def main():
             if download_class(args, class_name):
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
-            logging.error('Could not download class: %s', e)
+            logging.error('HTTPError %s', e)
         except ClassNotFound as cnf:
             logging.error('Could not find class: %s', cnf)
         except AuthenticationFailed as af:
