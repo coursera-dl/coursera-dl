@@ -150,6 +150,21 @@ class TestSyllabusParsing(unittest.TestCase):
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 61)
 
+    def test_fix_url_ads_sheme(self):
+        url = "www.coursera.org"
+        self.assertEquals(coursera_dl.fix_url(url), 'http://www.coursera.org')
+
+    def test_fix_url_removes_sheme(self):
+        url = " www.coursera.org "
+        self.assertEquals(coursera_dl.fix_url(url), 'http://www.coursera.org')
+
+    def test_fix_url_doesnt_alters_empty_url(self):
+        url = None
+        self.assertEquals(coursera_dl.fix_url(url), None)
+
+        url = ""
+        self.assertEquals(coursera_dl.fix_url(url), "")
+
 
 if __name__ == "__main__":
     unittest.main()
