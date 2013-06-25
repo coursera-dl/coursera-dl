@@ -50,6 +50,7 @@ import StringIO
 import subprocess
 import sys
 import time
+import urlparse
 
 import requests
 
@@ -469,6 +470,21 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
+def fix_url(url):
+    """
+    Strip whitespace characters from the beginning and the end of the url
+    and add a default scheme.
+    """
+    if url is None:
+        return None
+
+    url = url.strip()
+
+    if url and not urlparse.urlparse(url).scheme:
+        url = "http://" + url
+
+    return url
+
 def parse_syllabus(session, page, reverse=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
@@ -495,7 +511,7 @@ def parse_syllabus(session, page, reverse=False):
             lecture_page = None
 
             for a in vtag.findAll('a'):
-                href = a['href']
+                href = fix_url(a['href'])
                 fmt = get_anchor_format(href)
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
@@ -506,7 +522,8 @@ def parse_syllabus(session, page, reverse=False):
                 lecture_page = transform_preview_url(href)
                 if lecture_page:
                     try:
-                        lecture['mp4'] = get_video(session, lecture_page)
+                        href = get_video(session, lecture_page)
+                        lecture['mp4'] = fix_url(href)
                     except TypeError:
                         logging.warn('Could not get resource: %s', lecture_page)
 
@@ -516,6 +533,7 @@ def parse_syllabus(session, page, reverse=False):
                 for a in vtag.findAll('a'):
                     if a.get('data-modal-iframe'):
                         href = grab_hidden_video_url(session, a['data-modal-iframe'])
+                        href = fix_url(href)
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
                         if href is not None:
