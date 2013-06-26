@@ -20,6 +20,10 @@ FIREFOX_COOKIES_WITHOUT_COURSERA = \
     os.path.join(os.path.dirname(__file__), "fixtures",
                  "firefox_cookies_without_coursera.txt")
 
+FIREFOX_COOKIES_EXPIRED = \
+    os.path.join(os.path.dirname(__file__), "fixtures",
+                 "firefox_cookies_expired.txt")
+
 
 class MockResponse:
     def raise_for_status(self):
@@ -71,6 +75,14 @@ class CookiesFileTestCase(unittest.TestCase):
         self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
 
         self.assertEquals(len(cj), 0)
+
+    def test_did_not_find_expired_cookies_for_class(self):
+        import requests
+        cj = coursera_dl.find_cookies_for_class(
+            FIREFOX_COOKIES_EXPIRED, 'class-001')
+        self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
+
+        self.assertEquals(len(cj), 5)
 
     def test_we_have_enough_cookies(self):
         cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')

@@ -2,9 +2,9 @@
 # This content may be pasted into a cookies.txt file and used by wget
 # Example:  wget -x --load-cookies cookies.txt https://class.coursera.org/class-001/class/index
 #
-class.coursera.org	FALSE	/class-001	FALSE	1373759602.166928	csrf_token	csrfclass001
-class.coursera.org	FALSE	/class-001	FALSE	1373759602.166998	session	sessionclass001
-www.coursera.org	FALSE	/	FALSE	1373765776.224814	maestro_login_flag	1
-www.coursera.org	FALSE	/	FALSE	1372383376.224882	sessionid	c5b654a47a953e6c44ab519649da42df
-www.coursera.org	FALSE	/	FALSE	1373765776.224931	maestro_login	fake
+class.coursera.org	FALSE	/class-001	FALSE	2373759602.166928	csrf_token	csrfclass001
+class.coursera.org	FALSE	/class-001	FALSE	2373759602.166998	session	sessionclass001
+www.coursera.org	FALSE	/	FALSE	2373765776.224814	maestro_login_flag	1
+www.coursera.org	FALSE	/	FALSE	2372383376.224882	sessionid	c5b654a47a953e6c44ab519649da42df
+www.coursera.org	FALSE	/	FALSE	2373765776.224931	maestro_login	fake
 www.coursera.org	FALSE	/	TRUE	42843173776	maestro_user	fake

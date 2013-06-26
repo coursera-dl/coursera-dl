@@ -14,6 +14,6 @@ class.coursera.org	FALSE	/class-002	FALSE	2373594799	csrf_token	csrfclass002
 class.coursera.org	FALSE	/class-00Z	FALSE	2373594799	session	sessionclass002
 www.coursera.org	FALSE	/	TRUE	42843133365	maestro_user	fake
 .coursera.org	TRUE	/	FALSE	2434228385	__utma	fake
-class.coursera.org	FALSE	/class-001	FALSE	2373748385	csrf_token	csrfclass001
-class.coursera.org	FALSE	/class-001	FALSE	2373748385	session	sessionclass1
+class.coursera.org	FALSE	/class-001	FALSE	1273748385	csrf_token	csrfclass001
+class.coursera.org	FALSE	/class-001	FALSE	1273748385	session	sessionclass1
 disqus.com	FALSE	/	FALSE	1366621292	__jid	fake
