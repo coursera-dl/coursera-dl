@@ -28,10 +28,6 @@ TEST_SECTIONS_NOT_TO_MISS2 = \
     os.path.join(os.path.dirname(__file__),
                  "fixtures", "html", "sections-not-to-be-missed-2.html")
 
-TEST_DATASCI001_AND_BS4 = \
-    os.path.join(os.path.dirname(__file__),
-                 "fixtures", "html", "parsing-datasci-001-with-bs4.html")
-
 
 class TestSyllabusParsing(unittest.TestCase):
 
@@ -178,25 +174,36 @@ class TestSyllabusParsing(unittest.TestCase):
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 121)
 
-    def test_datasci001_and_bs4(self):
-        syllabus_page = open(TEST_DATASCI001_AND_BS4).read()
+    def test_parse_classes_with_bs4(self):
+        classes = {
+            'datasci-001': (10, 97, 358, 97),  # issue 134
+            'startup-001': (4, 44, 136, 44)    # issue 137
+        }
 
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
+        for class_, counts in classes.items():
+            filename = os.path.join(
+                os.path.dirname(__file__), "fixtures", "html",
+                "parsing-{0}-with-bs4.html".format(class_))
 
-        # section count
-        self.assertEqual(len(sections), 10)
+            syllabus_page = open(filename).read()
 
-        # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), 97)
+            sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
-        # resource count
-        resources = [res for lec in lectures for res in list(lec[1].items())]
-        self.assertEqual(len(resources), 358)
+            # section count
+            self.assertEqual(len(sections), counts[0])
 
-        # mp4 count
-        mp4s = [res for res in resources if res[0] == "mp4"]
-        self.assertEqual(len(mp4s), 97)
+            # lecture count
+            lectures = [lec for sec in sections for lec in sec[1]]
+            self.assertEqual(len(lectures), counts[1])
+
+            # resource count
+            resources = [res
+                         for lec in lectures for res in list(lec[1].items())]
+            self.assertEqual(len(resources), counts[2])
+
+            # mp4 count
+            mp4s = [res for res in resources if res[0] == "mp4"]
+            self.assertEqual(len(mp4s), counts[3])
 
     def test_fix_url_ads_sheme(self):
         url = "www.coursera.org"
