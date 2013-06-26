@@ -1,4 +1,5 @@
 argparse==1.2.1
 beautifulsoup4==4.1.3
+html5lib==0.95
 nose==1.3.0
 requests==1.2.3
