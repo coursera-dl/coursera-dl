@@ -10,27 +10,27 @@ from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "regular-syllabus.html")
+                 "fixtures", "html", "regular-syllabus.html")
 
 TEST_PREVIEW_FILE = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "preview.html")
+                 "fixtures", "html", "preview.html")
 
 TEST_LINKS_TO_WIKIPEDIA = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "links-to-wikipedia.html")
+                 "fixtures", "html", "links-to-wikipedia.html")
 
 TEST_SECTIONS_NOT_TO_MISS = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "sections-not-to-be-missed.html")
+                 "fixtures", "html", "sections-not-to-be-missed.html")
 
 TEST_SECTIONS_NOT_TO_MISS2 = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "sections-not-to-be-missed-2.html")
+                 "fixtures", "html", "sections-not-to-be-missed-2.html")
 
 TEST_DATASCI001_AND_BS4 = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "parsing-datasci-001-with-bs4.html")
+                 "fixtures", "html", "parsing-datasci-001-with-bs4.html")
 
 
 class TestSyllabusParsing(unittest.TestCase):

@@ -9,11 +9,11 @@ from coursera import credentials
 
 NETRC = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "netrc")
+                 "fixtures", "auth", "netrc")
 
 NOT_NETRC = \
     os.path.join(os.path.dirname(__file__),
-                 "fixtures", "not_netrc")
+                 "fixtures", "auth", "not_netrc")
 
 
 class CredentialsTestCase(unittest.TestCase):

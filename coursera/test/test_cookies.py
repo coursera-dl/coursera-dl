@@ -9,20 +9,20 @@ import unittest
 from coursera import coursera_dl
 
 FIREFOX_COOKIES = \
-    os.path.join(os.path.dirname(__file__), "fixtures",
-                 "firefox_cookies.txt")
+    os.path.join(os.path.dirname(__file__),
+                 "fixtures", "cookies", "firefox_cookies.txt")
 
 CHROME_COOKIES = \
-    os.path.join(os.path.dirname(__file__), "fixtures",
-                 "chrome_cookies.txt")
+    os.path.join(os.path.dirname(__file__),
+                 "fixtures", "cookies", "chrome_cookies.txt")
 
 FIREFOX_COOKIES_WITHOUT_COURSERA = \
-    os.path.join(os.path.dirname(__file__), "fixtures",
-                 "firefox_cookies_without_coursera.txt")
+    os.path.join(os.path.dirname(__file__),
+                 "fixtures", "cookies", "firefox_cookies_without_coursera.txt")
 
 FIREFOX_COOKIES_EXPIRED = \
-    os.path.join(os.path.dirname(__file__), "fixtures",
-                 "firefox_cookies_expired.txt")
+    os.path.join(os.path.dirname(__file__),
+                 "fixtures", "cookies", "firefox_cookies_expired.txt")
 
 
 class MockResponse:
