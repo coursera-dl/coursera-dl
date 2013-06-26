@@ -62,14 +62,12 @@ class TestSyllabusParsing(unittest.TestCase):
             return None
         coursera_dl.get_video = new_get_video
 
-
     def tearDown(self):
         """
         We unmock the methods mocked in set up.
         """
         coursera_dl.grab_hidden_video_url = self.__grab_hidden_video_url
         coursera_dl.get_video = self.__get_video
-
 
     def test_parse(self):
         syllabus_page = open(TEST_SYLLABUS_FILE).read()
@@ -91,7 +89,6 @@ class TestSyllabusParsing(unittest.TestCase):
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 102)
 
-
     def test_links_to_wikipedia(self):
         syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
 
@@ -112,7 +109,6 @@ class TestSyllabusParsing(unittest.TestCase):
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 36)
 
-
     def test_parse_preview(self):
         syllabus_page = open(TEST_PREVIEW_FILE).read()
 
@@ -132,7 +128,6 @@ class TestSyllabusParsing(unittest.TestCase):
         # mp4 count
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 106)
-
 
     def test_sections_missed(self):
         syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
