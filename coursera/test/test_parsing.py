@@ -28,6 +28,10 @@ TEST_SECTIONS_NOT_TO_MISS2 = \
     os.path.join(os.path.dirname(__file__),
                  "fixtures", "sections-not-to-be-missed-2.html")
 
+TEST_DATASCI001_AND_BS4 = \
+    os.path.join(os.path.dirname(__file__),
+                 "fixtures", "parsing-datasci-001-with-bs4.html")
+
 
 class TestSyllabusParsing(unittest.TestCase):
 
@@ -173,6 +177,26 @@ class TestSyllabusParsing(unittest.TestCase):
         # mp4 count
         mp4s = [res for res in resources if res[0] == "mp4"]
         self.assertEqual(len(mp4s), 121)
+
+    def test_datasci001_and_bs4(self):
+        syllabus_page = open(TEST_DATASCI001_AND_BS4).read()
+
+        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
+
+        # section count
+        self.assertEqual(len(sections), 10)
+
+        # lecture count
+        lectures = [lec for sec in sections for lec in sec[1]]
+        self.assertEqual(len(lectures), 97)
+
+        # resource count
+        resources = [res for lec in lectures for res in list(lec[1].items())]
+        self.assertEqual(len(resources), 358)
+
+        # mp4 count
+        mp4s = [res for res in resources if res[0] == "mp4"]
+        self.assertEqual(len(mp4s), 97)
 
     def test_fix_url_ads_sheme(self):
         url = "www.coursera.org"
