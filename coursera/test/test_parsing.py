@@ -172,7 +172,8 @@ class TestSyllabusParsing(unittest.TestCase):
     def test_parse_classes_with_bs4(self):
         classes = {
             'datasci-001': (10, 97, 358, 97),  # issue 134
-            'startup-001': (4, 44, 136, 44)    # issue 137
+            'startup-001': (4, 44, 136, 44),   # issue 137
+            'wealthofnations-001': (8, 74, 296, 74)  # issue 131
         }
 
         for class_, counts in classes.items():
