@@ -6,7 +6,7 @@ Test syllabus parsing.
 import os.path
 import unittest
 
-from coursera import coursera_dl
+from coursera import cookies
 
 FIREFOX_COOKIES = \
     os.path.join(os.path.dirname(__file__),
@@ -43,17 +43,17 @@ class CookiesFileTestCase(unittest.TestCase):
 
     def test_get_cookiejar_from_firefox_cookies(self):
         from cookielib import MozillaCookieJar
-        cj = coursera_dl.get_cookie_jar(FIREFOX_COOKIES)
+        cj = cookies.get_cookie_jar(FIREFOX_COOKIES)
         self.assertTrue(isinstance(cj, MozillaCookieJar))
 
     def test_get_cookiejar_from_chrome_cookies(self):
         from cookielib import MozillaCookieJar
-        cj = coursera_dl.get_cookie_jar(CHROME_COOKIES)
+        cj = cookies.get_cookie_jar(CHROME_COOKIES)
         self.assertTrue(isinstance(cj, MozillaCookieJar))
 
     def test_find_cookies_for_class(self):
         import requests
-        cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+        cj = cookies.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
         self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
 
         self.assertEquals(len(cj), 7)
@@ -70,7 +70,7 @@ class CookiesFileTestCase(unittest.TestCase):
 
     def test_did_not_find_cookies_for_class(self):
         import requests
-        cj = coursera_dl.find_cookies_for_class(
+        cj = cookies.find_cookies_for_class(
             FIREFOX_COOKIES_WITHOUT_COURSERA, 'class-001')
         self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
 
@@ -78,46 +78,46 @@ class CookiesFileTestCase(unittest.TestCase):
 
     def test_did_not_find_expired_cookies_for_class(self):
         import requests
-        cj = coursera_dl.find_cookies_for_class(
+        cj = cookies.find_cookies_for_class(
             FIREFOX_COOKIES_EXPIRED, 'class-001')
         self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
 
         self.assertEquals(len(cj), 5)
 
     def test_we_have_enough_cookies(self):
-        cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+        cj = cookies.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
 
-        enough = coursera_dl.do_we_have_enough_cookies(cj, 'class-001')
+        enough = cookies.do_we_have_enough_cookies(cj, 'class-001')
         self.assertTrue(enough)
 
     def test_we_dont_have_enough_cookies(self):
-        cj = coursera_dl.find_cookies_for_class(
+        cj = cookies.find_cookies_for_class(
             FIREFOX_COOKIES_WITHOUT_COURSERA, 'class-001')
 
-        enough = coursera_dl.do_we_have_enough_cookies(cj, 'class-001')
+        enough = cookies.do_we_have_enough_cookies(cj, 'class-001')
         self.assertFalse(enough)
 
     def test_make_cookie_values(self):
-        cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+        cj = cookies.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
 
         values = 'csrf_token=csrfclass001; session=sessionclass1'
-        cookie_values = coursera_dl.make_cookie_values(cj, 'class-001')
+        cookie_values = cookies.make_cookie_values(cj, 'class-001')
         self.assertEquals(cookie_values, values)
 
     def test_get_authentication_cookies_doesnt_call_down_the_wabbit_hole(self):
-        cj = coursera_dl.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
+        cj = cookies.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
         s = MockSession()
         s.cookies = cj
 
-        coursera_dl.get_authentication_cookies(s, 'class-001')
+        cookies.get_authentication_cookies(s, 'class-001')
         self.assertFalse(s.called)
 
     def test_get_authentication_cookies_raises_exception(self):
-        cj = coursera_dl.find_cookies_for_class(
+        cj = cookies.find_cookies_for_class(
             FIREFOX_COOKIES_WITHOUT_COURSERA, 'class-001')
         s = MockSession()
         s.cookies = cj
 
-        self.assertRaises(coursera_dl.AuthenticationFailed,
-                          coursera_dl.get_authentication_cookies,
+        self.assertRaises(cookies.AuthenticationFailed,
+                          cookies.get_authentication_cookies,
                           s, 'class-001')
