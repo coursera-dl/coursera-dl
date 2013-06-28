@@ -11,7 +11,9 @@ import StringIO
 
 import requests
 
-from define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL
+from define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
+from utils import mkdir_p
+
 
 # Monkey patch cookielib.Cookie.__init__.
 # Reason: The expires value may be a decimal string,
@@ -63,6 +65,10 @@ def login(session, class_name, username, password):
     """
     Login on www.coursera.org with the given credentials.
     """
+
+    if session.cookies.get('sessionid', domain="www.coursera.org"):
+        logging.info('Already logged in on www.coursera.org.')
+        return
 
     # Hit class url to obtain csrf_token
     class_url = CLASS_URL.format(class_name=class_name)
@@ -217,6 +223,41 @@ def get_cookie_jar(cookies_file):
     return cj
 
 
+def get_cookies_cache_path(username):
+    return os.path.join(PATH_COOKIES, username + '.txt')
+
+
+def get_cookies_from_cache(username):
+    """
+    Returns a RequestsCookieJar containing the cached cookies for the given
+    user.
+    """
+    path = get_cookies_cache_path(username)
+    cj = requests.cookies.RequestsCookieJar()
+    try:
+        cached_cj = get_cookie_jar(path)
+        for cookie in cached_cj:
+            cj.set_cookie(cookie)
+    except IOError:
+        pass
+
+    return cj
+
+
+def write_cookies_to_cache(cj, username):
+    """
+    Saves the RequestsCookieJar to disk in the Mozilla cookies.txt file format.
+    This prevents us from repeated authentications on the www.coursera.org and
+    class.coursera.org/class_name sites.
+    """
+    mkdir_p(PATH_COOKIES)
+    path = get_cookies_cache_path(username)
+    cached_cj = cookielib.MozillaCookieJar()
+    for cookie in cj:
+        cached_cj.set_cookie(cookie)
+    cached_cj.save(path)
+
+
 def get_cookies_for_class(session, class_name,
                           cookies_file=None,
                           username=None,
@@ -232,5 +273,12 @@ def get_cookies_for_class(session, class_name,
         session.cookies.update(cookies)
         logging.info('Loaded cookies from %s', cookies_file)
     else:
-        login(session, class_name, username, password)
-        get_authentication_cookies(session, class_name)
+        cookies = get_cookies_from_cache(username)
+        session.cookies.update(cookies)
+        if do_we_have_enough_cookies(cookies, class_name):
+            logging.info(
+                'Loaded cookies from %s', get_cookies_cache_path(username))
+        else:
+            login(session, class_name, username, password)
+            get_authentication_cookies(session, class_name)
+            write_cookies_to_cache(session.cookies, username)
