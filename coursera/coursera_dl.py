@@ -68,12 +68,8 @@ except ImportError:
 
 
 from credentials import get_credentials, CredentialsError
+from define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL
 
-
-AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
-CLASS_URL = 'https://class.coursera.org/{class_name}'
-AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
-                    '/auth/auth_redirector?type=login&subtype=normal'
 
 # Monkey patch cookielib.Cookie.__init__.
 # Reason: The expires value may be a decimal string,
