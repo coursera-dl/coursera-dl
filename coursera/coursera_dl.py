@@ -67,8 +67,7 @@ except ImportError:
 
 from cookies import (
     AuthenticationFailed, ClassNotFound,
-    find_cookies_for_class, login,
-    get_authentication_cookies, make_cookie_values)
+    get_cookies_for_class, make_cookie_values)
 from credentials import get_credentials, CredentialsError
 from define import CLASS_URL
 
@@ -806,13 +805,12 @@ def download_class(args, class_name):
         # Todo, remove this.
         session.cookie_values = 'dummy=dummy'
     else:
-        if args.cookies_file:
-            cookies = find_cookies_for_class(args.cookies_file, class_name)
-            session.cookies.update(cookies)
-            logging.info('Loaded cookies from %s', args.cookies_file)
-        else:
-            login(session, class_name, args.username, args.password)
-            get_authentication_cookies(session, class_name)
+        get_cookies_for_class(
+            session,
+            class_name,
+            cookies_file=args.cookies_file,
+            username=args.username, password=args.password
+        )
         session.cookie_values = make_cookie_values(session.cookies, class_name)
 
     # get the syllabus listing

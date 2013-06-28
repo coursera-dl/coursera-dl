@@ -214,3 +214,22 @@ def get_cookie_jar(cookies_file):
     cj._really_load(cookies, 'StringIO.cookies', False, False)
 
     return cj
+
+
+def get_cookies_for_class(session, class_name,
+                          cookies_file=None,
+                          username=None,
+                          password=None):
+    """
+    Get the cookies for the given class.
+    We do not validate the cookies if they are loaded from a cookies file
+    because this is intented for debugging purposes or if the coursera
+    authentication process has changed.
+    """
+    if cookies_file:
+        cookies = find_cookies_for_class(cookies_file, class_name)
+        session.cookies.update(cookies)
+        logging.info('Loaded cookies from %s', cookies_file)
+    else:
+        login(session, class_name, username, password)
+        get_authentication_cookies(session, class_name)
