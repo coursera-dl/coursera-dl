@@ -1,3 +1,4 @@
 *.py[co]
 *~
 .DS_Store
+_cache/
