@@ -41,15 +41,12 @@ Legalese:
 
 import argparse
 import datetime
-import errno
 import logging
 import os
 import re
-import string
 import subprocess
 import sys
 import time
-import urlparse
 
 import requests
 
@@ -70,6 +67,7 @@ from cookies import (
     get_cookies_for_class, make_cookie_values)
 from credentials import get_credentials, CredentialsError
 from define import CLASS_URL
+from utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 
 
 class BandwidthCalc(object):
@@ -184,30 +182,6 @@ def get_syllabus(session, class_name, local_page=False, preview=False):
     return page
 
 
-def clean_filename(s):
-    """
-    Sanitize a string to be used as a filename.
-    """
-
-    # strip paren portions which contain trailing time length (...)
-    s = re.sub(r"\([^\(]*$", '', s)
-    s = s.strip().replace(':', '-').replace(' ', '_')
-    s = s.replace('nbsp', '')
-    valid_chars = '-_.()%s%s' % (string.ascii_letters, string.digits)
-    return ''.join(c for c in s if c in valid_chars)
-
-
-def get_anchor_format(a):
-    """
-    Extract the resource file-type format from the anchor.
-    """
-
-    # (. or format=) then (file_extension) then (? or $)
-    # e.g. "...format=txt" or "...download.mp4?..."
-    fmt = re.search(r"(?:\.|format=)(\w+)(?:\?.*)?$", a)
-    return (fmt.group(1) if fmt else None)
-
-
 def transform_preview_url(a):
     """
     Given a preview lecture URL, transform it into a regular video URL.
@@ -233,22 +207,6 @@ def get_video(session, url):
     page = get_page(session, url)
     soup = BeautifulSoup(page)
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
-
-
-def fix_url(url):
-    """
-    Strip whitespace characters from the beginning and the end of the url
-    and add a default scheme.
-    """
-    if url is None:
-        return None
-
-    url = url.strip()
-
-    if url and not urlparse.urlparse(url).scheme:
-        url = "http://" + url
-
-    return url
 
 
 def parse_syllabus(session, page, reverse=False):
@@ -319,20 +277,6 @@ def parse_syllabus(session, page, reverse=False):
         logging.error('Probably bad cookies file (or wrong class name)')
 
     return sections
-
-
-def mkdir_p(path):
-    """
-    Create subdirectory hierarchy given in the paths argument.
-    """
-
-    try:
-        os.makedirs(path)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else:
-            raise
 
 
 def download_lectures(session,
