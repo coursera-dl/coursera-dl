@@ -259,8 +259,6 @@ def get_authentication_cookies(session, class_name):
 
     logging.info('Found authentication cookies.')
 
-    session.cookie_values = make_cookie_values(session.cookies, class_name)
-
 
 def do_we_have_enough_cookies(cj, class_name):
     """
@@ -1020,10 +1018,11 @@ def download_class(args, class_name):
         if args.cookies_file:
             cookies = find_cookies_for_class(args.cookies_file, class_name)
             session.cookies.update(cookies)
+            logging.info('Loaded cookies from %s', args.cookies_file)
         else:
             login(session, class_name, args.username, args.password)
-
-        get_authentication_cookies(session, class_name)
+            get_authentication_cookies(session, class_name)
+        session.cookie_values = make_cookie_values(session.cookies, class_name)
 
     # get the syllabus listing
     page = get_syllabus(session, class_name, args.local_page, args.preview)
