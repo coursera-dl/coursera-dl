@@ -70,7 +70,8 @@ def login(session, class_name, username, password):
 
     try:
         r.raise_for_status()
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.HTTPError as e:
+        logging.error(e)
         raise ClassNotFound(class_name)
 
     csrftoken = r.cookies.get('csrf_token')
