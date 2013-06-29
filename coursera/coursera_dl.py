@@ -249,14 +249,16 @@ def parse_syllabus(session, page, reverse=False):
                         href = get_video(session, lecture_page)
                         lecture['mp4'] = fix_url(href)
                     except TypeError:
-                        logging.warn('Could not get resource: %s', lecture_page)
+                        logging.warn(
+                            'Could not get resource: %s', lecture_page)
 
             # Special case: we possibly have hidden video links---thanks to
             # the University of Washington for that.
             if 'mp4' not in lecture:
                 for a in vtag.findAll('a'):
                     if a.get('data-modal-iframe'):
-                        href = grab_hidden_video_url(session, a['data-modal-iframe'])
+                        href = grab_hidden_video_url(
+                            session, a['data-modal-iframe'])
                         href = fix_url(href)
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
@@ -335,15 +337,19 @@ def download_lectures(session,
                 if i[0] in file_formats or 'all' in file_formats:
                     lectures_to_get.append(i)
                 else:
-                    logging.debug('Skipping b/c format %s not in %s', i[0], file_formats)
+                    logging.debug(
+                        'Skipping b/c format %s not in %s', i[0], file_formats)
 
             # write lecture resources
             for fmt, url in lectures_to_get:
                 if combined_section_lectures_nums:
-                    lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1,
-                                                         lecnum + 1, lecname, fmt))
+                    lecfn = os.path.join(
+                        sec,
+                        format_combine_number_resource(
+                            secnum + 1, lecnum + 1, lecname, fmt))
                 else:
-                    lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
+                    lecfn = os.path.join(
+                        sec, format_resource(lecnum + 1, lecname, fmt))
 
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
@@ -368,7 +374,9 @@ def download_lectures(session,
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
     if last_update >= 0:
-        if time.time() - last_update > total_seconds(datetime.timedelta(days=30)):
+        delta = time.time() - last_update
+        max_delta = total_seconds(datetime.timedelta(days=30))
+        if delta > max_delta:
             logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
             return True
     return False
@@ -380,7 +388,8 @@ def total_seconds(td):
 
     Added for backward compatibility, pre 2.7.
     """
-    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
+    return (td.microseconds +
+           (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
 
 
 def download_file(session,
@@ -483,8 +492,8 @@ def download_file_nowget(session, url, fn):
         r = session.get(url, stream=True)
 
         if (r.status_code is not 200):
-            logging.warn('Probably the file is missing from the AWS repository...'
-                         ' waiting.')
+            logging.warn('Probably the file is missing from the AWS repository'
+                         '... waiting.')
 
             if r.reason:
                 error_msg = r.reason + ' ' + str(r.status_code)
@@ -492,7 +501,8 @@ def download_file_nowget(session, url, fn):
                 error_msg = 'HTTP Error ' + str(r.status_code)
 
             wait_interval = 2 ** (attempts_count + 1)
-            print 'Error to downloading, will retry in %s seconds ...' % wait_interval
+            print 'Error to downloading, will retry in {0} seconds ...'.format(
+                wait_interval)
             time.sleep(wait_interval)
             attempts_count += 1
             continue
@@ -598,28 +608,32 @@ def parseArgs():
                         nargs='?',
                         const='wget',
                         default=None,
-                        help='use wget for downloading, optionally specify wget bin')
+                        help='use wget for downloading,'
+                             'optionally specify wget bin')
     parser.add_argument('--curl',
                         dest='curl',
                         action='store',
                         nargs='?',
                         const='curl',
                         default=None,
-                        help='use curl for downloading, optionally specify curl bin')
+                        help='use curl for downloading,'
+                             ' optionally specify curl bin')
     parser.add_argument('--aria2',
                         dest='aria2',
                         action='store',
                         nargs='?',
                         const='aria2c',
                         default=None,
-                        help='use aria2 for downloading, optionally specify aria2 bin')
+                        help='use aria2 for downloading,'
+                             ' optionally specify aria2 bin')
     parser.add_argument('--axel',
                         dest='axel',
                         action='store',
                         nargs='?',
                         const='axel',
                         default=None,
-                        help='use axel for downloading, optionally specify axel bin')
+                        help='use axel for downloading,'
+                             ' optionally specify axel bin')
     # We keep the wget_bin, ... options for backwards compatibility.
     parser.add_argument('-w',
                         '--wget_bin',
@@ -647,11 +661,13 @@ def parseArgs():
                         dest='overwrite',
                         action='store_true',
                         default=False,
-                        help='whether existing files should be overwritten (default: False)')
+                        help='whether existing files should be overwritten'
+                             ' (default: False)')
     parser.add_argument('-l',
                         '--process_local_page',
                         dest='local_page',
-                        help='uses or creates local cached version of syllabus page')
+                        help='uses or creates local cached version of syllabus'
+                             ' page')
     parser.add_argument('--skip-download',
                         dest='skip_download',
                         action='store_true',
@@ -676,7 +692,8 @@ def parseArgs():
                         dest='quiet',
                         action='store_true',
                         default=False,
-                        help='omit as many messages as possible (only printing errors)')
+                        help='omit as many messages as possible'
+                             ' (only printing errors)')
     parser.add_argument('--add-class',
                         dest='add_class',
                         action='append',
@@ -701,7 +718,8 @@ def parseArgs():
 
     args = parser.parse_args()
 
-    # Initialize the logging system first so that other functions can use it right away
+    # Initialize the logging system first so that other functions
+    # can use it right away
     if args.debug:
         logging.basicConfig(level=logging.DEBUG,
                             format='%(name)s[%(funcName)s] %(message)s')
@@ -718,7 +736,7 @@ def parseArgs():
     for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
         if getattr(args, bin):
             logging.error('The --%s option is deprecated, please use --%s',
-                bin, bin[:-4])
+                          bin, bin[:-4])
             sys.exit(1)
 
     # check arguments
@@ -729,7 +747,8 @@ def parseArgs():
     if not args.cookies_file:
         try:
             args.username, args.password = get_credentials(
-                username=args.username, password=args.password, netrc=args.netrc)
+                username=args.username, password=args.password,
+                netrc=args.netrc)
         except CredentialsError as e:
             logging.error(e)
             sys.exit(1)
@@ -807,7 +826,8 @@ def main():
             logging.error('Could not authenticate: %s', af)
 
     if completed_classes:
-        logging.info("Classes which appear completed: " + " ".join(completed_classes))
+        logging.info(
+            "Classes which appear completed: " + " ".join(completed_classes))
 
 
 if __name__ == '__main__':
