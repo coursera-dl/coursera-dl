@@ -53,6 +53,18 @@ the Honor of Code of the particular couses that you want to use with
 
 1\. Install any missing dependencies.
 
+  We strongly recommend that you consider installing Python packages
+  with [`pip`][17], as in it is the current [preferred method][18].  If you
+  are using pip, you can directly install all the dependencies from the
+  requirements file using `pip install -r requirements.txt`.
+
+  You may choose to install the dependencies yourself, but our users had
+  issues that not all resources (videos etc.) were downloaded with versions
+  of the dependencies different than those listed in the `requirements.txt`
+  file.
+
+  In any case, you may want to install:
+
   * [Beautiful Soup 4][5]: See also html5lib below.
     - Ubuntu/Debian: `sudo apt-get install python-bs4`
     - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
@@ -71,17 +83,15 @@ the Honor of Code of the particular couses that you want to use with
   * [easy_install][7]: Only necessary if not using prepackaged dependencies.
     - Ubuntu/Debian: `sudo apt-get install python-setuptools`
 
+  Again, make sure that you have the versions mentioned in the file
+  `requirements.txt` (later versions may be OK).
+
 On Mac OSX using MacPorts, the following may be used:
 
     port
     > install py-beautifulsoup
     > install py-argparse
     > install py-setuptools
-
-If you have the option, you may want to consider installing Python packages
-with [`pip`][17], as in it is the current [preferred method][18].  If you
-are using pip, you can directly install all the dependencies from the
-requirements file using `pip install -r requirements.txt`.
 
 2\. Create a Coursera.org account and enroll in a class.
 e.g. http://saas-class.org
