@@ -289,30 +289,6 @@ def make_cookie_values(cj, class_name):
     return '; '.join(cookies)
 
 
-def authenticate_through_netrc(user_specified_path=None):
-    """
-    Returns the tuple user / password given a path for the .netrc file
-    """
-    res = None
-    errors = []
-    paths_to_try = get_config_paths("netrc", user_specified_path)
-    for p in paths_to_try:
-        try:
-            logging.debug('Trying netrc file %s', p)
-            auths = netrc.netrc(p).authenticators('coursera-dl')
-            res = (auths[0], auths[2])
-            break
-        except (IOError, TypeError, netrc.NetrcParseError) as e:
-            errors.append(e)
-
-    if res is None:
-        for e in errors:
-            logging.error(str(e))
-        sys.exit(1)
-
-    return res
-
-
 def find_cookies_for_class(cookies_file, class_name):
     """
     Return a RequestsCookieJar containing the cookies for
