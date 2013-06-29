@@ -486,6 +486,7 @@ def fix_url(url):
 
     return url
 
+
 def parse_syllabus(session, page, reverse=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
