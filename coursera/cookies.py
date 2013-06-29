@@ -122,8 +122,8 @@ def down_the_wabbit_hole(session, class_name):
 
 def _get_authentication_cookies(session, class_name,
                                 username, password, retry=False):
-    # Get the class.coursera.org cookies. Remember that we need
-    # the cookies from www.coursera.org!
+    session.cookies.clear('class.coursera.org', '/' + class_name)
+
     down_the_wabbit_hole(session, class_name)
 
     enough = do_we_have_enough_cookies(session.cookies, class_name)
@@ -149,7 +149,7 @@ def get_authentication_cookies(session, class_name, username, password):
     # First, check if we already have the www.coursera.org cookies.
     if session.cookies.get('maestro_login', domain="www.coursera.org"):
         logged_in = True
-        logging.info('Already logged in on www.coursera.org.')
+        logging.debug('Already logged in on www.coursera.org.')
     else:
         logged_in = False
         login(session, class_name, username, password)
@@ -172,6 +172,24 @@ def do_we_have_enough_cookies(cj, class_name):
 
     return cj.get('session', domain=domain, path=path) \
         and cj.get('csrf_token', domain=domain, path=path)
+
+
+def do_we_have_valid_cookies(session, class_name):
+    """
+    Checks whether we have all the required cookies
+    to authenticate on class.coursera.org, and if they are not yet stale.
+    """
+    if not do_we_have_enough_cookies(session.cookies, class_name):
+        return False
+
+    url = CLASS_URL.format(class_name=class_name) + '/class'
+    r = session.head(url, allow_redirects=False)
+
+    if r.status_code == 200:
+        return True
+    else:
+        logging.debug('Stale session.')
+        return False
 
 
 def make_cookie_values(cj, class_name):
@@ -254,6 +272,8 @@ def get_cookies_from_cache(username):
         cached_cj = get_cookie_jar(path)
         for cookie in cached_cj:
             cj.set_cookie(cookie)
+        logging.debug(
+            'Loaded cookies from %s', get_cookies_cache_path(username))
     except IOError:
         pass
 
@@ -291,9 +311,8 @@ def get_cookies_for_class(session, class_name,
     else:
         cookies = get_cookies_from_cache(username)
         session.cookies.update(cookies)
-        if do_we_have_enough_cookies(cookies, class_name):
-            logging.info(
-                'Loaded cookies from %s', get_cookies_cache_path(username))
+        if do_we_have_valid_cookies(session, class_name):
+            logging.info('Already authenticated.')
         else:
             get_authentication_cookies(session, class_name, username, password)
             write_cookies_to_cache(session.cookies, username)
