@@ -59,12 +59,12 @@ try:
     from BeautifulSoup import BeautifulSoup
 except ImportError:
     from bs4 import BeautifulSoup as BeautifulSoup_
-    # Use html5lib for parsing if available
     try:
+        # Use html5lib for parsing if available
         import html5lib
         BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
     except ImportError:
-        BeautifulSoup = BeautifulSoup_
+        BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
 
 
 from credentials import get_credentials, CredentialsError
