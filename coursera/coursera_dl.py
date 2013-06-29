@@ -40,18 +40,13 @@ Legalese:
 """
 
 import argparse
-import cookielib
 import datetime
-import errno
 import logging
 import os
 import re
-import string
-import StringIO
 import subprocess
 import sys
 import time
-import urlparse
 
 import requests
 
@@ -67,62 +62,12 @@ except ImportError:
         BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
 
 
+from cookies import (
+    AuthenticationFailed, ClassNotFound,
+    get_cookies_for_class, make_cookie_values)
 from credentials import get_credentials, CredentialsError
-
-
-AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
-CLASS_URL = 'https://class.coursera.org/{class_name}'
-AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
-                    '/auth/auth_redirector?type=login&subtype=normal'
-
-# Monkey patch cookielib.Cookie.__init__.
-# Reason: The expires value may be a decimal string,
-# but the Cookie class uses int() ...
-__orginal_init__ = cookielib.Cookie.__init__
-
-
-def __fixed_init__(self, version, name, value,
-                   port, port_specified,
-                   domain, domain_specified, domain_initial_dot,
-                   path, path_specified,
-                   secure,
-                   expires,
-                   discard,
-                   comment,
-                   comment_url,
-                   rest,
-                   rfc2109=False,
-                   ):
-    expires = float(expires)
-    __orginal_init__(self, version, name, value,
-                     port, port_specified,
-                     domain, domain_specified, domain_initial_dot,
-                     path, path_specified,
-                     secure,
-                     expires,
-                     discard,
-                     comment,
-                     comment_url,
-                     rest,
-                     rfc2109=False,)
-
-cookielib.Cookie.__init__ = __fixed_init__
-
-
-class ClassNotFound(BaseException):
-    """
-    Class to be thrown if a course is not found in Coursera's site.
-    """
-
-    pass
-
-
-class AuthenticationFailed(BaseException):
-    """
-    Class to be thrown if we cannot authenticate on Coursera's site.
-    """
-
-    pass
+from define import CLASS_URL
+from utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 
 
 class BandwidthCalc(object):
@@ -178,165 +123,6 @@ def get_syllabus_url(class_name, preview):
     logging.debug('Using %s mode with page: %s', class_type, page)
 
     return page
-
-
-def login(session, class_name, username, password):
-    """
-    Login on www.coursera.org with the given credentials.
-    """
-
-    # Hit class url to obtain csrf_token
-    class_url = CLASS_URL.format(class_name=class_name)
-    r = requests.get(class_url, allow_redirects=False)
-
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError:
-        raise ClassNotFound(class_name)
-
-    csrftoken = r.cookies.get('csrf_token')
-
-    if not csrftoken:
-        raise AuthenticationFailed('Did not recieve csrf_token cookie.')
-
-    # Now make a call to the authenticator url.
-    headers = {
-        'Cookie': 'csrftoken=' + csrftoken,
-        'Referer': 'https://www.coursera.org',
-        'X-CSRFToken': csrftoken,
-    }
-
-    data = {
-        'email_address': username,
-        'password': password
-    }
-
-    r = session.post(AUTH_URL, data=data,
-                     headers=headers, allow_redirects=False)
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError:
-        raise AuthenticationFailed('Cannot login on www.coursera.org.')
-
-    logging.info('Logged in on www.coursera.org.')
-
-
-def down_the_wabbit_hole(session, class_name):
-    """
-    Authenticate on class.coursera.org
-    """
-
-    auth_redirector_url = AUTH_REDIRECT_URL.format(class_name=class_name)
-    r = session.get(auth_redirector_url)
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError:
-        raise AuthenticationFailed('Cannot login on class.coursera.org.')
-
-
-def get_authentication_cookies(session, class_name):
-    """
-    Get the necessary cookies to authenticate on class.coursera.org.
-
-    At this moment we should have the following cookies on www.coursera.org:
-        maestro_login_flag, sessionid, maestro_login
-    To access the class pages we need two cookies on class.coursera.org:
-        csrf_token, session
-    """
-
-    # First, check if we already have the class.coursera.org cookies.
-    enough = do_we_have_enough_cookies(session.cookies, class_name)
-
-    if not enough:
-        # Get the class.coursera.org cookies. Remember that we need
-        # the cookies from www.coursera.org!
-        down_the_wabbit_hole(session, class_name)
-
-        enough = do_we_have_enough_cookies(session.cookies, class_name)
-
-        if not enough:
-            raise AuthenticationFailed('Did not find necessary cookies.')
-
-    logging.info('Found authentication cookies.')
-
-    session.cookie_values = make_cookie_values(session.cookies, class_name)
-
-
-def do_we_have_enough_cookies(cj, class_name):
-    """
-    Checks whether we have all the required cookies
-    to authenticate on class.coursera.org.
-    """
-    domain = 'class.coursera.org'
-    path = "/" + class_name
-
-    return cj.get('session', domain=domain, path=path) \
-        and cj.get('csrf_token', domain=domain, path=path)
-
-
-def make_cookie_values(cj, class_name):
-    """
-    Makes a string of cookie keys and values.
-    Can be used to set a Cookie header.
-    """
-    path = "/" + class_name
-
-    cookies = [c.name + '=' + c.value
-               for c in cj
-               if c.domain == "class.coursera.org"
-               and c.path == path]
-
-    return '; '.join(cookies)
-
-
-def find_cookies_for_class(cookies_file, class_name):
-    """
-    Return a RequestsCookieJar containing the cookies for
-    www.coursera.org and class.coursera.org found in the given cookies_file.
-    """
-
-    path = "/" + class_name
-
-    def cookies_filter(c):
-        return c.domain == "www.coursera.org" \
-            or (c.domain == "class.coursera.org" and c.path == path)
-
-    cj = get_cookie_jar(cookies_file)
-    cookies_list = filter(cookies_filter, cj)
-
-    new_cj = requests.cookies.RequestsCookieJar()
-    for c in cookies_list:
-        new_cj.set_cookie(c)
-
-    return new_cj
-
-
-def load_cookies_file(cookies_file):
-    """
-    Loads the cookies file.
-
-    We pre-pend the file with the special Netscape header because the cookie
-    loader is very particular about this string.
-    """
-
-    cookies = StringIO.StringIO()
-    cookies.write('# Netscape HTTP Cookie File')
-    cookies.write(open(cookies_file, 'rU').read())
-    cookies.flush()
-    cookies.seek(0)
-    return cookies
-
-
-def get_cookie_jar(cookies_file):
-    cj = cookielib.MozillaCookieJar()
-    cookies = load_cookies_file(cookies_file)
-
-    # nasty hack: cj.load() requires a filename not a file, but if I use
-    # stringio, that file doesn't exist. I used NamedTemporaryFile before,
-    # but encountered problems on Windows.
-    cj._really_load(cookies, 'StringIO.cookies', False, False)
-
-    return cj
 
 
 def get_page(session, url):
@@ -396,30 +182,6 @@ def get_syllabus(session, class_name, local_page=False, preview=False):
     return page
 
 
-def clean_filename(s):
-    """
-    Sanitize a string to be used as a filename.
-    """
-
-    # strip paren portions which contain trailing time length (...)
-    s = re.sub(r"\([^\(]*$", '', s)
-    s = s.strip().replace(':', '-').replace(' ', '_')
-    s = s.replace('nbsp', '')
-    valid_chars = '-_.()%s%s' % (string.ascii_letters, string.digits)
-    return ''.join(c for c in s if c in valid_chars)
-
-
-def get_anchor_format(a):
-    """
-    Extract the resource file-type format from the anchor.
-    """
-
-    # (. or format=) then (file_extension) then (? or $)
-    # e.g. "...format=txt" or "...download.mp4?..."
-    fmt = re.search(r"(?:\.|format=)(\w+)(?:\?.*)?$", a)
-    return (fmt.group(1) if fmt else None)
-
-
 def transform_preview_url(a):
     """
     Given a preview lecture URL, transform it into a regular video URL.
@@ -445,22 +207,6 @@ def get_video(session, url):
     page = get_page(session, url)
     soup = BeautifulSoup(page)
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
-
-
-def fix_url(url):
-    """
-    Strip whitespace characters from the beginning and the end of the url
-    and add a default scheme.
-    """
-    if url is None:
-        return None
-
-    url = url.strip()
-
-    if url and not urlparse.urlparse(url).scheme:
-        url = "http://" + url
-
-    return url
 
 
 def parse_syllabus(session, page, reverse=False):
@@ -503,14 +249,16 @@ def parse_syllabus(session, page, reverse=False):
                         href = get_video(session, lecture_page)
                         lecture['mp4'] = fix_url(href)
                     except TypeError:
-                        logging.warn('Could not get resource: %s', lecture_page)
+                        logging.warn(
+                            'Could not get resource: %s', lecture_page)
 
             # Special case: we possibly have hidden video links---thanks to
             # the University of Washington for that.
             if 'mp4' not in lecture:
                 for a in vtag.findAll('a'):
                     if a.get('data-modal-iframe'):
-                        href = grab_hidden_video_url(session, a['data-modal-iframe'])
+                        href = grab_hidden_video_url(
+                            session, a['data-modal-iframe'])
                         href = fix_url(href)
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
@@ -531,20 +279,6 @@ def parse_syllabus(session, page, reverse=False):
         logging.error('Probably bad cookies file (or wrong class name)')
 
     return sections
-
-
-def mkdir_p(path):
-    """
-    Create subdirectory hierarchy given in the paths argument.
-    """
-
-    try:
-        os.makedirs(path)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else:
-            raise
 
 
 def download_lectures(session,
@@ -603,15 +337,19 @@ def download_lectures(session,
                 if i[0] in file_formats or 'all' in file_formats:
                     lectures_to_get.append(i)
                 else:
-                    logging.debug('Skipping b/c format %s not in %s', i[0], file_formats)
+                    logging.debug(
+                        'Skipping b/c format %s not in %s', i[0], file_formats)
 
             # write lecture resources
             for fmt, url in lectures_to_get:
                 if combined_section_lectures_nums:
-                    lecfn = os.path.join(sec, format_combine_number_resource(secnum + 1,
-                                                         lecnum + 1, lecname, fmt))
+                    lecfn = os.path.join(
+                        sec,
+                        format_combine_number_resource(
+                            secnum + 1, lecnum + 1, lecname, fmt))
                 else:
-                    lecfn = os.path.join(sec, format_resource(lecnum + 1, lecname, fmt))
+                    lecfn = os.path.join(
+                        sec, format_resource(lecnum + 1, lecname, fmt))
 
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
@@ -636,7 +374,9 @@ def download_lectures(session,
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
     if last_update >= 0:
-        if time.time() - last_update > total_seconds(datetime.timedelta(days=30)):
+        delta = time.time() - last_update
+        max_delta = total_seconds(datetime.timedelta(days=30))
+        if delta > max_delta:
             logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
             return True
     return False
@@ -648,7 +388,8 @@ def total_seconds(td):
 
     Added for backward compatibility, pre 2.7.
     """
-    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
+    return (td.microseconds +
+           (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
 
 
 def download_file(session,
@@ -751,8 +492,8 @@ def download_file_nowget(session, url, fn):
         r = session.get(url, stream=True)
 
         if (r.status_code is not 200):
-            logging.warn('Probably the file is missing from the AWS repository...'
-                         ' waiting.')
+            logging.warn('Probably the file is missing from the AWS repository'
+                         '... waiting.')
 
             if r.reason:
                 error_msg = r.reason + ' ' + str(r.status_code)
@@ -760,7 +501,8 @@ def download_file_nowget(session, url, fn):
                 error_msg = 'HTTP Error ' + str(r.status_code)
 
             wait_interval = 2 ** (attempts_count + 1)
-            print 'Error to downloading, will retry in %s seconds ...' % wait_interval
+            print 'Error to downloading, will retry in {0} seconds ...'.format(
+                wait_interval)
             time.sleep(wait_interval)
             attempts_count += 1
             continue
@@ -866,28 +608,32 @@ def parseArgs():
                         nargs='?',
                         const='wget',
                         default=None,
-                        help='use wget for downloading, optionally specify wget bin')
+                        help='use wget for downloading,'
+                             'optionally specify wget bin')
     parser.add_argument('--curl',
                         dest='curl',
                         action='store',
                         nargs='?',
                         const='curl',
                         default=None,
-                        help='use curl for downloading, optionally specify curl bin')
+                        help='use curl for downloading,'
+                             ' optionally specify curl bin')
     parser.add_argument('--aria2',
                         dest='aria2',
                         action='store',
                         nargs='?',
                         const='aria2c',
                         default=None,
-                        help='use aria2 for downloading, optionally specify aria2 bin')
+                        help='use aria2 for downloading,'
+                             ' optionally specify aria2 bin')
     parser.add_argument('--axel',
                         dest='axel',
                         action='store',
                         nargs='?',
                         const='axel',
                         default=None,
-                        help='use axel for downloading, optionally specify axel bin')
+                        help='use axel for downloading,'
+                             ' optionally specify axel bin')
     # We keep the wget_bin, ... options for backwards compatibility.
     parser.add_argument('-w',
                         '--wget_bin',
@@ -915,11 +661,13 @@ def parseArgs():
                         dest='overwrite',
                         action='store_true',
                         default=False,
-                        help='whether existing files should be overwritten (default: False)')
+                        help='whether existing files should be overwritten'
+                             ' (default: False)')
     parser.add_argument('-l',
                         '--process_local_page',
                         dest='local_page',
-                        help='uses or creates local cached version of syllabus page')
+                        help='uses or creates local cached version of syllabus'
+                             ' page')
     parser.add_argument('--skip-download',
                         dest='skip_download',
                         action='store_true',
@@ -944,7 +692,8 @@ def parseArgs():
                         dest='quiet',
                         action='store_true',
                         default=False,
-                        help='omit as many messages as possible (only printing errors)')
+                        help='omit as many messages as possible'
+                             ' (only printing errors)')
     parser.add_argument('--add-class',
                         dest='add_class',
                         action='append',
@@ -969,7 +718,8 @@ def parseArgs():
 
     args = parser.parse_args()
 
-    # Initialize the logging system first so that other functions can use it right away
+    # Initialize the logging system first so that other functions
+    # can use it right away
     if args.debug:
         logging.basicConfig(level=logging.DEBUG,
                             format='%(name)s[%(funcName)s] %(message)s')
@@ -986,7 +736,7 @@ def parseArgs():
     for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
         if getattr(args, bin):
             logging.error('The --%s option is deprecated, please use --%s',
-                bin, bin[:-4])
+                          bin, bin[:-4])
             sys.exit(1)
 
     # check arguments
@@ -997,7 +747,8 @@ def parseArgs():
     if not args.cookies_file:
         try:
             args.username, args.password = get_credentials(
-                username=args.username, password=args.password, netrc=args.netrc)
+                username=args.username, password=args.password,
+                netrc=args.netrc)
         except CredentialsError as e:
             logging.error(e)
             sys.exit(1)
@@ -1017,13 +768,13 @@ def download_class(args, class_name):
         # Todo, remove this.
         session.cookie_values = 'dummy=dummy'
     else:
-        if args.cookies_file:
-            cookies = find_cookies_for_class(args.cookies_file, class_name)
-            session.cookies.update(cookies)
-        else:
-            login(session, class_name, args.username, args.password)
-
-        get_authentication_cookies(session, class_name)
+        get_cookies_for_class(
+            session,
+            class_name,
+            cookies_file=args.cookies_file,
+            username=args.username, password=args.password
+        )
+        session.cookie_values = make_cookie_values(session.cookies, class_name)
 
     # get the syllabus listing
     page = get_syllabus(session, class_name, args.local_page, args.preview)
@@ -1075,7 +826,8 @@ def main():
             logging.error('Could not authenticate: %s', af)
 
     if completed_classes:
-        logging.info("Classes which appear completed: " + " ".join(completed_classes))
+        logging.info(
+            "Classes which appear completed: " + " ".join(completed_classes))
 
 
 if __name__ == '__main__':
