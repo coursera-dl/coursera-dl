@@ -53,19 +53,14 @@ the Honor of Code of the particular couses that you want to use with
 
 1\. Install any missing dependencies.
 
-  * [Beautiful Soup 3][4]
-    - Ubuntu/Debian: `sudo apt-get install python-beautifulsoup`
-    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup`
-    - Other: `easy_install beautifulsoup`
-  * [Beautiful Soup 4][5]: An alternative to Beautiful Soup 3. See also
-    html5lib below.
+  * [Beautiful Soup 4][5]: See also html5lib below.
     - Ubuntu/Debian: `sudo apt-get install python-bs4`
     - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
     - Other: `easy_install beautifulsoup4`
   * [Argparse][6]: Only necessary if using Python 2.6.
     - Ubuntu/Debian: `sudo apt-get install python-argparse`
     - Other: `easy_install argparse`
-  * [html5lib][15]: Recommended if using Beautiful Soup 4.
+  * [html5lib][15]: Recommended for parsing pages.
     - Ubuntu/Debian: `sudo apt-get install python-html5lib`
     - Mac OSX + MacPorts: `sudo port install py-html5lib`
     - Other: `easy_install html5lib`
@@ -210,7 +205,6 @@ first last at geemail dotcom or [@jplehmann][12]
 [1]: https://www.coursera.org
 [2]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [3]: https://rg3.github.com/youtube-dl
-[4]: http://www.crummy.com/software/BeautifulSoup/bs3
 [5]: http://www.crummy.com/software/BeautifulSoup
 [6]: http://pypi.python.org/pypi/argparse
 [7]: http://pypi.python.org/pypi/setuptools
