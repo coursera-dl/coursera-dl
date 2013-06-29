@@ -68,7 +68,10 @@ def login(session, class_name, username, password):
         sessionid, maestro_login, maestro_login_flag
     """
 
-    session.cookies.clear('www.coursera.org')
+    try:
+        session.cookies.clear('www.coursera.org')
+    except KeyError:
+        pass
 
     # Hit class url to obtain csrf_token
     class_url = CLASS_URL.format(class_name=class_name)
@@ -122,7 +125,10 @@ def down_the_wabbit_hole(session, class_name):
 
 def _get_authentication_cookies(session, class_name,
                                 username, password, retry=False):
-    session.cookies.clear('class.coursera.org', '/' + class_name)
+    try:
+        session.cookies.clear('class.coursera.org', '/' + class_name)
+    except KeyError:
+        pass
 
     down_the_wabbit_hole(session, class_name)
 
