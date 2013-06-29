@@ -64,11 +64,11 @@ class AuthenticationFailed(BaseException):
 def login(session, class_name, username, password):
     """
     Login on www.coursera.org with the given credentials.
+    This adds the following cookies to the session:
+        sessionid, maestro_login, maestro_login_flag
     """
 
-    if session.cookies.get('sessionid', domain="www.coursera.org"):
-        logging.info('Already logged in on www.coursera.org.')
-        return
+    session.cookies.clear('www.coursera.org')
 
     # Hit class url to obtain csrf_token
     class_url = CLASS_URL.format(class_name=class_name)
@@ -120,28 +120,44 @@ def down_the_wabbit_hole(session, class_name):
         raise AuthenticationFailed('Cannot login on class.coursera.org.')
 
 
-def get_authentication_cookies(session, class_name):
+def _get_authentication_cookies(session, class_name,
+                                username, password, retry=False):
+    # Get the class.coursera.org cookies. Remember that we need
+    # the cookies from www.coursera.org!
+    down_the_wabbit_hole(session, class_name)
+
+    enough = do_we_have_enough_cookies(session.cookies, class_name)
+
+    if not enough:
+        if retry:
+            logging.info('Renew session on www.coursera.org.')
+            login(session, class_name, username, password)
+            _get_authentication_cookies(
+                session, class_name, username, password, False)
+        else:
+            raise AuthenticationFailed('Did not find necessary cookies.')
+
+
+def get_authentication_cookies(session, class_name, username, password):
     """
     Get the necessary cookies to authenticate on class.coursera.org.
 
-    At this moment we should have the following cookies on www.coursera.org:
-        maestro_login_flag, sessionid, maestro_login
     To access the class pages we need two cookies on class.coursera.org:
         csrf_token, session
     """
 
-    # First, check if we already have the class.coursera.org cookies.
-    enough = do_we_have_enough_cookies(session.cookies, class_name)
+    # First, check if we already have the www.coursera.org cookies.
+    if session.cookies.get('maestro_login', domain="www.coursera.org"):
+        logged_in = True
+        logging.info('Already logged in on www.coursera.org.')
+    else:
+        logged_in = False
+        login(session, class_name, username, password)
 
-    if not enough:
-        # Get the class.coursera.org cookies. Remember that we need
-        # the cookies from www.coursera.org!
-        down_the_wabbit_hole(session, class_name)
-
-        enough = do_we_have_enough_cookies(session.cookies, class_name)
-
-        if not enough:
-            raise AuthenticationFailed('Did not find necessary cookies.')
+    # If logged_in, allow retry in case of stale sessions
+    # (session time-out, ...)
+    _get_authentication_cookies(
+        session, class_name, username, password, logged_in)
 
     logging.info('Found authentication cookies.')
 
@@ -279,6 +295,5 @@ def get_cookies_for_class(session, class_name,
             logging.info(
                 'Loaded cookies from %s', get_cookies_cache_path(username))
         else:
-            login(session, class_name, username, password)
-            get_authentication_cookies(session, class_name)
+            get_authentication_cookies(session, class_name, username, password)
             write_cookies_to_cache(session.cookies, username)

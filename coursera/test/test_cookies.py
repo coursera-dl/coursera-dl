@@ -104,20 +104,3 @@ class CookiesFileTestCase(unittest.TestCase):
         cookie_values = cookies.make_cookie_values(cj, 'class-001')
         self.assertEquals(cookie_values, values)
 
-    def test_get_authentication_cookies_doesnt_call_down_the_wabbit_hole(self):
-        cj = cookies.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
-        s = MockSession()
-        s.cookies = cj
-
-        cookies.get_authentication_cookies(s, 'class-001')
-        self.assertFalse(s.called)
-
-    def test_get_authentication_cookies_raises_exception(self):
-        cj = cookies.find_cookies_for_class(
-            FIREFOX_COOKIES_WITHOUT_COURSERA, 'class-001')
-        s = MockSession()
-        s.cookies = cj
-
-        self.assertRaises(cookies.AuthenticationFailed,
-                          cookies.get_authentication_cookies,
-                          s, 'class-001')
