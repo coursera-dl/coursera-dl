@@ -339,7 +339,7 @@ def get_cookie_jar(cookies_file):
     return cj
 
 
-def get_page(session, url):
+def get_page(session, url, skip_errors):
     """
     Download an HTML page using the requests session.
     """
@@ -350,17 +350,18 @@ def get_page(session, url):
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
         logging.error("Error getting page %s", url)
-        raise
+        if not skip_errors:
+            raise
 
     return r.text
 
 
-def grab_hidden_video_url(session, href):
+def grab_hidden_video_url(session, href, skip_errors=False):
     """
     Follow some extra redirects to grab hidden video URLs (like those from
     University of Washington).
     """
-    page = get_page(session, href)
+    page = get_page(session, href, skip_errors)
     soup = BeautifulSoup(page)
     l = soup.find('source', attrs={'type': 'video/mp4'})
     if l is not None:
@@ -369,7 +370,7 @@ def grab_hidden_video_url(session, href):
         return None
 
 
-def get_syllabus(session, class_name, local_page=False, preview=False):
+def get_syllabus(session, class_name, local_page=False, preview=False, skip_errors=False):
     """
     Get the course listing webpage.
 
@@ -381,7 +382,7 @@ def get_syllabus(session, class_name, local_page=False, preview=False):
 
     if not (local_page and os.path.exists(local_page)):
         url = get_syllabus_url(class_name, preview)
-        page = get_page(session, url)
+        page = get_page(session, url, skip_errors)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
 
         # cache the page if we're in 'local' mode
@@ -463,7 +464,7 @@ def fix_url(url):
     return url
 
 
-def parse_syllabus(session, page, reverse=False):
+def parse_syllabus(session, page, reverse=False, skip_errors=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -510,7 +511,7 @@ def parse_syllabus(session, page, reverse=False):
             if 'mp4' not in lecture:
                 for a in vtag.findAll('a'):
                     if a.get('data-modal-iframe'):
-                        href = grab_hidden_video_url(session, a['data-modal-iframe'])
+                        href = grab_hidden_video_url(session, a['data-modal-iframe'], skip_errors)
                         href = fix_url(href)
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
@@ -563,7 +564,8 @@ def download_lectures(session,
                       verbose_dirs=False,
                       preview=False,
                       combined_section_lectures_nums=False,
-                      hooks=None
+                      hooks=None,
+											skip_errors=False
                       ):
     """
     Downloads lecture resources described by sections.
@@ -966,6 +968,11 @@ def parseArgs():
                         action='append',
                         default=[],
                         help='hooks to run when finished')
+    parser.add_argument('--skip-errors',
+                        dest='skip_errors',
+                        action='store_true',
+                        default=False,
+                        help='skip errors in download')
 
     args = parser.parse_args()
 
@@ -1026,10 +1033,10 @@ def download_class(args, class_name):
         get_authentication_cookies(session, class_name)
 
     # get the syllabus listing
-    page = get_syllabus(session, class_name, args.local_page, args.preview)
+    page = get_syllabus(session, class_name, args.local_page, args.preview, args.skip_errors)
 
     # parse it
-    sections = parse_syllabus(session, page, args.reverse)
+    sections = parse_syllabus(session, page, args.reverse, args.skip_errors)
 
     # obtain the resources
     completed = download_lectures(
@@ -1049,7 +1056,8 @@ def download_class(args, class_name):
         args.verbose_dirs,
         args.preview,
         args.combined_section_lectures_nums,
-        args.hooks)
+        args.hooks,
+				args.skip_errors)
 
     return completed
 
