@@ -146,7 +146,11 @@ def grab_hidden_video_url(session, href):
     Follow some extra redirects to grab hidden video URLs (like those from
     University of Washington).
     """
-    page = get_page(session, href)
+    try:
+        page = get_page(session, href)
+    except requests.exceptions.HTTPError:
+        return None
+
     soup = BeautifulSoup(page)
     l = soup.find('source', attrs={'type': 'video/mp4'})
     if l is not None:
