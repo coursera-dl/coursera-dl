@@ -261,7 +261,7 @@ def download_about(session, class_name, path='', overwrite=False):
   about_json = get_page(session, about_url)
   data = json.loads(about_json)
   about_file = open(about_fn, 'w')
-  about_file.write(json.dumps(data, indent=4, separators={',',':'}))
+  about_file.write(json.dumps(data, indent=4, separators=(',',':')))
   about_file.close()
 
 
