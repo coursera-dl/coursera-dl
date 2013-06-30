@@ -52,6 +52,7 @@ import subprocess
 import sys
 import time
 import urlparse
+import json
 
 import requests
 
@@ -72,7 +73,7 @@ from credentials import get_credentials, CredentialsError
 
 AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
-ABOUT_URL = 'https://www.coursera.org/course/{class_name}'
+ABOUT_URL = 'https://www.coursera.org/maestro/api/topic/information?topic-id={class_name}'
 AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
                     '/auth/auth_redirector?type=login&subtype=normal'
 
@@ -549,16 +550,21 @@ def mkdir_p(path):
 
 
 def download_about(session, class_name, path='', overwrite=False):
-  # TODO need to strip off course number on end e.g. ml-001 -> ml
-  about_url = ABOUT_URL.format(class_name=class_name)
-  # XXX should we create a directory with metadata?
-  about_fn = os.path.join(path, 'about.html')
-  # idea: convert to markdown format using html2text
-  print "Getting about page: ", about_url
-  about_html = get_page(session, about_url)
-  # TODO check if it already exists
+  """
+  Download the 'about' metadata which is in JSON format and pretty-print it.
+  """
+  about_fn = os.path.join(path, 'about.json')
+  if os.path.exists(about_fn) and not overwrite:
+    return
+  # strip off course number on end e.g. ml-001 -> ml
+  base_class_name = class_name.split('-')[0]
+  about_url = ABOUT_URL.format(class_name=base_class_name)
+  # NOTE: should we create a directory with metadata?
+  logging.info('Downloading about page from: %s', about_url)
+  about_json = get_page(session, about_url)
+  data = json.loads(about_json)
   about_file = open(about_fn, 'w')
-  about_file.write(about_html)
+  about_file.write(json.dumps(data, indent=4, separators={',',':'}))
   about_file.close()
 
 
@@ -847,6 +853,11 @@ def parseArgs():
                         help='coursera password')
 
     # optional
+    parser.add_argument('--about',
+                        dest='about',
+                        action='store_true',
+                        default=False,
+                        help='download "about" metadata. (Default: False)')
     parser.add_argument('-b',
                         '--preview',
                         dest='preview',
@@ -1041,17 +1052,15 @@ def download_class(args, class_name):
         get_authentication_cookies(session, class_name)
 
     # get the syllabus listing
-    #page = get_syllabus(session, class_name, args.local_page, args.preview)
+    page = get_syllabus(session, class_name, args.local_page, args.preview)
 
     # parse it
-    #sections = parse_syllabus(session, page, args.reverse)
+    sections = parse_syllabus(session, page, args.reverse)
 
-    # download the about page
-    # TODO: make this conditional on an argument
-    download_about(session, class_name, args.path, args.overwrite)
+    if args.about:
+      download_about(session, class_name, args.path, args.overwrite)
 
     # obtain the resources
-    """
     completed = download_lectures(
         session,
         args.wget,
@@ -1070,10 +1079,8 @@ def download_class(args, class_name):
         args.preview,
         args.combined_section_lectures_nums,
         args.hooks)
-        """
 
-    #return completed
-    return []
+    return completed
 
 
 def main():
