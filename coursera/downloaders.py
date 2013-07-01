@@ -1,5 +1,6 @@
 import logging
 import os
+import requests
 import subprocess
 import sys
 import time
@@ -50,27 +51,41 @@ class ExternalDownloader(Downloader):
     We could possibly use python to stream files to disk,
     but this is slow compared to these external downloaders.
 
-    :param cookies_dict: Python dict of name-value pairs of cookies.
+    :param session: Requests session.
     :param url: External downloader binary.
     """
 
     # External downloader binary
     bin = None
 
-    def __init__(self, cookies_dict=None, bin=None):
-        self.cookies_dict = cookies_dict or {}
+    def __init__(self, session, bin=None):
+        self.session = session
         self.bin = bin or self.__class__.bin
 
         if not self.bin:
             raise RuntimeError("No bin specified")
 
-    def cookie_values(self):
+    def _prepare_cookies(self, command, url):
         """
-        Makes a string of cookie keys and values.
-        Can be used to set a Cookie header.
+        Extract cookies from the requests session and add them to the command
         """
 
-        return '; '.join(k + '=' + v for (k, v) in self.cookies_dict.items())
+        req = requests.models.Request()
+        req.method = 'GET'
+        req.url = url
+
+        cookie_values = requests.cookies.get_cookie_header(
+            self.session.cookies, req)
+
+        if cookie_values:
+            self._add_cookies(command, cookie_values)
+
+    def _add_cookies(self, command, cookie_values):
+        """
+        Add the given cookie values to the command
+        """
+
+        raise RuntimeError("Subclasses should implement this")
 
     def _create_command(self, url, filename):
         """
@@ -80,6 +95,7 @@ class ExternalDownloader(Downloader):
 
     def _start_download(self, url, filename):
         command = self._create_command(url, filename)
+        self._prepare_cookies(command, url)
         logging.debug('Executing %s: %s', self.bin, command)
         try:
             subprocess.call(command)
@@ -96,9 +112,11 @@ class WgetDownloader(ExternalDownloader):
 
     bin = 'wget'
 
+    def _add_cookies(self, command, cookie_values):
+        command.extend(['--header', "Cookie: " + cookie_values])
+
     def _create_command(self, url, filename):
-        return [self.bin, url, '-O', filename, '--no-cookies', '--header',
-                "Cookie: " + self.cookie_values(),
+        return [self.bin, url, '-O', filename, '--no-cookies',
                 '--no-check-certificate']
 
 
@@ -109,9 +127,11 @@ class CurlDownloader(ExternalDownloader):
 
     bin = 'curl'
 
+    def _add_cookies(self, command, cookie_values):
+        command.extend(['--cookie', cookie_values])
+
     def _create_command(self, url, filename):
-        return [self.bin, url, '-k', '-#', '-L', '-o', filename,
-                '--cookie', self.cookie_values()]
+        return [self.bin, url, '-k', '-#', '-L', '-o', filename]
 
 
 class Aria2Downloader(ExternalDownloader):
@@ -123,9 +143,11 @@ class Aria2Downloader(ExternalDownloader):
 
     bin = 'aria2'
 
+    def _add_cookies(self, command, cookie_values):
+        command.extend(['--header', "Cookie: " + cookie_values])
+
     def _create_command(self, url, filename):
-        return [self.bin, url, '-o', filename, '--header',
-                "Cookie: " + self.cookie_values(),
+        return [self.bin, url, '-o', filename,
                 '--check-certificate=false', '--log-level=notice',
                 '--max-connection-per-server=4', '--min-split-size=1M']
 
@@ -138,9 +160,11 @@ class AxelDownloader(ExternalDownloader):
 
     bin = 'axel'
 
+    def _add_cookies(self, command, cookie_values):
+        command.extend(['--H', "Cookie: " + cookie_values])
+
     def _create_command(self, url, filename):
-        return [self.bin, '-H', "Cookie: " + self.cookie_values(),
-                '-o', filename, '-n', '4', '-a', url]
+        return [self.bin, '-o', filename, '-n', '4', '-a', url]
 
 
 class BandwidthCalc(object):
@@ -258,8 +282,6 @@ def get_downloader(session, class_name, args):
 
     for bin, class_ in external.items():
         if (getattr(args, bin)):
-            cookies_dict = session.cookies.get_dict(
-                domain="class.coursera.org", path='/' + class_name)
-            return class_(cookies_dict=cookies_dict, bin=getattr(args, bin))
+            return class_(session, bin=getattr(args, bin))
 
     return NativeDownloader(session)
