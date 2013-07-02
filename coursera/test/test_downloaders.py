@@ -100,7 +100,7 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         cv = 'csrf_token=csrfclass001; session=sessionclass1'
         self.assertTrue(cv in command)
 
-    def test_arai2(self):
+    def test_aria2(self):
         s = self._get_session()
 
         d = downloaders.Aria2Downloader(s)
