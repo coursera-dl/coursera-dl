@@ -103,4 +103,3 @@ class CookiesFileTestCase(unittest.TestCase):
         values = 'csrf_token=csrfclass001; session=sessionclass1'
         cookie_values = cookies.make_cookie_values(cj, 'class-001')
         self.assertEquals(cookie_values, values)
-
