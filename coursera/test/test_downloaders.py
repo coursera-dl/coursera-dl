@@ -105,7 +105,7 @@ class ExternalDownloaderTestCase(unittest.TestCase):
 
         d = downloaders.Aria2Downloader(s)
         command = d._create_command('download_url', 'save_to')
-        self.assertEquals(command[0], 'aria2')
+        self.assertEquals(command[0], 'aria2c')
         self.assertTrue('download_url' in command)
         self.assertTrue('save_to' in command)
 

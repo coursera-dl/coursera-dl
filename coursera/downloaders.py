@@ -140,7 +140,7 @@ class Aria2Downloader(ExternalDownloader):
     gets the job done much faster than the alternatives.
     """
 
-    bin = 'aria2'
+    bin = 'aria2c'
 
     def _add_cookies(self, command, cookie_values):
         command.extend(['--header', "Cookie: " + cookie_values])
