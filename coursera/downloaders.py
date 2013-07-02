@@ -160,7 +160,7 @@ class AxelDownloader(ExternalDownloader):
     bin = 'axel'
 
     def _add_cookies(self, command, cookie_values):
-        command.extend(['--H', "Cookie: " + cookie_values])
+        command.extend(['-H', "Cookie: " + cookie_values])
 
     def _create_command(self, url, filename):
         return [self.bin, '-o', filename, '-n', '4', '-a', url]
