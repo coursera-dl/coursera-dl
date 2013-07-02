@@ -173,7 +173,8 @@ class TestSyllabusParsing(unittest.TestCase):
         classes = {
             'datasci-001': (10, 97, 358, 97),  # issue 134
             'startup-001': (4, 44, 136, 44),   # issue 137
-            'wealthofnations-001': (8, 74, 296, 74)  # issue 131
+            'wealthofnations-001': (8, 74, 296, 74),  # issue 131
+            'malsoftware-001': (3, 18, 56, 16)  # issue 148
         }
 
         for class_, counts in classes.items():
