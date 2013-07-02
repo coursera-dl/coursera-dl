@@ -136,9 +136,8 @@ class CurlDownloader(ExternalDownloader):
 
 class Aria2Downloader(ExternalDownloader):
     """
-    Uses aria2. Unfortunately, it does not give a nice
-    visual feedback, bug gets the job done much faster than the
-    alternatives.
+    Uses aria2. Unfortunately, it does not give a nice visual feedback, but
+    gets the job done much faster than the alternatives.
     """
 
     bin = 'aria2'
