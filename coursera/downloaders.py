@@ -224,10 +224,10 @@ class NativeDownloader(Downloader):
 
         attempts_count = 0
         error_msg = ''
-        while (attempts_count < 5):
+        while attempts_count < 5:
             r = self.session.get(url, stream=True)
 
-            if (r.status_code is not 200):
+            if r.status_code is not 200:
                 logging.warn(
                     'Probably the file is missing from the AWS repository...'
                     ' waiting.')
@@ -280,7 +280,7 @@ def get_downloader(session, class_name, args):
     }
 
     for bin, class_ in external.items():
-        if (getattr(args, bin)):
+        if getattr(args, bin):
             return class_(session, bin=getattr(args, bin))
 
     return NativeDownloader(session)
