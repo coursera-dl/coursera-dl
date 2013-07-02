@@ -52,7 +52,7 @@ class ExternalDownloader(Downloader):
     but this is slow compared to these external downloaders.
 
     :param session: Requests session.
-    :param url: External downloader binary.
+    :param bin: External downloader binary.
     """
 
     # External downloader binary
