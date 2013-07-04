@@ -262,9 +262,10 @@ def download_about(session, class_name, path='', overwrite=False):
     logging.info('Downloading about page from: %s', about_url)
     about_json = get_page(session, about_url)
     data = json.loads(about_json)
-    about_file = open(about_fn, 'w')
-    about_file.write(json.dumps(data, indent=4, separators=(',', ':')))
-    about_file.close()
+
+    with open(about_fn, 'w') as about_file:
+        json_data = json.dumps(data, indent=4, separators=(',', ':'))
+        about_file.write(json_data)
 
 
 def download_lectures(downloader,
