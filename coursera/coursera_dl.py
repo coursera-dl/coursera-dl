@@ -248,7 +248,7 @@ def download_about(session, class_name, path='', overwrite=False):
     """
     Download the 'about' metadata which is in JSON format and pretty-print it.
     """
-    about_fn = os.path.join(path, class_name, 'about.json')
+    about_fn = os.path.join(path, class_name + '-about.json')
     logging.debug('About file to be written to: %s', about_fn)
     if os.path.exists(about_fn) and not overwrite:
         return
