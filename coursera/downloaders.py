@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import logging
 import os
 import requests
@@ -239,7 +241,7 @@ class NativeDownloader(Downloader):
 
                 wait_interval = 2 ** (attempts_count + 1)
                 msg = 'Error downloading, will retry in {0} seconds ...'
-                print msg.format(wait_interval)
+                print(msg.format(wait_interval))
                 time.sleep(wait_interval)
                 attempts_count += 1
                 continue
@@ -251,12 +253,12 @@ class NativeDownloader(Downloader):
                 while True:
                     data = r.raw.read(chunk_sz)
                     if not data:
-                        print '.'
+                        print('.')
                         break
                     bw.received(len(data))
                     f.write(data)
                     bytesread += len(data)
-                    print '\r%d bytes read%s' % (bytesread, bw),
+                    print('\r%d bytes read%s' % (bytesread, bw), end=' ')
                     sys.stdout.flush()
             r.close()
             return True
@@ -279,7 +281,7 @@ def get_downloader(session, class_name, args):
         'axel': AxelDownloader,
     }
 
-    for bin, class_ in external.items():
+    for bin, class_ in list(external.items()):
         if getattr(args, bin):
             return class_(session, bin=getattr(args, bin))
 
