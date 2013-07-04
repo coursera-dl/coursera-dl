@@ -41,6 +41,7 @@ Legalese:
 
 import argparse
 import datetime
+import json
 import logging
 import os
 import re
@@ -48,8 +49,6 @@ import subprocess
 import sys
 import time
 import urlparse
-
-import json
 
 import requests
 
@@ -69,7 +68,7 @@ from cookies import (
     AuthenticationFailed, ClassNotFound,
     get_cookies_for_class, make_cookie_values)
 from credentials import get_credentials, CredentialsError
-from define import CLASS_URL
+from define import CLASS_URL, ABOUT_URL
 from downloaders import get_downloader
 from utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 
@@ -247,23 +246,22 @@ def parse_syllabus(session, page, reverse=False):
 
 
 def download_about(session, class_name, path='', overwrite=False):
-  """
-  Download the 'about' metadata which is in JSON format and pretty-print it.
-  """
-  about_fn = os.path.join(path, class_name, 'about.json')
-  if os.path.exists(about_fn) and not overwrite:
-    return
-  # strip off course number on end e.g. ml-001 -> ml
-  base_class_name = class_name.split('-')[0]
-  about_url = ABOUT_URL.format(class_name=base_class_name)
-  # NOTE: should we create a directory with metadata?
-  logging.info('Downloading about page from: %s', about_url)
-  about_json = get_page(session, about_url)
-  data = json.loads(about_json)
-  about_file = open(about_fn, 'w')
-  about_file.write(json.dumps(data, indent=4, separators=(',',':')))
-  about_file.close()
-
+    """
+    Download the 'about' metadata which is in JSON format and pretty-print it.
+    """
+    about_fn = os.path.join(path, class_name, 'about.json')
+    if os.path.exists(about_fn) and not overwrite:
+        return
+    # strip off course number on end e.g. ml-001 -> ml
+    base_class_name = class_name.split('-')[0]
+    about_url = ABOUT_URL.format(class_name=base_class_name)
+    # NOTE: should we create a directory with metadata?
+    logging.info('Downloading about page from: %s', about_url)
+    about_json = get_page(session, about_url)
+    data = json.loads(about_json)
+    about_file = open(about_fn, 'w')
+    about_file.write(json.dumps(data, indent=4, separators=(',', ':')))
+    about_file.close()
 
 
 def download_lectures(downloader,
@@ -630,7 +628,7 @@ def download_class(args, class_name):
     sections = parse_syllabus(session, page, args.reverse)
 
     if args.about:
-      download_about(session, class_name, args.path, args.overwrite)
+        download_about(session, class_name, args.path, args.overwrite)
 
     downloader = get_downloader(session, class_name, args)
 
