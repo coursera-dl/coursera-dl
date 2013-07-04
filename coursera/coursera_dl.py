@@ -251,9 +251,13 @@ def download_about(session, class_name, path='', overwrite=False):
     about_fn = os.path.join(path, class_name, 'about.json')
     if os.path.exists(about_fn) and not overwrite:
         return
+
     # strip off course number on end e.g. ml-001 -> ml
     base_class_name = class_name.split('-')[0]
+
     about_url = ABOUT_URL.format(class_name=base_class_name)
+    logging.debug('About url: %s', about_url)
+
     # NOTE: should we create a directory with metadata?
     logging.info('Downloading about page from: %s', about_url)
     about_json = get_page(session, about_url)
