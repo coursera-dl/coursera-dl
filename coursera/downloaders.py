@@ -238,7 +238,7 @@ class NativeDownloader(Downloader):
                     error_msg = 'HTTP Error ' + str(r.status_code)
 
                 wait_interval = 2 ** (attempts_count + 1)
-                msg = 'Error to downloading, will retry in {0} seconds ...'
+                msg = 'Error downloading, will retry in {0} seconds ...'
                 print msg.format(wait_interval)
                 time.sleep(wait_interval)
                 attempts_count += 1
