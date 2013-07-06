@@ -143,6 +143,9 @@ Troubleshooting
   the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
+* Make sure you have installed and/or updated all of your dependencies according to the 
+  requirements.txt file as described above.
+ 
 * One can export a Netscape-style cookies file with a browser
   extension ([1][9], [2][10]) and use it with the `-c` option. This comes in
   handy when the authentication via password is not working (the
