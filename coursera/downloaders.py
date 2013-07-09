@@ -168,49 +168,6 @@ class AxelDownloader(ExternalDownloader):
         return [self.bin, '-o', filename, '-n', '4', '-a', url]
 
 
-class BandwidthCalc(object):
-    """
-    Class for calculation of bandwidth for the "native" downloader.
-    """
-
-    def __init__(self):
-        self.nbytes = 0
-        self.prev_time = time.time()
-        self.prev_bw = 0
-        self.prev_bw_length = 0
-
-    def received(self, data_length):
-        now = time.time()
-        self.nbytes += data_length
-        time_delta = now - self.prev_time
-
-        if time_delta > 1:  # average over 1+ second
-            bw = float(self.nbytes) / time_delta
-            self.prev_bw = (self.prev_bw + 2 * bw) / 3
-            self.nbytes = 0
-            self.prev_time = now
-
-    def __str__(self):
-        if self.prev_bw == 0:
-            bw = ''
-        elif self.prev_bw < 1000:
-            bw = ' (%dB/s)' % self.prev_bw
-        elif self.prev_bw < 1000000:
-            bw = ' (%.2fKB/s)' % (self.prev_bw / 1000)
-        elif self.prev_bw < 1000000000:
-            bw = ' (%.2fMB/s)' % (self.prev_bw / 1000000)
-        else:
-            bw = ' (%.2fGB/s)' % (self.prev_bw / 1000000000)
-
-        length_diff = self.prev_bw_length - len(bw)
-        self.prev_bw_length = len(bw)
-
-        if length_diff > 0:
-            return '%s%s' % (bw, length_diff * ' ')
-        else:
-            return bw
-
-
 class NativeDownloader(Downloader):
     """
     'Native' python downloader -- slower than the external downloaders.
@@ -246,20 +203,13 @@ class NativeDownloader(Downloader):
                 attempts_count += 1
                 continue
 
-            bw = BandwidthCalc()
             chunk_sz = 1048576
-            bytesread = 0
             with open(filename, 'wb') as f:
                 while True:
                     data = r.raw.read(chunk_sz)
                     if not data:
-                        print('.')
                         break
-                    bw.received(len(data))
                     f.write(data)
-                    bytesread += len(data)
-                    print('\r%d bytes read%s' % (bytesread, bw), end=' ')
-                    sys.stdout.flush()
             r.close()
             return True
 
