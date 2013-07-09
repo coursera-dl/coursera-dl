@@ -187,6 +187,69 @@ def format_bytes(bytes):
     return '{0:.2f}{1}'.format(converted, suffix)
 
 
+class DownloadProgress(object):
+    """
+    Report download progress.
+    Inspired by https://github.com/rg3/youtube-dl
+    """
+
+    def __init__(self, total):
+        if total in [0, '0', None]:
+            self._total = None
+        else:
+            self._total = int(total)
+
+        self._current = 0
+        self._start = 0
+        self._now = 0
+
+        self._finished = False
+
+    def start(self):
+        self._now = time.time()
+        self._start = self._now
+
+    def stop(self):
+        self._now = time.time()
+        self._finished = True
+        self._total = self._current
+        self.report_progress()
+
+    def read(self, bytes):
+        self._now = time.time()
+        self._current += bytes
+        self.report_progress()
+
+    def calc_percent(self):
+        if self._total is None:
+            return '--%'
+        percentage = int(float(self._current) / float(self._total) * 100.0)
+        done = int(percentage/2)
+        return '[{0: <50}] {1}%'.format(done * '#', percentage)
+
+    def calc_speed(self):
+        dif = self._now - self._start
+        if self._current == 0 or dif < 0.001:  # One millisecond
+            return '---b/s'
+        return '{0}/s'.format(format_bytes(float(self._current) / dif))
+
+    def report_progress(self):
+        """Report download progress."""
+        percent = self.calc_percent()
+        total = format_bytes(self._total)
+
+        speed = self.calc_speed()
+        total_speed_report = '{0} at {1}'.format(total, speed)
+
+        report = '\r{0: <56} {1: >30}'.format(percent, total_speed_report)
+
+        if self._finished:
+            print(report)
+        else:
+            print(report, end="")
+        sys.stdout.flush()
+
+
 class NativeDownloader(Downloader):
     """
     'Native' python downloader -- slower than the external downloaders.
@@ -222,12 +285,17 @@ class NativeDownloader(Downloader):
                 attempts_count += 1
                 continue
 
+            content_length = r.headers.get('content-length')
+            progress = DownloadProgress(content_length)
             chunk_sz = 1048576
             with open(filename, 'wb') as f:
+                progress.start()
                 while True:
                     data = r.raw.read(chunk_sz)
                     if not data:
+                        progress.stop()
                         break
+                    progress.read(len(data))
                     f.write(data)
             r.close()
             return True
