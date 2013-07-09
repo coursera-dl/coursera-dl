@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import logging
+import math
 import os
 import requests
 import subprocess
@@ -166,6 +167,24 @@ class AxelDownloader(ExternalDownloader):
 
     def _create_command(self, url, filename):
         return [self.bin, '-o', filename, '-n', '4', '-a', url]
+
+
+def format_bytes(bytes):
+    """
+    Get human readable version of given bytes.
+    Ripped from https://github.com/rg3/youtube-dl
+    """
+    if bytes is None:
+        return 'N/A'
+    if type(bytes) is str:
+        bytes = float(bytes)
+    if bytes == 0.0:
+        exponent = 0
+    else:
+        exponent = int(math.log(bytes, 1024.0))
+    suffix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][exponent]
+    converted = float(bytes) / float(1024 ** exponent)
+    return '{0:.2f}{1}'.format(converted, suffix)
 
 
 class NativeDownloader(Downloader):
