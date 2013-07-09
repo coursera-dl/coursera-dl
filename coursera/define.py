@@ -8,7 +8,8 @@ import os
 
 AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
-ABOUT_URL = 'https://www.coursera.org/maestro/api/topic/information?topic-id={class_name}'
+ABOUT_URL = 'https://www.coursera.org/maestro/api/topic/information?' \
+            'topic-id={class_name}'
 AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
                     '/auth/auth_redirector?type=login&subtype=normal'
 

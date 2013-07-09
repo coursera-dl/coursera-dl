@@ -151,3 +151,57 @@ class NativeDownloaderTestCase(unittest.TestCase):
         self.assertFalse(d._start_download('download_url', 'save_to'))
 
         time.sleep = _sleep
+
+
+class DownloadProgressTestCase(unittest.TestCase):
+
+    def _get_progress(self, total):
+        p = downloaders.DownloadProgress(total)
+        p.report_progress = lambda: None
+
+        return p
+
+    def test_calc_percent_if_total_is_zero(self):
+        p = self._get_progress(0)
+        self.assertEquals(p.calc_percent(), '--%')
+
+        p.read(10)
+        self.assertEquals(p.calc_percent(), '--%')
+
+    def test_calc_percent_if_not_yet_read(self):
+        p = self._get_progress(100)
+        self.assertEquals(
+            p.calc_percent(),
+            '[                                                  ] 0%')
+
+    def test_calc_percent_if_read(self):
+        p = self._get_progress(100)
+        p.read(2)
+        self.assertEquals(
+            p.calc_percent(),
+            '[#                                                 ] 2%')
+
+        p.read(18)
+        self.assertEquals(
+            p.calc_percent(),
+            '[##########                                        ] 20%')
+
+        p = self._get_progress(2300)
+        p.read(177)
+        self.assertEquals(
+            p.calc_percent(),
+            '[###                                               ] 7%')
+
+    def test_calc_speed_if_total_is_zero(self):
+        p = self._get_progress(0)
+        self.assertEquals(p.calc_speed(), '---b/s')
+
+    def test_calc_speed_if_not_yet_read(self):
+        p = self._get_progress(100)
+        self.assertEquals(p.calc_speed(), '---b/s')
+
+    def test_calc_speed_ifread(self):
+        p = self._get_progress(10000)
+        p.read(2000)
+        p._now = p._start + 1000
+        self.assertEquals(p.calc_speed(), '2.00B/s')

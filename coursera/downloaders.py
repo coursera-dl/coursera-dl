@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import logging
+import math
 import os
 import requests
 import subprocess
@@ -168,47 +169,85 @@ class AxelDownloader(ExternalDownloader):
         return [self.bin, '-o', filename, '-n', '4', '-a', url]
 
 
-class BandwidthCalc(object):
+def format_bytes(bytes):
     """
-    Class for calculation of bandwidth for the "native" downloader.
+    Get human readable version of given bytes.
+    Ripped from https://github.com/rg3/youtube-dl
+    """
+    if bytes is None:
+        return 'N/A'
+    if type(bytes) is str:
+        bytes = float(bytes)
+    if bytes == 0.0:
+        exponent = 0
+    else:
+        exponent = int(math.log(bytes, 1024.0))
+    suffix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][exponent]
+    converted = float(bytes) / float(1024 ** exponent)
+    return '{0:.2f}{1}'.format(converted, suffix)
+
+
+class DownloadProgress(object):
+    """
+    Report download progress.
+    Inspired by https://github.com/rg3/youtube-dl
     """
 
-    def __init__(self):
-        self.nbytes = 0
-        self.prev_time = time.time()
-        self.prev_bw = 0
-        self.prev_bw_length = 0
-
-    def received(self, data_length):
-        now = time.time()
-        self.nbytes += data_length
-        time_delta = now - self.prev_time
-
-        if time_delta > 1:  # average over 1+ second
-            bw = float(self.nbytes) / time_delta
-            self.prev_bw = (self.prev_bw + 2 * bw) / 3
-            self.nbytes = 0
-            self.prev_time = now
-
-    def __str__(self):
-        if self.prev_bw == 0:
-            bw = ''
-        elif self.prev_bw < 1000:
-            bw = ' (%dB/s)' % self.prev_bw
-        elif self.prev_bw < 1000000:
-            bw = ' (%.2fKB/s)' % (self.prev_bw / 1000)
-        elif self.prev_bw < 1000000000:
-            bw = ' (%.2fMB/s)' % (self.prev_bw / 1000000)
+    def __init__(self, total):
+        if total in [0, '0', None]:
+            self._total = None
         else:
-            bw = ' (%.2fGB/s)' % (self.prev_bw / 1000000000)
+            self._total = int(total)
 
-        length_diff = self.prev_bw_length - len(bw)
-        self.prev_bw_length = len(bw)
+        self._current = 0
+        self._start = 0
+        self._now = 0
 
-        if length_diff > 0:
-            return '%s%s' % (bw, length_diff * ' ')
+        self._finished = False
+
+    def start(self):
+        self._now = time.time()
+        self._start = self._now
+
+    def stop(self):
+        self._now = time.time()
+        self._finished = True
+        self._total = self._current
+        self.report_progress()
+
+    def read(self, bytes):
+        self._now = time.time()
+        self._current += bytes
+        self.report_progress()
+
+    def calc_percent(self):
+        if self._total is None:
+            return '--%'
+        percentage = int(float(self._current) / float(self._total) * 100.0)
+        done = int(percentage/2)
+        return '[{0: <50}] {1}%'.format(done * '#', percentage)
+
+    def calc_speed(self):
+        dif = self._now - self._start
+        if self._current == 0 or dif < 0.001:  # One millisecond
+            return '---b/s'
+        return '{0}/s'.format(format_bytes(float(self._current) / dif))
+
+    def report_progress(self):
+        """Report download progress."""
+        percent = self.calc_percent()
+        total = format_bytes(self._total)
+
+        speed = self.calc_speed()
+        total_speed_report = '{0} at {1}'.format(total, speed)
+
+        report = '\r{0: <56} {1: >30}'.format(percent, total_speed_report)
+
+        if self._finished:
+            print(report)
         else:
-            return bw
+            print(report, end="")
+        sys.stdout.flush()
 
 
 class NativeDownloader(Downloader):
@@ -246,20 +285,18 @@ class NativeDownloader(Downloader):
                 attempts_count += 1
                 continue
 
-            bw = BandwidthCalc()
+            content_length = r.headers.get('content-length')
+            progress = DownloadProgress(content_length)
             chunk_sz = 1048576
-            bytesread = 0
             with open(filename, 'wb') as f:
+                progress.start()
                 while True:
                     data = r.raw.read(chunk_sz)
                     if not data:
-                        print('.')
+                        progress.stop()
                         break
-                    bw.received(len(data))
+                    progress.read(len(data))
                     f.write(data)
-                    bytesread += len(data)
-                    print('\r%d bytes read%s' % (bytesread, bw), end=' ')
-                    sys.stdout.flush()
             r.close()
             return True
 
