@@ -41,18 +41,18 @@ I've downloaded many other good videos such as those from Khan Academy.
   * Core functionality tested on Linux, Mac and Windows.
 
 
-## Directions
+## Instructions
 
-Requires Python 2 (2.6 or newer) and a free Coursera account enrolled in
-the class of interest.  Note: You must already have (manually) agreed to
-the Honor of Code of the particular couses that you want to use with
-`coursera-dl`.
+`coursera-dl` requires Python 2 (2.6 or newer) and a free Coursera account
+enrolled in the class of interest.  *Note:* You must already have (manually)
+agreed to the Honor of Code of the particular courses that you want to use
+with `coursera-dl`.
 
 1\. Install any missing dependencies.
 
-  We strongly recommend that you consider installing Python packages
-  with [`pip`][17], as in it is the current [preferred method][18].  If you
-  are using pip, you can directly install all the dependencies from the
+  We strongly recommend that you consider installing Python packages with
+  [`pip`][17], as in it is the current [preferred method][18].  If you are
+  using `pip`, you can directly install all the dependencies from the
   requirements file using `pip install -r requirements.txt`.
 
   You may choose to install the dependencies yourself, but our users had
@@ -62,18 +62,18 @@ the Honor of Code of the particular couses that you want to use with
 
   In any case, you may want to install:
 
-  * [Beautiful Soup 4][5]: See also html5lib below.
+  * [Beautiful Soup 4][5]: Required. See also html5lib below.
     - Ubuntu/Debian: `sudo apt-get install python-bs4`
     - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
     - Other: `easy_install beautifulsoup4`
-  * [Argparse][6]: Only necessary if using Python 2.6.
+  * [Argparse][6]: Required (but you only need to install with Python 2.6)
     - Ubuntu/Debian: `sudo apt-get install python-argparse`
     - Other: `easy_install argparse`
-  * [html5lib][15]: Recommended for parsing pages.
+  * [html5lib][15]: Not required, but recommended for parsing pages.
     - Ubuntu/Debian: `sudo apt-get install python-html5lib`
     - Mac OSX + MacPorts: `sudo port install py-html5lib`
     - Other: `easy_install html5lib`
-  * [requests][16]
+  * [requests][16]: Required.
     - Ubuntu/Debian: `sudo apt-get install python-requests`
     - Mac OSX + MacPorts: `sudo port install requests`
     - Other: `easy_install requests`
