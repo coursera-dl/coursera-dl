@@ -69,14 +69,14 @@ with `coursera-dl`.
   * [Argparse][6]: Required (but you only need to install with Python 2.6)
     - Ubuntu/Debian: `sudo apt-get install python-argparse`
     - Other: `pip argparse`
-  * [html5lib][15]: Not required, but recommended for parsing pages.
-    - Ubuntu/Debian: `sudo apt-get install python-html5lib`
-    - Mac OSX + MacPorts: `sudo port install py-html5lib`
-    - Other: `pip html5lib`
   * [requests][16]: Required.
     - Ubuntu/Debian: `sudo apt-get install python-requests`
     - Mac OSX + MacPorts: `sudo port install requests`
     - Other: `pip requests`
+  * [html5lib][15]: Not required, but recommended for parsing pages.
+    - Ubuntu/Debian: `sudo apt-get install python-html5lib`
+    - Mac OSX + MacPorts: `sudo port install py-html5lib`
+    - Other: `pip html5lib`
   * [easy_install][7]: Only necessary if not using prepackaged
     dependencies. Also, `pip` supersedes it.
     - Ubuntu/Debian: `sudo apt-get install python-setuptools`
