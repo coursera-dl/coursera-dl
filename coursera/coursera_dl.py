@@ -94,7 +94,7 @@ def get_page(session, url):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        logging.error("Error getting page %s", url)
+        logging.error("Error %s getting page %s", e, url)
         raise
 
     return r.text
