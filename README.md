@@ -1,5 +1,4 @@
-Coursera Downloader
-===================
+# Coursera Downloader
 
 [![Build Status](https://travis-ci.org/jplehmann/coursera.png?branch=master)](https://travis-ci.org/jplehmann/coursera)
 
@@ -31,8 +30,7 @@ This work was originally inspired in part by [youtube-dl][3] by which
 I've downloaded many other good videos such as those from Khan Academy.
 
 
-Features
---------
+## Features
 
   * Intentionally detailed names, so that it will display and sort properly
     on most interfaces (e.g., MX Video on Android phone).
@@ -43,8 +41,7 @@ Features
   * Core functionality tested on Linux, Mac and Windows.
 
 
-Directions
-----------
+## Directions
 
 Requires Python 2 (2.6 or newer) and a free Coursera account enrolled in
 the class of interest.  Note: You must already have (manually) agreed to
@@ -126,8 +123,7 @@ instead.  This is especially convenient, as typing usernames and passwords
 directly on the command line can get tiresome (even more if you happened to
 choose a "strong" password).
 
-Troubleshooting
----------------
+## Troubleshooting
 
 * When reporting bugs against `coursera-dl`, please don't forget to include
   enough information so that you can help us help you:
@@ -176,8 +172,7 @@ Troubleshooting
       able to access the course materials if you are not officially
       enrolled and agreed to the honor course via the website.
 
-Feedback
---------
+## Feedback
 
 I enjoy getting feedback. Here are a few of the comments I've received:
 
@@ -192,7 +187,6 @@ I enjoy getting feedback. Here are a few of the comments I've received:
   means would cost more than the average family earns in one week. Thanks!"
   <br>Jay L., [Tunapanda][14] 3/20/2013
 
-  
 * "I am a big fan of Coursera and attend lots of different courses. Time
   constraints don't allow me to attend all the courses I want at the same time.
   I came across your script, and I am very happily using it!  Great stuff and
@@ -209,8 +203,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 * "Thanks a lot! :)"
   <br>Viktor V. 24/04/2013
 
-Contact
--------
+## Contact
 
 Post bugs and issues on [github][11]. Send other comments to John Lehmann:
 first last at geemail dotcom or [@jplehmann][12]
