@@ -33,7 +33,8 @@ def __fixed_init__(self, version, name, value,
                    rest,
                    rfc2109=False,
                    ):
-    expires = float(expires)
+    if expires is not None:
+        expires = float(expires)
     __orginal_init__(self, version, name, value,
                      port, port_specified,
                      domain, domain_specified, domain_initial_dot,
