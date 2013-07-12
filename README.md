@@ -129,7 +129,10 @@ choose a "strong" password).
 * When reporting bugs against `coursera-dl`, please don't forget to include
   enough information so that you can help us help you:
     * Is the problem happening with the latest version of the script?
-    * What is the course that you are trying to access:
+    * What operating system are you using?
+    * Do you have all the recommended versions of the modules? See them in
+      the file `requirements.txt`.
+    * What is the course that you are trying to access?
     * What is the precise command line that you are using (feel free to hide
       your username and password with asterisks, but leave all other
       information untouched).
@@ -140,8 +143,8 @@ choose a "strong" password).
   the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
-* Make sure you have installed and/or updated all of your dependencies according to the 
-  requirements.txt file as described above.
+* Make sure you have installed and/or updated all of your dependencies
+  according to the `requirements.txt` file as described above.
  
 * One can export a Netscape-style cookies file with a browser
   extension ([1][9], [2][10]) and use it with the `-c` option. This comes in
@@ -166,12 +169,13 @@ choose a "strong" password).
 
 * If you get an error like `Could not find class: <CLASS_NAME>`:
     * Verify that the name of the course is correct. Current class
-      names in coursera are composed by a short course name e.g. class
-      and the current version of the course e.g. class-001, class-002,
+      names in coursera are composed by a short course name e.g. `class`
+      and the current version of the course (a number). For example, for a
+      class named `class`, you would have to use `class-001`, `class-002`
       etc.
     * Second, verify that you are enrolled in the course. You won't be
       able to access the course materials if you are not officially
-      enrolled and agreed to the honor course via the website.
+      enrolled and agreed to the honor course *via the website*.
 
 ## Feedback
 
