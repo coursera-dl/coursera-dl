@@ -48,41 +48,41 @@ enrolled in the class of interest.  *Note:* You must already have (manually)
 agreed to the Honor of Code of the particular courses that you want to use
 with `coursera-dl`.
 
-1\. Install any missing dependencies.
+### Install any missing dependencies.
 
-  We strongly recommend that you consider installing Python packages with
-  [`pip`][17], as in it is the current [preferred method][18].  If you are
-  using `pip`, you can directly install all the dependencies from the
-  requirements file using `pip install -r requirements.txt`.
+We strongly recommend that you consider installing Python packages with
+[`pip`][17], as in it is the current [preferred method][18].  If you are
+using `pip`, you can directly install all the dependencies from the
+requirements file using `pip install -r requirements.txt`.
 
-  You may choose to install the dependencies yourself, but our users had
-  issues that not all resources (videos etc.) were downloaded with versions
-  of the dependencies different than those listed in the `requirements.txt`
-  file.
+You may choose to install the dependencies yourself, but our users had
+issues that not all resources (videos etc.) were downloaded with versions
+of the dependencies different than those listed in the `requirements.txt`
+file.
 
-  In any case, you may want to install:
+In any case, you may want to install:
 
-  * [Beautiful Soup 4][5]: Required. See also html5lib below.
-    - Ubuntu/Debian: `sudo apt-get install python-bs4`
-    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
-    - Other: `pip beautifulsoup4`
-  * [Argparse][6]: Required (but you only need to install with Python 2.6)
-    - Ubuntu/Debian: `sudo apt-get install python-argparse`
-    - Other: `pip argparse`
-  * [requests][16]: Required.
-    - Ubuntu/Debian: `sudo apt-get install python-requests`
-    - Mac OSX + MacPorts: `sudo port install requests`
-    - Other: `pip requests`
-  * [html5lib][15]: Not required, but recommended for parsing pages.
-    - Ubuntu/Debian: `sudo apt-get install python-html5lib`
-    - Mac OSX + MacPorts: `sudo port install py-html5lib`
-    - Other: `pip html5lib`
-  * [easy_install][7]: Only necessary if not using prepackaged
-    dependencies. Also, `pip` supersedes it.
-    - Ubuntu/Debian: `sudo apt-get install python-setuptools`
+* [Beautiful Soup 4][5]: Required. See also html5lib below.
+  - Ubuntu/Debian: `sudo apt-get install python-bs4`
+  - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
+  - Other: `pip beautifulsoup4`
+* [Argparse][6]: Required (but you only need to install with Python 2.6)
+  - Ubuntu/Debian: `sudo apt-get install python-argparse`
+  - Other: `pip argparse`
+* [requests][16]: Required.
+  - Ubuntu/Debian: `sudo apt-get install python-requests`
+  - Mac OSX + MacPorts: `sudo port install requests`
+  - Other: `pip requests`
+* [html5lib][15]: Not required, but recommended for parsing pages.
+  - Ubuntu/Debian: `sudo apt-get install python-html5lib`
+  - Mac OSX + MacPorts: `sudo port install py-html5lib`
+  - Other: `pip html5lib`
+* [easy_install][7]: Only necessary if not using prepackaged
+  dependencies. Also, `pip` supersedes it.
+  - Ubuntu/Debian: `sudo apt-get install python-setuptools`
 
-  Again, make sure that you have the versions mentioned in the file
-  `requirements.txt` (later versions may be OK).
+Again, make sure that you have the versions mentioned in the file
+`requirements.txt` (later versions may be OK).
 
 On Mac OSX using MacPorts, the following may be used:
 
@@ -91,11 +91,15 @@ On Mac OSX using MacPorts, the following may be used:
     > install py-argparse
     > install py-setuptools
 
-2\. Create a Coursera.org account and enroll in a class.
-e.g. http://saas-class.org
+### Create an account with Coursera
 
-3\. Run the script to download the materials by providing your Coursera
-account (e.g., email address), password (or a `~/.netrc` file), the class names
+If you don't already have one, create a [Coursera][1] account and enroll in
+a class. See https://www.coursera.org/courses for the list of classes.
+
+### Running the script
+
+Run the script to download the materials by providing your Coursera account
+(e.g., email address), password (or a `~/.netrc` file), the class names
 
     General:                     coursera-dl -u <user> -p <pass> saas
     Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp proglang-2012-001
