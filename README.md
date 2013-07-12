@@ -23,7 +23,7 @@ following limitations:
 3. Using a wget in a for loop picks up extra videos which are not
    posted/linked, and these are sometimes duplicates.
 
-*DownloadThemAll* is another possiblity, but this script provides more features such
+*DownloadThemAll* is another possibility, but this script provides more features such
 as appropriately named files.
 
 This work was originally inspired in part by [youtube-dl][3] by which
@@ -110,7 +110,7 @@ account (e.g., email address), password (or a `~/.netrc` file), the class names
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
       Update:                  coursera-dl -n --path CURRENT `ls CURRENT`
 
-On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to
+On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username and password every time on the command
 line. To use it, simply add a line like the one below to a file named
 `.netrc` in your home directory (or the [equivalent][8], if you are using
@@ -136,10 +136,10 @@ choose a "strong" password).
     * What is the precise command line that you are using (feel free to hide
       your username and password with asterisks, but leave all other
       information untouched).
-    * What are the precise messages that you get? Please, copy and past them.
+    * What are the precise messages that you get? Please, copy and paste them.
       Don't reword the messages.
 
-* Make sure the classname you are using corresponds to the resource name used in
+* Make sure the class name you are using corresponds to the resource name used in
   the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
