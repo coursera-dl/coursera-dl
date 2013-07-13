@@ -4,13 +4,14 @@
 Cookie handling module.
 """
 
-import cookielib
 import logging
 import os
-import StringIO
 
 import requests
+import six
 
+from six.moves import StringIO
+from six.moves import http_cookiejar as cookielib
 from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
 from .utils import mkdir_p
 
@@ -244,7 +245,7 @@ def load_cookies_file(cookies_file):
     loader is very particular about this string.
     """
 
-    cookies = StringIO.StringIO()
+    cookies = StringIO()
     cookies.write('# Netscape HTTP Cookie File')
     cookies.write(open(cookies_file, 'rU').read())
     cookies.flush()

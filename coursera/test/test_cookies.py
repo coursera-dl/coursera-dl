@@ -6,6 +6,8 @@ Test syllabus parsing.
 import os.path
 import unittest
 
+import six
+
 from coursera import cookies
 
 FIREFOX_COOKIES = \
@@ -42,14 +44,14 @@ class MockSession:
 class CookiesFileTestCase(unittest.TestCase):
 
     def test_get_cookiejar_from_firefox_cookies(self):
-        from cookielib import MozillaCookieJar
+        from six.moves import http_cookiejar as cookielib
         cj = cookies.get_cookie_jar(FIREFOX_COOKIES)
-        self.assertTrue(isinstance(cj, MozillaCookieJar))
+        self.assertTrue(isinstance(cj, cookielib.MozillaCookieJar))
 
     def test_get_cookiejar_from_chrome_cookies(self):
-        from cookielib import MozillaCookieJar
+        from six.moves import http_cookiejar as cookielib
         cj = cookies.get_cookie_jar(CHROME_COOKIES)
-        self.assertTrue(isinstance(cj, MozillaCookieJar))
+        self.assertTrue(isinstance(cj, cookielib.MozillaCookieJar))
 
     def test_find_cookies_for_class(self):
         import requests
