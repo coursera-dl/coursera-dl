@@ -63,13 +63,13 @@ except ImportError:
         BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
 
 
-from cookies import (
+from .cookies import (
     AuthenticationFailed, ClassNotFound,
     get_cookies_for_class, make_cookie_values)
-from credentials import get_credentials, CredentialsError
-from define import CLASS_URL, ABOUT_URL
-from downloaders import get_downloader
-from utils import clean_filename, get_anchor_format, mkdir_p, fix_url
+from .credentials import get_credentials, CredentialsError
+from .define import CLASS_URL, ABOUT_URL
+from .downloaders import get_downloader
+from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 
 
 def get_syllabus_url(class_name, preview):

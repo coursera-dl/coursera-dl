@@ -11,8 +11,8 @@ import StringIO
 
 import requests
 
-from define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
-from utils import mkdir_p
+from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
+from .utils import mkdir_p
 
 
 # Monkey patch cookielib.Cookie.__init__.
