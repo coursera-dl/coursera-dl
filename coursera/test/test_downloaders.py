@@ -51,8 +51,8 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         d._add_cookies = mock_add_cookies
         command = []
         d._prepare_cookies(command, 'http://www.coursera.org')
-        self.assertEquals(
-            command, ['csrf_token=csrfclass001; session=sessionclass1'])
+        self.assertTrue('csrf_token=csrfclass001' in command[0])
+        self.assertTrue('session=sessionclass1' in command[0])
 
     def test_prepare_cookies_does_nothing(self):
         s = self._get_session()
@@ -86,8 +86,9 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         self.assertTrue('save_to' in command)
 
         d._prepare_cookies(command, 'http://www.coursera.org')
-        cv = 'csrf_token=csrfclass001; session=sessionclass1'
-        self.assertTrue("Cookie: " + cv in command)
+        self.assertTrue(any("Cookie: " in e for e in command))
+        self.assertTrue(any("csrf_token=csrfclass001" in e for e in command))
+        self.assertTrue(any("session=sessionclass1" in e for e in command))
 
     def test_curl(self):
         s = self._get_session()
@@ -99,8 +100,8 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         self.assertTrue('save_to' in command)
 
         d._prepare_cookies(command, 'http://www.coursera.org')
-        cv = 'csrf_token=csrfclass001; session=sessionclass1'
-        self.assertTrue(cv in command)
+        self.assertTrue(any("csrf_token=csrfclass001" in e for e in command))
+        self.assertTrue(any("session=sessionclass1" in e for e in command))
 
     def test_aria2(self):
         s = self._get_session()
@@ -112,8 +113,9 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         self.assertTrue('save_to' in command)
 
         d._prepare_cookies(command, 'http://www.coursera.org')
-        cv = 'csrf_token=csrfclass001; session=sessionclass1'
-        self.assertTrue("Cookie: " + cv in command)
+        self.assertTrue(any("Cookie: " in e for e in command))
+        self.assertTrue(any("csrf_token=csrfclass001" in e for e in command))
+        self.assertTrue(any("session=sessionclass1" in e for e in command))
 
     def test_axel(self):
         s = self._get_session()
@@ -125,8 +127,9 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         self.assertTrue('save_to' in command)
 
         d._prepare_cookies(command, 'http://www.coursera.org')
-        cv = 'csrf_token=csrfclass001; session=sessionclass1'
-        self.assertTrue("Cookie: " + cv in command)
+        self.assertTrue(any("Cookie: " in e for e in command))
+        self.assertTrue(any("csrf_token=csrfclass001" in e for e in command))
+        self.assertTrue(any("session=sessionclass1" in e for e in command))
 
 
 class NativeDownloaderTestCase(unittest.TestCase):
