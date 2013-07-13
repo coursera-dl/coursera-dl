@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Manages the credential information (netrc, passwords, etc).
 """
