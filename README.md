@@ -43,7 +43,7 @@ I've downloaded many other good videos such as those from Khan Academy.
 
 ## Instructions
 
-`coursera-dl` requires Python 2 (2.6 or newer) and a free Coursera account
+`coursera-dl` requires Python 2 (2.6 or newer) or Python 3 (3.2 or newer) and a free Coursera account
 enrolled in the class of interest.  *Note:* You must already have (manually)
 agreed to the Honor of Code of the particular courses that you want to use
 with `coursera-dl`.
@@ -162,7 +162,7 @@ choose a "strong" password).
         $ python
         >>> import html5lib
         >>> print(html5lib.__version__)
-        0.95-dev
+        1.0b2
 
 * If you get an error like `Could not find class: <CLASS_NAME>`:
     * Verify that the name of the course is correct. Current class
