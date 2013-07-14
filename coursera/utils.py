@@ -8,7 +8,14 @@ import errno
 import os
 import re
 import string
-import urlparse
+
+import six
+
+#  six.moves doesn’t support urlparse
+if six.PY3:
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
 
 
 def clean_filename(s):
@@ -59,7 +66,7 @@ def fix_url(url):
 
     url = url.strip()
 
-    if url and not urlparse.urlparse(url).scheme:
+    if url and not urlparse(url).scheme:
         url = "http://" + url
 
     return url

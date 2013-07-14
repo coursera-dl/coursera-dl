@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Manages the credential information (netrc, passwords, etc).
 """
@@ -45,7 +47,7 @@ def get_config_paths(config_name):
     2. Windows defines two 'user paths': $USERPROFILE, and the
     concatenation of the two variables $HOMEDRIVE and $HOMEPATH. Both of
     these paths point by default to the same location, e.g.
-    C:\Users\Username
+    C:\\Users\\Username
 
     3. $USERPROFILE cannot be changed, however $HOMEDRIVE and $HOMEPATH
     can be changed. They are originally intended to be the equivalent of
