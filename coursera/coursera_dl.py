@@ -50,6 +50,7 @@ import sys
 import time
 
 import requests
+from six import iteritems
 
 try:
     from BeautifulSoup import BeautifulSoup
@@ -317,7 +318,7 @@ def download_lectures(downloader,
 
             # Select formats to download
             lectures_to_get = []
-            for i in lecture.items():
+            for i in iteritems(lecture):
                 if i[0] in file_formats or 'all' in file_formats:
                     lectures_to_get.append(i)
                 else:

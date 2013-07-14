@@ -10,6 +10,8 @@ import subprocess
 import sys
 import time
 
+from six import iteritems
+
 
 class Downloader(object):
     """
@@ -320,7 +322,7 @@ def get_downloader(session, class_name, args):
         'axel': AxelDownloader,
     }
 
-    for bin, class_ in list(external.items()):
+    for bin, class_ in iteritems(external):
         if getattr(args, bin):
             return class_(session, bin=getattr(args, bin))
 

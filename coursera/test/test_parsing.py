@@ -8,6 +8,8 @@ Test functionality of coursera module.
 import os.path
 import unittest
 
+from six import iteritems
+
 from coursera import coursera_dl
 
 TEST_SYLLABUS_FILE = \
@@ -84,7 +86,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 102)
 
         # resource count
-        resources = [res for lec in lectures for res in list(lec[1].items())]
+        resources = [res for lec in lectures for res in iteritems(lec[1])]
         self.assertEqual(len(resources), 502)
 
         # mp4 count
@@ -104,7 +106,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 37)
 
         # resource count
-        resources = [res for lec in lectures for res in list(lec[1].items())]
+        resources = [res for lec in lectures for res in iteritems(lec[1])]
         self.assertEqual(len(resources), 158)
 
         # mp4 count
@@ -124,7 +126,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 106)
 
         # resource count
-        resources = [res for lec in lectures for res in list(lec[1].items())]
+        resources = [res for lec in lectures for res in iteritems(lec[1])]
         self.assertEqual(len(resources), 106)
 
         # mp4 count
@@ -144,7 +146,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 61)
 
         # resource count
-        resources = [res for lec in lectures for res in list(lec[1].items())]
+        resources = [res for lec in lectures for res in iteritems(lec[1])]
         self.assertEqual(len(resources), 224)
 
         # mp4 count
@@ -164,7 +166,7 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures), 121)
 
         # resource count
-        resources = [res for lec in lectures for res in list(lec[1].items())]
+        resources = [res for lec in lectures for res in iteritems(lec[1])]
         self.assertEqual(len(resources), 382)
 
         # mp4 count
@@ -179,7 +181,7 @@ class TestSyllabusParsing(unittest.TestCase):
             'malsoftware-001': (3, 18, 56, 16)  # issue 148
         }
 
-        for class_, counts in classes.items():
+        for class_, counts in iteritems(classes):
             filename = os.path.join(
                 os.path.dirname(__file__), "fixtures", "html",
                 "parsing-{0}-with-bs4.html".format(class_))
@@ -197,7 +199,7 @@ class TestSyllabusParsing(unittest.TestCase):
 
             # resource count
             resources = [res
-                         for lec in lectures for res in list(lec[1].items())]
+                         for lec in lectures for res in iteritems(lec[1])]
             self.assertEqual(len(resources), counts[2])
 
             # mp4 count
