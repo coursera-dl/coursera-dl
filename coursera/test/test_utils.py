@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+
 """
 Test the utility functions.
 """
 
 import unittest
+
+from six import iteritems
 
 from coursera import utils
 
@@ -20,7 +23,7 @@ class UtilsTestCase(unittest.TestCase):
             'Week 3: Data and Abstraction':
             'Week_3-_Data_and_Abstraction'
         }
-        for k, v in strings.items():
+        for k, v in iteritems(strings):
             self.assertEquals(utils.clean_filename(k), v)
 
     def test_get_anchor_format(self):
@@ -30,7 +33,7 @@ class UtilsTestCase(unittest.TestCase):
             'https://d396qusza40orc.cloudfront.net/week7-4.pdf': 'pdf',
             'https://class.coursera.org/download.mp4?lecture_id=123': 'mp4'
         }
-        for k, v in strings.items():
+        for k, v in iteritems(strings):
             self.assertEquals(utils.get_anchor_format(k), v)
 
     def test_fix_url_ads_sheme(self):
