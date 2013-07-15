@@ -70,12 +70,14 @@ class TestSyllabusParsing(unittest.TestCase):
         self.assertEqual(len(lectures_), lectures)
 
         # resource count
-        resources_ = [res for lec in lectures_ for res in iteritems(lec[1])]
-        self.assertEqual(len(resources_), resources)
+        resources_ = [(res[0], len(res[1]))
+                      for lec in lectures_ for res in iteritems(lec[1])]
+        self.assertEqual(sum(r for f, r in resources_), resources)
 
         # mp4 count
-        mp4_ = [res for res in resources_ if res[0] == "mp4"]
-        self.assertEqual(len(mp4_), mp4)
+        self.assertEqual(
+            sum(r for f, r in resources_ if f == "mp4"),
+            mp4)
 
     def test_parse(self):
         self._assert_parse(
@@ -114,7 +116,7 @@ class TestSyllabusParsing(unittest.TestCase):
             "sections-not-to-be-missed-2.html",
             sections=20,
             lectures=121,
-            resources=382,
+            resources=397,
             mp4=121)
 
     def test_parse_classes_with_bs4(self):
@@ -133,6 +135,14 @@ class TestSyllabusParsing(unittest.TestCase):
                 lectures=counts[1],
                 resources=counts[2],
                 mp4=counts[3])
+
+    def test_multiple_resources_with_the_same_format(self):
+        self._assert_parse(
+            "multiple-resources-with-the-same-format.html",
+            sections=18,
+            lectures=97,
+            resources=478,
+            mp4=97)
 
 
 if __name__ == "__main__":
