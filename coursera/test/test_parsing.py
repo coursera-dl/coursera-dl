@@ -12,26 +12,6 @@ from six import iteritems
 
 from coursera import coursera_dl
 
-TEST_SYLLABUS_FILE = \
-    os.path.join(os.path.dirname(__file__),
-                 "fixtures", "html", "regular-syllabus.html")
-
-TEST_PREVIEW_FILE = \
-    os.path.join(os.path.dirname(__file__),
-                 "fixtures", "html", "preview.html")
-
-TEST_LINKS_TO_WIKIPEDIA = \
-    os.path.join(os.path.dirname(__file__),
-                 "fixtures", "html", "links-to-wikipedia.html")
-
-TEST_SECTIONS_NOT_TO_MISS = \
-    os.path.join(os.path.dirname(__file__),
-                 "fixtures", "html", "sections-not-to-be-missed.html")
-
-TEST_SECTIONS_NOT_TO_MISS2 = \
-    os.path.join(os.path.dirname(__file__),
-                 "fixtures", "html", "sections-not-to-be-missed-2.html")
-
 
 class TestSyllabusParsing(unittest.TestCase):
 
@@ -73,105 +53,71 @@ class TestSyllabusParsing(unittest.TestCase):
         coursera_dl.grab_hidden_video_url = self.__grab_hidden_video_url
         coursera_dl.get_video = self.__get_video
 
-    def test_parse(self):
-        syllabus_page = open(TEST_SYLLABUS_FILE).read()
+    def _assert_parse(self, filename, sections, lectures, resources, mp4):
+        filename = os.path.join(
+            os.path.dirname(__file__), "fixtures", "html",
+            filename)
 
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
+        syllabus_page = open(filename).read()
+
+        sections_ = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
         # section count
-        self.assertEqual(len(sections), 23)
+        self.assertEqual(len(sections_), sections)
 
         # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), 102)
+        lectures_ = [lec for sec in sections_ for lec in sec[1]]
+        self.assertEqual(len(lectures_), lectures)
 
         # resource count
-        resources = [res for lec in lectures for res in iteritems(lec[1])]
-        self.assertEqual(len(resources), 502)
+        resources_ = [(res[0], len(res[1]))
+                      for lec in lectures_ for res in iteritems(lec[1])]
+        self.assertEqual(sum(r for f, r in resources_), resources)
 
         # mp4 count
-        mp4s = [res for res in resources if res[0] == "mp4"]
-        self.assertEqual(len(mp4s), 102)
+        self.assertEqual(
+            sum(r for f, r in resources_ if f == "mp4"),
+            mp4)
+
+    def test_parse(self):
+        self._assert_parse(
+            "regular-syllabus.html",
+            sections=23,
+            lectures=102,
+            resources=502,
+            mp4=102)
 
     def test_links_to_wikipedia(self):
-        syllabus_page = open(TEST_LINKS_TO_WIKIPEDIA).read()
-
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
-
-        # section count
-        self.assertEqual(len(sections), 5)
-
-        # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), 37)
-
-        # resource count
-        resources = [res for lec in lectures for res in iteritems(lec[1])]
-        self.assertEqual(len(resources), 158)
-
-        # mp4 count
-        mp4s = [res for res in resources if res[0] == "mp4"]
-        self.assertEqual(len(mp4s), 36)
+        self._assert_parse(
+            "links-to-wikipedia.html",
+            sections=5,
+            lectures=37,
+            resources=158,
+            mp4=36)
 
     def test_parse_preview(self):
-        syllabus_page = open(TEST_PREVIEW_FILE).read()
-
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
-
-        # section count
-        self.assertEqual(len(sections), 20)
-
-        # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), 106)
-
-        # resource count
-        resources = [res for lec in lectures for res in iteritems(lec[1])]
-        self.assertEqual(len(resources), 106)
-
-        # mp4 count
-        mp4s = [res for res in resources if res[0] == "mp4"]
-        self.assertEqual(len(mp4s), 106)
+        self._assert_parse(
+            "preview.html",
+            sections=20,
+            lectures=106,
+            resources=106,
+            mp4=106)
 
     def test_sections_missed(self):
-        syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS).read()
-
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
-
-        # section count
-        self.assertEqual(len(sections), 9)
-
-        # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), 61)
-
-        # resource count
-        resources = [res for lec in lectures for res in iteritems(lec[1])]
-        self.assertEqual(len(resources), 224)
-
-        # mp4 count
-        mp4s = [res for res in resources if res[0] == "mp4"]
-        self.assertEqual(len(mp4s), 61)
+        self._assert_parse(
+            "sections-not-to-be-missed.html",
+            sections=9,
+            lectures=61,
+            resources=224,
+            mp4=61)
 
     def test_sections_missed2(self):
-        syllabus_page = open(TEST_SECTIONS_NOT_TO_MISS2).read()
-
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
-
-        # section count
-        self.assertEqual(len(sections), 20)
-
-        # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), 121)
-
-        # resource count
-        resources = [res for lec in lectures for res in iteritems(lec[1])]
-        self.assertEqual(len(resources), 382)
-
-        # mp4 count
-        mp4s = [res for res in resources if res[0] == "mp4"]
-        self.assertEqual(len(mp4s), 121)
+        self._assert_parse(
+            "sections-not-to-be-missed-2.html",
+            sections=20,
+            lectures=121,
+            resources=397,
+            mp4=121)
 
     def test_parse_classes_with_bs4(self):
         classes = {
@@ -182,29 +128,21 @@ class TestSyllabusParsing(unittest.TestCase):
         }
 
         for class_, counts in iteritems(classes):
-            filename = os.path.join(
-                os.path.dirname(__file__), "fixtures", "html",
-                "parsing-{0}-with-bs4.html".format(class_))
+            filename = "parsing-{0}-with-bs4.html".format(class_)
+            self._assert_parse(
+                filename,
+                sections=counts[0],
+                lectures=counts[1],
+                resources=counts[2],
+                mp4=counts[3])
 
-            syllabus_page = open(filename).read()
-
-            sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
-
-            # section count
-            self.assertEqual(len(sections), counts[0])
-
-            # lecture count
-            lectures = [lec for sec in sections for lec in sec[1]]
-            self.assertEqual(len(lectures), counts[1])
-
-            # resource count
-            resources = [res
-                         for lec in lectures for res in iteritems(lec[1])]
-            self.assertEqual(len(resources), counts[2])
-
-            # mp4 count
-            mp4s = [res for res in resources if res[0] == "mp4"]
-            self.assertEqual(len(mp4s), counts[3])
+    def test_multiple_resources_with_the_same_format(self):
+        self._assert_parse(
+            "multiple-resources-with-the-same-format.html",
+            sections=18,
+            lectures=97,
+            resources=478,
+            mp4=97)
 
 
 if __name__ == "__main__":
