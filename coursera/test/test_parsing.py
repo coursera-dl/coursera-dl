@@ -59,26 +59,27 @@ class TestSyllabusParsing(unittest.TestCase):
             os.path.dirname(__file__), "fixtures", "html",
             filename)
 
-        syllabus_page = open(filename).read()
+        with open(filename) as syllabus:
+            syllabus_page = syllabus.read()
 
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
+            sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
-        # section count
-        self.assertEqual(len(sections), num_sections)
+            # section count
+            self.assertEqual(len(sections), num_sections)
 
-        # lecture count
-        lectures = [lec for sec in sections for lec in sec[1]]
-        self.assertEqual(len(lectures), num_lectures)
+            # lecture count
+            lectures = [lec for sec in sections for lec in sec[1]]
+            self.assertEqual(len(lectures), num_lectures)
 
-        # resource count
-        resources = [(res[0], len(res[1]))
-                     for lec in lectures for res in iteritems(lec[1])]
-        self.assertEqual(sum(r for f, r in resources), num_resources)
+            # resource count
+            resources = [(res[0], len(res[1]))
+                         for lec in lectures for res in iteritems(lec[1])]
+            self.assertEqual(sum(r for f, r in resources), num_resources)
 
-        # mp4 count
-        self.assertEqual(
-            sum(r for f, r in resources if f == "mp4"),
-            num_videos)
+            # mp4 count
+            self.assertEqual(
+                sum(r for f, r in resources if f == "mp4"),
+                num_videos)
 
     def test_parse(self):
         self._assert_parse(
