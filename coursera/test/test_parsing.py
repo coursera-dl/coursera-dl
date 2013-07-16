@@ -53,71 +53,72 @@ class TestSyllabusParsing(unittest.TestCase):
         coursera_dl.grab_hidden_video_url = self.__grab_hidden_video_url
         coursera_dl.get_video = self.__get_video
 
-    def _assert_parse(self, filename, sections, lectures, resources, mp4):
+    def _assert_parse(self, filename, num_sections, num_lectures,
+                      num_resources, num_videos):
         filename = os.path.join(
             os.path.dirname(__file__), "fixtures", "html",
             filename)
 
         syllabus_page = open(filename).read()
 
-        sections_ = coursera_dl.parse_syllabus(None, syllabus_page, None)
+        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
         # section count
-        self.assertEqual(len(sections_), sections)
+        self.assertEqual(len(sections), num_sections)
 
         # lecture count
-        lectures_ = [lec for sec in sections_ for lec in sec[1]]
-        self.assertEqual(len(lectures_), lectures)
+        lectures = [lec for sec in sections for lec in sec[1]]
+        self.assertEqual(len(lectures), num_lectures)
 
         # resource count
-        resources_ = [(res[0], len(res[1]))
-                      for lec in lectures_ for res in iteritems(lec[1])]
-        self.assertEqual(sum(r for f, r in resources_), resources)
+        resources = [(res[0], len(res[1]))
+                     for lec in lectures for res in iteritems(lec[1])]
+        self.assertEqual(sum(r for f, r in resources), num_resources)
 
         # mp4 count
         self.assertEqual(
-            sum(r for f, r in resources_ if f == "mp4"),
-            mp4)
+            sum(r for f, r in resources if f == "mp4"),
+            num_videos)
 
     def test_parse(self):
         self._assert_parse(
             "regular-syllabus.html",
-            sections=23,
-            lectures=102,
-            resources=502,
-            mp4=102)
+            num_sections=23,
+            num_lectures=102,
+            num_resources=502,
+            num_videos=102)
 
     def test_links_to_wikipedia(self):
         self._assert_parse(
             "links-to-wikipedia.html",
-            sections=5,
-            lectures=37,
-            resources=158,
-            mp4=36)
+            num_sections=5,
+            num_lectures=37,
+            num_resources=158,
+            num_videos=36)
 
     def test_parse_preview(self):
         self._assert_parse(
             "preview.html",
-            sections=20,
-            lectures=106,
-            resources=106,
-            mp4=106)
+            num_sections=20,
+            num_lectures=106,
+            num_resources=106,
+            num_videos=106)
 
     def test_sections_missed(self):
         self._assert_parse(
             "sections-not-to-be-missed.html",
-            sections=9,
-            lectures=61,
-            resources=224,
-            mp4=61)
+            num_sections=9,
+            num_lectures=61,
+            num_resources=224,
+            num_videos=61)
 
     def test_sections_missed2(self):
         self._assert_parse(
             "sections-not-to-be-missed-2.html",
-            sections=20,
-            lectures=121,
-            resources=397,
-            mp4=121)
+            num_sections=20,
+            num_lectures=121,
+            num_resources=397,
+            num_videos=121)
 
     def test_parse_classes_with_bs4(self):
         classes = {
@@ -131,18 +132,18 @@ class TestSyllabusParsing(unittest.TestCase):
             filename = "parsing-{0}-with-bs4.html".format(class_)
             self._assert_parse(
                 filename,
-                sections=counts[0],
-                lectures=counts[1],
-                resources=counts[2],
-                mp4=counts[3])
+                num_sections=counts[0],
+                num_lectures=counts[1],
+                num_resources=counts[2],
+                num_videos=counts[3])
 
     def test_multiple_resources_with_the_same_format(self):
         self._assert_parse(
             "multiple-resources-with-the-same-format.html",
-            sections=18,
-            lectures=97,
-            resources=478,
-            mp4=97)
+            num_sections=18,
+            num_lectures=97,
+            num_resources=478,
+            num_videos=97)
 
 
 if __name__ == "__main__":
