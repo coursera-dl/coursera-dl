@@ -200,10 +200,12 @@ def parse_syllabus(session, page, reverse=False):
 
             for a in vtag.findAll('a'):
                 href = fix_url(a['href'])
+                title = clean_filename(a.get('title', ''))
                 fmt = get_anchor_format(href)
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
-                    lecture[fmt] = href
+                    lecture[fmt] = lecture.get(fmt, [])
+                    lecture[fmt].append((href, title))
                     continue
 
                 # Special case: find preview URLs
@@ -211,7 +213,8 @@ def parse_syllabus(session, page, reverse=False):
                 if lecture_page:
                     try:
                         href = get_video(session, lecture_page)
-                        lecture['mp4'] = fix_url(href)
+                        lecture['mp4'] = lecture.get('mp4', [])
+                        lecture['mp4'].append((fix_url(href), ''))
                     except TypeError:
                         logging.warn(
                             'Could not get resource: %s', lecture_page)
@@ -227,7 +230,21 @@ def parse_syllabus(session, page, reverse=False):
                         fmt = 'mp4'
                         logging.debug('    %s %s', fmt, href)
                         if href is not None:
-                            lecture[fmt] = href
+                            lecture[fmt] = lecture.get(fmt, [])
+                            lecture[fmt].append((href, ''))
+
+
+            for fmt in lecture:
+                count = len(lecture[fmt])
+                for i, r in enumerate(lecture[fmt]):
+                    if (count == i + 1):
+                        # for backward compatibility, we do not add the title
+                        # to the filename (format_combine_number_resource and
+                        # format_resource)
+                        lecture[fmt][i] = (r[0], '')
+                    else:
+                        # make sure the title is unique
+                        lecture[fmt][i] = (r[0], '{0:d}_{1}'.format(i, r[1]))
 
             lectures.append((vname, lecture))
 
@@ -296,11 +313,15 @@ def download_lectures(downloader,
             sec = class_name.upper() + '_' + sec
         return sec
 
-    def format_resource(num, name, fmt):
-        return '%02d_%s.%s' % (num, name, fmt)
+    def format_resource(num, name, title, fmt):
+        if title:
+            title = '_' + title
+        return '%02d_%s%s.%s' % (num, name, title, fmt)
 
-    def format_combine_number_resource(secnum, lecnum, lecname, fmt):
-        return '%02d_%02d_%s.%s' % (secnum, lecnum, lecname, fmt)
+    def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
+        if title:
+            title = '_' + title
+        return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
 
     for (secnum, (section, lectures)) in enumerate(sections):
         if section_filter and not re.search(section_filter, section):
@@ -317,24 +338,25 @@ def download_lectures(downloader,
                 mkdir_p(sec)
 
             # Select formats to download
-            lectures_to_get = []
-            for i in iteritems(lecture):
-                if i[0] in file_formats or 'all' in file_formats:
-                    lectures_to_get.append(i)
+            resources_to_get = []
+            for fmt, resources in iteritems(lecture):
+                if fmt in file_formats or 'all' in file_formats:
+                    for r in resources:
+                        resources_to_get.append((fmt, r[0], r[1]))
                 else:
                     logging.debug(
-                        'Skipping b/c format %s not in %s', i[0], file_formats)
+                        'Skipping b/c format %s not in %s', fmt, file_formats)
 
             # write lecture resources
-            for fmt, url in lectures_to_get:
+            for fmt, url, title in resources_to_get:
                 if combined_section_lectures_nums:
                     lecfn = os.path.join(
                         sec,
                         format_combine_number_resource(
-                            secnum + 1, lecnum + 1, lecname, fmt))
+                            secnum + 1, lecnum + 1, lecname, title, fmt))
                 else:
                     lecfn = os.path.join(
-                        sec, format_resource(lecnum + 1, lecname, fmt))
+                        sec, format_resource(lecnum + 1, lecname, title, fmt))
 
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
