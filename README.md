@@ -130,6 +130,8 @@ choose a "strong" password).
 
 ## Troubleshooting
 
+It is important that:
+
 * When reporting bugs against `coursera-dl`, please don't forget to include
   enough information so that you can help us help you:
     * Is the problem happening with the latest version of the script?
@@ -180,6 +182,18 @@ choose a "strong" password).
     * Second, verify that you are enrolled in the course. You won't be
       able to access the course materials if you are not officially
       enrolled and agreed to the honor course *via the website*.
+
+* If:
+  - You get an error when using `-n` to specify that you want to use a
+    `.netrc` file and,
+  - You want the script to use your default netrc file and,
+  - You get a message saying `coursera-dl: error: too few arguments`
+
+  Then you should specify `--` as an argument after `-n`, that is, `-n --`
+  or change the order in which you pass the arguments to the script, so that
+  the argument after `-n` begins with an hyphen (`-`).  Otherwise, Python's
+  `argparse` module will think that what you are passing is the name of the
+  netrc file that you want to use. See issue #162.
 
 ## Feedback
 
