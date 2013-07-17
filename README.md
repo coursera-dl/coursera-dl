@@ -106,7 +106,7 @@ Run the script to download the materials by providing your Coursera account
     Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" saas
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
     Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
-    Use a ~/.netrc file:         coursera-dl -n saas
+    Use a ~/.netrc file:         coursera-dl -n -- saas
     Get the preview classes:     coursera-dl -n -b saas
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
     
