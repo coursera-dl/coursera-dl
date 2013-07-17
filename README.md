@@ -101,14 +101,14 @@ a class. See https://www.coursera.org/courses for the list of classes.
 Run the script to download the materials by providing your Coursera account
 (e.g., email address), password (or a `~/.netrc` file), the class names
 
-    General:                     coursera-dl -u <user> -p <pass> saas
-    Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp proglang-2012-001
-    Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" saas
-    Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
-    Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
-    Use a ~/.netrc file:         coursera-dl -n -- saas
-    Get the preview classes:     coursera-dl -n -b saas
-    Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
+    General:                     coursera-dl -u <user> -p <pass> modelthinking-004
+    Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
+    Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" crypto-004
+    Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" ml-2012-002
+    Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" qcomp-2012-001
+    Use a ~/.netrc file:         coursera-dl -n -- matrix-001
+    Get the preview classes:     coursera-dl -n -b ni-001
+    Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ comnetworks-002
     
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
