@@ -23,8 +23,8 @@ following limitations:
 3. Using a wget in a for loop picks up extra videos which are not
    posted/linked, and these are sometimes duplicates.
 
-*DownloadThemAll* is another possibility, but this script provides more features such
-as appropriately named files.
+*DownloadThemAll* is another possibility, but this script provides more
+features such as appropriately named files.
 
 This work was originally inspired in part by [youtube-dl][3] by which
 I've downloaded many other good videos such as those from Khan Academy.
@@ -43,10 +43,10 @@ I've downloaded many other good videos such as those from Khan Academy.
 
 ## Instructions
 
-`coursera-dl` requires Python 2 (2.6 or newer) or Python 3 (3.2 or newer) and a free Coursera account
-enrolled in the class of interest.  *Note:* You must already have (manually)
-agreed to the Honor of Code of the particular courses that you want to use
-with `coursera-dl`.
+`coursera-dl` requires Python 2 (2.6 or newer) or Python 3 (3.2 or newer)
+and a free Coursera account enrolled in the class of interest.  *Note:* You
+must already have (manually) agreed to the Honor of Code of the particular
+courses that you want to use with `coursera-dl`.
 
 ### Install any missing dependencies.
 
@@ -145,17 +145,17 @@ It is important that:
     * What are the precise messages that you get? Please, copy and paste them.
       Don't reword the messages.
 
-* Make sure the class name you are using corresponds to the resource name used in
-  the URL for that class:
+* Make sure the class name you are using corresponds to the resource name
+  used in the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
 * Make sure you have installed and/or updated all of your dependencies
   according to the `requirements.txt` file as described above.
  
-* One can export a Netscape-style cookies file with a browser
-  extension ([1][9], [2][10]) and use it with the `-c` option. This comes in
-  handy when the authentication via password is not working (the
-  authentication process changes now and then).
+* One can export a Netscape-style cookies file with a browser extension
+  ([1][9], [2][10]) and use it with the `-c` option. This comes in handy
+  when the authentication via password is not working (the authentication
+  process changes now and then).
 
 * If results show 0 sections, you most likely have provided invalid
   credentials (username and/or password in the command line or in your
