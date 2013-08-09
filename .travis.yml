@@ -5,6 +5,9 @@ python:
   - "3.2"
   - "3.3"
   - "pypy"
+matrix:
+  allow_failures:
+    - python: "pypy"
 # command to install dependencies
 install: "pip install -r requirements.txt --use-mirrors"
 # command to run tests
