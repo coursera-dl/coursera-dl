@@ -11,4 +11,4 @@ matrix:
 # command to install dependencies
 install: "pip install -r requirements.txt --use-mirrors"
 # command to run tests
-script: nosetests
+script: nosetests --verbose
