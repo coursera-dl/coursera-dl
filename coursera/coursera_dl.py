@@ -349,6 +349,8 @@ def download_lectures(downloader,
 
             # write lecture resources
             for fmt, url, title in resources_to_get:
+                if url.startswith('http:///'):
+                    url = url.replace('/', '', 1)
                 if combined_section_lectures_nums:
                     lecfn = os.path.join(
                         sec,
