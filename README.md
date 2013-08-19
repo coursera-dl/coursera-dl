@@ -71,8 +71,12 @@ In any case, you may want to install:
   - Other: `pip argparse`
 * [requests][16]: Required.
   - Ubuntu/Debian: `sudo apt-get install python-requests`
-  - Mac OSX + MacPorts: `sudo port install requests`
+  - Mac OSX + MacPorts: `sudo port install py-requests`
   - Other: `pip requests`
+* [six][19]: Required.
+  - Ubuntu/Debian: `sudo apt-get install python-six`
+  - Mac OSX + MacPorts: `sudo port install py27-six`
+  - Other: `pip six`
 * [html5lib][15]: Not required, but recommended for parsing pages.
   - Ubuntu/Debian: `sudo apt-get install python-html5lib`
   - Mac OSX + MacPorts: `sudo port install py-html5lib`
@@ -87,9 +91,12 @@ Again, make sure that you have the versions mentioned in the file
 On Mac OSX using MacPorts, the following may be used:
 
     port
+    > select --set python python27
     > install py-beautifulsoup
     > install py-argparse
     > install py-setuptools
+    > install py-requests
+    > install py27-six
 
 ### Create an account with Coursera
 
@@ -248,3 +255,4 @@ first last at geemail dotcom or [@jplehmann][12]
 [16]: http://docs.python-requests.org/en/latest/
 [17]: http://www.pip-installer.org/en/latest/
 [18]: http://python-distribute.org/pip_distribute.png
+[19]: https://pypi.python.org/pypi/six/
