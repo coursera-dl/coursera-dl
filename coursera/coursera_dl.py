@@ -52,6 +52,7 @@ import time
 from distutils.version import LooseVersion as V
 
 import requests
+import six
 from six import iteritems
 
 try:
