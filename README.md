@@ -55,9 +55,9 @@ We strongly recommend that you consider installing Python packages with
 using `pip`, you can directly install all the dependencies from the
 requirements file using `pip install -r requirements.txt`.
 
-#### Installing dependencies on your own
+### Installing dependencies on your own
 
-** Warning**: This method is not recommended unless you know what you are
+**Warning:** This method is not recommended unless you know what you are
 doing. Before filing bug reports, please check that the versions of your
 modules are those recommended in the `requirements.txt` file.
 
