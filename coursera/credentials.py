@@ -109,15 +109,21 @@ def authenticate_through_netrc(path=None):
     Raises CredentialsError if no valid netrc file is found.
     """
     errors = []
+    netrc_machine = 'coursera-dl'
     paths = [path] if path else get_config_paths("netrc")
     for path in paths:
         try:
             logging.debug('Trying netrc file %s', path)
-            auths = netrc.netrc(path).authenticators('coursera-dl')
-            return (auths[0], auths[2])
-        except (IOError, TypeError, netrc.NetrcParseError) as e:
+            auths = netrc.netrc(path).authenticators(netrc_machine)
+        except (IOError, netrc.NetrcParseError) as e:
             errors.append(e)
-
+        else:
+            if auths is None:
+                errors.append('Didn\'t find any credentials for ' +
+                              netrc_machine)
+            else:
+                return auths[0], auths[2]
+                
     error_messages = '\n'.join(str(e) for e in errors)
     raise CredentialsError(
         'Did not find valid netrc file:\n' + error_messages)
