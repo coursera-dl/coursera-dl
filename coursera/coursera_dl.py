@@ -52,7 +52,6 @@ import time
 from distutils.version import LooseVersion as V
 
 import requests
-import six
 from six import iteritems
 
 try:
@@ -80,6 +79,9 @@ _see_url = " See https://github.com/jplehmann/coursera/issues/139"
 
 # Test versions of some critical modules.
 # We may, perhaps, want to move these elsewhere.
+import bs4
+import six
+
 assert V(requests.__version__) >= V('1.2'), "Upgrade requests!" + _see_url
 assert V(six.__version__) >= V('1.3'), "Upgrade six!" + _see_url
 assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _see_url
