@@ -49,6 +49,8 @@ import subprocess
 import sys
 import time
 
+from distutils.version import LooseVersion as V
+
 import requests
 from six import iteritems
 
@@ -71,6 +73,15 @@ from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL
 from .downloaders import get_downloader
 from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
+
+# URL containing information about outdated modules
+_see_url = " See https://github.com/jplehmann/coursera/issues/139"
+
+# Test versions of some critical modules.
+# We may, perhaps, want to move these elsewhere.
+assert V(requests.__version__) >= V('1.2'), "Upgrade requests!" + _see_url
+assert V(six.__version__) >= V('1.3'), "Upgrade six!" + _see_url
+assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _see_url
 
 
 def get_syllabus_url(class_name, preview):
