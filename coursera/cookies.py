@@ -65,13 +65,13 @@ class AuthenticationFailed(BaseException):
 
 def login(session, class_name, username, password):
     """
-    Login on www.coursera.org with the given credentials.
+    Login on accounts.coursera.org with the given credentials.
     This adds the following cookies to the session:
         sessionid, maestro_login, maestro_login_flag
     """
 
     try:
-        session.cookies.clear('www.coursera.org')
+        session.cookies.clear('.coursera.org')
     except KeyError:
         pass
 
@@ -93,12 +93,12 @@ def login(session, class_name, username, password):
     # Now make a call to the authenticator url.
     headers = {
         'Cookie': 'csrftoken=' + csrftoken,
-        'Referer': 'https://www.coursera.org',
+        'Referer': 'https://accounts.coursera.org/signin',
         'X-CSRFToken': csrftoken,
     }
 
     data = {
-        'email_address': username,
+        'email': username,
         'password': password
     }
 
@@ -107,9 +107,9 @@ def login(session, class_name, username, password):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError:
-        raise AuthenticationFailed('Cannot login on www.coursera.org.')
+        raise AuthenticationFailed('Cannot login on accounts.coursera.org.')
 
-    logging.info('Logged in on www.coursera.org.')
+    logging.info('Logged in on accounts.coursera.org.')
 
 
 def down_the_wabbit_hole(session, class_name):
@@ -138,7 +138,7 @@ def _get_authentication_cookies(session, class_name,
 
     if not enough:
         if retry:
-            logging.info('Renew session on www.coursera.org.')
+            logging.info('Renew session on accounts.coursera.org.')
             login(session, class_name, username, password)
             _get_authentication_cookies(
                 session, class_name, username, password, False)
@@ -154,10 +154,10 @@ def get_authentication_cookies(session, class_name, username, password):
         csrf_token, session
     """
 
-    # First, check if we already have the www.coursera.org cookies.
-    if session.cookies.get('maestro_login', domain="www.coursera.org"):
+    # First, check if we already have the .coursera.org cookies.
+    if session.cookies.get('CAUTH', domain=".coursera.org"):
         logged_in = True
-        logging.debug('Already logged in on www.coursera.org.')
+        logging.debug('Already logged in on accounts.coursera.org.')
     else:
         logged_in = False
         login(session, class_name, username, password)
@@ -178,8 +178,7 @@ def do_we_have_enough_cookies(cj, class_name):
     domain = 'class.coursera.org'
     path = "/" + class_name
 
-    return cj.get('session', domain=domain, path=path) \
-        and cj.get('csrf_token', domain=domain, path=path)
+    return cj.get('csrf_token', domain=domain, path=path)
 
 
 def do_we_have_valid_cookies(session, class_name):
@@ -218,13 +217,13 @@ def make_cookie_values(cj, class_name):
 def find_cookies_for_class(cookies_file, class_name):
     """
     Return a RequestsCookieJar containing the cookies for
-    www.coursera.org and class.coursera.org found in the given cookies_file.
+    .coursera.org and class.coursera.org found in the given cookies_file.
     """
 
     path = "/" + class_name
 
     def cookies_filter(c):
-        return c.domain == "www.coursera.org" \
+        return c.domain == ".coursera.org" \
             or (c.domain == "class.coursera.org" and c.path == path)
 
     cj = get_cookie_jar(cookies_file)
@@ -290,7 +289,7 @@ def get_cookies_from_cache(username):
 def write_cookies_to_cache(cj, username):
     """
     Saves the RequestsCookieJar to disk in the Mozilla cookies.txt file format.
-    This prevents us from repeated authentications on the www.coursera.org and
+    This prevents us from repeated authentications on the accounts.coursera.org and
     class.coursera.org/class_name sites.
     """
     mkdir_p(PATH_COOKIES)
