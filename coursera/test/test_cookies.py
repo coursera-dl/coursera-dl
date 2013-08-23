@@ -60,11 +60,11 @@ class CookiesFileTestCase(unittest.TestCase):
         cj = cookies.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
         self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
 
-        self.assertEquals(len(cj), 7)
+        self.assertEquals(len(cj), 6)
 
         domains = cj.list_domains()
         self.assertEquals(len(domains), 2)
-        self.assertTrue('www.coursera.org' in domains)
+        self.assertTrue('.coursera.org' in domains)
         self.assertTrue('class.coursera.org' in domains)
 
         paths = cj.list_paths()
@@ -86,7 +86,7 @@ class CookiesFileTestCase(unittest.TestCase):
             FIREFOX_COOKIES_EXPIRED, 'class-001')
         self.assertTrue(isinstance(cj, requests.cookies.RequestsCookieJar))
 
-        self.assertEquals(len(cj), 5)
+        self.assertEquals(len(cj), 2)
 
     def test_we_have_enough_cookies(self):
         cj = cookies.find_cookies_for_class(FIREFOX_COOKIES, 'class-001')
