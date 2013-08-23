@@ -6,7 +6,7 @@ This module defines the global constants.
 
 import os
 
-AUTH_URL = 'https://www.coursera.org/maestro/api/user/login'
+AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
 ABOUT_URL = 'https://www.coursera.org/maestro/api/topic/information?' \
             'topic-id={class_name}'
