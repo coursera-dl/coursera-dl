@@ -15,5 +15,5 @@ AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
                     '/auth/auth_redirector?type=login&subtype=normal'
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-PATH_CACHE = tempfile.gettempdir()
+PATH_CACHE = os.path.join( tempfile.gettempdir(), '_coursera_dl_cache' )
 PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')
