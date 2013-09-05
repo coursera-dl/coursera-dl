@@ -16,6 +16,6 @@ AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # define a per-user cache folder
-user = os.environ.get( "USERNAME" )
+user = os.environ.get( "USERNAME" ) or os.environ.get("USER") or "unkown"
 PATH_CACHE = os.path.join( tempfile.gettempdir(), user+"_coursera_dl_cache" )
 PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')
