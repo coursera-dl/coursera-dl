@@ -42,13 +42,13 @@ def get_anchor_format(a):
     return (fmt.group(1) if fmt else None)
 
 
-def mkdir_p(path):
+def mkdir_p(path, mode = 0o777):
     """
     Create subdirectory hierarchy given in the paths argument.
     """
 
     try:
-        os.makedirs(path)
+        os.makedirs(path, mode)
     except OSError as exc:
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass

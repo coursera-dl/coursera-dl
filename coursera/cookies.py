@@ -292,7 +292,7 @@ def write_cookies_to_cache(cj, username):
     This prevents us from repeated authentications on the accounts.coursera.org and
     class.coursera.org/class_name sites.
     """
-    mkdir_p(PATH_COOKIES)
+    mkdir_p(PATH_COOKIES, 0o700)
     path = get_cookies_cache_path(username)
     cached_cj = cookielib.MozillaCookieJar()
     for cookie in cj:
