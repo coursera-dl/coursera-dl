@@ -44,9 +44,10 @@ I've downloaded many other good videos such as those from Khan Academy.
 ## Instructions
 
 `coursera-dl` requires Python 2 (2.6 or newer) or Python 3 (3.2 or newer)
-and a free Coursera account enrolled in the class of interest.  *Note:* You
-must already have (manually) agreed to the Honor of Code of the particular
-courses that you want to use with `coursera-dl`.
+and a free Coursera account enrolled in the class of interest. On Windows
+ensure that Python executable location is added to the PATH environment variable.
+*Note:* You must already have (manually) agreed to the Honor of Code of the
+particular courses that you want to use with `coursera-dl`.
 
 ### Install any missing dependencies.
 
@@ -112,7 +113,8 @@ a class. See https://www.coursera.org/courses for the list of classes.
 ### Running the script
 
 Run the script to download the materials by providing your Coursera account
-(e.g., email address), password (or a `~/.netrc` file), the class names
+credentials (e.g. email address and password or a `~/.netrc` file), the class names,
+as well as any additional parameters:
 
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
     Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
@@ -122,6 +124,7 @@ Run the script to download the materials by providing your Coursera account
     Use a ~/.netrc file:         coursera-dl -n -- matrix-001
     Get the preview classes:     coursera-dl -n -b ni-001
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ comnetworks-002
+    Display help:                coursera-dl --help
     
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
