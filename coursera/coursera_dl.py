@@ -389,6 +389,7 @@ def download_lectures(downloader,
             
         # after fetching resources, create a playlist with the videos downloaded
         if playlist == True :
+          path_to_return = os.getcwd()
           for (_path, subdirs, files) in os.walk(sec):
             os.chdir(_path)              
             if glob.glob("*.mp4") != []:
@@ -396,7 +397,7 @@ def download_lectures(downloader,
               for song in glob.glob("*.mp4"):
                 _m3u.write(song + "\n")
               _m3u.close()
-              os.chdir("../../")
+              os.chdir(path_to_return)
         
 
         if hooks:
