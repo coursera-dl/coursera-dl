@@ -388,7 +388,7 @@ def download_lectures(downloader,
                     last_update = max(last_update, os.path.getmtime(lecfn))
             
         # after fetching resources, create a playlist with the videos downloaded
-        if playlist == True :
+        if playlist:
           path_to_return = os.getcwd()
           for (_path, subdirs, files) in os.walk(sec):
             os.chdir(_path)              
