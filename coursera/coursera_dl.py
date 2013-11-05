@@ -393,9 +393,10 @@ def download_lectures(downloader,
           path_to_return = os.getcwd()
           for (_path, subdirs, files) in os.walk(sec):
             os.chdir(_path)
-            if glob.glob("*.mp4") != []:
-              _m3u = open(os.path.split(_path)[1] + ".m3u" , "w")
-              for song in glob.glob("*.mp4"):
+            globbed_files = glob.glob("*.mp4")
+            if len(globbed_files):
+              _m3u = open(os.path.split(_path)[1] + ".m3u", "w")
+              for song in globbed_files:
                 _m3u.write(song + "\n")
               _m3u.close()
               os.chdir(path_to_return)
