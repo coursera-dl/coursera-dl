@@ -624,7 +624,7 @@ def parseArgs():
                         dest='playlist',
                         action='store_true',
                         default=False,
-                        help='generate m3u playlists to course weeks')
+                        help='generate M3U playlists for course weeks')
 
     args = parser.parse_args()
 
