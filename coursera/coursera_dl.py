@@ -386,17 +386,20 @@ def download_lectures(downloader,
                     # record that time
                     last_update = max(last_update, os.path.getmtime(lecfn))
 
-        # after fetching resources, create a playlist with the videos
-        # downloaded
+        # After fetching resources, create a playlist in M3U format with the
+        # videos downloaded.
         if playlist:
             path_to_return = os.getcwd()
+
             for (_path, subdirs, files) in os.walk(sec):
                 os.chdir(_path)
-                globbed_files = glob.glob("*.mp4")
-                if len(globbed_files):
-                    with open(os.path.split(_path)[1] + ".m3u", "w") as _m3u:
-                        for song in globbed_files:
-                            _m3u.write(song + "\n")
+                globbed_videos = glob.glob("*.mp4")
+                m3u_name = os.path.split(_path)[1] + ".m3u"
+
+                if len(globbed_videos):
+                    with open(m3u_name, "w") as m3u:
+                        for video in globbed_videos:
+                            m3u.write(video + "\n")
                     os.chdir(path_to_return)
 
         if hooks:
