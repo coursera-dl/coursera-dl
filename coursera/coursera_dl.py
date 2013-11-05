@@ -248,7 +248,6 @@ def parse_syllabus(session, page, reverse=False):
                             lecture[fmt] = lecture.get(fmt, [])
                             lecture[fmt].append((href, ''))
 
-
             for fmt in lecture:
                 count = len(lecture[fmt])
                 for i, r in enumerate(lecture[fmt]):
@@ -390,17 +389,16 @@ def download_lectures(downloader,
         # after fetching resources, create a playlist with the videos
         # downloaded
         if playlist:
-          path_to_return = os.getcwd()
-          for (_path, subdirs, files) in os.walk(sec):
-            os.chdir(_path)
-            globbed_files = glob.glob("*.mp4")
-            if len(globbed_files):
-              _m3u = open(os.path.split(_path)[1] + ".m3u", "w")
-              for song in globbed_files:
-                _m3u.write(song + "\n")
-              _m3u.close()
-              os.chdir(path_to_return)
-
+            path_to_return = os.getcwd()
+            for (_path, subdirs, files) in os.walk(sec):
+                os.chdir(_path)
+                globbed_files = glob.glob("*.mp4")
+                if len(globbed_files):
+                    _m3u = open(os.path.split(_path)[1] + ".m3u", "w")
+                    for song in globbed_files:
+                        _m3u.write(song + "\n")
+                    _m3u.close()
+                    os.chdir(path_to_return)
 
         if hooks:
             for hook in hooks:
