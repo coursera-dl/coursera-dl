@@ -48,6 +48,7 @@ import re
 import subprocess
 import sys
 import time
+import glob
 
 from distutils.version import LooseVersion as V
 
@@ -313,7 +314,8 @@ def download_lectures(downloader,
                       verbose_dirs=False,
                       preview=False,
                       combined_section_lectures_nums=False,
-                      hooks=None
+                      hooks=None,
+                      playlist=False
                       ):
     """
     Downloads lecture resources described by sections.
@@ -384,6 +386,19 @@ def download_lectures(downloader,
                     # if this file hasn't been modified in a long time,
                     # record that time
                     last_update = max(last_update, os.path.getmtime(lecfn))
+            
+        # after fetching resources, create a playlist with the videos downloaded
+        if playlist == True :
+          path_to_return = os.getcwd()
+          for (_path, subdirs, files) in os.walk(sec):
+            os.chdir(_path)              
+            if glob.glob("*.mp4") != []:
+              _m3u = open(os.path.split(_path)[1] + ".m3u" , "w")
+              for song in glob.glob("*.mp4"):
+                _m3u.write(song + "\n")
+              _m3u.close()
+              os.chdir(path_to_return)
+        
 
         if hooks:
             for hook in hooks:
@@ -602,6 +617,12 @@ def parseArgs():
                         action='append',
                         default=[],
                         help='hooks to run when finished')
+    parser.add_argument('-pl',
+                        '--playlist',
+                        dest='playlist',
+                        action='store_true',
+                        default=False,
+                        help='generate m3u playlists to course weeks')
 
     args = parser.parse_args()
 
@@ -688,7 +709,8 @@ def download_class(args, class_name):
         args.verbose_dirs,
         args.preview,
         args.combined_section_lectures_nums,
-        args.hooks)
+        args.hooks,
+        args.playlist)
 
     return completed
 
