@@ -394,10 +394,9 @@ def download_lectures(downloader,
                 os.chdir(_path)
                 globbed_files = glob.glob("*.mp4")
                 if len(globbed_files):
-                    _m3u = open(os.path.split(_path)[1] + ".m3u", "w")
-                    for song in globbed_files:
-                        _m3u.write(song + "\n")
-                    _m3u.close()
+                    with open(os.path.split(_path)[1] + ".m3u", "w") as _m3u:
+                        for song in globbed_files:
+                            _m3u.write(song + "\n")
                     os.chdir(path_to_return)
 
         if hooks:
