@@ -12,7 +12,7 @@ Examples:
   coursera-dl -u <user> -p <passwd> -l listing.html -o saas --skip-download
 
 For further documentation and examples, visit the project's home at:
-  https://github.com/jplehmann/coursera
+  https://github.com/coursera-dl/coursera
 
 Authors and copyright:
     © 2012-2013, John Lehmann (first last at geemail dotcom or @jplehmann)
@@ -76,7 +76,7 @@ from .downloaders import get_downloader
 from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 
 # URL containing information about outdated modules
-_see_url = " See https://github.com/jplehmann/coursera/issues/139"
+_see_url = " See https://github.com/coursera-dl/coursera/issues/139"
 
 # Test versions of some critical modules.
 # We may, perhaps, want to move these elsewhere.

@@ -1,6 +1,6 @@
 # Coursera Downloader
 
-[![Build Status](https://travis-ci.org/jplehmann/coursera.png?branch=master)](https://travis-ci.org/jplehmann/coursera)
+[![Build Status](https://travis-ci.org/coursera-dl/coursera.png?branch=master)](https://travis-ci.org/coursera-dl/coursera)
 
 [Coursera][1] is arguably the leader in *massive open online courses* (MOOC)
 with a selection of more than 300 classes from 62 different institutions [as of
@@ -265,7 +265,7 @@ first last at geemail dotcom or [@jplehmann][12]
 [8]: http://stackoverflow.com/a/6031266/962311
 [9]: https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
 [10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
-[11]: https://github.com/jplehmann/coursera/issues
+[11]: https://github.com/coursera-dl/coursera/issues
 [12]: https://twitter.com/jplehmann
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
 [14]: http://www.tunapanda.org
