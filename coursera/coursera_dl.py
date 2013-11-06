@@ -388,15 +388,15 @@ def download_lectures(downloader,
                     last_update = max(last_update, os.path.getmtime(lecfn))
             
         # after fetching resources, create a playlist with the videos downloaded
-        if playlist == True :
+        if playlist:
           path_to_return = os.getcwd()
           for (_path, subdirs, files) in os.walk(sec):
-            os.chdir(_path)              
-            if glob.glob("*.mp4") != []:
-              _m3u = open(os.path.split(_path)[1] + ".m3u" , "w")
-              for song in glob.glob("*.mp4"):
-                _m3u.write(song + "\n")
-              _m3u.close()
+            os.chdir(_path)             
+            mp4_files_list = glob.glob("*.mp4")  
+            if len(mp4_files_list) != 0:
+              with open(os.path.split(_path)[1] + ".m3u" , "w") as _m3u:
+                for video in mp4_files_list:
+                  _m3u.write(video + "\n")
               os.chdir(path_to_return)
         
 
@@ -622,7 +622,7 @@ def parseArgs():
                         dest='playlist',
                         action='store_true',
                         default=False,
-                        help='generate m3u playlists to course weeks')
+                        help='generate m3u playlists for course weeks')
 
     args = parser.parse_args()
 
