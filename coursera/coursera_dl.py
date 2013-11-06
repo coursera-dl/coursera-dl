@@ -248,7 +248,6 @@ def parse_syllabus(session, page, reverse=False):
                             lecture[fmt] = lecture.get(fmt, [])
                             lecture[fmt].append((href, ''))
 
-
             for fmt in lecture:
                 count = len(lecture[fmt])
                 for i, r in enumerate(lecture[fmt]):
@@ -386,19 +385,22 @@ def download_lectures(downloader,
                     # if this file hasn't been modified in a long time,
                     # record that time
                     last_update = max(last_update, os.path.getmtime(lecfn))
-            
-        # after fetching resources, create a playlist with the videos downloaded
+
+        # After fetching resources, create a playlist in M3U format with the
+        # videos downloaded.
         if playlist:
-          path_to_return = os.getcwd()
-          for (_path, subdirs, files) in os.walk(sec):
-            os.chdir(_path)             
-            mp4_files_list = glob.glob("*.mp4")  
-            if len(mp4_files_list) != 0:
-              with open(os.path.split(_path)[1] + ".m3u" , "w") as _m3u:
-                for video in mp4_files_list:
-                  _m3u.write(video + "\n")
-              os.chdir(path_to_return)
-        
+            path_to_return = os.getcwd()
+
+            for (_path, subdirs, files) in os.walk(sec):
+                os.chdir(_path)
+                globbed_videos = glob.glob("*.mp4")
+                m3u_name = os.path.split(_path)[1] + ".m3u"
+
+                if len(globbed_videos):
+                    with open(m3u_name, "w") as m3u:
+                        for video in globbed_videos:
+                            m3u.write(video + "\n")
+                    os.chdir(path_to_return)
 
         if hooks:
             for hook in hooks:
@@ -622,7 +624,7 @@ def parseArgs():
                         dest='playlist',
                         action='store_true',
                         default=False,
-                        help='generate m3u playlists for course weeks')
+                        help='generate M3U playlists for course weeks')
 
     args = parser.parse_args()
 
