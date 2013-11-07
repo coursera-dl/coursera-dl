@@ -288,9 +288,9 @@ def get_cookies_from_cache(username):
 
 def write_cookies_to_cache(cj, username):
     """
-    Saves the RequestsCookieJar to disk in the Mozilla cookies.txt file format.
-    This prevents us from repeated authentications on the accounts.coursera.org and
-    class.coursera.org/class_name sites.
+    Saves the RequestsCookieJar to disk in the Mozilla cookies.txt file
+    format.  This prevents us from repeated authentications on the
+    accounts.coursera.org and class.coursera.org/class_name sites.
     """
     mkdir_p(PATH_COOKIES, 0o700)
     path = get_cookies_cache_path(username)

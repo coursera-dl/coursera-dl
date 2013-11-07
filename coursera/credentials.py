@@ -123,7 +123,7 @@ def authenticate_through_netrc(path=None):
                               netrc_machine)
             else:
                 return auths[0], auths[2]
-                
+
     error_messages = '\n'.join(str(e) for e in errors)
     raise CredentialsError(
         'Did not find valid netrc file:\n' + error_messages)
