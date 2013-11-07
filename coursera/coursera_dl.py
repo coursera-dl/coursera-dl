@@ -309,6 +309,7 @@ def download_lectures(downloader,
                       skip_download=False,
                       section_filter=None,
                       lecture_filter=None,
+                      resource_filter=None,
                       path='',
                       verbose_dirs=False,
                       preview=False,
@@ -348,7 +349,10 @@ def download_lectures(downloader,
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
             if lecture_filter and not re.search(lecture_filter,
                                                 lecname):
+                logging.debug('Skipping b/c of lf: %s %s', lecture_filter,
+                              lecname)
                 continue
+
             if not os.path.exists(sec):
                 mkdir_p(sec)
 
@@ -357,6 +361,10 @@ def download_lectures(downloader,
             for fmt, resources in iteritems(lecture):
                 if fmt in file_formats or 'all' in file_formats:
                     for r in resources:
+                        if resource_filter and r[1] and not re.search(resource_filter, r[1]):
+                            logging.debug('Skipping b/c of rf: %s %s',
+                                          resource_filter, r[1])
+                            continue
                         resources_to_get.append((fmt, r[0], r[1]))
                 else:
                     logging.debug(
@@ -505,6 +513,13 @@ def parseArgs():
                         action='store',
                         default=None,
                         help='only download lectures which contain this regex'
+                             ' (default: disabled)')
+    parser.add_argument('-rf',
+                        '--resource_filter',
+                        dest='resource_filter',
+                        action='store',
+                        default=None,
+                        help='only download resources which match this regex'
                              ' (default: disabled)')
     parser.add_argument('--wget',
                         dest='wget',
@@ -707,6 +722,7 @@ def download_class(args, class_name):
         args.skip_download,
         args.section_filter,
         args.lecture_filter,
+        args.resource_filter,
         args.path,
         args.verbose_dirs,
         args.preview,
