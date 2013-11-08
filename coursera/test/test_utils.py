@@ -17,7 +17,7 @@ class UtilsTestCase(unittest.TestCase):
         strings = {
             '(23:90)': '',
             '(:': '',
-            'a téest &and a@noòtheèr': 'a_test_and_another',
+            'a test and another': 'a_test_and_another',
             'Lecture 2.7 - Evaluation and Operators (16:25)':
             'Lecture_2.7_-_Evaluation_and_Operators',
             'Week 3: Data and Abstraction':
