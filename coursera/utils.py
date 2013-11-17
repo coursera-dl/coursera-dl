@@ -18,15 +18,24 @@ else:
     from urlparse import urlparse
 
 
-def clean_filename(s):
+def clean_filename(s, minimal_change=False):
     """
     Sanitize a string to be used as a filename.
+
+    If minimal_change is set to true, then we only strip the bare minimum of
+    characters that are problematic for filesystems (namely, ':', '/' and
+    '\x00').
     """
 
     # strip paren portions which contain trailing time length (...)
+    s = s.replace(':', '-').replace('/', '-').replace('\x00', '-')
+
+    if minimal_change:
+        return s
+
     s = re.sub(r"\([^\(]*$", '', s)
-    s = s.strip().replace(':', '-').replace(' ', '_')
     s = s.replace('nbsp', '')
+    s = s.strip().replace(' ', '_')
     valid_chars = '-_.()%s%s' % (string.ascii_letters, string.digits)
     return ''.join(c for c in s if c in valid_chars)
 
