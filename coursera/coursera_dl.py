@@ -152,10 +152,10 @@ def get_syllabus(session, class_name, local_page=False, preview=False):
         # cache the page if we're in 'local' mode
         if local_page:
             with open(local_page, 'w') as f:
-                f.write(page)
+                f.write(page.encode("utf-8"))
     else:
         with open(local_page) as f:
-            page = f.read()
+            page = f.read().decode("utf-8")
         logging.info('Read (%d bytes) from local file', len(page))
 
     return page
