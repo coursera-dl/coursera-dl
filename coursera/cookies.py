@@ -126,7 +126,7 @@ def down_the_wabbit_hole(session, class_name):
 
 
 def _get_authentication_cookies(session, class_name,
-                                username, password, retry=False):
+                                username, password):
     try:
         session.cookies.clear('class.coursera.org', '/' + class_name)
     except KeyError:
@@ -137,13 +137,7 @@ def _get_authentication_cookies(session, class_name,
     enough = do_we_have_enough_cookies(session.cookies, class_name)
 
     if not enough:
-        if retry:
-            logging.info('Renew session on accounts.coursera.org.')
-            login(session, class_name, username, password)
-            _get_authentication_cookies(
-                session, class_name, username, password, False)
-        else:
-            raise AuthenticationFailed('Did not find necessary cookies.')
+        raise AuthenticationFailed('Did not find necessary cookies.')
 
 
 def get_authentication_cookies(session, class_name, username, password):
@@ -156,16 +150,12 @@ def get_authentication_cookies(session, class_name, username, password):
 
     # First, check if we already have the .coursera.org cookies.
     if session.cookies.get('CAUTH', domain=".coursera.org"):
-        logged_in = True
         logging.debug('Already logged in on accounts.coursera.org.')
     else:
-        logged_in = False
         login(session, class_name, username, password)
 
-    # If logged_in, allow retry in case of stale sessions
-    # (session time-out, ...)
     _get_authentication_cookies(
-        session, class_name, username, password, logged_in)
+        session, class_name, username, password)
 
     logging.info('Found authentication cookies.')
 
