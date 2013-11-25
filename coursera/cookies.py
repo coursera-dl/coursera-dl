@@ -126,7 +126,7 @@ def down_the_wabbit_hole(session, class_name):
 
 
 def _get_authentication_cookies(session, class_name,
-                                username, password, retry=False):
+                                username, password):
     try:
         session.cookies.clear('class.coursera.org', '/' + class_name)
     except KeyError:
@@ -137,13 +137,7 @@ def _get_authentication_cookies(session, class_name,
     enough = do_we_have_enough_cookies(session.cookies, class_name)
 
     if not enough:
-        if retry:
-            logging.info('Renew session on accounts.coursera.org.')
-            login(session, class_name, username, password)
-            _get_authentication_cookies(
-                session, class_name, username, password, False)
-        else:
-            raise AuthenticationFailed('Did not find necessary cookies.')
+        raise AuthenticationFailed('Did not find necessary cookies.')
 
 
 def get_authentication_cookies(session, class_name, username, password):
@@ -156,16 +150,12 @@ def get_authentication_cookies(session, class_name, username, password):
 
     # First, check if we already have the .coursera.org cookies.
     if session.cookies.get('CAUTH', domain=".coursera.org"):
-        logged_in = True
         logging.debug('Already logged in on accounts.coursera.org.')
     else:
-        logged_in = False
         login(session, class_name, username, password)
 
-    # If logged_in, allow retry in case of stale sessions
-    # (session time-out, ...)
     _get_authentication_cookies(
-        session, class_name, username, password, logged_in)
+        session, class_name, username, password)
 
     logging.info('Found authentication cookies.')
 
@@ -178,13 +168,14 @@ def do_we_have_enough_cookies(cj, class_name):
     domain = 'class.coursera.org'
     path = "/" + class_name
 
-    return cj.get('csrf_token', domain=domain, path=path)
+    return cj.get('csrf_token', domain=domain, path=path) is not None
 
 
-def do_we_have_valid_cookies(session, class_name):
+def validate_cookies(session, class_name):
     """
     Checks whether we have all the required cookies
-    to authenticate on class.coursera.org, and if they are not yet stale.
+    to authenticate on class.coursera.org. Also check for and remove
+    stale session.
     """
     if not do_we_have_enough_cookies(session.cookies, class_name):
         return False
@@ -196,6 +187,10 @@ def do_we_have_valid_cookies(session, class_name):
         return True
     else:
         logging.debug('Stale session.')
+        try:
+            session.cookies.clear('.coursera.org')
+        except KeyError:
+            pass
         return False
 
 
@@ -317,7 +312,7 @@ def get_cookies_for_class(session, class_name,
     else:
         cookies = get_cookies_from_cache(username)
         session.cookies.update(cookies)
-        if do_we_have_valid_cookies(session, class_name):
+        if validate_cookies(session, class_name):
             logging.info('Already authenticated.')
         else:
             get_authentication_cookies(session, class_name, username, password)

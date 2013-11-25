@@ -45,6 +45,7 @@ import json
 import logging
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -71,7 +72,7 @@ from .cookies import (
     AuthenticationFailed, ClassNotFound,
     get_cookies_for_class, make_cookie_values)
 from .credentials import get_credentials, CredentialsError
-from .define import CLASS_URL, ABOUT_URL
+from .define import CLASS_URL, ABOUT_URL, PATH_CACHE
 from .downloaders import get_downloader
 from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 
@@ -152,10 +153,10 @@ def get_syllabus(session, class_name, local_page=False, preview=False):
         # cache the page if we're in 'local' mode
         if local_page:
             with open(local_page, 'w') as f:
-                f.write(page)
+                f.write(page.encode("utf-8"))
     else:
         with open(local_page) as f:
-            page = f.read()
+            page = f.read().decode("utf-8")
         logging.info('Read (%d bytes) from local file', len(page))
 
     return page
@@ -271,7 +272,8 @@ def parse_syllabus(session, page, reverse=False):
         sections.reverse()
 
     if not len(sections):
-        logging.error('Probably bad cookies file (or wrong class name)')
+        logging.error('The cookies file may be invalid, '
+                      'please re-run with the `--clear-cache` option.')
 
     return sections
 
@@ -640,6 +642,11 @@ def parseArgs():
                         action='store_true',
                         default=False,
                         help='generate M3U playlists for course weeks')
+    parser.add_argument('--clear-cache',
+                        dest='clear_cache',
+                        action='store_true',
+                        default=False,
+                        help='clear cached cookies')
 
     args = parser.parse_args()
 
@@ -740,6 +747,10 @@ def main():
 
     args = parseArgs()
     completed_classes = []
+
+    mkdir_p(PATH_CACHE, 0o700)
+    if args.clear_cache:
+        shutil.rmtree(PATH_CACHE)
 
     for class_name in args.class_names:
         try:
