@@ -184,7 +184,8 @@ def do_we_have_enough_cookies(cj, class_name):
 def do_we_have_valid_cookies(session, class_name):
     """
     Checks whether we have all the required cookies
-    to authenticate on class.coursera.org, and if they are not yet stale.
+    to authenticate on class.coursera.org. Also check for and remove
+    stale session.
     """
     if not do_we_have_enough_cookies(session.cookies, class_name):
         return False
@@ -196,6 +197,10 @@ def do_we_have_valid_cookies(session, class_name):
         return True
     else:
         logging.debug('Stale session.')
+        try:
+            session.cookies.clear('.coursera.org')
+        except KeyError:
+            pass
         return False
 
 
