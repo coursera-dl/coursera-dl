@@ -272,7 +272,8 @@ def parse_syllabus(session, page, reverse=False):
         sections.reverse()
 
     if not len(sections):
-        logging.error('The cookies file may be invalid, please re-run with the `--clear-cache` option.')
+        logging.error('The cookies file may be invalid, '
+                      'please re-run with the `--clear-cache` option.')
 
     return sections
 

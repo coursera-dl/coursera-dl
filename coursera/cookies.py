@@ -178,7 +178,7 @@ def do_we_have_enough_cookies(cj, class_name):
     domain = 'class.coursera.org'
     path = "/" + class_name
 
-    return cj.get('csrf_token', domain=domain, path=path)
+    return cj.get('csrf_token', domain=domain, path=path) is not None
 
 
 def do_we_have_valid_cookies(session, class_name):
