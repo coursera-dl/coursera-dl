@@ -181,7 +181,7 @@ def do_we_have_enough_cookies(cj, class_name):
     return cj.get('csrf_token', domain=domain, path=path) is not None
 
 
-def do_we_have_valid_cookies(session, class_name):
+def validate_cookies(session, class_name):
     """
     Checks whether we have all the required cookies
     to authenticate on class.coursera.org. Also check for and remove
@@ -322,7 +322,7 @@ def get_cookies_for_class(session, class_name,
     else:
         cookies = get_cookies_from_cache(username)
         session.cookies.update(cookies)
-        if do_we_have_valid_cookies(session, class_name):
+        if validate_cookies(session, class_name):
             logging.info('Already authenticated.')
         else:
             get_authentication_cookies(session, class_name, username, password)
