@@ -34,7 +34,9 @@ class UtilsTestCase(unittest.TestCase):
             'Lecture 2.7 - Evaluation and Operators (16:25)':
             'Lecture 2.7 - Evaluation and Operators (16-25)',
             'Week 3: Data and Abstraction':
-            'Week 3- Data and Abstraction'
+            'Week 3- Data and Abstraction',
+            '  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning':
+            '  (Week 1) BRANDING-  Marketing Strategy and Brand Positioning'
         }
         for k, v in iteritems(strings):
             self.assertEquals(utils.clean_filename(k, minimal_change=True), v)
