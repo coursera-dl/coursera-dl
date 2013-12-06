@@ -171,10 +171,10 @@ def transform_preview_url(a):
 
     # Example URLs
     # "https://class.coursera.org/modelthinking/lecture/preview_view/8"
-    # "https://class.coursera.org/nlp/lecture/view?lecture_id=124"
+    # "https://class.coursera.org/nlp/lecture/preview_view?lecture_id=124"
     mobj = re.search(r'preview_view/(\d+)$', a)
     if mobj:
-        return re.sub(r'preview_view/(\d+)$', r'view?lecture_id=\1', a)
+        return re.sub(r'preview_view/(\d+)$', r'preview_view?lecture_id=\1', a)
     else:
         return None
 
