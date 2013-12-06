@@ -201,21 +201,24 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
     for stag in soup.findAll(attrs={'class':
                                     re.compile('^course-item-list-header')}):
         assert stag.contents[0] is not None, "couldn't find section"
-        section_name = clean_filename(stag.contents[0].contents[1], intact_fnames)
+        untouched_fname = stag.contents[0].contents[1]
+        section_name = clean_filename(untouched_fname, intact_fnames)
         logging.info(section_name)
         lectures = []  # resources for 1 lecture
 
         # traverse resources (e.g., video, ppt, ..)
         for vtag in stag.nextSibling.findAll('li'):
             assert vtag.a.contents[0], "couldn't get lecture name"
-            vname = clean_filename(vtag.a.contents[0], intact_fnames)
+            untouched_fname = vtag.a.contents[0]
+            vname = clean_filename(untouched_fname, intact_fnames)
             logging.info('  %s', vname)
             lecture = {}
             lecture_page = None
 
             for a in vtag.findAll('a'):
                 href = fix_url(a['href'])
-                title = clean_filename(a.get('title', ''), intact_fnames)
+                untouched_fname = a.get('title', '')
+                title = clean_filename(untouched_fname, intact_fnames)
                 fmt = get_anchor_format(href)
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
