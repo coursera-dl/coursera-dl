@@ -28,7 +28,7 @@ def clean_filename(s, minimal_change=False):
     """
 
     # strip paren portions which contain trailing time length (...)
-    s = s.replace(':', '-').replace('/', '-').replace('\x00', '-')
+    s = s.replace(':', '-').replace('/', '-').replace('\x00', '-').replace('\n', '')
 
     if minimal_change:
         return s
