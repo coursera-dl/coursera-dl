@@ -24,7 +24,7 @@ def clean_filename(s, minimal_change=False):
 
     If minimal_change is set to true, then we only strip the bare minimum of
     characters that are problematic for filesystems (namely, ':', '/' and
-    '\x00').
+    '\x00', '\n').
     """
 
     # strip paren portions which contain trailing time length (...)
