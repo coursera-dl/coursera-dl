@@ -26,9 +26,8 @@ def clean_filename(s):
     # strip paren portions which contain trailing time length (...)
     s = re.sub(r"\([^\(]*$", '', s)
     s = s.strip().replace(':', '-').replace(' ', '_')
-    s = s.replace('nbsp', '')
-    valid_chars = '-_.()%s%s' % (string.ascii_letters, string.digits)
-    return ''.join(c for c in s if c in valid_chars)
+    s = s.replace('&nbsp;', '')
+    return s
 
 
 def get_anchor_format(a):
