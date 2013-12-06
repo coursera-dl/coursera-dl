@@ -188,7 +188,7 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(session, page, reverse=False):
+def parse_syllabus(session, page, reverse=False, intact_fnames=False):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -201,21 +201,21 @@ def parse_syllabus(session, page, reverse=False):
     for stag in soup.findAll(attrs={'class':
                                     re.compile('^course-item-list-header')}):
         assert stag.contents[0] is not None, "couldn't find section"
-        section_name = clean_filename(stag.contents[0].contents[1])
+        section_name = clean_filename(stag.contents[0].contents[1], intact_fnames)
         logging.info(section_name)
         lectures = []  # resources for 1 lecture
 
         # traverse resources (e.g., video, ppt, ..)
         for vtag in stag.nextSibling.findAll('li'):
             assert vtag.a.contents[0], "couldn't get lecture name"
-            vname = clean_filename(vtag.a.contents[0])
+            vname = clean_filename(vtag.a.contents[0], intact_fnames)
             logging.info('  %s', vname)
             lecture = {}
             lecture_page = None
 
             for a in vtag.findAll('a'):
                 href = fix_url(a['href'])
-                title = clean_filename(a.get('title', ''))
+                title = clean_filename(a.get('title', ''), intact_fnames)
                 fmt = get_anchor_format(href)
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
@@ -315,7 +315,8 @@ def download_lectures(downloader,
                       preview=False,
                       combined_section_lectures_nums=False,
                       hooks=None,
-                      playlist=False
+                      playlist=False,
+                      intact_fnames=False
                       ):
     """
     Downloads lecture resources described by sections.
@@ -640,6 +641,11 @@ def parseArgs():
                         action='store_true',
                         default=False,
                         help='generate M3U playlists for course weeks')
+    parser.add_argument('--unrestricted-filenames',
+                        dest='intact_fnames',
+                        action='store_true',
+                        default=False,
+                        help='Do not limit filenames to be ASCII-only')
 
     args = parser.parse_args()
 
@@ -705,7 +711,8 @@ def download_class(args, class_name):
     page = get_syllabus(session, class_name, args.local_page, args.preview)
 
     # parse it
-    sections = parse_syllabus(session, page, args.reverse)
+    sections = parse_syllabus(session, page, args.reverse,
+                              args.intact_fnames)
 
     if args.about:
         download_about(session, class_name, args.path, args.overwrite)
@@ -728,7 +735,8 @@ def download_class(args, class_name):
         args.preview,
         args.combined_section_lectures_nums,
         args.hooks,
-        args.playlist)
+        args.playlist,
+        args.intact_fnames)
 
     return completed
 
