@@ -26,6 +26,19 @@ class UtilsTestCase(unittest.TestCase):
         for k, v in iteritems(strings):
             self.assertEquals(utils.clean_filename(k), v)
 
+    def test_clean_filename_minimal_change(self):
+        strings = {
+            '(23:90)': '(23-90)',
+            '(:': '(-',
+            'a téest &and a@noòtheèr': 'a téest &and a@noòtheèr',
+            'Lecture 2.7 - Evaluation and Operators (16:25)':
+            'Lecture 2.7 - Evaluation and Operators (16-25)',
+            'Week 3: Data and Abstraction':
+            'Week 3- Data and Abstraction'
+        }
+        for k, v in iteritems(strings):
+            self.assertEquals(utils.clean_filename(k, minimal_change=True), v)
+
     def test_get_anchor_format(self):
         strings = {
             'https://class.coursera.org/sub?q=123_en&format=txt': 'txt',
