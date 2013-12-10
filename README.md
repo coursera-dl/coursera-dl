@@ -1,6 +1,7 @@
 # Coursera Downloader
 
 [![Build Status](https://travis-ci.org/coursera-dl/coursera.png?branch=master)](https://travis-ci.org/coursera-dl/coursera)
+[![Coverage Status](https://coveralls.io/repos/coursera-dl/coursera/badge.png)](https://coveralls.io/r/coursera-dl/coursera)
 
 [Coursera][1] is arguably the leader in *massive open online courses* (MOOC)
 with a selection of more than 300 classes from 62 different institutions [as of
