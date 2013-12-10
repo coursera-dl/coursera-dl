@@ -275,3 +275,7 @@ first last at geemail dotcom or [@jplehmann][12]
 [17]: http://www.pip-installer.org/en/latest/
 [18]: http://python-distribute.org/pip_distribute.png
 [19]: https://pypi.python.org/pypi/six/
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
