@@ -9,6 +9,11 @@ matrix:
   allow_failures:
     - python: "pypy"
 # command to install dependencies
-install: "pip install -r requirements.txt --use-mirrors"
+install:
+  - pip install -r requirements.txt --use-mirrors
+  - pip install --use-mirrors coveralls
 # command to run tests
 script: nosetests --verbose --with-coverage --cover-package=coursera
+
+after_success:
+  coveralls
