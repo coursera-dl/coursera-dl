@@ -27,7 +27,7 @@ def _getenv_or_empty(s):
     return os.getenv(s) or ""
 
 
-def get_config_paths(config_name):
+def get_config_paths(config_name): # pragma: no test
     """
     Returns a list of config files paths to try in order, given config file
     name and possibly a user-specified path.

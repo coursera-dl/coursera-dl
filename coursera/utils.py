@@ -12,7 +12,7 @@ import string
 import six
 
 #  six.moves doesn’t support urlparse
-if six.PY3:
+if six.PY3: # pragma: no cover
     from urllib.parse import urlparse
 else:
     from urlparse import urlparse
