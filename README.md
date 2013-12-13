@@ -132,18 +132,18 @@ as well as any additional parameters:
       Update:                  coursera-dl -n --path CURRENT `ls CURRENT`
 
 On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
-specifying both your username and password every time on the command
-line. To use it, simply add a line like the one below to a file named
-`.netrc` in your home directory (or the [equivalent][8], if you are using
-Windows) with contents like:
+specifying both your username (i.e., your email address) and password every
+time on the command line. To use it, simply add a line like the one below to
+a file named `.netrc` in your home directory (or the [equivalent][8], if you
+are using Windows) with contents like:
 
     machine coursera-dl login <user> password <pass>
 
 Create the file if it doesn't exist yet.  From then on, you can switch from
 using `-u` and `-p` to simply call `coursera-dl` with the option `-n`
-instead.  This is especially convenient, as typing usernames and passwords
-directly on the command line can get tiresome (even more if you happened to
-choose a "strong" password).
+instead.  This is especially convenient, as typing usernames (email
+addresses) and passwords directly on the command line can get tiresome (even
+more if you happened to choose a "strong" password).
 
 ## Troubleshooting
 
