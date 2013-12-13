@@ -145,6 +145,13 @@ instead.  This is especially convenient, as typing usernames (email
 addresses) and passwords directly on the command line can get tiresome (even
 more if you happened to choose a "strong" password).
 
+**NOTE**: If your password contains punctuation, quotes or other "funny
+characters" (e.g., `<`, `>`, `#`, `&`, `|` and so on), then you may have to
+escape them from your shell. With bash or other Bourne-shell clones (and
+probably with many other shells) one of the better ways to do so is to
+enclose your password in single quotes, so that you don't run into
+problems.  See issue #213 for more information.
+
 ## Troubleshooting
 
 It is important that:
