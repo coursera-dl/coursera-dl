@@ -149,19 +149,6 @@ more if you happened to choose a "strong" password).
 
 It is important that:
 
-* When reporting bugs against `coursera-dl`, please don't forget to include
-  enough information so that you can help us help you:
-    * Is the problem happening with the latest version of the script?
-    * What operating system are you using?
-    * Do you have all the recommended versions of the modules? See them in
-      the file `requirements.txt`.
-    * What is the course that you are trying to access?
-    * What is the precise command line that you are using (feel free to hide
-      your username and password with asterisks, but leave all other
-      information untouched).
-    * What are the precise messages that you get? Please, copy and paste them.
-      Don't reword the messages.
-
 * Make sure the class name you are using corresponds to the resource name
   used in the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
@@ -220,6 +207,22 @@ It is important that:
   the argument after `-n` begins with an hyphen (`-`).  Otherwise, Python's
   `argparse` module will think that what you are passing is the name of the
   netrc file that you want to use. See issue #162.
+
+## Filing an issue/Reporting a bug
+
+When reporting bugs against `coursera-dl`, please don't forget to include
+enough information so that you can help us help you:
+
+* Is the problem happening with the latest version of the script?
+* What operating system are you using?
+* Do you have all the recommended versions of the modules? See them in
+  the file `requirements.txt`.
+* What is the course that you are trying to access?
+* What is the precise command line that you are using (feel free to hide
+  your username and password with asterisks, but leave all other
+  information untouched).
+* What are the precise messages that you get? Please, copy and paste them.
+  Don't reword the messages.
 
 ## Feedback
 
