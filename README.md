@@ -160,6 +160,9 @@ It is important that:
   used in the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
+* Have you tried to clean the cached cookies/credentials with the
+  `--clear-cache` option?
+
 * Note that many courses (most, perhaps?) may remove the materials after a
   little while after the course is completed, while other courses may retain
   the materials up to a next session/offering of the same course (to avoid
