@@ -154,7 +154,8 @@ problems.  See issue #213 for more information.
 
 ## Troubleshooting
 
-It is important that:
+If you have problems when downloading class materials, please try to see if
+one of the following actions solve your problem:
 
 * Make sure the class name you are using corresponds to the resource name
   used in the URL for that class:
