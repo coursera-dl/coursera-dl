@@ -129,10 +129,10 @@ as well as any additional parameters:
     
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
-      Update:                  coursera-dl -n --path CURRENT `dir CURRENT`
+      Update:                  coursera-dl -n --path CURRENT `\ls CURRENT`
     
-    Note: using coursera-dl -n --path CURRENT `ls CURRENT` produces errors if the
-    terminal uses special characters to colorize the output. Use `dir` instead of `ls`
+    Note: If your ls command is aliased to display a colorized output, you may experience problems. 
+    Be sure to escape the ls command (use \ls) to assure that no special characters get sent to the script.
 
 On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username (i.e., your email address) and password every
