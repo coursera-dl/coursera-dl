@@ -454,7 +454,7 @@ def parseArgs():
     # positional
     parser.add_argument('class_names',
                         action='store',
-                        nargs='+',
+                        nargs='*',
                         help='name(s) of the class(es) (e.g. "nlp")')
 
     parser.add_argument('-c',
@@ -598,6 +598,12 @@ def parseArgs():
                         action='store_true',
                         default=False,
                         help='for debugging: skip actual downloading of files')
+    parser.add_argument('--update',
+                        dest='update_flag',
+                        default=False,
+                        const=True,
+                        nargs='?',
+                        help='Update course-folders content')
     parser.add_argument('--path',
                         dest='path',
                         action='store',
@@ -658,6 +664,14 @@ def parseArgs():
                         help='Do not limit filenames to be ASCII-only')
 
     args = parser.parse_args()
+
+    # Check if should update and include the folders
+    if args.update_flag:
+    	for _, dir, _ in os.walk(args.path):
+    		print(dir)
+    		args.class_names += dir
+    if len(args.class_names) < 1:
+    	logging.error('error: no class to be loaded')
 
     # Initialize the logging system first so that other functions
     # can use it right away
