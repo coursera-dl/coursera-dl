@@ -667,10 +667,13 @@ def parseArgs():
 
     # Check if should update and include the folders
     if args.update_flag:
+    	# Get the root folder for the path
     	_, dirs, _ = os.walk(args.path).__next__()
-    	for dir in dirs:
-    		logging.debug(dir)
-    	args.class_names += dirs
+    	if len(dirs) > 0
+	    	logging.debug("Found the folders/courses:")
+	    	for dir in dirs:
+	    		logging.debug(dir)
+    		args.class_names += dirs
     if len(args.class_names) < 1:
     	logging.error('error: no class to be loaded')
 
