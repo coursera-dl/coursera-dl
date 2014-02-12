@@ -6,8 +6,9 @@ python:
   - "pypy"
 matrix:
   allow_failures:
-    - python: "2.6"
-    - python: "pypy"
+    - python:
+       - "2.6"
+       - "pypy"
 # command to install dependencies
 install:
   - pip install -r requirements.txt
