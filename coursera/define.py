@@ -17,7 +17,7 @@ AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # define a per-user cache folder
-if os.name == "posix": # pragma: no cover
+if os.name == "posix":  # pragma: no cover
     import pwd
     user = pwd.getpwuid(os.getuid())[0]
 else:
