@@ -10,8 +10,8 @@ matrix:
     - python: "pypy"
 # command to install dependencies
 install:
-  - pip install -r requirements.txt --use-mirrors
-  - pip install --use-mirrors coveralls
+  - pip install -r requirements.txt
+  - pip install coveralls
 # command to run tests
 script: nosetests --verbose --with-coverage --cover-package=coursera
 
