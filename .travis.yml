@@ -3,7 +3,7 @@ python:
   - "2.7"
   - "3.2"
   - "3.3"
-  - "3.4"
+#  - "3.4" # Wait for fix: https://github.com/travis-ci/travis-ci/issues/1989
   - "pypy"
 matrix:
   allow_failures:
