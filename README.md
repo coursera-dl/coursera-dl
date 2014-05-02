@@ -44,9 +44,11 @@ I've downloaded many other good videos such as those from Khan Academy.
 
 ## Instructions
 
-`coursera-dl` requires Python 2 (2.6 or newer) or Python 3 (3.2 or newer)
-and a free Coursera account enrolled in the class of interest. On Windows
-ensure that Python executable location is added to the PATH environment variable.
+`coursera-dl` requires Python 2 or Python 3 and a free Coursera account
+enrolled in the class of interest. (At present/May of 2014, we test
+automatically the execution of the program with Python versions 2.6, 2.7,
+Pypy, 3.2, 3.3, and 3.4).
+
 *Note:* You must already have (manually) agreed to the Honor of Code of the
 particular courses that you want to use with `coursera-dl`.
 
