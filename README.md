@@ -34,7 +34,7 @@ I've downloaded many other good videos such as those from Khan Academy.
 ## Features
 
   * Intentionally detailed names, so that it will display and sort properly
-    on most interfaces (e.g., MX Video on Android phone).
+    on most interfaces (e.g., MX Video, or [VLC][4] on Android devices).
   * Regex-based section (week) and lecture name filters to download only
     certain resources.
   * File format extension filter to grab resource types you want.
@@ -277,6 +277,7 @@ first last at geemail dotcom or [@jplehmann][12]
 [1]: https://www.coursera.org
 [2]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [3]: https://rg3.github.com/youtube-dl
+[4]: https://f-droid.org/repository/browse/?fdid=org.videolan.vlc
 [5]: http://www.crummy.com/software/BeautifulSoup
 [6]: http://pypi.python.org/pypi/argparse
 [7]: http://pypi.python.org/pypi/setuptools
