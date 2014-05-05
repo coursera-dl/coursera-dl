@@ -300,7 +300,7 @@ first last at geemail dotcom or [@jplehmann][12]
 [15]: https://github.com/html5lib/html5lib-python
 [16]: http://docs.python-requests.org/en/latest/
 [17]: http://www.pip-installer.org/en/latest/
-[18]: http://python-distribute.org/pip_distribute.png
+[18]: https://stackoverflow.com/a/17601159 
 [19]: https://pypi.python.org/pypi/six/
 
 
