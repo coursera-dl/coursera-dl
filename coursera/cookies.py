@@ -99,7 +99,8 @@ def login(session, class_name, username, password):
 
     data = {
         'email': username,
-        'password': password
+        'password': password,
+        'webrequest':'true'
     }
 
     r = session.post(AUTH_URL, data=data,
