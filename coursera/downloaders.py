@@ -227,6 +227,8 @@ class DownloadProgress(object):
     def calc_percent(self):
         if self._total is None:
             return '--%'
+        if self._total == 0:
+            return '100% done'
         percentage = int(float(self._current) / float(self._total) * 100.0)
         done = int(percentage/2)
         return '[{0: <50}] {1}%'.format(done * '#', percentage)
