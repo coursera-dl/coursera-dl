@@ -76,7 +76,8 @@ from .cookies import (
 from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE
 from .downloaders import get_downloader
-from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url, decode_input
+from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
+from .utils import decode_input
 
 # URL containing information about outdated modules
 _see_url = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -678,7 +679,8 @@ def parseArgs():
     # turn list of strings into list
     args.file_formats = args.file_formats.split()
 
-    # decode path so we can work properly with cyrillic symbols on different versions on Python
+    # decode path so we can work properly with cyrillic symbols on different
+    # versions on Python
     args.path = decode_input(args.path)
 
     for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
