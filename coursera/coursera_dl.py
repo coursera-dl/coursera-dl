@@ -39,8 +39,6 @@ Legalese:
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-# Convert all strings to unicode to prevent program from UnicodeDecodeError when --path contains cyrillic sympols.
-from __future__ import unicode_literals
 
 
 import argparse
