@@ -662,8 +662,6 @@ def parseArgs():
 
     args = parser.parse_args()
 
-    # Decode path so we can work properly with cyrillic symbols on different versions on Python.
-    args.path = decode_input(args.path)
 
     # Initialize the logging system first so that other functions
     # can use it right away
@@ -679,6 +677,9 @@ def parseArgs():
 
     # turn list of strings into list
     args.file_formats = args.file_formats.split()
+
+    # decode path so we can work properly with cyrillic symbols on different versions on Python
+    args.path = decode_input(args.path)
 
     for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
         if getattr(args, bin):
