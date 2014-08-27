@@ -8,6 +8,7 @@ import errno
 import os
 import re
 import string
+import sys
 
 import six
 
@@ -17,6 +18,12 @@ if six.PY3:  # pragma: no cover
 else:
     from urlparse import urlparse
 
+if six.PY2:
+    def decode_input(x):
+        return x.decode(sys.stdin.encoding)
+else:
+    def decode_input(x):
+        return x
 
 def clean_filename(s, minimal_change=False):
     """
