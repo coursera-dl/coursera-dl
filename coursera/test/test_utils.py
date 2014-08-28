@@ -66,14 +66,11 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEquals(utils.fix_url(url), "")
 
     def test_decode_input(self):
-        encoded_inputs = {
+        encoded_inputs = [
             str("/home/user/темп"),
-            str("22少女時代22")
-        }
+            str("22少女時代22")]
 
-        for encoded_input in encoded_inputs:
-            if six.PY2:
-                self.assertTrue(isinstance(encoded_input, str), "Encoded input is not a binary type.")
+        for encoded_input in encoded_inputs:  
             decoded_input = utils.decode_input(encoded_input)
-            self.assertTrue(isinstance(decoded_input, six.text_type), "Decoded input is not a text type.")
-          
+            self.assertTrue(isinstance(decoded_input, six.text_type),
+            "Decoded input is not a text type.")
