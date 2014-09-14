@@ -299,11 +299,15 @@ def download_about(session, class_name, path='', overwrite=False):
     # NOTE: should we create a directory with metadata?
     logging.info('Downloading about page from: %s', about_url)
     about_json = get_page(session, about_url)
-    data = json.loads(about_json)
-
-    with open(about_fn, 'w') as about_file:
-        json_data = json.dumps(data, indent=4, separators=(',', ':'))
-        about_file.write(json_data)
+    data = json.loads(about_json)["elements"]
+    
+    for element in data:
+        if element["shortName"] == base_class_name:
+            with open(about_fn, 'w') as about_file:
+                json_data = json.dumps(element, indent=4,
+                    separators=(',', ':'))
+                about_file.write(json_data)
+            break
 
 
 def download_lectures(downloader,

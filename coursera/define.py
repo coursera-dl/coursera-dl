@@ -10,8 +10,13 @@ import tempfile
 
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
-ABOUT_URL = 'https://www.coursera.org/maestro/api/topic/information?' \
-            'topic-id={class_name}'
+ABOUT_URL = 'https://api.coursera.org/api/catalog.v1/courses?' \
+            'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,' \
+            'smallIconHover,universityLogo,universityLogoSt,video,videoId,' \
+            'aboutTheCourse,targetAudience,faq,courseSyllabus,courseFormat,' \
+            'suggestedReadings,instructor,estimatedClassWorkload,' \
+            'aboutTheInstructor,recommendedBackground&' \
+            'q=search&query={class_name}'
 AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
                     '/auth/auth_redirector?type=login&subtype=normal'
 
