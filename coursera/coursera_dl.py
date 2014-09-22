@@ -39,6 +39,8 @@ Legalese:
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+
+
 import argparse
 import datetime
 import json
@@ -75,6 +77,7 @@ from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE
 from .downloaders import get_downloader
 from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
+from .utils import decode_input
 
 # URL containing information about outdated modules
 _see_url = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -354,6 +357,7 @@ def download_lectures(downloader,
             logging.debug('Skipping b/c of sf: %s %s', section_filter,
                           section)
             continue
+
         sec = os.path.join(path, class_name, format_section(secnum + 1,
                                                             section))
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
@@ -663,6 +667,7 @@ def parseArgs():
 
     args = parser.parse_args()
 
+
     # Initialize the logging system first so that other functions
     # can use it right away
     if args.debug:
@@ -677,6 +682,10 @@ def parseArgs():
 
     # turn list of strings into list
     args.file_formats = args.file_formats.split()
+
+    # decode path so we can work properly with cyrillic symbols on different
+    # versions on Python
+    args.path = decode_input(args.path)
 
     for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
         if getattr(args, bin):

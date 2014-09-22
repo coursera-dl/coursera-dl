@@ -8,6 +8,7 @@ import errno
 import os
 import re
 import string
+import sys
 
 import six
 
@@ -18,9 +19,17 @@ else:
     from urlparse import urlparse
 
 
+if six.PY2:
+    def decode_input(x):
+        return x.decode(sys.stdin.encoding)
+else:
+    def decode_input(x):
+        return x
+
+
 def clean_filename(s, minimal_change=False):
     """
-    Sanitize a string to be used as a filename.
+   Sanitize a string to be used as a filename.
 
     If minimal_change is set to true, then we only strip the bare minimum of
     characters that are problematic for filesystems (namely, ':', '/' and
@@ -28,7 +37,12 @@ def clean_filename(s, minimal_change=False):
     """
 
     # strip paren portions which contain trailing time length (...)
-    s = s.replace(':', '-').replace('/', '-').replace('\x00', '-').replace('\n', '')
+    s = (
+        s.replace(':', '-')
+        .replace('/', '-')
+        .replace('\x00', '-')
+        .replace('\n', '')
+        )
 
     if minimal_change:
         return s

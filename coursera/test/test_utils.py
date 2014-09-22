@@ -5,8 +5,7 @@ Test the utility functions.
 """
 
 import unittest
-
-from six import iteritems
+import six
 
 from coursera import utils
 
@@ -23,7 +22,7 @@ class UtilsTestCase(unittest.TestCase):
             'Week 3: Data and Abstraction':
             'Week_3-_Data_and_Abstraction'
         }
-        for k, v in iteritems(strings):
+        for k, v in six.iteritems(strings):
             self.assertEquals(utils.clean_filename(k), v)
 
     def test_clean_filename_minimal_change(self):
@@ -38,7 +37,7 @@ class UtilsTestCase(unittest.TestCase):
             '  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning':
             '  (Week 1) BRANDING-  Marketing Strategy and Brand Positioning'
         }
-        for k, v in iteritems(strings):
+        for k, v in six.iteritems(strings):
             self.assertEquals(utils.clean_filename(k, minimal_change=True), v)
 
     def test_get_anchor_format(self):
@@ -48,7 +47,7 @@ class UtilsTestCase(unittest.TestCase):
             'https://d396qusza40orc.cloudfront.net/week7-4.pdf': 'pdf',
             'https://class.coursera.org/download.mp4?lecture_id=123': 'mp4'
         }
-        for k, v in iteritems(strings):
+        for k, v in six.iteritems(strings):
             self.assertEquals(utils.get_anchor_format(k), v)
 
     def test_fix_url_ads_sheme(self):
@@ -65,3 +64,13 @@ class UtilsTestCase(unittest.TestCase):
 
         url = ""
         self.assertEquals(utils.fix_url(url), "")
+
+    def test_decode_input(self):
+        encoded_inputs = [
+            str("/home/user/темп"),
+            str("22少女時代22")]
+
+        for encoded_input in encoded_inputs:  
+            decoded_input = utils.decode_input(encoded_input)
+            self.assertTrue(isinstance(decoded_input, six.text_type),
+            "Decoded input is not a text type.")
