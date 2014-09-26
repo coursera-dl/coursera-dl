@@ -14,11 +14,11 @@ class UtilsTestCase(unittest.TestCase):
 
     def test_clean_filename(self):
         strings = {
-            '(23:90)': '',
-            '(:': '',
+            '(23:90)': '23-90',
+            '(:': '-',
             'a téest &and a@noòtheèr': 'a_test_and_another',
             'Lecture 2.7 - Evaluation and Operators (16:25)':
-            'Lecture_2.7_-_Evaluation_and_Operators',
+            'Lecture_2.7_-_Evaluation_and_Operators_16-25',
             'Week 3: Data and Abstraction':
             'Week_3-_Data_and_Abstraction'
         }
