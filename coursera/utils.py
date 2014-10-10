@@ -19,7 +19,7 @@ else:
     from urlparse import urlparse
 
 
-if six.PY2:
+if six.PY3:
     def decode_input(x):
         return x.decode(sys.stdin.encoding)
 else:
