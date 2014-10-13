@@ -21,7 +21,9 @@ else:
 
 if six.PY2:
     def decode_input(x):
-        return x.decode(sys.stdin.encoding)
+        stdin_encoding = sys.stdin.encoding
+        if stdin_encoding is None: stdin_encoding = "UTF-8"
+        return x.decode(stdin_encoding)
 else:
     def decode_input(x):
         return x
