@@ -6,8 +6,10 @@ Test the utility functions.
 
 import unittest
 import six
+import datetime
 
 from coursera import utils
+from coursera import coursera_dl
 
 
 class UtilsTestCase(unittest.TestCase):
@@ -74,3 +76,17 @@ class UtilsTestCase(unittest.TestCase):
             decoded_input = utils.decode_input(encoded_input)
             self.assertTrue(isinstance(decoded_input, six.text_type),
             "Decoded input is not a text type.")
+
+    def test_total_seconds(self):
+
+        ts = coursera_dl.total_seconds(datetime.timedelta(days=30))
+        self.assertEquals(ts,2592000)
+
+    def test_parse_args(self):
+
+        args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])
+
+        self.assertEquals(args.about, False)
+        self.assertEquals(args.class_names, ['posa-001'])
+        self.assertEquals(args.username, 'bob')
+        self.assertEquals(args.password, 'bill')
