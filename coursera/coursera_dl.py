@@ -451,7 +451,7 @@ def total_seconds(td):
            (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
 
 
-def parseArgs():
+def parseArgs(args=None):
     """
     Parse the arguments/options passed to the program on the command line.
     """
@@ -665,7 +665,7 @@ def parseArgs():
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
 
     # Initialize the logging system first so that other functions
