@@ -82,22 +82,22 @@ In any case, you may want to install:
 * [Beautiful Soup 4][5]: Required. See also html5lib below.
   - Ubuntu/Debian: `sudo apt-get install python-bs4`
   - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
-  - Other: `pip beautifulsoup4`
+  - Other: `pip install beautifulsoup4`
 * [Argparse][6]: Required (but you only need to install with Python 2.6)
   - Ubuntu/Debian: `sudo apt-get install python-argparse`
-  - Other: `pip argparse`
+  - Other: `pip install argparse`
 * [requests][16]: Required.
   - Ubuntu/Debian: `sudo apt-get install python-requests`
   - Mac OSX + MacPorts: `sudo port install py-requests`
-  - Other: `pip requests`
+  - Other: `pip install requests`
 * [six][19]: Required.
   - Ubuntu/Debian: `sudo apt-get install python-six`
   - Mac OSX + MacPorts: `sudo port install py27-six`
-  - Other: `pip six`
+  - Other: `pip install six`
 * [html5lib][15]: Not required, but recommended for parsing pages.
   - Ubuntu/Debian: `sudo apt-get install python-html5lib`
   - Mac OSX + MacPorts: `sudo port install py-html5lib`
-  - Other: `pip html5lib`
+  - Other: `pip install html5lib`
 * [easy_install][7]: Only necessary if not using prepackaged
   dependencies. Also, `pip` supersedes it.
   - Ubuntu/Debian: `sudo apt-get install python-setuptools`
