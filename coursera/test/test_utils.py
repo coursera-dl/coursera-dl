@@ -5,9 +5,11 @@ Test the utility functions.
 """
 
 import unittest
+import requests
 import six
 import datetime
 
+from mock import Mock
 from coursera import utils
 from coursera import coursera_dl
 
@@ -90,3 +92,24 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEquals(args.class_names, ['posa-001'])
         self.assertEquals(args.username, 'bob')
         self.assertEquals(args.password, 'bill')
+
+    def get_mock_session(self):
+        page_obj = Mock()
+        page_obj.text = "<page/>"
+        page_obj.raise_for_status = Mock()
+        session = requests.Session()
+        session.get = Mock(return_value=page_obj)
+        return page_obj, session
+
+    def test_get_page(self):
+
+        page_obj, session = self.get_mock_session()
+
+        p = coursera_dl.get_page(session, 'http://www.not.here')
+
+        session.get.assert_called_once_with('http://www.not.here')
+        page_obj.raise_for_status.assert_called_once()
+        self.assertEquals(p,"<page/>")
+
+
+
