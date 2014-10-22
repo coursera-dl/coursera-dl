@@ -3,6 +3,7 @@
 """
 Test the utility functions.
 """
+import os
 
 import unittest
 import requests
@@ -93,9 +94,9 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEquals(args.username, 'bob')
         self.assertEquals(args.password, 'bill')
 
-    def get_mock_session(self):
+    def get_mock_session(self, page_text):
         page_obj = Mock()
-        page_obj.text = "<page/>"
+        page_obj.text = page_text
         page_obj.raise_for_status = Mock()
         session = requests.Session()
         session.get = Mock(return_value=page_obj)
@@ -103,7 +104,7 @@ class UtilsTestCase(unittest.TestCase):
 
     def test_get_page(self):
 
-        page_obj, session = self.get_mock_session()
+        page_obj, session = self.get_mock_session("<page/>")
 
         p = coursera_dl.get_page(session, 'http://www.not.here')
 
@@ -111,5 +112,14 @@ class UtilsTestCase(unittest.TestCase):
         page_obj.raise_for_status.assert_called_once()
         self.assertEquals(p,"<page/>")
 
+    def test_grab_hidden_video_url(self):
 
+        filename = os.path.join(
+            os.path.dirname(__file__), "fixtures", "html",
+            "hidden-videos_2.html")
+
+        page_text = open(filename).read()
+        page_obj, session = self.get_mock_session(page_text)
+        p = coursera_dl.grab_hidden_video_url(session,'http://www.hidden.video')
+        self.assertEquals("video1.mp4",p)
 
