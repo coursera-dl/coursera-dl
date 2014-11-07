@@ -218,7 +218,7 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(session, page, lang, reverse=False, intact_fnames=False):
+def parse_syllabus(session, page, reverse=False, intact_fnames=False, lang=None):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -254,7 +254,7 @@ def parse_syllabus(session, page, lang, reverse=False, intact_fnames=False):
                 fmt = get_anchor_format(href)
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
-                    if fmt == 'mp4':
+                    if fmt == 'mp4' and session:
                         # Get url like "https://class.coursera.org/ml-007/lecture/view?lecture_id=1"
                         # So we can use this to get languages of subtitles
                         subtitles = grab_more_subtitles(session,
@@ -782,9 +782,8 @@ def download_class(args, class_name):
     page = get_syllabus(session, class_name, args.local_page, args.preview)
 
     # parse it
-    # remove blanks in languages
-    sections = parse_syllabus(session, page, args.lang.replace(' ', ''), args.reverse,
-                              args.intact_fnames)
+    sections = parse_syllabus(session, page, args.reverse,
+                              args.intact_fnames, args.lang.replace(' ', ''))
 
     if args.about:
         download_about(session, class_name, args.path, args.overwrite)
