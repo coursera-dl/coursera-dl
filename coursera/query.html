@@ -1,0 +1,33 @@
+$def with (clsname, username, passwd, status, log)
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coursera Downloader</title>
+</head>
+<body>
+    <form action="/delete" method="post">
+        <fieldset>
+            <legend>STATUS</legend>
+            <input type="hidden" name="action" value="delete" />
+            <input type="hidden" name="clsname" value="$clsname" />
+            <input type="hidden" name="username" value="$username" />
+            <input type="hidden" name="passwd" value="$passwd" />
+            <p>Current Status: $status<a href="/">    Go back</a></p>
+            <input type="submit" value="Delete Task" /><br>
+        </fieldset>
+        <fieldset>
+            <legend>LOGFILE</legend>
+            <p>
+                $for line in log:
+                    $if "OK" in line or "saved" in line:
+                        <strong style="color: green">$line.rstrip('\n')</strong> + <br>
+                    $elif "ERR" in line:
+                        <strong style="color: red">$line.rstrip('\n')</strong> + <br>
+                    $else:
+                        $line.rstrip('\n') + <br>
+            </p>
+        </fieldset>
+    </form>
+</body>
+</html>

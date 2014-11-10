@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coursera Downloader</title>
+</head>
+<body>
+    <h1>Coursera Off-line Downloader</h1>
+    <form action="/" method="post">
+        <table border="1">
+            <tr>
+                <th>Items(* for Important)</th>
+                <th>Available Options</th>
+                <th>Friendly Reminder</th>
+            </tr>
+            <tr>
+                <td>* Course Name</td>
+                <td><input type="text" name="clsname" size="30" required="required" /></td>
+                <td>You MUST ensure your password is right.</td>
+            </tr>
+            <tr>
+                <td>* User Name</td>
+                <td><input type="text" name="username" size="30" required="required" /></td>
+                <td>We will NOT record your username!</td>
+            </tr>
+            <tr>
+                <td>* Pass Word</td>
+                <td><input type="password" name="passwd" size="30" required="required" /></td>
+                <td>We will NOT record your password!</td>
+            </tr>
+            <tr>
+                <td>Select Your Action</td>
+                <td>
+                    <input type="radio" name="action" value="add" checked="checked">
+                    Add a task
+                    <input type="radio" name="action" value="query">
+                    Query task
+                </td>
+                <td>You can choose to add a new task or query your submitted task.</td>
+            </tr>
+            <tr>
+                <td>Select Subtitle Lang</td>
+                <td>
+                    <select name="lang">
+                        <option value="en">English</option>
+                        <option value="zh">Chinese</option>
+                        <option value="ko">Korean</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ru">Russian</option>
+                        <option value="it">Italian</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="fa">Farsi</option>
+                        <option value="ar">Arabic</option>
+                        <option value="th">Thai</option>
+                        <option value="vi">Vietnamese</option>
+                        <option value="id">Indonesian</option>
+                        <option value="es">Spanish</option>
+                    </select>
+                </td>
+                <td>The language you prefer may not exist, English subtitles will be downloaded instead.</td>
+            </tr>
+            <tr>
+                <td>Select Downloader</td>
+                <td>
+                    <select name="downloader">
+                        <option value="aria2">Aria2</option>
+                        <option value="python">Python(default)</option>
+                        <option value="wget">Wget</option>
+                        <option value="curl">Curl</option>
+                        <option value="axel">Axel</option>
+                    </select>
+                </td>
+                <td>Aria2 is highly recommend.</td>
+            </tr>
+            <tr>
+                <td>Overwrite Existing Files</td>
+                <td>
+                    <input type="radio" name="overwrite" value="yes" />Yes
+                    <input type="radio" name="overwrite" value="no" checked="checked" /> No
+                </td>
+                <td>Whether existing files should be overwritten.</td>
+            </tr>
+            <tr>
+                <td>Reverse Order</td>
+                <td>
+                    <input type="radio" name="reverse" value="yes" />Yes
+                    <input type="radio" name="reverse" value="no" checked="checked" /> No
+                </td>
+                <td>Whether to download sections in reverse order.</td>
+            </tr>
+
+            <tr>
+                <td>File Formats</td>
+                <td><input type="text" name="fmts" size="15" /></td>
+                <td>Use blank to separate filename extensions!</td>
+            </tr>
+            <tr>
+                <td>Section Filter</td>
+                <td><input type="text" name="sf" size="15" /></td>
+                <td>Only download sections which contain this regex.</td>
+            </tr>
+            <tr>
+                <td>Lecture Filter</td>
+                <td><input type="text" name="lf" size="15" /></td>
+                <td>Only download lectures which contain this regex.</td>
+            </tr>
+            <tr>
+                <td>Resource Filter</td>
+                <td><input type="text" name="rf" size="15" /></td>
+                <td>Only download resources which match this regex.</td>
+            </tr>
+            <tr><td colspan="3"><input type="submit" value="Execute Command" size="15" /></td></tr>
+        </table>
+
+    </form>
+</body>
+</html>

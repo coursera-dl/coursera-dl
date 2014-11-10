@@ -52,6 +52,7 @@ import subprocess
 import sys
 import time
 import glob
+import daemon
 
 from distutils.version import LooseVersion as V
 
@@ -254,7 +255,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False, lang=None)
                 fmt = get_anchor_format(href)
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
-                    if fmt == 'mp4' and session:
+                    if lang and session and fmt == 'mp4':
                         # Get url like "https://class.coursera.org/ml-007/lecture/view?lecture_id=1"
                         # So we can use this to get languages of subtitles
                         subtitles = grab_more_subtitles(session,
@@ -707,14 +708,33 @@ def parseArgs(args=None):
                         '--subtitle',
                         dest='lang',
                         action='store',
-                        default=None,
+                        default='',
                         help='Use this to choose the language of subtitles, '
                              'and if the specified language is not supported, '
                              'then the english subtitles will be downloaded. '
                              'Available options are abbreviation of languages, '
                              'such as, en, zh, ar, es, fa, it...')
+    parser.add_argument('--daemon',
+                        dest='is_daemon',
+                        action='store_true',
+                        default=False,
+                        help='Add this parameter to start the program as a '
+                             'download server. Then you can run this on personal'
+                             'servers such as Raspberry and many other devices.'
+                             'The default port would be 8083, you can then visit'
+                             'http://(IP of server):8083 to add download tasks.')
+    parser.add_argument('--port-num',
+                        dest='port',
+                        action='store',
+                        default=8082,
+                        help='Specify the listening port, default port is 8082.')
 
     args = parser.parse_args(args)
+
+    # When started as a server, program needs less parameters.
+    # So this check is placed at the front.
+    if args.is_daemon:
+        daemon.start_daemon(args.port, args.path)
 
     # Initialize the logging system first so that other functions
     # can use it right away

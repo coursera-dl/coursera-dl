@@ -3,3 +3,4 @@
 .DS_Store
 _cache/
 .coverage
+.idea/
