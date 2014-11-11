@@ -33,13 +33,32 @@ attr_list = [
     'rf'
 ]
 
+msgError = '<h2 style="color:red">%s</h2>'
+msgInfo = '<h2 style="color:green">%s</h2>'
+msgWarn = '<h2 style="color:yellow">%s</h2>'
+msgBlue = '<h2 style="color:blue">%s</h2>'
+
+Error_00 = 'Too many tasks!!!'
+Error_01 = 'Current course is already downloading!'
+Error_03 = 'Attribute "%s" not found!'
+Error_04 = 'Download task not found! Or wrong username/password!'
+Error_05 = 'Unknown command!'
+Error_06 = 'Permission denied!'
+Error_07 = 'Download task is now running!'
+Error_08 = 'Failed to kill task!'
+
+Info_00 = 'Download task successfully added!'
+Info_01 = 'Download task successfully removed!'
+Info_02 = 'Download task successfully restarted!'
+
 
 thread_status = {
-    0: "Not Started",
-    1: "Now Running",
-    2: "Successfully Complete",
-    3: "Error occured while downloading"
+    0: '<strong style="color:blue">%s</strong>' % "Not Started",
+    1: '<strong style="color:yellow">%s</strong>' % "Now Running",
+    2: '<strong style="color:green">%s</strong>' % "Successfully Complete",
+    3: '<strong style="color:red">%s</strong>' % "Error occured while downloading"
 }
+
 
 class Tools:
     @staticmethod
@@ -50,6 +69,7 @@ class Tools:
 class workThread(threading.Thread):
     def __init__(self, data, download_dir):
         threading.Thread.__init__(self)
+        self.data = data
         # The download directory
         self.download_dir = download_dir
         # PIPE object
@@ -105,12 +125,13 @@ class workThread(threading.Thread):
             cmd.append('--resource_filter')
             cmd.append('"%s"' % self.rf)
         cmd.append(self.clsname)
-        print ' '.join(cmd)
+        cmd = ' '.join(cmd)
+        print cmd
         if Debug:
             self.status = 2
         else:
             # self.pipe = subprocess.Popen(cmd)
-            self.pipe = subprocess.Popen(cmd, stderr=self.log_fid, stdout=self.log_fid)
+            self.pipe = subprocess.Popen(cmd, shell=True, stderr=self.log_fid, stdout=self.log_fid)
             return_code = self.pipe.wait()
             if return_code == 0:
                 self.status = 2
@@ -133,17 +154,17 @@ class daemon:
     def add_download(self, data):
         # Check if there are too many threads
         if threading.activeCount() > 20:
-            return '<h2 style="color:red">Too many tasks!!!</h2>'
+            return msgError % Error_00
         # Check if the course is already downloading
         for t in self.ThreadPool:
             if t.clsname == data.get('clsname'):
-                return '<h2 style="color:red">Current course is already downloading!</h2>'
+                return msgError % Error_01
 
         # Create a new download thread and then start it
         new_thread = workThread(data, self.download_dir)
         self.ThreadPool.append(new_thread)
         new_thread.start()
-        return '<h2 style="color:green">Download task successfully added!</h2>'
+        return msgInfo % Info_00
 
     def run_server(self):
         self.app = web.application(urls, globals())
@@ -171,8 +192,8 @@ class index:
         # Try to extract post data
         for attr in attr_list:
             if data.get(attr) is None:
-                return Tools.refreshInfo('<h2 style="color:red">%s</h2>'
-                                         % ('Attribute "%s" not found!' % attr), 3, '/')
+                return Tools.refreshInfo(msgError % (Error_03 % attr), 3, '/')
+
         # Handle this request
         if data['action'] == 'add':
             result = d.add_download(data)
@@ -192,16 +213,15 @@ class index:
                 page = web.template.frender('coursera/query.html')
                 return page(data['clsname'], data['username'], data['passwd'], stat, t.getLog())
             else:
-                return Tools.refreshInfo('<h2 style="color:red">Download task not found! '
-                                         'Or wrong username/password!</h2>', 3, '/')
+                return Tools.refreshInfo(msgError % Error_04, 3, '/')
         else:
-            return Tools.refreshInfo('<h2 style="color:red">Unknown action!</h2>', 3, '/')
+            return Tools.refreshInfo(msgError % Error_05, 3, '/')
 
 
 class delete:
     def GET(self):
         web.header('content-type', 'text/html')
-        return Tools.refreshInfo('<h2 style="color:red">Permission denied!</h2>', 3, '/')
+        return Tools.refreshInfo(msgError % Error_06, 3, '/')
 
     def POST(self):
         web.header('content-type', 'text/html')
@@ -212,20 +232,31 @@ class delete:
             if t.clsname == data['clsname'] and t.username == data['username'] and t.passwd == data['passwd']:
                 pos = i
                 break
+        # If found the task
         if pos != -1:
             t = d.ThreadPool[pos]
             if t.status == 1:
                 if "win" in platform:
-                    return Tools.refreshInfo('<h2 style="color:red">Download task is now running!</h2>', 3, '/')
+                    return Tools.refreshInfo(msgError % Error_07, 3, '/')
                 else:
                     cmd = 'ps aux | grep "%s" | grep -v grep | awk \'{print $2}\' | xargs kill -9' % t.clsname
                     if subprocess.call(cmd, shell=True) != 0:
-                        return Tools.refreshInfo('<h2 style="color:red">Failed to kill task!</h2>', 3, '/')
+                        return Tools.refreshInfo(msgError % Error_08, 3, '/')
+            # Now previous download task is removed
+            t.log_fid.close()
             d.ThreadPool.pop(pos)
-            return Tools.refreshInfo('<h2 style="color:blue">Download task removed!</h2>', 3, '/')
+            # See if we need to start a new one
+            if data.get('action') == 'del':
+                return Tools.refreshInfo(msgInfo % Info_01, 3, '/')
+            elif data.get('action') == 'restart':
+                new_thread = workThread(t.data, d.download_dir)
+                d.ThreadPool.append(new_thread)
+                new_thread.start()
+                return Tools.refreshInfo(msgInfo % Info_02, 3, '/')
+            else:
+                return Tools.refreshInfo(msgError % Error_05, 3, '/')
         else:
-            return Tools.refreshInfo('<h2 style="color:red">Download task not found! '
-                                         'Or wrong username/password!</h2>', 3, '/')
+            return Tools.refreshInfo(msgError % Error_04, 3, '/')
 
 
 def start_daemon(port_num, download_dir=gettempdir()):

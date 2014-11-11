@@ -219,7 +219,7 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(session, page, reverse=False, intact_fnames=False, lang=None):
+def parse_syllabus(session, page, reverse=False, intact_fnames=False, lang=''):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
