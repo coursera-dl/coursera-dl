@@ -13,7 +13,7 @@ $def with (clsname, username, passwd, status, log)
             <input type="hidden" name="clsname" value="$clsname" />
             <input type="hidden" name="username" value="$username" />
             <input type="hidden" name="passwd" value="$passwd" />
-            <h2>Current Status: $status</h2>
+            <p>Current Status: $:status</p>
             Delete Task<input type="radio" checked="checked" name="action" value="del" />
             Restart Task<input type="radio" name="action" value="restart" />
             <input type="submit" value="Execute Command" />    <a href="/">Go back</a><br>

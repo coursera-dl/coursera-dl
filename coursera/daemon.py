@@ -53,10 +53,10 @@ Info_02 = 'Download task successfully restarted!'
 
 
 thread_status = {
-    0: '<strong style="color:blue">%s</strong>' % "Not Started",
-    1: '<strong style="color:yellow">%s</strong>' % "Now Running",
-    2: '<strong style="color:green">%s</strong>' % "Successfully Complete",
-    3: '<strong style="color:red">%s</strong>' % "Error occured while downloading"
+    0: '<strong style="color: blue">%s</strong>' % "Not Started",
+    1: '<strong style="color: yellow">%s</strong>' % "Now Running",
+    2: '<strong style="color: green">%s</strong>' % "Successfully Complete",
+    3: '<strong style="color: red">%s</strong>' % "Error occured while downloading"
 }
 
 
