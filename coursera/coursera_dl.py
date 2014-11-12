@@ -52,7 +52,7 @@ import subprocess
 import sys
 import time
 import glob
-import daemon
+from daemon import start_daemon
 
 from distutils.version import LooseVersion as V
 
@@ -734,7 +734,7 @@ def parseArgs(args=None):
     # When started as a server, program needs less parameters.
     # So this check is placed at the front.
     if args.is_daemon:
-        daemon.start_daemon(args.port, args.path)
+        start_daemon(args.port, args.path)
 
     # Initialize the logging system first so that other functions
     # can use it right away

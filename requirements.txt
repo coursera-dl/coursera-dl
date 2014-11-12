@@ -5,12 +5,3 @@ nose>=1.3.0
 requests>=2.2.1
 six>=1.3.0
 web.py>=0.37
-utils
-db
-net
-wsgi
-http
-webapi
-httpserver
-debugerror
-
