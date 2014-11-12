@@ -2,11 +2,18 @@
 <html>
 <head>
     <title>Coursera Downloader</title>
+    <link href="assets/css/styles.css" rel="stylesheet" type="text/css" />
+    <script src="assets/js/fort.min.js"></script>
+    <link href="assets/css/fort.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+  <div class="top">
+    <div class="colors"></div>
+  </div>
+  <div class="form">
     <h1>Coursera Off-line Downloader</h1>
     <form action="/" method="post">
-        <table border="1">
+        <table>
             <tr>
                 <th>Items(* for Important)</th>
                 <th>Available Options</th>
@@ -14,31 +21,29 @@
             </tr>
             <tr>
                 <td>* Course Name</td>
-                <td><input type="text" name="clsname" size="30" required="required" /></td>
+                <td><input type="text" name="clsname" required="required" /></td>
                 <td>You MUST ensure your password is right.</td>
             </tr>
             <tr>
                 <td>* User Name</td>
-                <td><input type="text" name="username" size="30" required="required" /></td>
+                <td><input type="text" name="username" required="required" /></td>
                 <td>We will NOT record your username!</td>
             </tr>
             <tr>
                 <td>* Pass Word</td>
-                <td><input type="password" name="passwd" size="30" required="required" /></td>
+                <td><input type="password" name="passwd" required="required" /></td>
                 <td>We will NOT record your password!</td>
             </tr>
             <tr>
-                <td>Select Your Action</td>
+                <td>Action</td>
                 <td>
-                    <input type="radio" name="action" value="add" checked="checked">
-                    Add a task
-                    <input type="radio" name="action" value="query">
-                    Query task
+                    <lable><input type="radio" name="action" value="add" checked="checked" class="">Add</lable>
+                    <lable><input type="radio" name="action" value="query">Query</lable>
                 </td>
                 <td>You can choose to add a new task or query your submitted task.</td>
             </tr>
             <tr>
-                <td>Select Subtitle Lang</td>
+                <td>Subtitle lang. </td>
                 <td>
                     <select name="lang">
                         <option value="en">English</option>
@@ -59,7 +64,7 @@
                 <td>The language you prefer may not exist, English subtitles will be downloaded instead.</td>
             </tr>
             <tr>
-                <td>Select Downloader</td>
+                <td>Downloader</td>
                 <td>
                     <select name="downloader">
                         <option value="aria2">Aria2</option>
@@ -72,7 +77,7 @@
                 <td>Aria2 is highly recommend.</td>
             </tr>
             <tr>
-                <td>Overwrite Existing Files</td>
+                <td>Overwrite? </td>
                 <td>
                     <input type="radio" name="overwrite" value="yes" />Yes
                     <input type="radio" name="overwrite" value="no" checked="checked" /> No
@@ -108,9 +113,15 @@
                 <td><input type="text" name="rf" size="15" /></td>
                 <td>Only download resources which match this regex.</td>
             </tr>
-            <tr><td colspan="3"><input type="submit" value="Execute Command" size="15" /></td></tr>
+            <tr><td></d><td colspan="2"><button type="submit">Execute Command</button></td></tr>
         </table>
 
     </form>
+  </div>
+      <script src="assets/js/scripts.js" type="text/javascript"></script>
+      <script src="assets/js/jquery.min.js" type="text/javascript"></script>
+      <script>
+        gradient();
+      </script>
 </body>
 </html>

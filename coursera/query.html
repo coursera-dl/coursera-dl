@@ -4,8 +4,10 @@ $def with (clsname, username, passwd, status, log)
 <html>
 <head>
     <title>Coursera Downloader</title>
+    <link href="assets/css/styles.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<div class="main">
     <form action="/delete" method="post">
         <fieldset>
             <legend>STATUS</legend>
@@ -14,7 +16,7 @@ $def with (clsname, username, passwd, status, log)
             <input type="hidden" name="username" value="$username" />
             <input type="hidden" name="passwd" value="$passwd" />
             <p>Current Status: $status<a href="/">    Go back</a></p>
-            <input type="submit" value="Delete Task" /><br>
+            <button type="submit" id="delete">Delete Task</button><br>
         </fieldset>
         <fieldset>
             <legend>LOGFILE</legend>
@@ -29,5 +31,8 @@ $def with (clsname, username, passwd, status, log)
             </p>
         </fieldset>
     </form>
+</div>
+<script src="assets/js/scripts.js" type="text/javascript"></script>
+<script src="assets/js/jquery.min.js" type="text/javascript"></script>
 </body>
 </html>
