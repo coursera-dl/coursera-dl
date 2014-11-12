@@ -15,26 +15,19 @@ $def with (clsname, username, passwd, status, log)
             <input type="hidden" name="clsname" value="$clsname" />
             <input type="hidden" name="username" value="$username" />
             <input type="hidden" name="passwd" value="$passwd" />
-<<<<<<< HEAD
-            <p>Current Status: $:status</p>
-            Delete Task<input type="radio" checked="checked" name="action" value="del" />
-            Restart Task<input type="radio" name="action" value="restart" />
-            <input type="submit" value="Execute Command" />    <a href="/">Go back</a><br>
-=======
             <p>Current Status: $status<a href="/">    Go back</a></p>
             <button type="submit" id="delete">Delete Task</button><br>
->>>>>>> 37ded0b535263e316ec6c4a3c93df4a40850ed24
         </fieldset>
         <fieldset>
             <legend>LOGFILE</legend>
             <p>
                 $for line in log:
                     $if "OK" in line or "saved" in line:
-                        <strong style="color: green">$line.rstrip('\n')</strong> <br>
+                        <strong style="color: green">$line.rstrip('\n')</strong><br>
                     $elif "ERR" in line:
-                        <strong style="color: red">$line.rstrip('\n')</strong> <br>
+                        <strong style="color: red">$line.rstrip('\n')</strong><br>
                     $else:
-                        $line.rstrip('\n') <br>
+                        $line.rstrip('\n')<br>
             </p>
         </fieldset>
     </form>
