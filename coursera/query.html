@@ -4,7 +4,7 @@ $def with (clsname, username, passwd, status, log)
 <html>
 <head>
     <title>Coursera Downloader</title>
-    <link href="assets/css/styles.css" rel="stylesheet" type="text/css" />
+    <link href="static/css/styles.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div class="main">
@@ -15,24 +15,26 @@ $def with (clsname, username, passwd, status, log)
             <input type="hidden" name="clsname" value="$clsname" />
             <input type="hidden" name="username" value="$username" />
             <input type="hidden" name="passwd" value="$passwd" />
-            <p>Current Status: $status<a href="/">    Go back</a></p>
-            <button type="submit" id="delete">Delete Task</button><br>
+            <p>Current Status: $:status</p>
+            Delete Task<input type="radio" checked="checked" name="action" value="del" />
+            Restart Task<input type="radio" name="action" value="restart" />  <a href="/">Go back</a><br><br>
+            <button type="submit" id="delete">Execute</button>
         </fieldset>
         <fieldset>
             <legend>LOGFILE</legend>
             <p>
                 $for line in log:
                     $if "OK" in line or "saved" in line:
-                        <strong style="color: green">$line.rstrip('\n')</strong><br>
+                        <strong style="color: green">$line.rstrip('\n')</strong> <br>
                     $elif "ERR" in line:
-                        <strong style="color: red">$line.rstrip('\n')</strong><br>
+                        <strong style="color: red">$line.rstrip('\n')</strong> <br>
                     $else:
-                        $line.rstrip('\n')<br>
+                        $line.rstrip('\n') <br>
             </p>
         </fieldset>
     </form>
 </div>
-<script src="assets/js/scripts.js" type="text/javascript"></script>
-<script src="assets/js/jquery.min.js" type="text/javascript"></script>
+<script src="static/js/scripts.js" type="text/javascript"></script>
+<script src="static/js/jquery.min.js" type="text/javascript"></script>
 </body>
 </html>

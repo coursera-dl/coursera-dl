@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>Coursera Downloader</title>
-    <link href="assets/css/styles.css" rel="stylesheet" type="text/css" />
-    <script src="assets/js/fort.min.js"></script>
-    <link href="assets/css/fort.min.css" rel="stylesheet" type="text/css" />
+    <link href="static/css/styles.css" rel="stylesheet" type="text/css" />
+    <script src="static/js/fort.min.js"></script>
+    <link href="static/css/fort.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
   <div class="top">
@@ -15,22 +15,22 @@
     <form action="/" method="post">
         <table>
             <tr>
-                <th>Items(* for Important)</th>
+                <th>Items</th>
                 <th>Available Options</th>
                 <th>Friendly Reminder</th>
             </tr>
             <tr>
-                <td>* Course Name</td>
+                <td>Course</td>
                 <td><input type="text" name="clsname" required="required" /></td>
-                <td>You MUST ensure your password is right.</td>
+                <td>You MUST ensure your course name is right.</td>
             </tr>
             <tr>
-                <td>* User Name</td>
+                <td>User Name</td>
                 <td><input type="text" name="username" required="required" /></td>
                 <td>We will NOT record your username!</td>
             </tr>
             <tr>
-                <td>* Pass Word</td>
+                <td>Pass Word</td>
                 <td><input type="password" name="passwd" required="required" /></td>
                 <td>We will NOT record your password!</td>
             </tr>
@@ -43,7 +43,7 @@
                 <td>You can choose to add a new task or query your submitted task.</td>
             </tr>
             <tr>
-                <td>Subtitle lang. </td>
+                <td>Subtitle lang</td>
                 <td>
                     <select name="lang">
                         <option value="en">English</option>
@@ -77,7 +77,7 @@
                 <td>Aria2 is highly recommend.</td>
             </tr>
             <tr>
-                <td>Overwrite? </td>
+                <td>Overwrite ?</td>
                 <td>
                     <input type="radio" name="overwrite" value="yes" />Yes
                     <input type="radio" name="overwrite" value="no" checked="checked" /> No
@@ -118,8 +118,8 @@
 
     </form>
   </div>
-      <script src="assets/js/scripts.js" type="text/javascript"></script>
-      <script src="assets/js/jquery.min.js" type="text/javascript"></script>
+      <script src="static/js/scripts.js" type="text/javascript"></script>
+      <script src="static/js/jquery.min.js" type="text/javascript"></script>
       <script>
         gradient();
       </script>

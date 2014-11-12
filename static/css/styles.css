@@ -181,3 +181,5 @@ fieldset {
     background: #f33;
     top: 2px;
 }
+
+p {word-break:break-all;}
