@@ -1,0 +1,183 @@
+body {
+    font-family: "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    background: #eee;
+}
+
+.form, .main {
+    width: 768px;
+    max-width: 95%;
+    margin: 0 auto;
+}
+
+.form h1 {
+    text-align: center;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse
+}
+
+td,th {
+    padding: 0
+}
+
+th {
+    text-align: left
+}
+
+table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px
+}
+
+table>thead>tr>th,table>tbody>tr>th,table>tfoot>tr>th,table>thead>tr>td,table>tbody>tr>td,table>tfoot>tr>td {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd
+}
+
+table>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd
+}
+
+table {
+    background-color: transparent
+}
+
+caption {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: #777;
+    text-align: left
+}
+
+th {
+    text-align: left;
+    border-bottom: 2px solid #ccc;
+}
+
+table>caption+thead>tr:first-child>th,table>colgroup+thead>tr:first-child>th,table>thead:first-child>tr:first-child>th,table>caption+thead>tr:first-child>td,table>colgroup+thead>tr:first-child>td,table>thead:first-child>tr:first-child>td {
+    border-top: 0
+}
+
+table>tbody+tbody {
+    border-top: 2px solid #ddd
+}
+
+table table {
+    background-color: #fff
+}
+
+input[type="text"], input[type="password"], select {
+    display: block;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s
+}
+
+button {
+    padding: 25px 120px 25px 60px;
+    color: #111;
+    background-color: #e6e6ff;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    padding: 25px 80px;
+    display: inline-block;
+    margin: 15px 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    outline: none;
+    position: relative;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+    padding: 25px 120px 25px 60px;
+    overflow: hidden;
+}
+
+button:before {
+    content: ">>";
+    left: auto;
+    right: 10px;
+    top: 0;
+    z-index: 2;
+    position: absolute;
+    height: 100%;
+    line-height: 3;
+    font-size: 140%;
+    width: 60px;
+}
+
+button:after {
+    content: '';
+    position: absolute;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+    width: 20%;
+    height: 200%;
+    background: rgba(245,245,255,0.4);
+    z-index: 1;
+    right: 0;
+    top: 0;
+    margin: -5px 0 0 -5px;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: rotate(-20deg);
+    -moz-transform-origin: 0 0;
+    -moz-transform: rotate(-20deg);
+    -ms-transform-origin: 0 0;
+    -ms-transform: rotate(-20deg);
+    transform-origin: 0 0;
+    transform: rotate(-20deg);
+}
+
+button:hover:after {
+    width: 30%;
+}
+
+button:hover {
+    background: #66f;
+}
+
+button:active {
+    background: #33f;
+    top: 2px;
+}
+
+fieldset {
+    background: #f6f6f6;
+}
+
+#delete:before {
+    content: 'X'
+}
+
+#delete {
+    background-color: #ffe6e6;
+}
+
+#delete:hover {
+    background: #f66;
+}
+
+#delete:active {
+    background: #f33;
+    top: 2px;
+}
