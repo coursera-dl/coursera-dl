@@ -72,7 +72,7 @@ except ImportError:
 from .cookies import (
     AuthenticationFailed, ClassNotFound,
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
-from .credentials import get_credentials, CredentialsError
+from .credentials import get_credentials, CredentialsError, keyring
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
 from .downloaders import get_downloader
@@ -604,6 +604,13 @@ def parseArgs(args=None):
                         default=None,
                         help='coursera password')
 
+    parser.add_argument('-k',
+                        '--keyring',
+                        dest='use_keyring',
+                        action='store_true',
+                        default=False,
+                        help='use keyring provided by operating system to '
+                             'save and load credentials')
     # optional
     parser.add_argument('--about',
                         dest='about',
@@ -808,6 +815,14 @@ def parseArgs(args=None):
             sys.exit(1)
 
     # check arguments
+    if args.use_keyring and args.password:
+        logging.warning('--keyring and --password cannot be specified together')
+        args.use_keyring = False
+
+    if args.use_keyring and not keyring:
+        logging.warning('The python module `keyring` not found.')
+        args.use_keyring = False
+
     if args.cookies_file and not os.path.exists(args.cookies_file):
         logging.error('Cookies file not found: %s', args.cookies_file)
         sys.exit(1)
@@ -816,7 +831,7 @@ def parseArgs(args=None):
         try:
             args.username, args.password = get_credentials(
                 username=args.username, password=args.password,
-                netrc=args.netrc)
+                netrc=args.netrc, use_keyring=args.use_keyring)
         except CredentialsError as e:
             logging.error(e)
             sys.exit(1)
