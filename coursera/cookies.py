@@ -8,7 +8,6 @@ import logging
 import os
 
 import requests
-import six
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
