@@ -3,12 +3,12 @@
 """
 Test the utility functions.
 """
+import datetime
 import os
-
 import unittest
+
 import requests
 import six
-import datetime
 
 from mock import Mock
 from coursera import utils
