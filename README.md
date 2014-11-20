@@ -101,6 +101,8 @@ In any case, you may want to install:
 * [easy_install][7]: Only necessary if not using prepackaged
   dependencies. Also, `pip` supersedes it.
   - Ubuntu/Debian: `sudo apt-get install python-setuptools`
+* [keyring][20]: Optional. For storing credentials in system keyring (Mac OS X Keychain, Linux Secret Service, Windows Credential Vault).
+  - All: `pip install keyring`
 
 Again, make sure that you have the versions mentioned in the file
 `requirements.txt` (later versions may be OK).
@@ -302,6 +304,7 @@ first last at geemail dotcom or [@jplehmann][12]
 [17]: http://www.pip-installer.org/en/latest/
 [18]: http://python-distribute.org/pip_distribute.png
 [19]: https://pypi.python.org/pypi/six/
+[20]: https://pypi.python.org/pypi/keyring
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

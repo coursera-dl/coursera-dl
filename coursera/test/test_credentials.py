@@ -48,13 +48,13 @@ class CredentialsTestCase(unittest.TestCase):
         self.assertEquals(username, 'user')
         self.assertEquals(password, 'pass')
 
-    def test_get_credentials_with_username_given(self):
+    def test_get_credentials_with_username_given(self, use_keyring=False):
         import getpass
         _getpass = getpass.getpass
         getpass.getpass = lambda x: 'pass'
 
         username, password = credentials.get_credentials(
-            username='user')
+            username='user', use_keyring=use_keyring)
         self.assertEquals(username, 'user')
         self.assertEquals(password, 'pass')
 
@@ -64,3 +64,14 @@ class CredentialsTestCase(unittest.TestCase):
         self.assertRaises(
             credentials.CredentialsError,
             credentials.get_credentials)
+
+    def test_get_credentials_with_keyring(self):
+        if not credentials.keyring:
+            return None
+        self.test_get_credentials_with_username_given(True)
+
+        # Test again, this time without getpass
+        username, password = credentials.get_credentials(
+            username='user', use_keyring=True)
+        self.assertEquals(username, 'user')
+        self.assertEquals(password, 'pass')
