@@ -22,7 +22,8 @@ else:
 if six.PY2:
     def decode_input(x):
         stdin_encoding = sys.stdin.encoding
-        if stdin_encoding is None: stdin_encoding = "UTF-8"
+        if stdin_encoding is None:
+            stdin_encoding = "UTF-8"
         return x.decode(stdin_encoding)
 else:
     def decode_input(x):
@@ -31,7 +32,7 @@ else:
 
 def clean_filename(s, minimal_change=False):
     """
-   Sanitize a string to be used as a filename.
+    Sanitize a string to be used as a filename.
 
     If minimal_change is set to true, then we only strip the bare minimum of
     characters that are problematic for filesystems (namely, ':', '/' and
@@ -50,7 +51,7 @@ def clean_filename(s, minimal_change=False):
         return s
 
     s = s.replace('(', '').replace(')', '')
-    s = s.rstrip('.') # Remove excess of trailing dots
+    s = s.rstrip('.')  # Remove excess of trailing dots
 
     s = s.replace('nbsp', '')
     s = s.strip().replace(' ', '_')
@@ -66,7 +67,7 @@ def get_anchor_format(a):
     # (. or format=) then (file_extension) then (? or $)
     # e.g. "...format=txt" or "...download.mp4?..."
     fmt = re.search(r"(?:\.|format=)(\w+)(?:\?.*)?$", a)
-    return (fmt.group(1) if fmt else None)
+    return fmt.group(1) if fmt else None
 
 
 def mkdir_p(path, mode=0o777):

@@ -40,7 +40,6 @@ Legalese:
 """
 
 
-
 import argparse
 import datetime
 import json
@@ -258,7 +257,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
             for fmt in lecture:
                 count = len(lecture[fmt])
                 for i, r in enumerate(lecture[fmt]):
-                    if (count == i + 1):
+                    if count == i + 1:
                         # for backward compatibility, we do not add the title
                         # to the filename (format_combine_number_resource and
                         # format_resource)
@@ -303,12 +302,12 @@ def download_about(session, class_name, path='', overwrite=False):
     logging.info('Downloading about page from: %s', about_url)
     about_json = get_page(session, about_url)
     data = json.loads(about_json)["elements"]
-    
+
     for element in data:
         if element["shortName"] == base_class_name:
             with open(about_fn, 'w') as about_file:
                 json_data = json.dumps(element, indent=4,
-                    separators=(',', ':'))
+                                       separators=(',', ':'))
                 about_file.write(json_data)
             break
 
@@ -448,7 +447,7 @@ def total_seconds(td):
     Added for backward compatibility, pre 2.7.
     """
     return (td.microseconds +
-           (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
+            (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
 
 
 def parseArgs(args=None):
