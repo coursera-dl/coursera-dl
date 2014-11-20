@@ -1,6 +1,0 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from coursera import coursera_dl
-
-coursera_dl.main()

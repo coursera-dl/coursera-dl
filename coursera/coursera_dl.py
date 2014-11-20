@@ -791,7 +791,3 @@ def main():
     if completed_classes:
         logging.info(
             "Classes which appear completed: " + " ".join(completed_classes))
-
-
-if __name__ == '__main__':
-    main()
