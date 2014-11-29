@@ -3,11 +3,14 @@
 """
 Test the utility functions.
 """
-
-import unittest
-import six
 import datetime
+import os
+import unittest
 
+import requests
+import six
+
+from mock import Mock
 from coursera import utils
 from coursera import coursera_dl
 
@@ -72,21 +75,47 @@ class UtilsTestCase(unittest.TestCase):
             str("/home/user/темп"),
             str("22少女時代22")]
 
-        for encoded_input in encoded_inputs:  
+        for encoded_input in encoded_inputs:
             decoded_input = utils.decode_input(encoded_input)
             self.assertTrue(isinstance(decoded_input, six.text_type),
-            "Decoded input is not a text type.")
+                            "Decoded input is not a text type.")
 
     def test_total_seconds(self):
-
         ts = coursera_dl.total_seconds(datetime.timedelta(days=30))
-        self.assertEquals(ts,2592000)
+        self.assertEquals(ts, 2592000)
 
     def test_parse_args(self):
-
         args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])
 
         self.assertEquals(args.about, False)
         self.assertEquals(args.class_names, ['posa-001'])
         self.assertEquals(args.username, 'bob')
         self.assertEquals(args.password, 'bill')
+
+    def get_mock_session(self, page_text):
+        page_obj = Mock()
+        page_obj.text = page_text
+        page_obj.raise_for_status = Mock()
+        session = requests.Session()
+        session.get = Mock(return_value=page_obj)
+        return page_obj, session
+
+    def test_get_page(self):
+        page_obj, session = self.get_mock_session('<page/>')
+
+        p = coursera_dl.get_page(session, 'http://www.not.here')
+
+        session.get.assert_called_once_with('http://www.not.here')
+        page_obj.raise_for_status.assert_called_once()
+        self.assertEquals(p, '<page/>')
+
+    def test_grab_hidden_video_url(self):
+        filename = os.path.join(
+            os.path.dirname(__file__), "fixtures", "html",
+            "hidden-videos_2.html")
+
+        page_text = open(filename).read()
+        page_obj, session = self.get_mock_session(page_text)
+        p = coursera_dl.grab_hidden_video_url(session,
+                                              'http://www.hidden.video')
+        self.assertEquals('video1.mp4', p)

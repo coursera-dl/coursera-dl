@@ -8,7 +8,6 @@ import logging
 import os
 
 import requests
-import six
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
@@ -100,7 +99,7 @@ def login(session, class_name, username, password):
     data = {
         'email': username,
         'password': password,
-        'webrequest':'true'
+        'webrequest': 'true'
     }
 
     r = session.post(AUTH_URL, data=data,

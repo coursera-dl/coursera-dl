@@ -8,8 +8,6 @@ Test syllabus parsing.
 import os.path
 import unittest
 
-import six
-
 from coursera import cookies
 
 FIREFOX_COOKIES = \
