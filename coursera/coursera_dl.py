@@ -51,6 +51,7 @@ import subprocess
 import sys
 import time
 import glob
+from daemon import start_daemon
 
 from distutils.version import LooseVersion as V
 
@@ -137,6 +138,32 @@ def grab_hidden_video_url(session, href):
         return None
 
 
+def grab_more_subtitles(session, href):
+    """
+    Follow some extra redirects to grab more subtitles for the videos.  We
+    return a list of tuples, where each tuple is a pair of the form language
+    and URL. An example of a tuple:
+
+    ('pt',
+    'https://class.coursera.org/introfinance-005/lecture/subtitles?q=188_pt')
+    """
+    try:
+        page = get_page(session, href)
+    except requests.exceptions.HTTPError:
+        return None
+
+    soup = BeautifulSoup(page)
+    l = soup.findAll('track', attrs={'kind': 'subtitles'})
+
+    if l is not None:
+        subtitles = {}
+        for i in l:
+            subtitles[i['srclang']] = i['src']
+        return subtitles
+    else:
+        return None
+
+
 def get_syllabus(session, class_name, local_page=False, preview=False):
     """
     Get the course listing webpage.
@@ -191,7 +218,7 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(session, page, reverse=False, intact_fnames=False):
+def parse_syllabus(session, page, reverse=False, intact_fnames=False, lang=''):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -218,6 +245,8 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
             lecture = {}
             lecture_page = None
 
+            subtitles = {}
+
             for a in vtag.findAll('a'):
                 href = fix_url(a['href'])
                 untouched_fname = a.get('title', '')
@@ -225,6 +254,11 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
                 fmt = get_anchor_format(href)
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
+                    if lang and session and fmt == 'mp4':
+                        # Get url like "https://class.coursera.org/ml-007/lecture/view?lecture_id=1"
+                        # So we can use this to get languages of subtitles
+                        subtitles = grab_more_subtitles(session,
+                        href.replace(href.split('/')[-1], "") + "view?" + href.split('?')[-1])
                     lecture[fmt] = lecture.get(fmt, [])
                     lecture[fmt].append((href, title))
                     continue
@@ -253,6 +287,12 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
                         if href is not None:
                             lecture[fmt] = lecture.get(fmt, [])
                             lecture[fmt].append((href, ''))
+
+            if lang and subtitles and lang in subtitles and 'srt' in lecture:
+                # When user specified language, and we can get subtitles,
+                # and the language exists, and there are subtitles for lecture
+                # then we overwrite the first item for backward compatibility
+                lecture['srt'][0] = (subtitles[lang], lecture['srt'][0][1])
 
             for fmt in lecture:
                 count = len(lecture[fmt])
@@ -663,9 +703,37 @@ def parseArgs(args=None):
                         action='store_true',
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
+    parser.add_argument('-s',
+                        '--subtitle',
+                        dest='lang',
+                        action='store',
+                        default='',
+                        help='Use this to choose the language of subtitles, '
+                             'and if the specified language is not supported, '
+                             'then the english subtitles will be downloaded. '
+                             'Available options are abbreviation of languages, '
+                             'such as, en, zh, ar, es, fa, it...')
+    parser.add_argument('--daemon',
+                        dest='is_daemon',
+                        action='store_true',
+                        default=False,
+                        help='Add this parameter to start the program as a '
+                             'download server. Then you can run this on personal'
+                             'servers such as Raspberry and many other devices.'
+                             'The default port would be 8083, you can then visit'
+                             'http://(IP of server):8083 to add download tasks.')
+    parser.add_argument('--port-num',
+                        dest='port',
+                        action='store',
+                        default=8082,
+                        help='Specify the listening port, default port is 8082.')
 
     args = parser.parse_args(args)
 
+    # When started as a server, program needs less parameters.
+    # So this check is placed at the front.
+    if args.is_daemon:
+        start_daemon(args.port, args.path)
 
     # Initialize the logging system first so that other functions
     # can use it right away
@@ -734,7 +802,7 @@ def download_class(args, class_name):
 
     # parse it
     sections = parse_syllabus(session, page, args.reverse,
-                              args.intact_fnames)
+                              args.intact_fnames, args.lang.replace(' ', ''))
 
     if args.about:
         download_about(session, class_name, args.path, args.overwrite)
