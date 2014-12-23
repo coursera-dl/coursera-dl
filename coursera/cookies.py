@@ -11,8 +11,8 @@ import requests
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
-from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
-from .utils import mkdir_p
+from define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
+from utils import mkdir_p
 
 
 # Monkey patch cookielib.Cookie.__init__.
@@ -47,7 +47,7 @@ def __fixed_init__(self, version, name, value,
                      rest,
                      rfc2109=False,)
 
-cookielib.Cookie.__init__ = __fixed_init__
+#cookielib.Cookie.__init__ = __fixed_init__
 
 
 class ClassNotFound(BaseException):
@@ -62,7 +62,7 @@ class AuthenticationFailed(BaseException):
     """
 
 
-def login(session, class_name, username, password):
+def login(session, username, password):
     """
     Login on accounts.coursera.org with the given credentials.
     This adds the following cookies to the session:
@@ -75,40 +75,63 @@ def login(session, class_name, username, password):
         pass
 
     # Hit class url to obtain csrf_token
-    class_url = CLASS_URL.format(class_name=class_name)
-    r = requests.get(class_url, allow_redirects=False)
-
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logging.error(e)
-        raise ClassNotFound(class_name)
-
-    csrftoken = r.cookies.get('csrf_token')
-
-    if not csrftoken:
-        raise AuthenticationFailed('Did not recieve csrf_token cookie.')
+    # Not Neccessary
+#    class_url = CLASS_URL.format(class_name=class_name)
+#    r = requests.get(class_url, allow_redirects=False)
+#
+#    try:
+#        r.raise_for_status()
+#    except requests.exceptions.HTTPError as e:
+#        logging.error(e)
+#        raise ClassNotFound(class_name)
+#
+#    csrftoken = r.cookies.get('csrf_token')
+#
+#    if not csrftoken:
+#        raise AuthenticationFailed('Did not recieve csrf_token cookie.')
+#        
+        
+    
 
     # Now make a call to the authenticator url.
-    headers = {
-        'Cookie': 'csrftoken=' + csrftoken,
-        'Referer': 'https://accounts.coursera.org/signin',
-        'X-CSRFToken': csrftoken,
-    }
+    import random
+    import string
+    def randomString(length):
+        return ''.join(random.choice(string.letters + string.digits) for i in xrange(length))
+    
+    user_agent = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) "
+              "AppleWebKit/537.36 (KHTML, like Gecko) "
+              "Chrome/36.0.1985.143 Safari/537.36")   
+    XCSRF2Cookie = 'csrf2_token_%s' % ''.join(randomString(8))
+    XCSRF2Token = ''.join(randomString(24))
+    XCSRFToken = ''.join(randomString(24))
+    cookie = "csrftoken=%s; %s=%s" % (XCSRFToken, XCSRF2Cookie, XCSRF2Token)
 
+    headers = {"User-Agent": user_agent,
+                "Referer": "https://accounts.coursera.org/signin",
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRF2-Cookie": XCSRF2Cookie,
+                "X-CSRF2-Token": XCSRF2Token,
+                "X-CSRFToken": XCSRFToken,
+                "Cookie": cookie
+                }
+                
     data = {
         'email': username,
         'password': password,
         'webrequest': 'true'
     }
-
+    
     r = session.post(AUTH_URL, data=data,
                      headers=headers, allow_redirects=False)
+                     
     try:
         r.raise_for_status()
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.HTTPError as e:
+        print e
         raise AuthenticationFailed('Cannot login on accounts.coursera.org.')
 
+    print "Done."
     logging.info('Logged in on accounts.coursera.org.')
 
 
@@ -122,6 +145,7 @@ def down_the_wabbit_hole(session, class_name):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError:
+        pass
         raise AuthenticationFailed('Cannot login on class.coursera.org.')
 
 
@@ -152,7 +176,7 @@ def get_authentication_cookies(session, class_name, username, password):
     if session.cookies.get('CAUTH', domain=".coursera.org"):
         logging.debug('Already logged in on accounts.coursera.org.')
     else:
-        login(session, class_name, username, password)
+        login(session, username, password)
 
     _get_authentication_cookies(
         session, class_name, username, password)
