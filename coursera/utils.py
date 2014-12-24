@@ -6,6 +6,7 @@ This module provides utility functions that are used within the script.
 
 import errno
 import os
+import random
 import re
 import string
 import sys
@@ -18,6 +19,14 @@ if six.PY3:  # pragma: no cover
 else:
     from urlparse import urlparse
 
+# Python3 (and six) don't provide string
+if six.PY3:
+    from string import ascii_letters as string_ascii_letters
+    from string import digits as string_digits
+else:
+    from string import letters as string_ascii_letters
+    from string import digits as string_digits
+
 
 if six.PY2:
     def decode_input(x):
@@ -28,6 +37,15 @@ if six.PY2:
 else:
     def decode_input(x):
         return x
+
+
+def random_string(length):
+    """
+    Return a pseudo-random string of specified length.
+    """
+    valid_chars = string_ascii_letters + string_digits
+
+    return ''.join(random.choice(valid_chars) for i in range(length))
 
 
 def clean_filename(s, minimal_change=False):
