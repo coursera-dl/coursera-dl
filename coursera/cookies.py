@@ -12,8 +12,7 @@ import requests
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
 from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
-from .utils import mkdir_p
-
+from .utils import mkdir_p, random_string
 
 # Monkey patch cookielib.Cookie.__init__.
 # Reason: The expires value may be a decimal string,
@@ -90,10 +89,16 @@ def login(session, class_name, username, password):
         raise AuthenticationFailed('Did not recieve csrf_token cookie.')
 
     # Now make a call to the authenticator url.
+    csrf2cookie = 'csrf2_token_%s' % random_string(8)
+    csrf2token = random_string(24)
+    cookie = "csrftoken=%s; %s=%s" % (csrftoken, csrf2cookie, csrf2token)
+
     headers = {
-        'Cookie': 'csrftoken=' + csrftoken,
+        'Cookie': cookie,
         'Referer': 'https://accounts.coursera.org/signin',
         'X-CSRFToken': csrftoken,
+        'X-CSRF2-Cookie': csrf2cookie,
+        'X-CSRF2-Token': csrf2token,
     }
 
     data = {
