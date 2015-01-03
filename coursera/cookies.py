@@ -68,10 +68,12 @@ def login(session, class_name, username, password):
         sessionid, maestro_login, maestro_login_flag
     """
 
+    logging.debug('Initiating login.')
     try:
         session.cookies.clear('.coursera.org')
+        logging.debug('Cleared .coursera.org cookies.')
     except KeyError:
-        pass
+        logging.debug('There were no .coursera.org cookies to be cleared.')
 
     # Hit class url to obtain csrf_token
     class_url = CLASS_URL.format(class_name=class_name)
@@ -86,12 +88,16 @@ def login(session, class_name, username, password):
     csrftoken = r.cookies.get('csrf_token')
 
     if not csrftoken:
-        raise AuthenticationFailed('Did not recieve csrf_token cookie.')
+        raise AuthenticationFailed('Did not receive csrf_token cookie.')
+    else:
+        logging.debug('Obtaining the csrf_token: %s.', csrftoken)
 
     # Now make a call to the authenticator url.
     csrf2cookie = 'csrf2_token_%s' % random_string(8)
     csrf2token = random_string(24)
     cookie = "csrftoken=%s; %s=%s" % (csrftoken, csrf2cookie, csrf2token)
+
+    logging.debug('Forging cookie header: %s.', cookie)
 
     headers = {
         'Cookie': cookie,
@@ -124,10 +130,16 @@ def down_the_wabbit_hole(session, class_name):
 
     auth_redirector_url = AUTH_REDIRECT_URL.format(class_name=class_name)
     r = session.get(auth_redirector_url)
+
+    logging.debug('Following %s to authenticate on class.coursera.org.',
+                  auth_redirector_url)
+
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError:
         raise AuthenticationFailed('Cannot login on class.coursera.org.')
+
+    logging.debug('Exiting "deep" authentication.')
 
 
 def _get_authentication_cookies(session, class_name,
@@ -159,6 +171,7 @@ def get_authentication_cookies(session, class_name, username, password):
     else:
         login(session, class_name, username, password)
 
+    # FIXME: put the previous function body here.
     _get_authentication_cookies(
         session, class_name, username, password)
 
@@ -243,6 +256,8 @@ def load_cookies_file(cookies_file):
     loader is very particular about this string.
     """
 
+    logging.debug('Loading cookie file %s into memory.', cookies_file)
+
     cookies = StringIO()
     cookies.write('# Netscape HTTP Cookie File')
     cookies.write(open(cookies_file, 'rU').read())
@@ -272,6 +287,9 @@ def get_cookies_from_cache(username):
     Returns a RequestsCookieJar containing the cached cookies for the given
     user.
     """
+
+    logging.debug('Trying to get cookies from the cache.')
+
     path = get_cookies_cache_path(username)
     cj = requests.cookies.RequestsCookieJar()
     try:
@@ -281,7 +299,7 @@ def get_cookies_from_cache(username):
         logging.debug(
             'Loaded cookies from %s', get_cookies_cache_path(username))
     except IOError:
-        pass
+        logging.debug('Could not load cookies from the cache.')
 
     return cj
 
