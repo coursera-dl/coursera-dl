@@ -41,6 +41,14 @@ I've downloaded many other good videos such as those from Khan Academy.
   * Login credentials accepted on command-line or from `.netrc` file
   * Core functionality tested on Linux, Mac and Windows.
 
+## Disclaimer
+
+`coursera-dl` is meant to the availability of Coursera material.
+
+We do not encourage any use that violates the [Terms Of Use][20]. Excerpt:
+
+"[...] Coursera grants you a personal, non-exclusive, non-transferable license to access and use the Sites. You may download material from the Sites only for your own personal, non-commercial use. You may not otherwise copy, reproduce, retransmit, distribute, publish, commercially exploit or otherwise transfer any material, nor may you modify or create derivatives works of the material."
+
 
 ## Instructions
 
@@ -302,7 +310,7 @@ first last at geemail dotcom or [@jplehmann][12]
 [17]: http://www.pip-installer.org/en/latest/
 [18]: http://python-distribute.org/pip_distribute.png
 [19]: https://pypi.python.org/pypi/six/
-
+[20]: https://www.coursera.org/about/terms
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
