@@ -3,3 +3,7 @@
 .DS_Store
 _cache/
 .coverage
+
+# virtualenv folders
+venv2
+venv3

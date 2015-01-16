@@ -117,6 +117,11 @@ def login(session, class_name, username, password):
                      headers=headers, allow_redirects=False)
     try:
         r.raise_for_status()
+
+        # Some how the order of cookies parameters are important
+        # for coursera!!!
+        v = session.cookies.pop('CAUTH')
+        session.cookies.set('CAUTH', v)
     except requests.exceptions.HTTPError:
         raise AuthenticationFailed('Cannot login on accounts.coursera.org.')
 
