@@ -43,11 +43,18 @@ I've downloaded many other good videos such as those from Khan Academy.
 
 ## Disclaimer
 
-`coursera-dl` is meant to the availability of Coursera material.
+`coursera-dl` is meant to be used only for your material that Coursera gives
+you access to download.
 
-We do not encourage any use that violates the [Terms Of Use][20]. Excerpt:
+We do not encourage any use that violates their [Terms Of Use][20]. A
+relevant excerpt:
 
-"[...] Coursera grants you a personal, non-exclusive, non-transferable license to access and use the Sites. You may download material from the Sites only for your own personal, non-commercial use. You may not otherwise copy, reproduce, retransmit, distribute, publish, commercially exploit or otherwise transfer any material, nor may you modify or create derivatives works of the material."
+> "[...] Coursera grants you a personal, non-exclusive, non-transferable
+> license to access and use the Sites. You may download material from the
+> Sites only for your own personal, non-commercial use. You may not
+> otherwise copy, reproduce, retransmit, distribute, publish, commercially
+> exploit or otherwise transfer any material, nor may you modify or create
+> derivatives works of the material."
 
 
 ## Instructions
