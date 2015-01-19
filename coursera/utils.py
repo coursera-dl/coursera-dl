@@ -77,7 +77,6 @@ def clean_filename(s, minimal_change=False):
     s = s.replace('(', '').replace(')', '')
     s = s.rstrip('.')  # Remove excess of trailing dots
 
-    s = s.replace('nbsp', '')
     s = s.strip().replace(' ', '_')
     valid_chars = '-_.()%s%s' % (string.ascii_letters, string.digits)
     return ''.join(c for c in s if c in valid_chars)
