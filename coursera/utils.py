@@ -13,6 +13,8 @@ import sys
 
 import six
 
+from six.moves import html_parser
+
 #  six.moves doesn’t support urlparse
 if six.PY3:  # pragma: no cover
     from urllib.parse import urlparse
@@ -56,6 +58,10 @@ def clean_filename(s, minimal_change=False):
     characters that are problematic for filesystems (namely, ':', '/' and
     '\x00', '\n').
     """
+
+    # First, deal with URL encoded strings
+    h = html_parser.HTMLParser()
+    s = h.unescape(s)
 
     # strip paren portions which contain trailing time length (...)
     s = (
