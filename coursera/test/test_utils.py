@@ -32,7 +32,8 @@ class UtilsTestCase(unittest.TestCase):
             '&nbsp;': ''
         }
         for k, v in six.iteritems(strings):
-            self.assertEquals(utils.clean_filename(k), v)
+            actual_res = utils.clean_filename(k)
+            self.assertEquals(actual_res, v, actual_res)
 
     def test_clean_filename_minimal_change(self):
         strings = {
@@ -49,7 +50,8 @@ class UtilsTestCase(unittest.TestCase):
             '&nbsp;': u'\xa0'
         }
         for k, v in six.iteritems(strings):
-            self.assertEquals(utils.clean_filename(k, minimal_change=True), v)
+            actual_res = utils.clean_filename(k, minimal_change=True)
+            self.assertEquals(actual_res, v, actual_res)
 
     def test_get_anchor_format(self):
         strings = {
