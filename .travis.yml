@@ -2,7 +2,6 @@ language: python
 python:
   - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
   - "3.4"
   - "pypy"
@@ -12,6 +11,8 @@ matrix:
        - "2.6"
     - python:
        - "pypy"
+    - python:
+       - "3.2"
 # command to install dependencies
 install:
   - pip install -r requirements.txt
