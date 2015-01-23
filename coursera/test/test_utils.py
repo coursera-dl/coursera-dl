@@ -5,6 +5,7 @@ Test the utility functions.
 """
 import datetime
 import os
+import random
 import unittest
 
 import requests
@@ -62,6 +63,21 @@ class UtilsTestCase(unittest.TestCase):
         }
         for k, v in six.iteritems(strings):
             self.assertEquals(utils.get_anchor_format(k), v)
+
+    def test_random_string(self):
+        random.seed(0)  # set seed for reproducible tests
+
+        res = utils.random_string(8)
+        self.assertEqual(len(res), 8)
+
+        # Python 2 and Python 3 use different strategies for generation of
+        # PRNG, according to the documentation available at
+        # https://docs.python.org/3.4/library/random.html#random.seed
+        if six.PY2:
+            self.assertEqual(res, '0UAqFzWs')
+        else:
+            self.assertEqual(res, '2yW4Acq9')
+
 
     def test_fix_url_ads_sheme(self):
         url = "www.coursera.org"
