@@ -2,6 +2,8 @@
 # Fabric configuration - http://www.fabfile.org/
 #
 
+from __future__ import print_function
+
 import errno
 import os
 
@@ -69,7 +71,7 @@ def release():
     """Release a new version"""
     release_check()
     build()
-    print "Releasing", env.projname, "version", env.version
+    print("Releasing %s version %s." % (env.projname, env.version))
     local("git tag %s" % env.version)
     local("python setup.py sdist upload")
     local("git push --tags")
