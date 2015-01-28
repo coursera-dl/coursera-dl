@@ -2,9 +2,10 @@
 # Fabric configuration - http://www.fabfile.org/
 #
 
-from fabric.api import *
-import os
 import errno
+import os
+
+from fabric.api import *
 
 env.projname = local("python setup.py --name", capture=True)
 env.version = local("python setup.py --version", capture=True)
