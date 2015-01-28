@@ -5,7 +5,7 @@
 import errno
 import os
 
-from fabric.api import *
+from fabric.api import (env, local, task)
 
 env.projname = local("python setup.py --name", capture=True)
 env.version = local("python setup.py --version", capture=True)
