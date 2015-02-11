@@ -51,7 +51,7 @@ import subprocess
 import sys
 import time
 import glob
-import threadpool
+from .threadpool import ThreadPool, makeRequests
 
 from distutils.version import LooseVersion as V
 
@@ -335,7 +335,7 @@ def download_lectures(downloader,
     Returns True if the class appears completed.
     """
     last_update = -1
-    pool = threadpool.ThreadPool(num_of_threads)
+    pool = ThreadPool(num_of_threads)
 
     def format_section(num, section):
         sec = '%02d_%s' % (num, section)
@@ -400,7 +400,7 @@ def download_lectures(downloader,
                     if not skip_download:
                         logging.info('Downloading: %s', lecfn)
                         # downloader.download(url, lecfn)
-                        reqs = threadpool.makeRequests(downloader.download, [((url, lecfn), {})])
+                        reqs = makeRequests(downloader.download, [((url, lecfn), {})])
                         [pool.putRequest(req) for req in reqs]
                     else:
                         open(lecfn, 'w').close()  # touch
