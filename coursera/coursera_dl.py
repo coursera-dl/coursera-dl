@@ -51,6 +51,7 @@ import subprocess
 import sys
 import time
 import glob
+import threadpool
 
 from distutils.version import LooseVersion as V
 
@@ -327,13 +328,14 @@ def download_lectures(downloader,
                       combined_section_lectures_nums=False,
                       hooks=None,
                       playlist=False,
-                      intact_fnames=False
-                      ):
+                      intact_fnames=False,
+                      num_of_threads=2):
     """
     Downloads lecture resources described by sections.
     Returns True if the class appears completed.
     """
     last_update = -1
+    pool = threadpool.ThreadPool(num_of_threads)
 
     def format_section(num, section):
         sec = '%02d_%s' % (num, section)
@@ -397,7 +399,9 @@ def download_lectures(downloader,
                 if overwrite or not os.path.exists(lecfn):
                     if not skip_download:
                         logging.info('Downloading: %s', lecfn)
-                        downloader.download(url, lecfn)
+                        # downloader.download(url, lecfn)
+                        reqs = threadpool.makeRequests(downloader.download, [((url, lecfn), {})])
+                        [pool.putRequest(req) for req in reqs]
                     else:
                         open(lecfn, 'w').close()  # touch
                     last_update = time.time()
@@ -429,6 +433,7 @@ def download_lectures(downloader,
                 os.chdir(sec)
                 subprocess.call(hook)
 
+    pool.wait()
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
     if last_update >= 0:
@@ -663,6 +668,12 @@ def parseArgs(args=None):
                         action='store_true',
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
+    parser.add_argument('-s',
+                        '--num-of-downloaders',
+                        dest='num_of_threads',
+                        action='store',
+                        default=2,
+                        help='down concurrently will be more fast, default to be 2.')
 
     args = parser.parse_args(args)
 
@@ -705,7 +716,7 @@ def parseArgs(args=None):
         except CredentialsError as e:
             logging.error(e)
             sys.exit(1)
-
+    args.num_of_threads = int(args.num_of_threads)
     return args
 
 
@@ -758,7 +769,8 @@ def download_class(args, class_name):
         args.combined_section_lectures_nums,
         args.hooks,
         args.playlist,
-        args.intact_fnames)
+        args.intact_fnames,
+        args.num_of_threads)
 
     return completed
 
