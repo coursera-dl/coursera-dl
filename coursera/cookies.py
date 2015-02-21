@@ -11,7 +11,8 @@ import requests
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
-from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
+from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES, \
+    AUTH_URL_V3
 from .utils import mkdir_p, random_string
 
 # Monkey patch cookielib.Cookie.__init__.
@@ -338,3 +339,55 @@ def get_cookies_for_class(session, class_name,
         else:
             get_authentication_cookies(session, class_name, username, password)
             write_cookies_to_cache(session.cookies, username)
+
+
+def authenticate(session, username, password):
+    """
+    Authenticate the given username.
+    Note: Because this function doesn't use `class_name` for authentication,
+    can be a raplacement for login function. Also uses Login API v3 to
+    authenticate, I don't know if this is an advantage or not, yet!
+    """
+    logging.debug('Initiating login...')
+    try:
+        session.cookies.clear('.coursera.org')
+        logging.debug('Cleared .coursera.org cookies.')
+    except KeyError:
+        logging.debug('There were no .coursera.org cookies to be cleared.')
+
+    # csrftoken is simply a 20 char random string.
+    csrftoken = random_string(20)
+
+    # Now make a call to the authenticator url.
+    csrf2cookie = 'csrf2_token_%s' % random_string(8)
+    csrf2token = random_string(24)
+    cookie = "csrftoken=%s; %s=%s" % (csrftoken, csrf2cookie, csrf2token)
+
+    logging.debug('Forging cookie header: %s.', cookie)
+
+    headers = {
+        'Cookie': cookie,
+        'X-CSRFToken': csrftoken,
+        'X-CSRF2-Cookie': csrf2cookie,
+        'X-CSRF2-Token': csrf2token,
+    }
+
+    data = {
+        'email': username,
+        'password': password,
+        'webrequest': 'true'
+    }
+
+    r = session.post(AUTH_URL_V3, data=data,
+                     headers=headers, allow_redirects=False)
+    try:
+        r.raise_for_status()
+
+        # Some how the order of cookies parameters are important
+        # for coursera!!!
+        v = session.cookies.pop('CAUTH')
+        session.cookies.set('CAUTH', v)
+    except requests.exceptions.HTTPError:
+        raise AuthenticationFailed('Cannot login on coursera.org.')
+
+    logging.info('Logged in on coursera.org.')

@@ -9,6 +9,7 @@ import getpass
 import tempfile
 
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
+AUTH_URL_V3 = 'https://www.coursera.org/api/login/v3'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
 ABOUT_URL = 'https://api.coursera.org/api/catalog.v1/courses?' \
             'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,' \
