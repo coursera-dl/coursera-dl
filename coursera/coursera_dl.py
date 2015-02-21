@@ -858,8 +858,8 @@ def download_on_demand_class(args, class_name):
 
     # obtain the resources
     completed = True
-    for module in modules:
-        module_name = module[0]
+    for idx, module in enumerate(modules):
+        module_name = '%02d_%s' % (idx + 1, module[0])
         sections = module[1]
 
         result = download_lectures(
