@@ -125,6 +125,16 @@ class UtilsTestCase(unittest.TestCase):
         rv = coursera_dl.is_course_complete(tm)
         self.assertTrue(rv)
 
+    def test_correct_formatting_of_class_URL(self):
+
+        url = coursera_dl.get_syllabus_url('bob', False)
+        self.assertEqual('https://class.coursera.org/bob/lecture/index', url)
+
+    def test_correct_formatting_of_class_with_preview_URL(self):
+
+        url = coursera_dl.get_syllabus_url('bill', True)
+        self.assertEqual('https://class.coursera.org/bill/lecture/preview', url)
+
 
     def test_parse_args(self):
         args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])
