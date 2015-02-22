@@ -7,6 +7,7 @@ import datetime
 import os
 import random
 import unittest
+from time import time
 
 import requests
 import six
@@ -107,6 +108,23 @@ class UtilsTestCase(unittest.TestCase):
     def test_total_seconds(self):
         ts = coursera_dl.total_seconds(datetime.timedelta(days=30))
         self.assertEquals(ts, 2592000)
+
+    def test_is_course_complete_should_give_false_if_there_was_recent_update(self):
+
+        delta = datetime.timedelta(days=29).total_seconds()
+        tm = time() - delta
+
+        rv = coursera_dl.is_course_complete(tm)
+        self.assertFalse(rv)
+
+    def test_is_course_complete_should_give_true_if_there_was_no_recent_update(self):
+
+        delta = datetime.timedelta(days=31).total_seconds()
+        tm = time() - delta
+
+        rv = coursera_dl.is_course_complete(tm)
+        self.assertTrue(rv)
+
 
     def test_parse_args(self):
         args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])

@@ -312,6 +312,16 @@ def download_about(session, class_name, path='', overwrite=False):
             break
 
 
+def is_course_complete(last_update):
+    rv = False
+    if last_update >= 0:
+        delta = time.time() - last_update
+        max_delta = total_seconds(datetime.timedelta(days=30))
+        if delta > max_delta:
+            rv = True
+    return rv
+
+
 def download_lectures(downloader,
                       class_name,
                       sections,
@@ -431,13 +441,10 @@ def download_lectures(downloader,
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
-    if last_update >= 0:
-        delta = time.time() - last_update
-        max_delta = total_seconds(datetime.timedelta(days=30))
-        if delta > max_delta:
-            logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
-            return True
-    return False
+    rv = is_course_complete(last_update)
+    if rv:
+        logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
+    return rv
 
 
 def total_seconds(td):
