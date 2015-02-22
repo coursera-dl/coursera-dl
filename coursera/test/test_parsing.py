@@ -4,13 +4,45 @@
 """
 Test functionality of coursera module.
 """
-
+import json
 import os.path
 import unittest
 
 from six import iteritems
+from mock import patch, Mock, mock_open
 
 from coursera import coursera_dl
+
+
+class TestJSonHandling(unittest.TestCase):
+    def setUp(self):
+        self.saved_get_page = coursera_dl.get_page
+        self.json_path = os.path.join(os.path.dirname(__file__), "fixtures", "json")
+
+    def tearDown(self):
+        coursera_dl.get_page = self.saved_get_page
+
+    def test_that_should_not_dl_if_file_exist(self):
+        coursera_dl.get_page = Mock()
+        coursera_dl.download_about(object(), "matrix-002", self.json_path)
+        self.assertFalse(coursera_dl.get_page.called)
+
+    def test_that_we_parse_and_write_json_correctly(self):
+
+        raw_data = open(os.path.join(os.path.dirname(__file__), "fixtures", "json", "unprocessed.json")).read()
+        coursera_dl.get_page = lambda x, y:  raw_data
+        open_mock = mock_open()
+
+        with patch('coursera.coursera_dl.open', open_mock, create=True):
+
+            coursera_dl.download_about(object(), "networksonline-002", self.json_path)
+
+        open_mock.assert_called_once_with(os.path.join(self.json_path, 'networksonline-002-about.json'), 'w')
+
+        data = json.loads(open_mock().write.call_args[0][0])
+
+        self.assertEqual(data['id'], 394)
+        self.assertEqual(data['shortName'], 'networksonline')
 
 
 class TestSyllabusParsing(unittest.TestCase):
