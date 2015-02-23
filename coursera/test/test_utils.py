@@ -135,7 +135,7 @@ class UtilsTestCase(unittest.TestCase):
 
     def test_is_course_complete_should_give_false_if_there_was_recent_update(self):
 
-        delta = datetime.timedelta(days=29).total_seconds()
+        delta = coursera_dl.total_seconds(datetime.timedelta(days=29))
         tm = time() - delta
 
         rv = coursera_dl.is_course_complete(tm)
@@ -143,7 +143,7 @@ class UtilsTestCase(unittest.TestCase):
 
     def test_is_course_complete_should_give_true_if_there_was_no_recent_update(self):
 
-        delta = datetime.timedelta(days=31).total_seconds()
+        delta = coursera_dl.total_seconds(datetime.timedelta(days=31))
         tm = time() - delta
 
         rv = coursera_dl.is_course_complete(tm)

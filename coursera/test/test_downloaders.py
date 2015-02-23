@@ -21,22 +21,22 @@ class ResourceCollectorTestCase(unittest.TestCase):
     def test_collect_all_resources(self):
         res = coursera_dl.find_resources_to_get(self.sample_bag, 'all', None)
 
-        self.assertSequenceEqual([
-                                     ('mp4', 'h://url1/lc1.mp4', 'video'),
-                                     ('pdf', 'h://url2/lc2.pdf', 'slides'),
-                                     ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
+        self.assertEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
+                         ('pdf', 'h://url2/lc2.pdf', 'slides'),
+                         ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
 
     def test_collect_only_pdfs(self):
         res = coursera_dl.find_resources_to_get(self.sample_bag, 'pdf', None)
 
-        self.assertSequenceEqual([('pdf', 'h://url2/lc2.pdf', 'slides')],
-                                   sorted(res))
+        self.assertEqual([('pdf', 'h://url2/lc2.pdf', 'slides')],
+                         sorted(res))
 
     def test_collect_with_filtering(self):
         res = coursera_dl.find_resources_to_get(self.sample_bag, 'all', 'de')
+        res = sorted(res)
 
-        self.assertSequenceEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
-                                  ('pdf', 'h://url2/lc2.pdf', 'slides')], sorted(res))
+        self.assertEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
+                          ('pdf', 'h://url2/lc2.pdf', 'slides')], res)
 
 
 class ExternalDownloaderTestCase(unittest.TestCase):
