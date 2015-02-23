@@ -28,5 +28,5 @@ if os.name == "posix":  # pragma: no cover
 else:
     user = getpass.getuser()
 
-PATH_CACHE = os.path.join(tempfile.gettempdir(), user+"_coursera_dl_cache")
+PATH_CACHE = os.path.join(tempfile.gettempdir(), user + "_coursera_dl_cache")
 PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')

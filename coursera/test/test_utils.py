@@ -89,27 +89,27 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEquals(utils.fix_url(url), 'http://www.coursera.org')
 
     def test_format_combine_resource_works_correctly(self):
-        rv = coursera_dl.format_combine_number_resource( 5, 4, "Moving_the_furniture", 'The_Basics', "mp4")
+        rv = coursera_dl.format_combine_number_resource(5, 4, "Moving_the_furniture", 'The_Basics', "mp4")
         self.assertEqual('05_04_Moving_the_furniture_The_Basics.mp4', rv)
 
     def test_format_combine_resource_works_correctly_without_title(self):
-        rv = coursera_dl.format_combine_number_resource( 5, 1, "Introduction", '', "mp4")
+        rv = coursera_dl.format_combine_number_resource(5, 1, "Introduction", '', "mp4")
         self.assertEqual('05_01_Introduction.mp4', rv)
 
     def test_format_resource_works_correctly(self):
-        rv = coursera_dl.format_resource( 2, "Washing", "Dishes", "mp9")
+        rv = coursera_dl.format_resource(2, "Washing", "Dishes", "mp9")
         self.assertEqual('02_Washing_Dishes.mp9', rv)
 
     def test_format_resource_works_correctly_without_title(self):
-        rv = coursera_dl.format_resource( 1, "Introduction", '', "mp2")
+        rv = coursera_dl.format_resource(1, "Introduction", '', "mp2")
         self.assertEqual('01_Introduction.mp2', rv)
 
     def test_format_section_works_correctly(self):
-        rv = coursera_dl.format_section( 9, 'bob', 'WEAVING', False )
+        rv = coursera_dl.format_section(9, 'bob', 'WEAVING', False)
         self.assertEqual('09_bob', rv)
 
     def test_format_section_works_correctly_with_verbose(self):
-        rv = coursera_dl.format_section( 9, 'bill', 'WEAVING', True )
+        rv = coursera_dl.format_section(9, 'bill', 'WEAVING', True)
         self.assertEqual('WEAVING_09_bill', rv)
 
     def test_fix_url_doesnt_alters_empty_url(self):

@@ -235,7 +235,7 @@ class DownloadProgress(object):
         if self._total == 0:
             return '100% done'
         percentage = int(float(self._current) / float(self._total) * 100.0)
-        done = int(percentage/2)
+        done = int(percentage / 2)
         return '[{0: <50}] {1}%'.format(done * '#', percentage)
 
     def calc_speed(self):

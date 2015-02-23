@@ -30,7 +30,7 @@ class TestJSonHandling(unittest.TestCase):
     def test_that_we_parse_and_write_json_correctly(self):
 
         raw_data = open(os.path.join(os.path.dirname(__file__), "fixtures", "json", "unprocessed.json")).read()
-        coursera_dl.get_page = lambda x, y:  raw_data
+        coursera_dl.get_page = lambda x, y: raw_data
         open_mock = mock_open()
 
         with patch('coursera.coursera_dl.open', open_mock, create=True):

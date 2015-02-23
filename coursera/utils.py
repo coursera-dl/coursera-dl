@@ -69,7 +69,7 @@ def clean_filename(s, minimal_change=False):
         .replace('/', '-')
         .replace('\x00', '-')
         .replace('\n', '')
-        )
+    )
 
     if minimal_change:
         return s

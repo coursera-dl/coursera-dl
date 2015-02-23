@@ -45,7 +45,7 @@ class ExternalDownloaderTestCase(unittest.TestCase):
         import time
         import requests
 
-        expires = int(time.time() + 60*60*24*365*50)
+        expires = int(time.time() + 60 * 60 * 24 * 365 * 50)
 
         s = requests.Session()
         s.cookies.set('csrf_token', 'csrfclass001',

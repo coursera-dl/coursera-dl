@@ -322,7 +322,7 @@ def is_course_complete(last_update):
     return rv
 
 
-def format_section(num, section, class_name, verbose_dirs ):
+def format_section(num, section, class_name, verbose_dirs):
         sec = '%02d_%s' % (num, section)
         if verbose_dirs:
             sec = class_name.upper() + '_' + sec
@@ -463,7 +463,7 @@ def total_seconds(td):
     Added for backward compatibility, pre 2.7.
     """
     return (td.microseconds +
-            (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
+            (td.seconds + td.days * 24 * 3600) * 10 ** 6) // 10 ** 6
 
 
 def parseArgs(args=None):
@@ -681,7 +681,6 @@ def parseArgs(args=None):
                         help='Do not limit filenames to be ASCII-only')
 
     args = parser.parse_args(args)
-
 
     # Initialize the logging system first so that other functions
     # can use it right away
