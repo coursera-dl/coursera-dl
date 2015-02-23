@@ -312,6 +312,53 @@ def download_about(session, class_name, path='', overwrite=False):
             break
 
 
+def is_course_complete(last_update):
+    rv = False
+    if last_update >= 0:
+        delta = time.time() - last_update
+        max_delta = total_seconds(datetime.timedelta(days=30))
+        if delta > max_delta:
+            rv = True
+    return rv
+
+
+def format_section(num, section, class_name, verbose_dirs ):
+        sec = '%02d_%s' % (num, section)
+        if verbose_dirs:
+            sec = class_name.upper() + '_' + sec
+        return sec
+
+
+def format_resource(num, name, title, fmt):
+        if title:
+            title = '_' + title
+        return '%02d_%s%s.%s' % (num, name, title, fmt)
+
+
+def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
+        if title:
+            title = '_' + title
+        return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
+
+
+def find_resources_to_get(lecture, file_formats, resource_filter):
+    # Select formats to download
+    resources_to_get = []
+    for fmt, resources in iteritems(lecture):
+        if fmt in file_formats or 'all' in file_formats:
+            for r in resources:
+                if resource_filter and r[1] and not re.search(resource_filter, r[1]):
+                    logging.debug('Skipping b/c of rf: %s %s',
+                                  resource_filter, r[1])
+                    continue
+                resources_to_get.append((fmt, r[0], r[1]))
+        else:
+            logging.debug(
+                'Skipping b/c format %s not in %s', fmt, file_formats)
+
+    return resources_to_get
+
+
 def download_lectures(downloader,
                       class_name,
                       sections,
@@ -335,30 +382,14 @@ def download_lectures(downloader,
     """
     last_update = -1
 
-    def format_section(num, section):
-        sec = '%02d_%s' % (num, section)
-        if verbose_dirs:
-            sec = class_name.upper() + '_' + sec
-        return sec
-
-    def format_resource(num, name, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%s%s.%s' % (num, name, title, fmt)
-
-    def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
-
     for (secnum, (section, lectures)) in enumerate(sections):
         if section_filter and not re.search(section_filter, section):
             logging.debug('Skipping b/c of sf: %s %s', section_filter,
                           section)
             continue
 
-        sec = os.path.join(path, class_name, format_section(secnum + 1,
-                                                            section))
+        sec = os.path.join(path, class_name,
+                           format_section(secnum + 1, section, class_name, verbose_dirs))
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
             if lecture_filter and not re.search(lecture_filter,
                                                 lecname):
@@ -369,19 +400,7 @@ def download_lectures(downloader,
             if not os.path.exists(sec):
                 mkdir_p(sec)
 
-            # Select formats to download
-            resources_to_get = []
-            for fmt, resources in iteritems(lecture):
-                if fmt in file_formats or 'all' in file_formats:
-                    for r in resources:
-                        if resource_filter and r[1] and not re.search(resource_filter, r[1]):
-                            logging.debug('Skipping b/c of rf: %s %s',
-                                          resource_filter, r[1])
-                            continue
-                        resources_to_get.append((fmt, r[0], r[1]))
-                else:
-                    logging.debug(
-                        'Skipping b/c format %s not in %s', fmt, file_formats)
+            resources_to_get = find_resources_to_get(lecture, file_formats, resource_filter)
 
             # write lecture resources
             for fmt, url, title in resources_to_get:
@@ -431,13 +450,10 @@ def download_lectures(downloader,
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
-    if last_update >= 0:
-        delta = time.time() - last_update
-        max_delta = total_seconds(datetime.timedelta(days=30))
-        if delta > max_delta:
-            logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
-            return True
-    return False
+    rv = is_course_complete(last_update)
+    if rv:
+        logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
+    return rv
 
 
 def total_seconds(td):

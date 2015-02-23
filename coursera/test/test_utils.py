@@ -7,6 +7,7 @@ import datetime
 import os
 import random
 import unittest
+from time import time
 
 import requests
 import six
@@ -87,6 +88,30 @@ class UtilsTestCase(unittest.TestCase):
         url = " www.coursera.org "
         self.assertEquals(utils.fix_url(url), 'http://www.coursera.org')
 
+    def test_format_combine_resource_works_correctly(self):
+        rv = coursera_dl.format_combine_number_resource( 5, 4, "Moving_the_furniture", 'The_Basics', "mp4")
+        self.assertEqual('05_04_Moving_the_furniture_The_Basics.mp4', rv)
+
+    def test_format_combine_resource_works_correctly_without_title(self):
+        rv = coursera_dl.format_combine_number_resource( 5, 1, "Introduction", '', "mp4")
+        self.assertEqual('05_01_Introduction.mp4', rv)
+
+    def test_format_resource_works_correctly(self):
+        rv = coursera_dl.format_resource( 2, "Washing", "Dishes", "mp9")
+        self.assertEqual('02_Washing_Dishes.mp9', rv)
+
+    def test_format_resource_works_correctly_without_title(self):
+        rv = coursera_dl.format_resource( 1, "Introduction", '', "mp2")
+        self.assertEqual('01_Introduction.mp2', rv)
+
+    def test_format_section_works_correctly(self):
+        rv = coursera_dl.format_section( 9, 'bob', 'WEAVING', False )
+        self.assertEqual('09_bob', rv)
+
+    def test_format_section_works_correctly_with_verbose(self):
+        rv = coursera_dl.format_section( 9, 'bill', 'WEAVING', True )
+        self.assertEqual('WEAVING_09_bill', rv)
+
     def test_fix_url_doesnt_alters_empty_url(self):
         url = None
         self.assertEquals(utils.fix_url(url), None)
@@ -107,6 +132,33 @@ class UtilsTestCase(unittest.TestCase):
     def test_total_seconds(self):
         ts = coursera_dl.total_seconds(datetime.timedelta(days=30))
         self.assertEquals(ts, 2592000)
+
+    def test_is_course_complete_should_give_false_if_there_was_recent_update(self):
+
+        delta = coursera_dl.total_seconds(datetime.timedelta(days=29))
+        tm = time() - delta
+
+        rv = coursera_dl.is_course_complete(tm)
+        self.assertFalse(rv)
+
+    def test_is_course_complete_should_give_true_if_there_was_no_recent_update(self):
+
+        delta = coursera_dl.total_seconds(datetime.timedelta(days=31))
+        tm = time() - delta
+
+        rv = coursera_dl.is_course_complete(tm)
+        self.assertTrue(rv)
+
+    def test_correct_formatting_of_class_URL(self):
+
+        url = coursera_dl.get_syllabus_url('bob', False)
+        self.assertEqual('https://class.coursera.org/bob/lecture/index', url)
+
+    def test_correct_formatting_of_class_with_preview_URL(self):
+
+        url = coursera_dl.get_syllabus_url('bill', True)
+        self.assertEqual('https://class.coursera.org/bill/lecture/preview', url)
+
 
     def test_parse_args(self):
         args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])
