@@ -322,6 +322,25 @@ def is_course_complete(last_update):
     return rv
 
 
+def format_section(num, section, class_name, verbose_dirs ):
+        sec = '%02d_%s' % (num, section)
+        if verbose_dirs:
+            sec = class_name.upper() + '_' + sec
+        return sec
+
+
+def format_resource(num, name, title, fmt):
+        if title:
+            title = '_' + title
+        return '%02d_%s%s.%s' % (num, name, title, fmt)
+
+
+def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
+        if title:
+            title = '_' + title
+        return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
+
+
 def download_lectures(downloader,
                       class_name,
                       sections,
@@ -345,30 +364,14 @@ def download_lectures(downloader,
     """
     last_update = -1
 
-    def format_section(num, section):
-        sec = '%02d_%s' % (num, section)
-        if verbose_dirs:
-            sec = class_name.upper() + '_' + sec
-        return sec
-
-    def format_resource(num, name, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%s%s.%s' % (num, name, title, fmt)
-
-    def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
-
     for (secnum, (section, lectures)) in enumerate(sections):
         if section_filter and not re.search(section_filter, section):
             logging.debug('Skipping b/c of sf: %s %s', section_filter,
                           section)
             continue
 
-        sec = os.path.join(path, class_name, format_section(secnum + 1,
-                                                            section))
+        sec = os.path.join(path, class_name,
+                           format_section(secnum + 1, section, class_name, verbose_dirs))
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
             if lecture_filter and not re.search(lecture_filter,
                                                 lecname):
