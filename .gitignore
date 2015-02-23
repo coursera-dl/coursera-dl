@@ -4,7 +4,8 @@
 _cache/
 .coverage
 /cover/
-
 # virtualenv folders
 venv2
 venv3
+.idea
+.python-version
