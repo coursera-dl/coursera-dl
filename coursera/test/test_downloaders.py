@@ -7,6 +7,36 @@ Test the downloaders.
 import unittest
 
 from coursera import downloaders
+from coursera import coursera_dl
+
+
+class ResourceCollectorTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sample_bag = {
+            'mp4': [['h://url1/lc1.mp4', 'video']],
+            'pdf': [['h://url2/lc2.pdf', 'slides']],
+            'txt': [['h://url3/lc3.txt', 'subtitle']]
+        }
+
+    def test_collect_all_resources(self):
+        res = coursera_dl.find_resources_to_get(self.sample_bag, 'all', None)
+
+        self.assertSequenceEqual([
+                                     ('mp4', 'h://url1/lc1.mp4', 'video'),
+                                     ('pdf', 'h://url2/lc2.pdf', 'slides'),
+                                     ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
+
+    def test_collect_only_pdfs(self):
+        res = coursera_dl.find_resources_to_get(self.sample_bag, 'pdf', None)
+
+        self.assertSequenceEqual([('pdf', 'h://url2/lc2.pdf', 'slides')],
+                                   sorted(res))
+
+    def test_collect_with_filtering(self):
+        res = coursera_dl.find_resources_to_get(self.sample_bag, 'all', 'de')
+
+        self.assertSequenceEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
+                                  ('pdf', 'h://url2/lc2.pdf', 'slides')], sorted(res))
 
 
 class ExternalDownloaderTestCase(unittest.TestCase):

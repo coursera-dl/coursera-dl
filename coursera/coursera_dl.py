@@ -341,6 +341,24 @@ def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
         return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
 
 
+def find_resources_to_get(lecture, file_formats, resource_filter):
+    # Select formats to download
+    resources_to_get = []
+    for fmt, resources in iteritems(lecture):
+        if fmt in file_formats or 'all' in file_formats:
+            for r in resources:
+                if resource_filter and r[1] and not re.search(resource_filter, r[1]):
+                    logging.debug('Skipping b/c of rf: %s %s',
+                                  resource_filter, r[1])
+                    continue
+                resources_to_get.append((fmt, r[0], r[1]))
+        else:
+            logging.debug(
+                'Skipping b/c format %s not in %s', fmt, file_formats)
+
+    return resources_to_get
+
+
 def download_lectures(downloader,
                       class_name,
                       sections,
@@ -382,19 +400,7 @@ def download_lectures(downloader,
             if not os.path.exists(sec):
                 mkdir_p(sec)
 
-            # Select formats to download
-            resources_to_get = []
-            for fmt, resources in iteritems(lecture):
-                if fmt in file_formats or 'all' in file_formats:
-                    for r in resources:
-                        if resource_filter and r[1] and not re.search(resource_filter, r[1]):
-                            logging.debug('Skipping b/c of rf: %s %s',
-                                          resource_filter, r[1])
-                            continue
-                        resources_to_get.append((fmt, r[0], r[1]))
-                else:
-                    logging.debug(
-                        'Skipping b/c format %s not in %s', fmt, file_formats)
+            resources_to_get = find_resources_to_get(lecture, file_formats, resource_filter)
 
             # write lecture resources
             for fmt, url, title in resources_to_get:
