@@ -568,8 +568,7 @@ def parseArgs(args=None):
                         action='store_true',
                         default=False,
                         help='download "about" metadata. (Default: False)')
-    parser.add_argument('-m',
-                        '--on-demand',
+    parser.add_argument('--on-demand',
                         dest='on_demand',
                         action='store_true',
                         default=False,
