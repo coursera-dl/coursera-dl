@@ -71,7 +71,7 @@ except ImportError:
 
 from .cookies import (
     AuthenticationFailed, ClassNotFound,
-    get_cookies_for_class, make_cookie_values, authenticate)
+    get_cookies_for_class, make_cookie_values, login)
 from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
@@ -844,7 +844,7 @@ def download_on_demand_class(args, class_name):
     """
 
     session = requests.Session()
-    authenticate(session, args.username, args.password)
+    login(session, args.username, args.password)
 
     # get the syllabus listing
     page = get_on_demand_syllabus(session, class_name)
