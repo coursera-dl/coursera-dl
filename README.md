@@ -142,6 +142,7 @@ credentials (e.g. email address and password or a `~/.netrc` file), the class na
 as well as any additional parameters:
 
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
+    On-Demand course:            coursera-dl -u <user> -p <pass> --on-demand calculus1
     Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
     Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" crypto-004
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" ml-2012-002
@@ -150,6 +151,9 @@ as well as any additional parameters:
     Get the preview classes:     coursera-dl -n -b ni-001
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ comnetworks-002
     Display help:                coursera-dl --help
+
+    Note: Some of the options like `-sf` and `-f` may not work with on-demand course.
+    Downloading on-demand courses are mutually exclusive with regular courses.
     
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}

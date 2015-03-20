@@ -11,7 +11,8 @@ import requests
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
-from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
+from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES, \
+    AUTH_URL_V3
 from .utils import mkdir_p, random_string
 
 # Monkey patch cookielib.Cookie.__init__.
@@ -61,9 +62,9 @@ class AuthenticationFailed(BaseException):
     """
 
 
-def login(session, class_name, username, password):
+def login(session, username, password, class_name=None):
     """
-    Login on accounts.coursera.org with the given credentials.
+    Login on coursera.org with the given credentials.
     This adds the following cookies to the session:
         sessionid, maestro_login, maestro_login_flag
     """
@@ -75,22 +76,18 @@ def login(session, class_name, username, password):
     except KeyError:
         logging.debug('There were no .coursera.org cookies to be cleared.')
 
-    # Hit class url to obtain csrf_token
-    class_url = CLASS_URL.format(class_name=class_name)
-    r = requests.get(class_url, allow_redirects=False)
+    # Hit class url
+    if class_name is not None:
+        class_url = CLASS_URL.format(class_name=class_name)
+        r = requests.get(class_url, allow_redirects=False)
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            logging.error(e)
+            raise ClassNotFound(class_name)
 
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logging.error(e)
-        raise ClassNotFound(class_name)
-
-    csrftoken = r.cookies.get('csrf_token')
-
-    if not csrftoken:
-        raise AuthenticationFailed('Did not receive csrf_token cookie.')
-    else:
-        logging.debug('Obtaining the csrf_token: %s.', csrftoken)
+    # csrftoken is simply a 20 char random string.
+    csrftoken = random_string(20)
 
     # Now make a call to the authenticator url.
     csrf2cookie = 'csrf2_token_%s' % random_string(8)
@@ -101,7 +98,6 @@ def login(session, class_name, username, password):
 
     headers = {
         'Cookie': cookie,
-        'Referer': 'https://accounts.coursera.org/signin',
         'X-CSRFToken': csrftoken,
         'X-CSRF2-Cookie': csrf2cookie,
         'X-CSRF2-Token': csrf2token,
@@ -113,7 +109,8 @@ def login(session, class_name, username, password):
         'webrequest': 'true'
     }
 
-    r = session.post(AUTH_URL, data=data,
+    # Auth API V3
+    r = session.post(AUTH_URL_V3, data=data,
                      headers=headers, allow_redirects=False)
     try:
         r.raise_for_status()
@@ -123,9 +120,9 @@ def login(session, class_name, username, password):
         v = session.cookies.pop('CAUTH')
         session.cookies.set('CAUTH', v)
     except requests.exceptions.HTTPError:
-        raise AuthenticationFailed('Cannot login on accounts.coursera.org.')
+        raise AuthenticationFailed('Cannot login on coursera.org.')
 
-    logging.info('Logged in on accounts.coursera.org.')
+    logging.info('Logged in on coursera.org.')
 
 
 def down_the_wabbit_hole(session, class_name):
@@ -159,7 +156,7 @@ def get_authentication_cookies(session, class_name, username, password):
     if session.cookies.get('CAUTH', domain=".coursera.org"):
         logging.debug('Already logged in on accounts.coursera.org.')
     else:
-        login(session, class_name, username, password)
+        login(session, username, password, class_name=class_name)
 
     try:
         session.cookies.clear('class.coursera.org', '/' + class_name)

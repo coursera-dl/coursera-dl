@@ -71,9 +71,10 @@ except ImportError:
 
 from .cookies import (
     AuthenticationFailed, ClassNotFound,
-    get_cookies_for_class, make_cookie_values)
+    get_cookies_for_class, make_cookie_values, login)
 from .credentials import get_credentials, CredentialsError
-from .define import CLASS_URL, ABOUT_URL, PATH_CACHE
+from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
+    OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
 from .downloaders import get_downloader
 from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 from .utils import decode_input
@@ -89,6 +90,23 @@ import six
 assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _see_url
 assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _see_url
 assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _see_url
+
+
+def get_on_demand_video_url(session, video_id):
+    """
+    Return the download URL of on-demand course video.
+    """
+
+    url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
+    page = get_page(session, url)
+
+    dom = json.loads(page)
+    sources = dom['sources']
+    sources.sort(key=lambda src: src['resolution'])
+    sources.reverse()
+    video_url = sources[0]['formatSources']['video/mp4']
+
+    return video_url
 
 
 def get_syllabus_url(class_name, preview):
@@ -160,6 +178,18 @@ def get_syllabus(session, class_name, local_page=False, preview=False):
         with open(local_page) as f:
             page = f.read().decode("utf-8")
         logging.info('Read (%d bytes) from local file', len(page))
+
+    return page
+
+
+def get_on_demand_syllabus(session, class_name):
+    """
+    Get the on-demand course listing webpage.
+    """
+
+    url = OPENCOURSE_CONTENT_URL.format(class_name=class_name)
+    page = get_page(session, url)
+    logging.info('Downloaded %s (%d bytes)', url, len(page))
 
     return page
 
@@ -281,6 +311,45 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
                       'please re-run with the `--clear-cache` option.')
 
     return sections
+
+
+def parse_on_demand_syllabus(session, page, reverse=False,
+                             intact_fnames=False):
+    """
+    Parses a Coursera on-demand course listing/syllabus page.
+    """
+    dom = json.loads(page)
+
+    logging.info('Parsing syllabus of on-demand course. '
+                 'This may take some time, be patient ...')
+    modules = []
+    json_modules = dom['courseMaterial']['elements']
+    for module in json_modules:
+        module_slug = module['slug']
+        sections = []
+        json_sections = module['elements']
+        for section in json_sections:
+            section_slug = section['slug']
+            lectures = []
+            json_lectures = section['elements']
+            for lecture in json_lectures:
+                lecture_slug = lecture['slug']
+                if lecture['content']['typeName'] == 'lecture':
+                    lecture_video_id = lecture['content']['definition']['videoId']
+                    lecture_video_url = get_on_demand_video_url(session, lecture_video_id)
+                    if lecture_video_url is not None:
+                        lectures.append((lecture_slug, {'mp4': [(lecture_video_url, '')]}))
+
+            if lectures:
+                sections.append((section_slug, lectures))
+
+        if sections:
+            modules.append((module_slug, sections))
+
+    if modules and reverse:
+        modules.reverse()
+
+    return modules
 
 
 def download_about(session, class_name, path='', overwrite=False):
@@ -515,6 +584,11 @@ def parseArgs(args=None):
                         action='store_true',
                         default=False,
                         help='download "about" metadata. (Default: False)')
+    parser.add_argument('--on-demand',
+                        dest='on_demand',
+                        action='store_true',
+                        default=False,
+                        help='get on-demand videos. (Default: False)')
     parser.add_argument('-b',
                         '--preview',
                         dest='preview',
@@ -778,6 +852,53 @@ def download_class(args, class_name):
     return completed
 
 
+def download_on_demand_class(args, class_name):
+    """
+    Download all requested resources from the on-demand class
+    given in class_name. Returns True if the class appears completed.
+    """
+
+    session = requests.Session()
+    login(session, args.username, args.password)
+
+    # get the syllabus listing
+    page = get_on_demand_syllabus(session, class_name)
+
+    # parse it
+    modules = parse_on_demand_syllabus(session, page, args.reverse,
+                                       args.intact_fnames)
+
+    downloader = get_downloader(session, class_name, args)
+
+    # obtain the resources
+    completed = True
+    for idx, module in enumerate(modules):
+        module_name = '%02d_%s' % (idx + 1, module[0])
+        sections = module[1]
+
+        result = download_lectures(
+            downloader,
+            module_name,
+            sections,
+            args.file_formats,
+            args.overwrite,
+            args.skip_download,
+            args.section_filter,
+            args.lecture_filter,
+            args.resource_filter,
+            os.path.join(args.path, class_name),
+            args.verbose_dirs,
+            args.preview,
+            args.combined_section_lectures_nums,
+            args.hooks,
+            args.playlist,
+            args.intact_fnames
+        )
+        completed = completed and result
+
+    return completed
+
+
 def main():
     """
     Main entry point for execution as a program (instead of as a module).
@@ -793,7 +914,13 @@ def main():
     for class_name in args.class_names:
         try:
             logging.info('Downloading class: %s', class_name)
-            if download_class(args, class_name):
+            result = False
+            if args.on_demand:
+                result = download_on_demand_class(args, class_name)
+            else:
+                result = download_class(args, class_name)
+
+            if result:
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
