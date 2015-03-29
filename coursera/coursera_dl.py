@@ -71,7 +71,7 @@ except ImportError:
 
 from .cookies import (
     AuthenticationFailed, ClassNotFound,
-    get_cookies_for_class, make_cookie_values, login)
+    get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
@@ -135,6 +135,17 @@ def get_page(session, url):
         raise
 
     return r.text
+
+
+def get_session():
+    """
+    Create a session with TLS v1.2 certificate.
+    """
+
+    session = requests.Session()
+    session.mount('https://', TLSAdapter())
+
+    return session
 
 
 def grab_hidden_video_url(session, href):
@@ -804,7 +815,7 @@ def download_class(args, class_name):
     Returns True if the class appears completed.
     """
 
-    session = requests.Session()
+    session = get_session()
 
     if args.preview:
         # Todo, remove this.
@@ -858,7 +869,7 @@ def download_on_demand_class(args, class_name):
     given in class_name. Returns True if the class appears completed.
     """
 
-    session = requests.Session()
+    session = get_session()
     login(session, args.username, args.password)
 
     # get the syllabus listing
