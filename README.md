@@ -135,6 +135,8 @@ On Mac OSX using MacPorts, the following may be used:
 If you don't already have one, create a [Coursera][1] account and enroll in
 a class. See https://www.coursera.org/courses for the list of classes.
 
+*Important:*  Some courses are on-demand and do not require enrollment.  On-demand courses can NOT be downloaded with coursera-dl.
+
 ### Running the script
 
 Run the script to download the materials by providing your Coursera account
