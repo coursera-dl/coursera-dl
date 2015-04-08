@@ -34,8 +34,7 @@ def __fixed_init__(self, version, name, value,
                    comment,
                    comment_url,
                    rest,
-                   rfc2109=False,
-                   ):
+                   rfc2109=False):
     if expires is not None:
         expires = float(expires)
     __orginal_init__(self, version, name, value,
@@ -48,7 +47,7 @@ def __fixed_init__(self, version, name, value,
                      comment,
                      comment_url,
                      rest,
-                     rfc2109=False,)
+                     rfc2109=False)
 
 cookielib.Cookie.__init__ = __fixed_init__
 

@@ -242,8 +242,8 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
     soup = BeautifulSoup(page)
 
     # traverse sections
-    for stag in soup.findAll(attrs={'class':
-                                    re.compile('^course-item-list-header')}):
+    stags = soup.findAll(attrs={'class': re.compile('^course-item-list-header')})
+    for stag in stags:
         assert stag.contents[0] is not None, "couldn't find section"
         untouched_fname = stag.contents[0].contents[1]
         section_name = clean_filename(untouched_fname, intact_fnames)
@@ -454,8 +454,7 @@ def download_lectures(downloader,
                       combined_section_lectures_nums=False,
                       hooks=None,
                       playlist=False,
-                      intact_fnames=False
-                      ):
+                      intact_fnames=False):
     """
     Downloads lecture resources described by sections.
     Returns True if the class appears completed.
@@ -821,12 +820,10 @@ def download_class(args, class_name):
         # Todo, remove this.
         session.cookie_values = 'dummy=dummy'
     else:
-        get_cookies_for_class(
-            session,
-            class_name,
-            cookies_file=args.cookies_file,
-            username=args.username, password=args.password
-        )
+        get_cookies_for_class(session,
+                              class_name,
+                              cookies_file=args.cookies_file,
+                              username=args.username, password=args.password)
         session.cookie_values = make_cookie_values(session.cookies, class_name)
 
     # get the syllabus listing
