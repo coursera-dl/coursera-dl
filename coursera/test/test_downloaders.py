@@ -22,8 +22,8 @@ class ResourceCollectorTestCase(unittest.TestCase):
         res = coursera_dl.find_resources_to_get(self.sample_bag, 'all', None)
 
         self.assertEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
-                         ('pdf', 'h://url2/lc2.pdf', 'slides'),
-                         ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
+                          ('pdf', 'h://url2/lc2.pdf', 'slides'),
+                          ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
 
     def test_collect_only_pdfs(self):
         res = coursera_dl.find_resources_to_get(self.sample_bag, 'pdf', None)

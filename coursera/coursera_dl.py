@@ -403,22 +403,22 @@ def is_course_complete(last_update):
 
 
 def format_section(num, section, class_name, verbose_dirs):
-        sec = '%02d_%s' % (num, section)
-        if verbose_dirs:
-            sec = class_name.upper() + '_' + sec
-        return sec
+    sec = '%02d_%s' % (num, section)
+    if verbose_dirs:
+        sec = class_name.upper() + '_' + sec
+    return sec
 
 
 def format_resource(num, name, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%s%s.%s' % (num, name, title, fmt)
+    if title:
+        title = '_' + title
+    return '%02d_%s%s.%s' % (num, name, title, fmt)
 
 
 def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
+    if title:
+        title = '_' + title
+    return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
 
 
 def find_resources_to_get(lecture, file_formats, resource_filter):
@@ -839,23 +839,22 @@ def download_class(args, class_name):
     downloader = get_downloader(session, class_name, args)
 
     # obtain the resources
-    completed = download_lectures(
-        downloader,
-        class_name,
-        sections,
-        args.file_formats,
-        args.overwrite,
-        args.skip_download,
-        args.section_filter,
-        args.lecture_filter,
-        args.resource_filter,
-        args.path,
-        args.verbose_dirs,
-        args.preview,
-        args.combined_section_lectures_nums,
-        args.hooks,
-        args.playlist,
-        args.intact_fnames)
+    completed = download_lectures(downloader,
+                                  class_name,
+                                  sections,
+                                  args.file_formats,
+                                  args.overwrite,
+                                  args.skip_download,
+                                  args.section_filter,
+                                  args.lecture_filter,
+                                  args.resource_filter,
+                                  args.path,
+                                  args.verbose_dirs,
+                                  args.preview,
+                                  args.combined_section_lectures_nums,
+                                  args.hooks,
+                                  args.playlist,
+                                  args.intact_fnames)
 
     return completed
 
