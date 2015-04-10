@@ -79,7 +79,6 @@ class UtilsTestCase(unittest.TestCase):
         else:
             self.assertEqual(res, '2yW4Acq9')
 
-
     def test_fix_url_ads_sheme(self):
         url = "www.coursera.org"
         self.assertEquals(utils.fix_url(url), 'http://www.coursera.org')
@@ -158,7 +157,6 @@ class UtilsTestCase(unittest.TestCase):
 
         url = coursera_dl.get_syllabus_url('bill', True)
         self.assertEqual('https://class.coursera.org/bill/lecture/preview', url)
-
 
     def test_parse_args(self):
         args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])
