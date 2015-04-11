@@ -17,8 +17,11 @@ matrix:
 install:
   - pip install -r requirements.txt
   - pip install coveralls
+  - pip install pytest
+  - pip install pytest-cov
+  - pip install pytest-xdist
 # command to run tests
-script: nosetests --verbose --with-coverage --cover-package=coursera
+script: py.test coursera/test -v --cov coursera --cov-report html
 
 after_success:
   coveralls
