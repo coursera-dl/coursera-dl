@@ -18,14 +18,15 @@ the related materials into appropriately named files and directories.
 Why is this helpful?  A utility like [`wget`][2] can work, but has the
 following limitations:
 
-1. Video names have a number in them, but this does not correspond to the
-   actual order.  Manually renaming them is a pain.
+1. Video names have numbers in them, but this does not correspond to the
+   actual order.  Manually renaming them is a pain that is best left for
+   computers.
 2. Using names from the syllabus page provides more informative names.
-3. Using a wget in a for loop picks up extra videos which are not
+3. Using wget in a for loop picks up extra videos which are not
    posted/linked, and these are sometimes duplicates.
 
-*DownloadThemAll* is another possibility, but this script provides more
-features such as appropriately named files.
+Browser extensions like *DownloadThemAll* is another possibility, but
+`coursera-dl` provides more features such as appropriately named files.
 
 This work was originally inspired in part by [youtube-dl][3] by which
 I've downloaded many other good videos such as those from Khan Academy.
@@ -65,7 +66,7 @@ automatically the execution of the program with Python versions 2.6, 2.7,
 Pypy, 3.2, 3.3, and 3.4).
 
 On any operating system, ensure that the Python executable location is added
-to your PATH environment variable and, once you have the dependencies
+to your `PATH` environment variable and, once you have the dependencies
 installed (see next section), for a *basic* usage, you will need to invoke
 the script from the main directory of the project and prepend it with the
 word `python`.  You can also use more advanced features of the program by
