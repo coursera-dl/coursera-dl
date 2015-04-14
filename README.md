@@ -201,6 +201,9 @@ class names, as well as any additional parameters:
 may experience problems.  Be sure to escape the `ls` command (use `\ls`) to
 assure that no special characters get sent to the script.
 
+Note that we *do* support the new On Demand classes. You have to use the
+option `--on-demand` for that purpose. You also have to download those
+classes *separately* for regular, time-based classes.
 
 On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username (i.e., your email address) and password every
@@ -231,6 +234,9 @@ one of the following actions solve your problem:
 * Make sure the class name you are using corresponds to the resource name
   used in the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
+
+* To download an On Demand course, use the `--on-demand` option of the
+  program.
 
 * Have you tried to clean the cached cookies/credentials with the
   `--clear-cache` option?
