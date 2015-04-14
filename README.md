@@ -309,8 +309,9 @@ enough information so that you can help us help you:
 * What is the precise command line that you are using (feel free to hide
   your username and password with asterisks, but leave all other
   information untouched).
-* What are the precise messages that you get? Please, copy and paste them.
-  Don't reword the messages.
+* What are the precise messages that you get? Please, use the `--debug`
+  option before posting the messages as a bug report. Please, copy and paste
+  them.  Don't reword/paraphrase the messages.
 
 ## Feedback
 
