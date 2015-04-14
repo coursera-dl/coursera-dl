@@ -176,8 +176,8 @@ a class. See https://www.coursera.org/courses for the list of classes.
 ### Running the script
 
 Run the script to download the materials by providing your Coursera account
-credentials (e.g. email address and password or a `~/.netrc` file), the class names,
-as well as any additional parameters:
+credentials (e.g. email address and password or a `~/.netrc` file), the
+class names, as well as any additional parameters:
 
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
     On-Demand course:            coursera-dl -u <user> -p <pass> --on-demand calculus1
@@ -197,8 +197,10 @@ as well as any additional parameters:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
       Update:                  coursera-dl -n --path CURRENT `\ls CURRENT`
     
-    Note: If your ls command is aliased to display a colorized output, you may experience problems. 
-    Be sure to escape the ls command (use \ls) to assure that no special characters get sent to the script.
+**Note:** If your `ls` command is aliased to display a colorized output, you
+may experience problems.  Be sure to escape the `ls` command (use `\ls`) to
+assure that no special characters get sent to the script.
+
 
 On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username (i.e., your email address) and password every
