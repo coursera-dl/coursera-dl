@@ -346,8 +346,10 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 
 ## Contact
 
-Post bugs and issues on [github][11]. Send other comments to John Lehmann:
-first last at geemail dotcom or [@jplehmann][12]
+Post bugs and issues on [github][11]. Send other comments to Rogério Brito
+(the current maintainer): first last at ime dot usp dot br (twitter:
+[@rtdbrito][21]) or to John Lehman (the original author): first last at
+geemail dotcom (twitter: [@jplehmann][12]).
 
 [1]: https://www.coursera.org
 [2]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
@@ -369,6 +371,6 @@ first last at geemail dotcom or [@jplehmann][12]
 [18]: http://python-distribute.org/pip_distribute.png
 [19]: https://pypi.python.org/pypi/six/
 [20]: https://www.coursera.org/about/terms
+[21]: https://twitter.com/rtdbrito
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
