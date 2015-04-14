@@ -82,6 +82,40 @@ We strongly recommend that you consider installing Python packages with
 using `pip`, you can directly install all the dependencies from the
 requirements file using `pip install -r requirements.txt`.
 
+#### Recommended installation method for Unix systems
+
+We strongly recommend that you install `coursera-dl` and all its
+dependencies in a way that does *not* interfere with the rest of your Python
+installation. This is accomplished by the creation of a *virtual
+environment*, or "virtualenv".
+
+For the initial setup, in a Unix-like operating system, please use the
+following steps (create/adapt first the directory
+`/directory/where/I/want/my/courses`):
+
+    cd /directory/where/I/want/my/courses
+    virtualenv my-coursera
+    cd my-coursera
+    source bin/activate
+    git clone https://github.com/coursera-dl/coursera
+    cd coursera
+    pip install -r requirements.txt
+    ./coursera-dl ...
+
+To further download new videos from your classes, simply perform:
+
+    cd /directory/where/I/want/my/courses/my-coursera
+    source bin/activate
+    cd coursera
+    ./coursera-dl ...
+
+We are working on streamlining this whole process so that it is as simple as
+possible, but to support older versions of Python and to cope with Coursera
+disabling SSLv3, we have to take a few extra steps.  In any case, it is
+*highly* recommended that you always install the latest version of the
+Python interpreter that you can.
+
+
 #### Installing dependencies on your own
 
 **Warning:** This method is not recommended unless you know what you are
