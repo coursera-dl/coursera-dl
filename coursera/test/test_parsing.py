@@ -100,45 +100,39 @@ def _assert_parse(filename, num_sections, num_lectures,
             sum(r for f, r in resources if f == "mp4"),
             num_videos)
 
-def test_parse(get_video):
-    _assert_parse(
-        "regular-syllabus.html",
-        num_sections=23,
-        num_lectures=102,
-        num_resources=502,
-        num_videos=102)
-
-def test_links_to_wikipedia(get_video):
-    _assert_parse(
-        "links-to-wikipedia.html",
-        num_sections=5,
-        num_lectures=37,
-        num_resources=158,
-        num_videos=36)
-
-def test_parse_preview(get_video):
-    _assert_parse(
-        "preview.html",
-        num_sections=20,
-        num_lectures=106,
-        num_resources=106,
-        num_videos=106)
-
-def test_sections_missed(get_video):
-    _assert_parse(
-        "sections-not-to-be-missed.html",
-        num_sections=9,
-        num_lectures=61,
-        num_resources=224,
-        num_videos=61)
-
-def test_sections_missed2(get_video):
-    _assert_parse(
+@pytest.mark.parametrize(
+    "syllabus,sections", [
+        (
+            "regular-syllabus.html",
+            dict(num_sections=23, num_lectures=102, num_resources=502, num_videos=102)
+        ),
+        (
+            "links-to-wikipedia.html",
+            dict(num_sections=5, num_lectures=37, num_resources=158, num_videos=36)
+        ),
+        (
+            "preview.html",
+            dict(num_sections=20, num_lectures=106, num_resources=106, num_videos=106)
+        ),
+        (
+            "sections-not-to-be-missed.html",
+            dict(num_sections=9,
+                 num_lectures=61,
+                 num_resources=224,
+                 num_videos=61)
+        ),
+        (
         "sections-not-to-be-missed-2.html",
-        num_sections=20,
+            dict(num_sections=20,
         num_lectures=121,
         num_resources=397,
         num_videos=121)
+        ),
+
+    ]
+)
+def test_parse(get_video, syllabus, sections):
+    _assert_parse(syllabus, **sections)
 
 def test_parse_classes_with_bs4(get_video):
     classes = {
