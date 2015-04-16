@@ -72,8 +72,21 @@ def get_video(monkeypatch):
                         lambda session, href: None)
 
 
-def _assert_parse(filename, num_sections, num_lectures,
-                    num_resources, num_videos):
+@pytest.mark.parametrize(
+    "filename,num_sections,num_lectures,num_resources,num_videos", [
+        ("regular-syllabus.html", 23, 102, 502, 102),
+        ("links-to-wikipedia.html", 5, 37, 158, 36),
+        ("preview.html", 20, 106, 106, 106),
+        ("sections-not-to-be-missed.html", 9, 61, 224, 61),
+        ("sections-not-to-be-missed-2.html", 20, 121, 397, 121),
+        ("parsing-datasci-001-with-bs4.html", 10, 97, 358, 97),  # issue 134
+        ("parsing-startup-001-with-bs4.html", 4, 44, 136, 44),  # issue 137
+        ("parsing-wealthofnations-001-with-bs4.html", 8, 74, 296, 74),  # issue 131
+        ("parsing-malsoftware-001-with-bs4.html", 3, 18, 56, 16),  # issue 148
+        ("multiple-resources-with-the-same-format.html", 18, 97, 478, 97),
+    ]
+)
+def test_parse(get_video, filename, num_sections, num_lectures, num_resources, num_videos):
     filename = os.path.join(
         os.path.dirname(__file__), "fixtures", "html",
         filename)
@@ -99,70 +112,3 @@ def _assert_parse(filename, num_sections, num_lectures,
         assertEqual(
             sum(r for f, r in resources if f == "mp4"),
             num_videos)
-
-def test_parse(get_video):
-    _assert_parse(
-        "regular-syllabus.html",
-        num_sections=23,
-        num_lectures=102,
-        num_resources=502,
-        num_videos=102)
-
-def test_links_to_wikipedia(get_video):
-    _assert_parse(
-        "links-to-wikipedia.html",
-        num_sections=5,
-        num_lectures=37,
-        num_resources=158,
-        num_videos=36)
-
-def test_parse_preview(get_video):
-    _assert_parse(
-        "preview.html",
-        num_sections=20,
-        num_lectures=106,
-        num_resources=106,
-        num_videos=106)
-
-def test_sections_missed(get_video):
-    _assert_parse(
-        "sections-not-to-be-missed.html",
-        num_sections=9,
-        num_lectures=61,
-        num_resources=224,
-        num_videos=61)
-
-def test_sections_missed2(get_video):
-    _assert_parse(
-        "sections-not-to-be-missed-2.html",
-        num_sections=20,
-        num_lectures=121,
-        num_resources=397,
-        num_videos=121)
-
-def test_parse_classes_with_bs4(get_video):
-    classes = {
-        'datasci-001': (10, 97, 358, 97),  # issue 134
-        'startup-001': (4, 44, 136, 44),   # issue 137
-        'wealthofnations-001': (8, 74, 296, 74),  # issue 131
-        'malsoftware-001': (3, 18, 56, 16)  # issue 148
-    }
-
-    for class_, counts in iteritems(classes):
-        filename = "parsing-{0}-with-bs4.html".format(class_)
-        _assert_parse(
-            filename,
-            num_sections=counts[0],
-            num_lectures=counts[1],
-            num_resources=counts[2],
-            num_videos=counts[3])
-
-def test_multiple_resources_with_the_same_format(get_video):
-    _assert_parse(
-        "multiple-resources-with-the-same-format.html",
-        num_sections=18,
-        num_lectures=97,
-        num_resources=478,
-        num_videos=97)
-
-
