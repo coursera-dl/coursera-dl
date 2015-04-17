@@ -4,6 +4,7 @@
 _cache/
 .coverage
 /cover/
+/htmlcov/
 # virtualenv folders
 venv2
 venv3
