@@ -8,9 +8,10 @@ from setuptools import setup
 
 setup(
     name='coursera',
-    version='0.0.0',  # FIXME
-    author='fixme',
-    author_email='fixme',
+    version='0.0.0',
+    maintainer='Rogério Theodoro de Brito',
+    maintainer_email='rbrito@ime.usp.br',
+
     license='LGPL',
     url='https://github.com/coursera-dl/coursera',
 
@@ -24,10 +25,12 @@ setup(
     keywords=['python', 'FIXME'],
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
+        'Intended Audience :: End Users/Desktop',
+        'Environment :: Console',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
         'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        # XXX FIXME add more, these are "Trove Classifiers"
+        'Topic :: Education',
+        'Operating System :: OS Independent'
     ],
 
     packages=["coursera"],
