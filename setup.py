@@ -27,12 +27,14 @@ setup(
     keywords=['python', 'FIXME'],
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Intended Audience :: End Users/Desktop',
         'Environment :: Console',
+        'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
+        'Operating System :: OS Independent'
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python',
         'Topic :: Education',
-        'Operating System :: OS Independent'
     ],
 
     packages=["coursera"],
