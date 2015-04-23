@@ -3,6 +3,5 @@ coverage>=3.7
 html5lib>=1.0b2
 requests>=2.4.3
 six>=1.5.0
-mock>=1.0.1
 urllib3>=1.10
 pyasn1>=0.1.7
