@@ -5,10 +5,8 @@ python:
   - "3.3"
   - "3.4"
   - "pypy"
-  - "nightly"
 matrix:
   allow_failures:
-    - python: "nigthly"
     - python: "pypy"
     - python: "3.2"
 # command to install dependencies
