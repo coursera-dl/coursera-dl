@@ -1,3 +1,4 @@
 pytest
 pytest-cov
+pytest-xdist
 mock>=1.0.1
