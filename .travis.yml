@@ -5,6 +5,7 @@ python:
   - "3.3"
   - "3.4"
   - "pypy"
+  - "nightly"
 matrix:
   allow_failures:
     - python:
@@ -13,6 +14,8 @@ matrix:
        - "pypy"
     - python:
        - "3.2"
+    - python:
+       - "nigthly"
 # command to install dependencies
 install:
   - pip install -r requirements.txt
