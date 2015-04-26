@@ -42,11 +42,12 @@ setup(
         'Programming Language :: Python',
         'Topic :: Education',
     ],
-
     packages=["coursera"],
     entry_points=dict(
         console_scripts=[
             'coursera-dl=coursera.coursera_dl:main'
         ]
     ),
+
+    scripts=['coursera-dl'],
 )
