@@ -1,5 +1,4 @@
 beautifulsoup4>=4.1.3
-coverage>=3.7
 html5lib>=1.0b2
 requests>=2.4.3
 six>=1.5.0
