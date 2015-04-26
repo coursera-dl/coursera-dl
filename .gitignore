@@ -8,6 +8,7 @@ _cache/
 /build/
 /dist/
 *.egg-info
+.tox
 
 # virtualenv folders
 venv2
