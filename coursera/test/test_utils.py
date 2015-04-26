@@ -100,38 +100,46 @@ def test_fix_url_ads_sheme():
 
 def test_fix_url_removes_sheme():
     url = " www.coursera.org "
-    assertEquals(utils.fix_url(url), 'http://www.coursera.org')
+    assert utils.fix_url(url) == 'http://www.coursera.org'
+
 
 def test_format_combine_resource_works_correctly():
     rv = coursera_dl.format_combine_number_resource(5, 4, "Moving_the_furniture", 'The_Basics', "mp4")
-    assertEqual('05_04_Moving_the_furniture_The_Basics.mp4', rv)
+    assert '05_04_Moving_the_furniture_The_Basics.mp4' == rv
+
 
 def test_format_combine_resource_works_correctly_without_title():
     rv = coursera_dl.format_combine_number_resource(5, 1, "Introduction", '', "mp4")
-    assertEqual('05_01_Introduction.mp4', rv)
+    assert '05_01_Introduction.mp4' == rv
+
 
 def test_format_resource_works_correctly():
     rv = coursera_dl.format_resource(2, "Washing", "Dishes", "mp9")
-    assertEqual('02_Washing_Dishes.mp9', rv)
+    assert '02_Washing_Dishes.mp9' == rv
+
 
 def test_format_resource_works_correctly_without_title():
     rv = coursera_dl.format_resource(1, "Introduction", '', "mp2")
-    assertEqual('01_Introduction.mp2', rv)
+    assert '01_Introduction.mp2' == rv
+
 
 def test_format_section_works_correctly():
     rv = coursera_dl.format_section(9, 'bob', 'WEAVING', False)
-    assertEqual('09_bob', rv)
+    assert '09_bob' == rv
+
 
 def test_format_section_works_correctly_with_verbose():
     rv = coursera_dl.format_section(9, 'bill', 'WEAVING', True)
-    assertEqual('WEAVING_09_bill', rv)
+    assert 'WEAVING_09_bill' == rv
+
 
 def test_fix_url_doesnt_alters_empty_url():
     url = None
-    assertEquals(utils.fix_url(url), None)
+    assert utils.fix_url(url) is None
 
     url = ""
-    assertEquals(utils.fix_url(url), "")
+    assert utils.fix_url(url) == ""
+
 
 def test_decode_input():
     encoded_inputs = [
@@ -144,7 +152,8 @@ def test_decode_input():
 
 def test_total_seconds():
     ts = coursera_dl.total_seconds(datetime.timedelta(days=30))
-    assertEquals(ts, 2592000)
+    assert ts == 2592000
+
 
 def test_is_course_complete_should_give_false_if_there_was_recent_update():
 
@@ -165,21 +174,23 @@ def test_is_course_complete_should_give_true_if_there_was_no_recent_update():
 def test_correct_formatting_of_class_URL():
 
     url = coursera_dl.get_syllabus_url('bob', False)
-    assertEqual('https://class.coursera.org/bob/lecture/index', url)
+    assert 'https://class.coursera.org/bob/lecture/index' == url
+
 
 def test_correct_formatting_of_class_with_preview_URL():
 
     url = coursera_dl.get_syllabus_url('bill', True)
-    assertEqual('https://class.coursera.org/bill/lecture/preview', url)
+    assert 'https://class.coursera.org/bill/lecture/preview' == url
 
 
 def test_parse_args():
     args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])
 
-    assertEquals(args.about, False)
-    assertEquals(args.class_names, ['posa-001'])
-    assertEquals(args.username, 'bob')
-    assertEquals(args.password, 'bill')
+    assert args.about == False
+    assert args.class_names == ['posa-001']
+    assert args.username == 'bob'
+    assert args.password == 'bill'
+
 
 def get_mock_session(page_text):
     page_obj = Mock()
@@ -196,7 +207,8 @@ def test_get_page():
 
     session.get.assert_called_once_with('http://www.not.here')
     page_obj.raise_for_status.assert_called_once()
-    assertEquals(p, '<page/>')
+    assert p == '<page/>'
+
 
 def test_grab_hidden_video_url():
     filename = os.path.join(
@@ -206,5 +218,5 @@ def test_grab_hidden_video_url():
     page_text = open(filename).read()
     page_obj, session = get_mock_session(page_text)
     p = coursera_dl.grab_hidden_video_url(session,
-                                            'http://www.hidden.video')
-    assertEquals('video1.mp4', p)
+                                          'http://www.hidden.video')
+    assert 'video1.mp4' == p
