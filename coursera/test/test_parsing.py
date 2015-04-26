@@ -21,6 +21,7 @@ from .test_utils import assertEqual, assertEquals, assertTrue, assertFalse, asse
 def get_page(monkeypatch):
     monkeypatch.setattr(coursera_dl, 'get_page', Mock())
 
+
 @pytest.fixture
 def json_path():
     return os.path.join(os.path.dirname(__file__), "fixtures", "json")
@@ -30,6 +31,7 @@ def test_that_should_not_dl_if_file_exist(get_page, json_path):
     coursera_dl.get_page = Mock()
     coursera_dl.download_about(object(), "matrix-002", json_path)
     assertFalse(coursera_dl.get_page.called)
+
 
 def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 
@@ -105,7 +107,7 @@ def test_parse(get_video, filename, num_sections, num_lectures, num_resources, n
 
         # resource count
         resources = [(res[0], len(res[1]))
-                        for lec in lectures for res in iteritems(lec[1])]
+                     for lec in lectures for res in iteritems(lec[1])]
         assertEqual(sum(r for f, r in resources), num_resources)
 
         # mp4 count

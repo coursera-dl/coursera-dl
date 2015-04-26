@@ -20,14 +20,18 @@ from coursera import coursera_dl
 def assertEqual(a, b):
     assert a == b
 
+
 def assertEquals(a, b):
     assert a == b
+
 
 def assertTrue(stmt):
     assert stmt
 
+
 def assertFalse(stmt):
     assert not stmt
+
 
 def assertRaises(e, f, *a, **kw):
     pytest.raises(e, f, *a, **kw)
@@ -51,6 +55,7 @@ def test_clean_filename():
         actual_res = utils.clean_filename(k)
         assert actual_res == v
 
+
 def test_clean_filename_minimal_change():
     strings = {
         '(23:90)': '(23-90)',
@@ -69,6 +74,7 @@ def test_clean_filename_minimal_change():
         actual_res = utils.clean_filename(k, minimal_change=True)
         assert actual_res == v
 
+
 def test_get_anchor_format():
     strings = {
         'https://class.coursera.org/sub?q=123_en&format=txt': 'txt',
@@ -78,6 +84,7 @@ def test_get_anchor_format():
     }
     for k, v in six.iteritems(strings):
         assertEquals(utils.get_anchor_format(k), v)
+
 
 def test_random_string():
     random.seed(0)  # set seed for reproducible tests
@@ -97,6 +104,7 @@ def test_random_string():
 def test_fix_url_ads_sheme():
     url = "www.coursera.org"
     assertEquals(utils.fix_url(url), 'http://www.coursera.org')
+
 
 def test_fix_url_removes_sheme():
     url = " www.coursera.org "
@@ -150,6 +158,7 @@ def test_decode_input():
         decoded_input = utils.decode_input(encoded_input)
         assert isinstance(decoded_input, six.text_type), "Decoded input is not a text type."
 
+
 def test_total_seconds():
     ts = coursera_dl.total_seconds(datetime.timedelta(days=30))
     assert ts == 2592000
@@ -163,6 +172,7 @@ def test_is_course_complete_should_give_false_if_there_was_recent_update():
     rv = coursera_dl.is_course_complete(tm)
     assertFalse(rv)
 
+
 def test_is_course_complete_should_give_true_if_there_was_no_recent_update():
 
     delta = coursera_dl.total_seconds(datetime.timedelta(days=31))
@@ -170,6 +180,7 @@ def test_is_course_complete_should_give_true_if_there_was_no_recent_update():
 
     rv = coursera_dl.is_course_complete(tm)
     assertTrue(rv)
+
 
 def test_correct_formatting_of_class_URL():
 
@@ -199,6 +210,7 @@ def get_mock_session(page_text):
     session = requests.Session()
     session.get = Mock(return_value=page_obj)
     return page_obj, session
+
 
 def test_get_page():
     page_obj, session = get_mock_session('<page/>')

@@ -10,6 +10,7 @@ import pytest
 
 from .test_utils import assertEqual, assertEquals, assertTrue, assertFalse, assertRaises
 
+
 @pytest.fixture
 def sample_bag():
     sample_bag = {
@@ -19,25 +20,28 @@ def sample_bag():
     }
     return sample_bag
 
+
 def test_collect_all_resources(sample_bag):
     res = coursera_dl.find_resources_to_get(sample_bag, 'all', None)
 
     assertEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
-                        ('pdf', 'h://url2/lc2.pdf', 'slides'),
-                        ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
+                 ('pdf', 'h://url2/lc2.pdf', 'slides'),
+                 ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
+
 
 def test_collect_only_pdfs(sample_bag):
     res = coursera_dl.find_resources_to_get(sample_bag, 'pdf', None)
 
     assertEqual([('pdf', 'h://url2/lc2.pdf', 'slides')],
-                        sorted(res))
+                sorted(res))
+
 
 def test_collect_with_filtering(sample_bag):
     res = coursera_dl.find_resources_to_get(sample_bag, 'all', 'de')
     res = sorted(res)
 
     assertEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
-                        ('pdf', 'h://url2/lc2.pdf', 'slides')], res)
+                 ('pdf', 'h://url2/lc2.pdf', 'slides')], res)
 
 
 # External Downloader
@@ -50,16 +54,18 @@ def _ext_get_session():
 
     s = requests.Session()
     s.cookies.set('csrf_token', 'csrfclass001',
-                    domain="www.coursera.org", expires=expires)
+                  domain="www.coursera.org", expires=expires)
     s.cookies.set('session', 'sessionclass1',
-                    domain="www.coursera.org", expires=expires)
+                  domain="www.coursera.org", expires=expires)
     s.cookies.set('k', 'v',
-                    domain="www.example.org", expires=expires)
+                  domain="www.example.org", expires=expires)
 
     return s
 
+
 def test_bin_not_specified():
     assertRaises(RuntimeError, downloaders.ExternalDownloader, None)
+
 
 def test_bin_not_found_raises_exception():
     d = downloaders.ExternalDownloader(None, bin='no_way_this_exists')
@@ -67,9 +73,11 @@ def test_bin_not_found_raises_exception():
     d._create_command = lambda x, y: ['no_way_this_exists']
     assertRaises(OSError, d._start_download, 'url', 'filename')
 
+
 def test_bin_is_set():
     d = downloaders.ExternalDownloader(None, bin='test')
     assertEquals(d.bin, 'test')
+
 
 def test_prepare_cookies():
     s = _ext_get_session()
@@ -84,6 +92,7 @@ def test_prepare_cookies():
     d._prepare_cookies(command, 'http://www.coursera.org')
     assertTrue('csrf_token=csrfclass001' in command[0])
     assertTrue('session=sessionclass1' in command[0])
+
 
 def test_prepare_cookies_does_nothing():
     s = _ext_get_session()
@@ -100,12 +109,14 @@ def test_prepare_cookies_does_nothing():
     d._prepare_cookies(command, 'http://www.coursera.org')
     assertEquals(command, [])
 
+
 def test_start_command_raises_exception():
     d = downloaders.ExternalDownloader(None, bin='test')
     d._add_cookies = lambda cmd, cookie_values: None
     assertRaises(
         NotImplementedError,
         d._create_command, 'url', 'filename')
+
 
 def test_wget():
     s = _ext_get_session()
@@ -121,6 +132,7 @@ def test_wget():
     assertTrue(any("csrf_token=csrfclass001" in e for e in command))
     assertTrue(any("session=sessionclass1" in e for e in command))
 
+
 def test_curl():
     s = _ext_get_session()
 
@@ -133,6 +145,7 @@ def test_curl():
     d._prepare_cookies(command, 'http://www.coursera.org')
     assertTrue(any("csrf_token=csrfclass001" in e for e in command))
     assertTrue(any("session=sessionclass1" in e for e in command))
+
 
 def test_aria2():
     s = _ext_get_session()
@@ -147,6 +160,7 @@ def test_aria2():
     assertTrue(any("Cookie: " in e for e in command))
     assertTrue(any("csrf_token=csrfclass001" in e for e in command))
     assertTrue(any("session=sessionclass1" in e for e in command))
+
 
 def test_axel():
     s = _ext_get_session()
@@ -197,6 +211,7 @@ def _get_progress(total):
 
     return p
 
+
 def test_calc_percent_if_total_is_zero():
     p = _get_progress(0)
     assertEquals(p.calc_percent(), '--%')
@@ -204,11 +219,13 @@ def test_calc_percent_if_total_is_zero():
     p.read(10)
     assertEquals(p.calc_percent(), '--%')
 
+
 def test_calc_percent_if_not_yet_read():
     p = _get_progress(100)
     assertEquals(
         p.calc_percent(),
         '[                                                  ] 0%')
+
 
 def test_calc_percent_if_read():
     p = _get_progress(100)
@@ -228,13 +245,16 @@ def test_calc_percent_if_read():
         p.calc_percent(),
         '[###                                               ] 7%')
 
+
 def test_calc_speed_if_total_is_zero():
     p = _get_progress(0)
     assertEquals(p.calc_speed(), '---b/s')
 
+
 def test_calc_speed_if_not_yet_read():
     p = _get_progress(100)
     assertEquals(p.calc_speed(), '---b/s')
+
 
 def test_calc_speed_ifread():
     p = _get_progress(10000)
