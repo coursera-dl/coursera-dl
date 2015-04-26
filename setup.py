@@ -50,4 +50,5 @@ setup(
     ),
 
     scripts=['coursera-dl'],
+    platforms = ['any'],
 )
