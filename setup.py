@@ -24,7 +24,7 @@ setup(
 
     description='Script for downloading Coursera.org videos and naming them.',
     long_description=open('README.md', 'r').read(),
-    keywords=['python', 'FIXME'],
+    keywords=['coursera', 'download', 'education', 'MOOCs', 'video'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
