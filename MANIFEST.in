@@ -1,2 +1,3 @@
 include requirements*.txt
 include *.md
+include LICENSE
