@@ -2,11 +2,12 @@ Please, before sending patches, it is helpful if you:
 
 * Make sure that you have all dependencies installed, like via
 
-        pip install -r requirements
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
 
 * Run the test suite with
 
-        nosetests --verbose --with-coverage --cover-package=coursera
+        py.test coursera/test -v --cov coursera --cov-report html
 
 * Check for any potential bugs with the help of [`pep8`][pep8],
   [`pyflakes`][pyflakes], and [`pylint`][pylint].
