@@ -49,4 +49,6 @@ setup(
             'coursera-dl=coursera.coursera_dl:main'
         ]
     ),
+
+    platforms = ['any'],
 )
