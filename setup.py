@@ -30,7 +30,7 @@ setup(
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
-        'Operating System :: OS Independent'
+        'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
