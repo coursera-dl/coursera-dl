@@ -197,7 +197,7 @@ def test_correct_formatting_of_class_with_preview_URL():
 def test_parse_args():
     args = coursera_dl.parseArgs(['-u', 'bob', '-p', 'bill', 'posa-001'])
 
-    assert args.about == False
+    assert args.about is False
     assert args.class_names == ['posa-001']
     assert args.username == 'bob'
     assert args.password == 'bill'
