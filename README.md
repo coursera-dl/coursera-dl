@@ -192,11 +192,11 @@ class names, as well as any additional parameters:
 
     Note: Some of the options like `-sf` and `-f` may not work with on-demand course.
     Downloading on-demand courses are mutually exclusive with regular courses.
-    
+
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
       Update:                  coursera-dl -n --path CURRENT `\ls CURRENT`
-    
+
 **Note:** If your `ls` command is aliased to display a colorized output, you
 may experience problems.  Be sure to escape the `ls` command (use `\ls`) to
 assure that no special characters get sent to the script.
@@ -252,7 +252,7 @@ one of the following actions solve your problem:
 
 * Make sure you have installed and/or updated all of your dependencies
   according to the `requirements.txt` file as described above.
- 
+
 * One can export a Netscape-style cookies file with a browser extension
   ([1][9], [2][10]) and use it with the `-c` option. This comes in handy
   when the authentication via password is not working (the authentication
@@ -320,7 +320,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 * "Thanks for the good job! Knowledge will flood the World a little more thanks
   to your script!"
   <br>Guillaume V. 11/8/2012
-  
+
 * "Just wanted to send you props for your Python script to download Coursera
   courses. I've been using it in Kenya for my non-profit to get online courses
   to places where internet is really expensive and unreliable. Mostly kids here
@@ -333,7 +333,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
   I came across your script, and I am very happily using it!  Great stuff and
   thanks for making this available on Github - well done!"
   <br>William G.  2/18/2013
-  
+
 * "This script is awesome! I was painstakingly downloading each and every video
   and ppt by hand -- looked into wget but ran into wildcard issues with HTML,
   and then.. I came across your script.  Can't tell you how many hours you've
