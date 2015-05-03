@@ -85,5 +85,5 @@ def release():
     build()
     print("Releasing %s version %s." % (env.projname, env.version))
     local("git tag %s" % env.version)
-    local("python setup.py sdist upload")
+    local('twine upload dist/coursera-*.tar.gz*')
     local("git push --tags")
