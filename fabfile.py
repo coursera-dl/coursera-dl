@@ -24,7 +24,13 @@ def mkdirs(path):
 
 
 @task
+def create_rst_doc():
+    local('pandoc --from=markdown --to=rst --output=README.rst README.md')
+
+
+@task
 def clean():
+    create_rst_doc()
     local("python setup.py clean")
     local("rm coursera_dl.egg-info htmlcov build -rf")
     local("find . -name '*.pyc' -delete")
@@ -32,6 +38,7 @@ def clean():
 
 @task
 def build():
+    create_rst_doc()
     local("python setup.py sdist")
 
 
