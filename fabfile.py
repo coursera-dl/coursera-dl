@@ -9,6 +9,9 @@ import os
 
 from fabric.api import (env, local, task)
 
+if not os.path.exists('README.rst'):
+    local('pandoc --from=markdown --to=rst --output=README.rst README.md')
+
 env.projname = local("python setup.py --name", capture=True)
 env.version = local("python setup.py --version", capture=True)
 
