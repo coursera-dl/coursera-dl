@@ -35,7 +35,8 @@ def create_rst_doc():
 def clean():
     create_rst_doc()
     local("python setup.py clean")
-    local("rm -rf coursera.egg-info htmlcov build dist README.rst")
+    local("rm -rf .tox coursera.egg-info htmlcov build dist README.rst")
+    local("rm -rf coursera/__pycache__/ coursera/test/__pycache__/")
     local("find . -name '*.pyc' -delete")
 
 
