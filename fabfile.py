@@ -32,7 +32,7 @@ def create_rst_doc():
 def clean():
     create_rst_doc()
     local("python setup.py clean")
-    local("rm coursera_dl.egg-info htmlcov build -rf")
+    local("rm -rf coursera.egg-info htmlcov build dist README.rst")
     local("find . -name '*.pyc' -delete")
 
 
