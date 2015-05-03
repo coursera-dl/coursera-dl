@@ -148,54 +148,25 @@ Python interpreter that you can.
 ### Installing dependencies on your own
 
 **Warning:** This method is not recommended unless you know what you are
-doing. Once again, before filing bug reports, if you installed the
-dependencies own your own, please check that the versions of your modules
-are at least those recommended in the `requirements.txt` file.  The
-`requirements.txt` file is the official resource that we use as reference
-and support.
+doing.
 
-Yet once again, you may choose to install the dependencies yourself, but our
-users had issues that not all resources (videos etc.) were downloaded with
-versions of the dependencies different than those listed in the
-`requirements.txt` file.
+You can use the `pip` program to install the dependencies on your own.  They
+are all listed in the `requirements.txt` file (and the extra dependencies
+needed for development are listed in the `requirements-dev.txt` file).
 
-In any case, you may want to install:
+To use this method, you would proceed as:
 
-* [Beautiful Soup 4][5]: Required. See also html5lib below.
-  - Ubuntu/Debian: `sudo apt-get install python-bs4`
-  - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
-  - Other: `pip install beautifulsoup4`
-* [Argparse][6]: Required (but you only need to install with Python 2.6)
-  - Ubuntu/Debian: `sudo apt-get install python-argparse`
-  - Other: `pip install argparse`
-* [requests][16]: Required.
-  - Ubuntu/Debian: `sudo apt-get install python-requests`
-  - Mac OSX + MacPorts: `sudo port install py-requests`
-  - Other: `pip install requests`
-* [six][19]: Required.
-  - Ubuntu/Debian: `sudo apt-get install python-six`
-  - Mac OSX + MacPorts: `sudo port install py27-six`
-  - Other: `pip install six`
-* [html5lib][15]: Not required, but recommended for parsing pages.
-  - Ubuntu/Debian: `sudo apt-get install python-html5lib`
-  - Mac OSX + MacPorts: `sudo port install py-html5lib`
-  - Other: `pip install html5lib`
-* [easy_install][7]: Only necessary if not using prepackaged
-  dependencies. Also, `pip` supersedes it.
-  - Ubuntu/Debian: `sudo apt-get install python-setuptools`
+    pip install -r requirements.txt
+    pip install -r requirements-dev.txt
 
-Again, make sure that you have the versions mentioned in the file
-`requirements.txt` (later versions may be OK).
+The second line above should only be needed if you intend to help with
+development (and help is *always* welcome) or if a maintainer of the project
+asks you to install extra packages for debugging purposes.
 
-On Mac OSX using MacPorts, the following may be used:
-
-    port
-    > select --set python python27
-    > install py-beautifulsoup
-    > install py-argparse
-    > install py-setuptools
-    > install py-requests
-    > install py27-six
+Once again, before filing bug reports, if you installed the dependencies on
+your own, please check that the versions of your modules are at least those
+recommended according to the `requirements.txt` file (and,
+`requirements-dev.txt` file, if applicable).
 
 ## Create an account with Coursera
 
