@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='coursera',
-    version='0.0.0',
+    version='0.0.1',
     maintainer='Rogério Theodoro de Brito',
     maintainer_email='rbrito@ime.usp.br',
 
