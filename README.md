@@ -266,14 +266,6 @@ one of the following actions solve your problem:
   sometimes a preview is available, containing all the classes from the
   last course. These files can be downloaded by passing the -b parameter.
 
-* If you are using Beautiful Soup 4, make sure you have installed
-  html5lib:
-
-        $ python
-        >>> import html5lib
-        >>> print(html5lib.__version__)
-        1.0b2
-
 * If you get an error like `Could not find class: <CLASS_NAME>`:
     * Verify that the name of the course is correct. Current class
       names in coursera are composed by a short course name e.g. `class`
