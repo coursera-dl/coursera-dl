@@ -102,9 +102,12 @@ to use the option `--user` to `pip install`, if you need can.
 ### Alternative ways of installing missing dependencies
 
 We strongly recommend that you consider installing Python packages with
-[`pip`][17], as in it is the current [preferred method][18].  If you are
-using `pip`, you can directly install all the dependencies from the
-requirements file using `pip install -r requirements.txt`.
+[`pip`][17], as in it is the current [preferred method][18], unless directed
+otherwise by one of the project members (for instance, when testing or
+debugging a new feature or using the source code directly from our git
+repository).  If you are using `pip`, you can directly install all the
+dependencies from the requirements file using `pip install -r
+requirements.txt`.
 
 #### Alternative installation method for Unix systems
 
