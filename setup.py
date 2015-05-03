@@ -23,7 +23,7 @@ setup(
     ),
 
     description='Script for downloading Coursera.org videos and naming them.',
-    long_description=open('README.md', 'r').read(),
+    long_description=open('README.rst', 'r').read(),
     keywords=['coursera', 'download', 'education', 'MOOCs', 'video'],
     classifiers=[
         'Development Status :: 4 - Beta',
