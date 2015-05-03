@@ -44,6 +44,7 @@ def clean():
 def build():
     create_rst_doc()
     local("python setup.py sdist")
+    local("gpg --detach-sign -a dist/coursera-%s.tar.gz" % env.version)
 
 
 @task
