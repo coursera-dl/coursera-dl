@@ -39,8 +39,10 @@ I've downloaded many other good videos such as those from Khan Academy.
   * Regex-based section (week) and lecture name filters to download only
     certain resources.
   * File format extension filter to grab resource types you want.
-  * Login credentials accepted on command-line or from `.netrc` file
+  * Login credentials accepted on command-line or from `.netrc` file.
   * Core functionality tested on Linux, Mac and Windows.
+  * Support for both regular (i.e., time-based) courses as well as on-demand
+    courses.
 
 ## Disclaimer
 
