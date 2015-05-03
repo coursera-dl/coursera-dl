@@ -75,14 +75,36 @@ looking at the "Running the script" section of this document.
 *Note:* You must already have (manually) agreed to the Honor of Code of the
 particular courses that you want to use with `coursera-dl`.
 
-### Install any missing dependencies.
+### Recommended installation method for all Operating Systems
+
+From a command line (preferrably, from a virtual environment), simply issue
+the command:
+
+    pip install coursera
+
+
+This will dowload [the latest released version][23] of the program from the
+[Python Package Index (PyPI)][22] along with *all* the necessary
+dependencies. At this point, you should be ready to start using it.
+
+**Note 1:** Note that the PyPI package is called simply `coursera`, but the
+command-line is called `coursera-dl`. This is an unfortunate fact related to
+conflicting names.
+
+**Note 2:** We strongly recommend that you *don't* install the package
+globally on your machine (i.e., with root/administrator privileges), as the
+installed modules may conflict with other Python applications that you have
+installed in your system (or they can interfere with `coursera-dl`).  Prefer
+to use the option `--user` to `pip install`, if you need can.
+
+### Alternative ways of installing missing dependencies
 
 We strongly recommend that you consider installing Python packages with
 [`pip`][17], as in it is the current [preferred method][18].  If you are
 using `pip`, you can directly install all the dependencies from the
 requirements file using `pip install -r requirements.txt`.
 
-#### Recommended installation method for Unix systems
+#### Alternative installation method for Unix systems
 
 We strongly recommend that you install `coursera-dl` and all its
 dependencies in a way that does *not* interfere with the rest of your Python
@@ -372,5 +394,7 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [19]: https://pypi.python.org/pypi/six/
 [20]: https://www.coursera.org/about/terms
 [21]: https://twitter.com/rtdbrito
+[22]: http://pypi.python.org/
+[23]: http://pypi.python.org/pypi/coursera
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
