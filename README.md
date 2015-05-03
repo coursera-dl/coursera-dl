@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/coursera-dl/coursera.png?branch=master)](https://travis-ci.org/coursera-dl/coursera)
 [![Coverage Status](https://coveralls.io/repos/coursera-dl/coursera/badge.png)](https://coveralls.io/r/coursera-dl/coursera)
 
+# Introduction
+
 [Coursera][1] is arguably the leader in *massive open online courses* (MOOC)
 with a selection of more than 300 classes from 62 different institutions [as of
 February 2013][13]. Generous contributions by educators and institutions are
@@ -32,7 +34,7 @@ This work was originally inspired in part by [youtube-dl][3] by which
 I've downloaded many other good videos such as those from Khan Academy.
 
 
-## Features
+# Features
 
   * Intentionally detailed names, so that it will display and sort properly
     on most interfaces (e.g., MX Video, or [VLC][4] on Android devices).
@@ -44,7 +46,7 @@ I've downloaded many other good videos such as those from Khan Academy.
   * Support for both regular (i.e., time-based) courses as well as on-demand
     courses.
 
-## Disclaimer
+# Disclaimer
 
 `coursera-dl` is meant to be used only for your material that Coursera gives
 you access to download.
@@ -60,7 +62,7 @@ relevant excerpt:
 > derivatives works of the material."
 
 
-## Instructions
+# Installation instructions
 
 `coursera-dl` requires Python 2 or Python 3 and a free Coursera account
 enrolled in the class of interest. (At present/May of 2015, we test
@@ -77,7 +79,7 @@ looking at the "Running the script" section of this document.
 *Note:* You must already have (manually) agreed to the Honor of Code of the
 particular courses that you want to use with `coursera-dl`.
 
-### Recommended installation method for all Operating Systems
+## Recommended installation method for all Operating Systems
 
 From a command line (preferrably, from a virtual environment), simply issue
 the command:
@@ -99,7 +101,7 @@ installed modules may conflict with other Python applications that you have
 installed in your system (or they can interfere with `coursera-dl`).  Prefer
 to use the option `--user` to `pip install`, if you need can.
 
-### Alternative ways of installing missing dependencies
+## Alternative ways of installing missing dependencies
 
 We strongly recommend that you consider installing Python packages with
 [`pip`][17], as in it is the current [preferred method][18], unless directed
@@ -109,7 +111,7 @@ repository).  If you are using `pip`, you can directly install all the
 dependencies from the requirements file using `pip install -r
 requirements.txt`.
 
-#### Alternative installation method for Unix systems
+### Alternative installation method for Unix systems
 
 We strongly recommend that you install `coursera-dl` and all its
 dependencies in a way that does *not* interfere with the rest of your Python
@@ -143,7 +145,7 @@ disabling SSLv3, we have to take a few extra steps.  In any case, it is
 Python interpreter that you can.
 
 
-#### Installing dependencies on your own
+### Installing dependencies on your own
 
 **Warning:** This method is not recommended unless you know what you are
 doing. Once again, before filing bug reports, if you installed the
@@ -195,12 +197,12 @@ On Mac OSX using MacPorts, the following may be used:
     > install py-requests
     > install py27-six
 
-### Create an account with Coursera
+## Create an account with Coursera
 
 If you don't already have one, create a [Coursera][1] account and enroll in
 a class. See https://www.coursera.org/courses for the list of classes.
 
-### Running the script
+## Running the script
 
 Run the script to download the materials by providing your Coursera account
 credentials (e.g. email address and password or a `~/.netrc` file), the
@@ -253,7 +255,7 @@ probably with many other shells) one of the better ways to do so is to
 enclose your password in single quotes, so that you don't run into
 problems.  See issue #213 for more information.
 
-## Troubleshooting
+# Troubleshooting
 
 If you have problems when downloading class materials, please try to see if
 one of the following actions solve your problem:
@@ -323,7 +325,7 @@ one of the following actions solve your problem:
   `argparse` module will think that what you are passing is the name of the
   netrc file that you want to use. See issue #162.
 
-## Filing an issue/Reporting a bug
+# Filing an issue/Reporting a bug
 
 When reporting bugs against `coursera-dl`, please don't forget to include
 enough information so that you can help us help you:
@@ -340,7 +342,7 @@ enough information so that you can help us help you:
   option before posting the messages as a bug report. Please, copy and paste
   them.  Don't reword/paraphrase the messages.
 
-## Feedback
+# Feedback
 
 I enjoy getting feedback. Here are a few of the comments I've received:
 
@@ -371,7 +373,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 * "Thanks a lot! :)"
   <br>Viktor V. 24/04/2013
 
-## Contact
+# Contact
 
 Post bugs and issues on [github][11]. Send other comments to Rogério Brito
 (the current maintainer): first last at ime dot usp dot br (twitter:
