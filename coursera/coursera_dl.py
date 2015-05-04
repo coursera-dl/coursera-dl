@@ -74,7 +74,7 @@ from .cookies import (
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
-    OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
+    OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL, OPENCOURSE_SUBTITLE_URL
 from .downloaders import get_downloader
 from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
 from .utils import decode_input
@@ -348,8 +348,10 @@ def parse_on_demand_syllabus(session, page, reverse=False,
                 if lecture['content']['typeName'] == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
                     lecture_video_url = get_on_demand_video_url(session, lecture_video_id)
+                    lecture_subtitle_url = OPENCOURSE_SUBTITLE_URL.format(video_id=lecture_video_id, lang_code='en')
+
                     if lecture_video_url is not None:
-                        lectures.append((lecture_slug, {'mp4': [(lecture_video_url, '')]}))
+                        lectures.append((lecture_slug, {'mp4': [(lecture_video_url, '')], 'srt': [(lecture_subtitle_url, '')]}))
 
             if lectures:
                 sections.append((section_slug, lectures))
