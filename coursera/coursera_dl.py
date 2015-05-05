@@ -115,7 +115,7 @@ def get_on_demand_video_url(session, video_id):
     if subtitles is not None:
         en_subtitle_url = subtitles.get('en')
         if en_subtitle_url is not None:
-            video_content['srt'] = en_subtitle
+            video_content['srt'] = en_subtitle_url
 
     return video_content
 
