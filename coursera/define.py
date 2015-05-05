@@ -8,6 +8,7 @@ import os
 import getpass
 import tempfile
 
+COURSERA_URL = 'https://www.coursera.org'
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 AUTH_URL_V3 = 'https://www.coursera.org/api/login/v3'
 CLASS_URL = 'https://class.coursera.org/{class_name}'

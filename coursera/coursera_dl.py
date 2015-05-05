@@ -76,8 +76,8 @@ from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
 from .downloaders import get_downloader
-from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
-from .utils import decode_input
+from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url, \
+    decode_input, make_coursera_absolute_url
 
 # URL containing information about outdated modules
 _see_url = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -115,7 +115,8 @@ def get_on_demand_video_url(session, video_id):
     if subtitles is not None:
         en_subtitle_url = subtitles.get('en')
         if en_subtitle_url is not None:
-            video_content['srt'] = en_subtitle_url
+            # some subtitle urls are relative!
+            video_content['srt'] = make_coursera_absolute_url(en_subtitle_url)
 
     return video_content
 

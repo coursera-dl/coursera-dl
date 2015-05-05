@@ -13,13 +13,15 @@ import sys
 
 import six
 
+from .define import COURSERA_URL
+
 from six.moves import html_parser
 
 #  six.moves doesn’t support urlparse
 if six.PY3:  # pragma: no cover
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, urljoin
 else:
-    from urlparse import urlparse
+    from urlparse import urlparse, urljoin
 
 # Python3 (and six) don't provide string
 if six.PY3:
@@ -119,5 +121,17 @@ def fix_url(url):
 
     if url and not urlparse(url).scheme:
         url = "http://" + url
+
+    return url
+
+
+def make_coursera_absolute_url(url):
+    """
+    If given url is relative adds coursera netloc,
+    otherwise returns it without any changes.
+    """
+
+    if not bool(urlparse(url).netloc):
+        return urljoin(COURSERA_URL, url)
 
     return url
