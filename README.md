@@ -341,8 +341,8 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 
 # Contact
 
-Post bugs and issues on [github][11]. Send other comments to Rogério Brito
-(the current maintainer): first last at ime dot usp dot br (twitter:
+Please, post bugs and issues on [github][11]. Send other comments to Rogério
+Theodoro de Brito (the current maintainer): rbrito@ime.usp.br (twitter:
 [@rtdbrito][21]) or to John Lehmann (the original author): first last at
 geemail dotcom (twitter: [@jplehmann][12]).
 
