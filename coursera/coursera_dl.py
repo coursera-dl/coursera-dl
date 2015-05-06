@@ -74,10 +74,10 @@ from .cookies import (
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError
 from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
-    OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL, OPENCOURSE_SUBTITLE_URL
+    OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
 from .downloaders import get_downloader
-from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
-from .utils import decode_input
+from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url, \
+    decode_input, make_coursera_absolute_url
 
 # URL containing information about outdated modules
 _see_url = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -100,13 +100,25 @@ def get_on_demand_video_url(session, video_id):
     url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
     page = get_page(session, url)
 
+    video_content = {}
     dom = json.loads(page)
+
+    # videos
     sources = dom['sources']
     sources.sort(key=lambda src: src['resolution'])
     sources.reverse()
     video_url = sources[0]['formatSources']['video/mp4']
+    video_content['mp4'] = video_url
 
-    return video_url
+    # english subtitles
+    subtitles = dom.get('subtitles')
+    if subtitles is not None:
+        en_subtitle_url = subtitles.get('en')
+        if en_subtitle_url is not None:
+            # some subtitle urls are relative!
+            video_content['srt'] = make_coursera_absolute_url(en_subtitle_url)
+
+    return video_content
 
 
 def get_syllabus_url(class_name, preview):
@@ -347,11 +359,13 @@ def parse_on_demand_syllabus(session, page, reverse=False,
                 lecture_slug = lecture['slug']
                 if lecture['content']['typeName'] == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
-                    lecture_video_url = get_on_demand_video_url(session, lecture_video_id)
-                    lecture_subtitle_url = OPENCOURSE_SUBTITLE_URL.format(video_id=lecture_video_id, lang_code='en')
+                    video_content = get_on_demand_video_url(session, lecture_video_id)
+                    lecture_video_content = {}
+                    for key, value in video_content.items():
+                        lecture_video_content[key] = [(value, '')]
 
-                    if lecture_video_url is not None:
-                        lectures.append((lecture_slug, {'mp4': [(lecture_video_url, '')], 'srt': [(lecture_subtitle_url, '')]}))
+                    if lecture_video_content:
+                        lectures.append((lecture_slug, lecture_video_content))
 
             if lectures:
                 sections.append((section_slug, lectures))

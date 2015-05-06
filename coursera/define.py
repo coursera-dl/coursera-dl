@@ -8,12 +8,12 @@ import os
 import getpass
 import tempfile
 
+COURSERA_URL = 'https://www.coursera.org'
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 AUTH_URL_V3 = 'https://www.coursera.org/api/login/v3'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
 OPENCOURSE_CONTENT_URL = 'https://www.coursera.org/api/opencourse.v1/course/{class_name}'
 OPENCOURSE_VIDEO_URL = 'https://www.coursera.org/api/opencourse.v1/video/{video_id}'
-OPENCOURSE_SUBTITLE_URL = 'https://www.coursera.org/api/opencourse.v1/video/{video_id}/subtitles/{lang_code}?vtt=false'
 
 ABOUT_URL = 'https://api.coursera.org/api/catalog.v1/courses?' \
             'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,' \
