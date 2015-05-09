@@ -12,7 +12,6 @@ from six import iteritems
 from mock import patch, Mock, mock_open
 
 from coursera import coursera_dl
-from .test_utils import assertEqual, assertEquals, assertTrue, assertFalse, assertRaises
 
 
 # JSon Handling
