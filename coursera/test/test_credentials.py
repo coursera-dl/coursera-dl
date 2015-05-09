@@ -8,7 +8,7 @@ import os.path
 import pytest
 
 from coursera import credentials
-from .test_utils import assertEquals, assertTrue, assertFalse, assertRaises
+from .test_utils import assertRaises
 
 NETRC = \
     os.path.join(os.path.dirname(__file__),
