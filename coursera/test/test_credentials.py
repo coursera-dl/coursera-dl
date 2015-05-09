@@ -21,8 +21,8 @@ NOT_NETRC = \
 
 def test_authenticate_through_netrc_with_given_path():
     username, password = credentials.authenticate_through_netrc(NETRC)
-    assertEquals(username, 'user@mail.com')
-    assertEquals(password, 'secret')
+    assert username == 'user@mail.com'
+    assert password == 'secret'
 
 
 def test_authenticate_through_netrc_raises_exception():
@@ -34,8 +34,8 @@ def test_authenticate_through_netrc_raises_exception():
 
 def test_get_credentials_with_netrc():
     username, password = credentials.get_credentials(netrc=NETRC)
-    assertEquals(username, 'user@mail.com')
-    assertEquals(password, 'secret')
+    assert username == 'user@mail.com'
+    assert password == 'secret'
 
 
 def test_get_credentials_with_invalid_netrc_raises_exception():
@@ -48,8 +48,8 @@ def test_get_credentials_with_invalid_netrc_raises_exception():
 def test_get_credentials_with_username_and_password_given():
     username, password = credentials.get_credentials(
         username='user', password='pass')
-    assertEquals(username, 'user')
-    assertEquals(password, 'pass')
+    assert username == 'user'
+    assert password == 'pass'
 
 
 def test_get_credentials_with_username_given():
@@ -59,8 +59,8 @@ def test_get_credentials_with_username_given():
 
     username, password = credentials.get_credentials(
         username='user')
-    assertEquals(username, 'user')
-    assertEquals(password, 'pass')
+    assert username == 'user'
+    assert password == 'pass'
 
     getpass.getpass = _getpass
 
