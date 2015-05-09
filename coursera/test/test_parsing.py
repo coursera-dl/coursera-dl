@@ -30,7 +30,7 @@ def json_path():
 def test_that_should_not_dl_if_file_exist(get_page, json_path):
     coursera_dl.get_page = Mock()
     coursera_dl.download_about(object(), "matrix-002", json_path)
-    assertFalse(coursera_dl.get_page.called)
+    assert coursera_dl.get_page.called is False
 
 
 def test_that_we_parse_and_write_json_correctly(get_page, json_path):
@@ -47,8 +47,8 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 
     data = json.loads(open_mock().write.call_args[0][0])
 
-    assertEqual(data['id'], 394)
-    assertEqual(data['shortName'], 'networksonline')
+    assert data['id'] == 394
+    assert data['shortName'] == 'networksonline'
 
 
 # Test Syllabus Parsing
@@ -99,18 +99,16 @@ def test_parse(get_video, filename, num_sections, num_lectures, num_resources, n
         sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
 
         # section count
-        assertEqual(len(sections), num_sections)
+        assert len(sections) == num_sections
 
         # lecture count
         lectures = [lec for sec in sections for lec in sec[1]]
-        assertEqual(len(lectures), num_lectures)
+        assert len(lectures) == num_lectures
 
         # resource count
         resources = [(res[0], len(res[1]))
                      for lec in lectures for res in iteritems(lec[1])]
-        assertEqual(sum(r for f, r in resources), num_resources)
+        assert sum(r for f, r in resources) == num_resources
 
         # mp4 count
-        assertEqual(
-            sum(r for f, r in resources if f == "mp4"),
-            num_videos)
+        assert sum(r for f, r in resources if f == "mp4") == num_videos
