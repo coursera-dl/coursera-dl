@@ -52,13 +52,13 @@ def test_get_credentials_with_username_and_password_given():
     assert password == 'pass'
 
 
-def test_get_credentials_with_username_given():
+def test_get_credentials_with_username_given(use_keyring=False):
     import getpass
     _getpass = getpass.getpass
     getpass.getpass = lambda x: 'pass'
 
     username, password = credentials.get_credentials(
-        username='user')
+        username='user', use_keyring=use_keyring)
     assert username == 'user'
     assert password == 'pass'
 
@@ -69,3 +69,14 @@ def test_get_credentials_without_username_given_raises_exception():
     assertRaises(
         credentials.CredentialsError,
         credentials.get_credentials)
+
+def test_get_credentials_with_keyring():
+    if not credentials.keyring:
+        return None
+    test_get_credentials_with_username_given(True)
+
+    # Test again, this time without getpass
+    username, password = credentials.get_credentials(
+        username='user', use_keyring=True)
+    assert username == 'user'
+    assert password == 'pass'
