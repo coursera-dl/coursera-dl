@@ -70,13 +70,13 @@ def test_get_credentials_without_username_given_raises_exception():
         credentials.CredentialsError,
         credentials.get_credentials)
 
-def test_get_credentials_with_keyring(self):
+def test_get_credentials_with_keyring():
     if not credentials.keyring:
         return None
-    self.test_get_credentials_with_username_given(True)
+    test_get_credentials_with_username_given(True)
 
     # Test again, this time without getpass
     username, password = credentials.get_credentials(
         username='user', use_keyring=True)
-    self.assertEquals(username, 'user')
-    self.assertEquals(password, 'pass')
+    assert username == 'user'
+    assert password == 'pass'
