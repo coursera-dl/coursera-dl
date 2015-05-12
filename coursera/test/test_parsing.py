@@ -33,8 +33,10 @@ def test_that_should_not_dl_if_file_exist(get_page, json_path):
 
 
 def test_that_we_parse_and_write_json_correctly(get_page, json_path):
+    unprocessed_json = os.path.join(os.path.dirname(__file__),
+                                  "fixtures", "json", "unprocessed.json")
 
-    raw_data = open(os.path.join(os.path.dirname(__file__), "fixtures", "json", "unprocessed.json")).read()
+    raw_data = open(unprocessed_json).read()
     coursera_dl.get_page = lambda x, y: raw_data
     open_mock = mock_open()
 
@@ -42,7 +44,8 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 
         coursera_dl.download_about(object(), "networksonline-002", json_path)
 
-    open_mock.assert_called_once_with(os.path.join(json_path, 'networksonline-002-about.json'), 'w')
+    about_json = os.path.join(json_path, 'networksonline-002-about.json')
+    open_mock.assert_called_once_with(about_json, 'w')
 
     data = json.loads(open_mock().write.call_args[0][0])
 
