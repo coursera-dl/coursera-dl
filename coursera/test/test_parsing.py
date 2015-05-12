@@ -41,7 +41,6 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
     open_mock = mock_open()
 
     with patch('coursera.coursera_dl.open', open_mock, create=True):
-
         coursera_dl.download_about(object(), "networksonline-002", json_path)
 
     about_json = os.path.join(json_path, 'networksonline-002-about.json')

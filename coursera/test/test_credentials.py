@@ -70,6 +70,7 @@ def test_get_credentials_without_username_given_raises_exception():
         credentials.CredentialsError,
         credentials.get_credentials)
 
+
 def test_get_credentials_with_keyring():
     if not credentials.keyring:
         return None
