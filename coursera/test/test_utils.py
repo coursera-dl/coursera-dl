@@ -83,27 +83,27 @@ def test_get_anchor_format():
         'https://class.coursera.org/download.mp4?lecture_id=123': 'mp4'
     }
     for k, v in six.iteritems(strings):
-        assertEquals(utils.get_anchor_format(k), v)
+        assert utils.get_anchor_format(k) == v
 
 
 def test_random_string():
     random.seed(0)  # set seed for reproducible tests
 
     res = utils.random_string(8)
-    assertEqual(len(res), 8)
+    assert len(res) == 8
 
     # Python 2 and Python 3 use different strategies for generation of
     # PRNG, according to the documentation available at
     # https://docs.python.org/3.4/library/random.html#random.seed
     if six.PY2:
-        assertEqual(res, '0UAqFzWs')
+        assert res == '0UAqFzWs'
     else:
-        assertEqual(res, '2yW4Acq9')
+        assert res == '2yW4Acq9'
 
 
 def test_fix_url_ads_sheme():
     url = "www.coursera.org"
-    assertEquals(utils.fix_url(url), 'http://www.coursera.org')
+    assert utils.fix_url(url) == 'http://www.coursera.org'
 
 
 def test_fix_url_removes_sheme():
