@@ -46,8 +46,8 @@ def test_get_credentials_with_invalid_netrc_raises_exception():
 
 
 def test_get_credentials_with_username_and_password_given():
-    username, password = credentials.get_credentials(
-        username='user', password='pass')
+    username, password = credentials.get_credentials(username='user',
+                                                     password='pass')
     assert username == 'user'
     assert password == 'pass'
 
@@ -57,8 +57,8 @@ def test_get_credentials_with_username_given(use_keyring=False):
     _getpass = getpass.getpass
     getpass.getpass = lambda x: 'pass'
 
-    username, password = credentials.get_credentials(
-        username='user', use_keyring=use_keyring)
+    username, password = credentials.get_credentials(username='user',
+                                                     use_keyring=use_keyring)
     assert username == 'user'
     assert password == 'pass'
 
@@ -76,7 +76,7 @@ def test_get_credentials_with_keyring():
     test_get_credentials_with_username_given(True)
 
     # Test again, this time without getpass
-    username, password = credentials.get_credentials(
-        username='user', use_keyring=True)
+    username, password = credentials.get_credentials(username='user',
+                                                     use_keyring=True)
     assert username == 'user'
     assert password == 'pass'
