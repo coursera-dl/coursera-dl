@@ -58,8 +58,8 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 @pytest.fixture
 def get_video(monkeypatch):
     """
-    mock some methods that would, otherwise, create
-    repeateadly many web requests.
+    Mock some methods that would, otherwise, create repeateadly many web
+    requests.
 
     More specifically, we mock:
 
