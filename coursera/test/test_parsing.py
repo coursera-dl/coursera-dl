@@ -6,6 +6,7 @@ Test functionality of coursera module.
 """
 import json
 import os.path
+
 import pytest
 
 from six import iteritems
@@ -34,7 +35,7 @@ def test_that_should_not_dl_if_file_exist(get_page, json_path):
 
 def test_that_we_parse_and_write_json_correctly(get_page, json_path):
     unprocessed_json = os.path.join(os.path.dirname(__file__),
-                                  "fixtures", "json", "unprocessed.json")
+                                    "fixtures", "json", "unprocessed.json")
 
     raw_data = open(unprocessed_json).read()
     coursera_dl.get_page = lambda x, y: raw_data
@@ -90,9 +91,8 @@ def get_video(monkeypatch):
     ]
 )
 def test_parse(get_video, filename, num_sections, num_lectures, num_resources, num_videos):
-    filename = os.path.join(
-        os.path.dirname(__file__), "fixtures", "html",
-        filename)
+    filename = os.path.join(os.path.dirname(__file__), "fixtures", "html",
+                            filename)
 
     with open(filename) as syllabus:
         syllabus_page = syllabus.read()
