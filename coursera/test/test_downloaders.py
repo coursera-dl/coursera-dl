@@ -24,24 +24,23 @@ def sample_bag():
 def test_collect_all_resources(sample_bag):
     res = coursera_dl.find_resources_to_get(sample_bag, 'all', None)
 
-    assertEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
-                 ('pdf', 'h://url2/lc2.pdf', 'slides'),
-                 ('txt', 'h://url3/lc3.txt', 'subtitle')], sorted(res))
+    assert [('mp4', 'h://url1/lc1.mp4', 'video'),
+            ('pdf', 'h://url2/lc2.pdf', 'slides'),
+            ('txt', 'h://url3/lc3.txt', 'subtitle')] == sorted(res)
 
 
 def test_collect_only_pdfs(sample_bag):
     res = coursera_dl.find_resources_to_get(sample_bag, 'pdf', None)
 
-    assertEqual([('pdf', 'h://url2/lc2.pdf', 'slides')],
-                sorted(res))
+    assert [('pdf', 'h://url2/lc2.pdf', 'slides')] == sorted(res)
 
 
 def test_collect_with_filtering(sample_bag):
     res = coursera_dl.find_resources_to_get(sample_bag, 'all', 'de')
     res = sorted(res)
 
-    assertEqual([('mp4', 'h://url1/lc1.mp4', 'video'),
-                 ('pdf', 'h://url2/lc2.pdf', 'slides')], res)
+    assert [('mp4', 'h://url1/lc1.mp4', 'video'),
+            ('pdf', 'h://url2/lc2.pdf', 'slides')] == res
 
 
 # External Downloader
@@ -76,7 +75,7 @@ def test_bin_not_found_raises_exception():
 
 def test_bin_is_set():
     d = downloaders.ExternalDownloader(None, bin='test')
-    assertEquals(d.bin, 'test')
+    assert d.bin == 'test'
 
 
 def test_prepare_cookies():
@@ -90,8 +89,8 @@ def test_prepare_cookies():
     d._add_cookies = mock_add_cookies
     command = []
     d._prepare_cookies(command, 'http://www.coursera.org')
-    assertTrue('csrf_token=csrfclass001' in command[0])
-    assertTrue('session=sessionclass1' in command[0])
+    assert 'csrf_token=csrfclass001' in command[0]
+    assert 'session=sessionclass1' in command[0]
 
 
 def test_prepare_cookies_does_nothing():
@@ -107,7 +106,7 @@ def test_prepare_cookies_does_nothing():
     d._add_cookies = mock_add_cookies
 
     d._prepare_cookies(command, 'http://www.coursera.org')
-    assertEquals(command, [])
+    assert command == []
 
 
 def test_start_command_raises_exception():
@@ -123,14 +122,14 @@ def test_wget():
 
     d = downloaders.WgetDownloader(s)
     command = d._create_command('download_url', 'save_to')
-    assertEquals(command[0], 'wget')
-    assertTrue('download_url' in command)
-    assertTrue('save_to' in command)
+    assert command[0] == 'wget'
+    assert 'download_url' in command
+    assert 'save_to' in command
 
     d._prepare_cookies(command, 'http://www.coursera.org')
-    assertTrue(any("Cookie: " in e for e in command))
-    assertTrue(any("csrf_token=csrfclass001" in e for e in command))
-    assertTrue(any("session=sessionclass1" in e for e in command))
+    assert any("Cookie: " in e for e in command)
+    assert any("csrf_token=csrfclass001" in e for e in command)
+    assert any("session=sessionclass1" in e for e in command)
 
 
 def test_curl():
@@ -138,13 +137,13 @@ def test_curl():
 
     d = downloaders.CurlDownloader(s)
     command = d._create_command('download_url', 'save_to')
-    assertEquals(command[0], 'curl')
-    assertTrue('download_url' in command)
-    assertTrue('save_to' in command)
+    assert command[0] == 'curl'
+    assert 'download_url' in command
+    assert 'save_to' in command
 
     d._prepare_cookies(command, 'http://www.coursera.org')
-    assertTrue(any("csrf_token=csrfclass001" in e for e in command))
-    assertTrue(any("session=sessionclass1" in e for e in command))
+    assert any("csrf_token=csrfclass001" in e for e in command)
+    assert any("session=sessionclass1" in e for e in command)
 
 
 def test_aria2():
@@ -152,14 +151,14 @@ def test_aria2():
 
     d = downloaders.Aria2Downloader(s)
     command = d._create_command('download_url', 'save_to')
-    assertEquals(command[0], 'aria2c')
-    assertTrue('download_url' in command)
-    assertTrue('save_to' in command)
+    assert command[0] == 'aria2c'
+    assert 'download_url' in command
+    assert 'save_to' in command
 
     d._prepare_cookies(command, 'http://www.coursera.org')
-    assertTrue(any("Cookie: " in e for e in command))
-    assertTrue(any("csrf_token=csrfclass001" in e for e in command))
-    assertTrue(any("session=sessionclass1" in e for e in command))
+    assert any("Cookie: " in e for e in command)
+    assert any("csrf_token=csrfclass001" in e for e in command)
+    assert any("session=sessionclass1" in e for e in command)
 
 
 def test_axel():
@@ -167,14 +166,14 @@ def test_axel():
 
     d = downloaders.AxelDownloader(s)
     command = d._create_command('download_url', 'save_to')
-    assertEquals(command[0], 'axel')
-    assertTrue('download_url' in command)
-    assertTrue('save_to' in command)
+    assert command[0] == 'axel'
+    assert 'download_url' in command
+    assert 'save_to' in command
 
     d._prepare_cookies(command, 'http://www.coursera.org')
-    assertTrue(any("Cookie: " in e for e in command))
-    assertTrue(any("csrf_token=csrfclass001" in e for e in command))
-    assertTrue(any("session=sessionclass1" in e for e in command))
+    assert any("Cookie: " in e for e in command)
+    assert any("csrf_token=csrfclass001" in e for e in command)
+    assert any("session=sessionclass1" in e for e in command)
 
 
 # Native Downloader
@@ -198,7 +197,7 @@ def test_all_attempts_have_failed():
 
     session = MockSession()
     d = downloaders.NativeDownloader(session)
-    assertFalse(d._start_download('download_url', 'save_to'))
+    assert d._start_download('download_url', 'save_to') is False
 
     time.sleep = _sleep
 
@@ -214,50 +213,46 @@ def _get_progress(total):
 
 def test_calc_percent_if_total_is_zero():
     p = _get_progress(0)
-    assertEquals(p.calc_percent(), '--%')
+    assert p.calc_percent() == '--%'
 
     p.read(10)
-    assertEquals(p.calc_percent(), '--%')
+    assert p.calc_percent() == '--%'
 
 
 def test_calc_percent_if_not_yet_read():
     p = _get_progress(100)
-    assertEquals(
-        p.calc_percent(),
-        '[                                                  ] 0%')
+    assert (p.calc_percent() ==
+            '[                                                  ] 0%')
 
 
 def test_calc_percent_if_read():
     p = _get_progress(100)
     p.read(2)
-    assertEquals(
-        p.calc_percent(),
-        '[#                                                 ] 2%')
+    assert (p.calc_percent() ==
+            '[#                                                 ] 2%')
 
     p.read(18)
-    assertEquals(
-        p.calc_percent(),
-        '[##########                                        ] 20%')
+    assert (p.calc_percent() ==
+            '[##########                                        ] 20%')
 
     p = _get_progress(2300)
     p.read(177)
-    assertEquals(
-        p.calc_percent(),
-        '[###                                               ] 7%')
+    assert (p.calc_percent() ==
+            '[###                                               ] 7%')
 
 
 def test_calc_speed_if_total_is_zero():
     p = _get_progress(0)
-    assertEquals(p.calc_speed(), '---b/s')
+    assert p.calc_speed() == '---b/s'
 
 
 def test_calc_speed_if_not_yet_read():
     p = _get_progress(100)
-    assertEquals(p.calc_speed(), '---b/s')
+    assert p.calc_speed() == '---b/s'
 
 
 def test_calc_speed_ifread():
     p = _get_progress(10000)
     p.read(2000)
     p._now = p._start + 1000
-    assertEquals(p.calc_speed(), '2.00B/s')
+    assert p.calc_speed() == '2.00B/s'

@@ -170,7 +170,7 @@ def test_is_course_complete_should_give_false_if_there_was_recent_update():
     tm = time() - delta
 
     rv = coursera_dl.is_course_complete(tm)
-    assertFalse(rv)
+    assert rv is False
 
 
 def test_is_course_complete_should_give_true_if_there_was_no_recent_update():
@@ -179,7 +179,7 @@ def test_is_course_complete_should_give_true_if_there_was_no_recent_update():
     tm = time() - delta
 
     rv = coursera_dl.is_course_complete(tm)
-    assertTrue(rv)
+    assert rv is True
 
 
 def test_correct_formatting_of_class_URL():
