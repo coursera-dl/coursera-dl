@@ -8,7 +8,7 @@ from coursera import downloaders
 from coursera import coursera_dl
 import pytest
 
-from .test_utils import assertEqual, assertEquals, assertTrue, assertFalse, assertRaises
+from .test_utils import assertRaises
 
 
 @pytest.fixture

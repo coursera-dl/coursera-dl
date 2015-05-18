@@ -17,22 +17,6 @@ from coursera import utils
 from coursera import coursera_dl
 
 
-def assertEqual(a, b):
-    assert a == b
-
-
-def assertEquals(a, b):
-    assert a == b
-
-
-def assertTrue(stmt):
-    assert stmt
-
-
-def assertFalse(stmt):
-    assert not stmt
-
-
 def assertRaises(e, f, *a, **kw):
     pytest.raises(e, f, *a, **kw)
 
