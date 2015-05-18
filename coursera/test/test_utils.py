@@ -21,53 +21,53 @@ def assertRaises(e, f, *a, **kw):
     pytest.raises(e, f, *a, **kw)
 
 
-def test_clean_filename():
-    strings = {
-        '(23:90)': '23-90',
-        '(:': '-',
-        'a téest &and a@noòtheèr': 'a_test_and_another',
-        'Lecture 2.7 - Evaluation and Operators (16:25)':
-        'Lecture_2.7_-_Evaluation_and_Operators_16-25',
-        'Week 3: Data and Abstraction':
-        'Week_3-_Data_and_Abstraction',
-        '  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning':
-        'Week_1_BRANDING-__Marketing_Strategy_and_Brand_Positioning',
-        'test &amp; &quot; adfas': 'test___adfas',
-        '&nbsp;': ''
-    }
-    for k, v in six.iteritems(strings):
-        actual_res = utils.clean_filename(k)
-        assert actual_res == v
+@pytest.mark.parametrize(
+    "unclean,clean", [
+        ('(23:90)', '23-90'),
+        ('(:', '-'),
+        ('a téest &and a@noòtheèr', 'a_test_and_another'),
+        ('Lecture 2.7 - Evaluation and Operators (16:25)',
+         'Lecture_2.7_-_Evaluation_and_Operators_16-25'),
+        ('Week 3: Data and Abstraction', 'Week_3-_Data_and_Abstraction'),
+        ('  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning',
+         'Week_1_BRANDING-__Marketing_Strategy_and_Brand_Positioning'),
+        ('test &amp; &quot; adfas', 'test___adfas'),
+        ('&nbsp;', ''),
+    ]
+)
+def test_clean_filename(unclean, clean):
+    assert utils.clean_filename(unclean) == clean
 
 
-def test_clean_filename_minimal_change():
-    strings = {
-        '(23:90)': '(23-90)',
-        '(:': '(-',
-        'a téest &and a@noòtheèr': 'a téest &and a@noòtheèr',
-        'Lecture 2.7 - Evaluation and Operators (16:25)':
-        'Lecture 2.7 - Evaluation and Operators (16-25)',
-        'Week 3: Data and Abstraction':
-        'Week 3- Data and Abstraction',
-        '  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning':
-        '  (Week 1) BRANDING-  Marketing Strategy and Brand Positioning',
-        'test &amp; &quot; adfas': 'test & " adfas',
-        '&nbsp;': u'\xa0'
-    }
-    for k, v in six.iteritems(strings):
-        actual_res = utils.clean_filename(k, minimal_change=True)
-        assert actual_res == v
+@pytest.mark.parametrize(
+    "unclean,clean", [
+        ('(23:90)', '(23-90)'),
+        ('(:', '(-'),
+        ('a téest &and a@noòtheèr', 'a téest &and a@noòtheèr'),
+        ('Lecture 2.7 - Evaluation and Operators (16:25)',
+         'Lecture 2.7 - Evaluation and Operators (16-25)'),
+        ('Week 3: Data and Abstraction',
+         'Week 3- Data and Abstraction'),
+        ('  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning',
+         '  (Week 1) BRANDING-  Marketing Strategy and Brand Positioning'),
+        ('test &amp; &quot; adfas', 'test & " adfas'),
+        ('&nbsp;', u'\xa0'),
+    ]
+)
+def test_clean_filename_minimal_change(unclean, clean):
+    assert utils.clean_filename(unclean, minimal_change=True) == clean
 
 
-def test_get_anchor_format():
-    strings = {
-        'https://class.coursera.org/sub?q=123_en&format=txt': 'txt',
-        'https://class.coursera.org/sub?q=123_en&format=srt': 'srt',
-        'https://d396qusza40orc.cloudfront.net/week7-4.pdf': 'pdf',
-        'https://class.coursera.org/download.mp4?lecture_id=123': 'mp4'
-    }
-    for k, v in six.iteritems(strings):
-        assert utils.get_anchor_format(k) == v
+@pytest.mark.parametrize(
+    "url,format", [
+        ('https://class.coursera.org/sub?q=123_en&format=txt', 'txt'),
+        ('https://class.coursera.org/sub?q=123_en&format=srt', 'srt'),
+        ('https://d396qusza40orc.cloudfront.net/week7-4.pdf', 'pdf'),
+        ('https://class.coursera.org/download.mp4?lecture_id=123', 'mp4'),
+    ]
+)
+def test_get_anchor_format(url, format):
+    assert utils.get_anchor_format(url) == format
 
 
 def test_random_string():
