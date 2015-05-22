@@ -42,6 +42,7 @@ Legalese:
 
 import argparse
 import datetime
+import glob
 import json
 import logging
 import os
@@ -50,7 +51,6 @@ import shutil
 import subprocess
 import sys
 import time
-import glob
 
 from distutils.version import LooseVersion as V
 
