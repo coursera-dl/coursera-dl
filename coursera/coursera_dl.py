@@ -54,19 +54,14 @@ import time
 
 from distutils.version import LooseVersion as V
 
+import html5lib
 import requests
-from six import iteritems
 
-try:
-    from BeautifulSoup import BeautifulSoup
-except ImportError:
-    from bs4 import BeautifulSoup as BeautifulSoup_
-    try:
-        # Use html5lib for parsing if available
-        import html5lib
-        BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
-    except ImportError:
-        BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
+from six import iteritems
+from bs4 import BeautifulSoup as BeautifulSoup_
+
+# Force us of bs4 with html5lib
+BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
 
 from .cookies import (
