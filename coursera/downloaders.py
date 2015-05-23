@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Module for download-related classes and functions.
+
+We currently support an internal downloader written in Python with just the
+essential functionality and four "industrial-strength" external downloaders,
+namely, aria2c, axel, curl, and wget.
+"""
 
 from __future__ import print_function
 
