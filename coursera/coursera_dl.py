@@ -54,7 +54,6 @@ import time
 
 from distutils.version import LooseVersion as V
 
-import html5lib
 import requests
 
 from six import iteritems
