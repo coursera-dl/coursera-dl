@@ -29,9 +29,9 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # define a per-user cache folder
 if os.name == "posix":  # pragma: no cover
     import pwd
-    user = pwd.getpwuid(os.getuid())[0]
+    _USER = pwd.getpwuid(os.getuid())[0]
 else:
-    user = getpass.getuser()
+    _USER = getpass.getuser()
 
-PATH_CACHE = os.path.join(tempfile.gettempdir(), user + "_coursera_dl_cache")
+PATH_CACHE = os.path.join(tempfile.gettempdir(), _USER + "_coursera_dl_cache")
 PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')

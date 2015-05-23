@@ -74,16 +74,16 @@ from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url, \
     decode_input, make_coursera_absolute_url
 
 # URL containing information about outdated modules
-_see_url = " See https://github.com/coursera-dl/coursera/issues/139"
+_SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
 
 # Test versions of some critical modules.
 # We may, perhaps, want to move these elsewhere.
 import bs4
 import six
 
-assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _see_url
-assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _see_url
-assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _see_url
+assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
+assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
+assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
 
 
 def get_on_demand_video_url(session, video_id):
