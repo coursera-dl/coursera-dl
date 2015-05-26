@@ -16,7 +16,7 @@ For further documentation and examples, visit the project's home at:
 
 Authors and copyright:
     © 2012-2013, John Lehmann (first last at geemail dotcom or @jplehmann)
-    © 2012-2013, Rogério Brito (r lastname at ime usp br)
+    © 2012-2015, Rogério Brito (r lastname at ime usp br)
     © 2013, Jonas De Taeye (first dt at fastmail fm)
 
 Contributions are welcome, but please add new unit tests to test your changes
@@ -39,8 +39,10 @@ Legalese:
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+
 import argparse
 import datetime
+import glob
 import json
 import logging
 import os
@@ -49,44 +51,68 @@ import shutil
 import subprocess
 import sys
 import time
-import glob
 
 from distutils.version import LooseVersion as V
 
 import requests
-from six import iteritems
 
-try:
-    from BeautifulSoup import BeautifulSoup
-except ImportError:
-    from bs4 import BeautifulSoup as BeautifulSoup_
-    try:
-        # Use html5lib for parsing if available
-        import html5lib
-        BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
-    except ImportError:
-        BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
+from six import iteritems
+from bs4 import BeautifulSoup as BeautifulSoup_
+
+# Force us of bs4 with html5lib
+BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
 
 from .cookies import (
     AuthenticationFailed, ClassNotFound,
-    get_cookies_for_class, make_cookie_values)
-from .credentials import get_credentials, CredentialsError
-from .define import CLASS_URL, ABOUT_URL, PATH_CACHE
+    get_cookies_for_class, make_cookie_values, login, TLSAdapter)
+from .credentials import get_credentials, CredentialsError, keyring
+from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
+    OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
 from .downloaders import get_downloader
-from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url
+from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url, \
+    decode_input, make_coursera_absolute_url
 
 # URL containing information about outdated modules
-_see_url = " See https://github.com/coursera-dl/coursera/issues/139"
+_SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
 
 # Test versions of some critical modules.
 # We may, perhaps, want to move these elsewhere.
 import bs4
 import six
 
-assert V(requests.__version__) >= V('1.2'), "Upgrade requests!" + _see_url
-assert V(six.__version__) >= V('1.3'), "Upgrade six!" + _see_url
-assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _see_url
+assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
+assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
+assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
+
+
+def get_on_demand_video_url(session, video_id):
+    """
+    Return the download URL of on-demand course video.
+    """
+
+    url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
+    page = get_page(session, url)
+
+    video_content = {}
+    dom = json.loads(page)
+
+    # videos
+    sources = dom['sources']
+    sources.sort(key=lambda src: src['resolution'])
+    sources.reverse()
+    video_url = sources[0]['formatSources']['video/mp4']
+    video_content['mp4'] = video_url
+
+    # english subtitles
+    subtitles = dom.get('subtitles')
+    if subtitles is not None:
+        en_subtitle_url = subtitles.get('en')
+        if en_subtitle_url is not None:
+            # some subtitle urls are relative!
+            video_content['srt'] = make_coursera_absolute_url(en_subtitle_url)
+
+    return video_content
 
 
 def get_syllabus_url(class_name, preview):
@@ -115,6 +141,17 @@ def get_page(session, url):
         raise
 
     return r.text
+
+
+def get_session():
+    """
+    Create a session with TLS v1.2 certificate.
+    """
+
+    session = requests.Session()
+    session.mount('https://', TLSAdapter())
+
+    return session
 
 
 def grab_hidden_video_url(session, href):
@@ -162,6 +199,18 @@ def get_syllabus(session, class_name, local_page=False, preview=False):
     return page
 
 
+def get_on_demand_syllabus(session, class_name):
+    """
+    Get the on-demand course listing webpage.
+    """
+
+    url = OPENCOURSE_CONTENT_URL.format(class_name=class_name)
+    page = get_page(session, url)
+    logging.info('Downloaded %s (%d bytes)', url, len(page))
+
+    return page
+
+
 def transform_preview_url(a):
     """
     Given a preview lecture URL, transform it into a regular video URL.
@@ -199,8 +248,8 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
     soup = BeautifulSoup(page)
 
     # traverse sections
-    for stag in soup.findAll(attrs={'class':
-                                    re.compile('^course-item-list-header')}):
+    stags = soup.findAll(attrs={'class': re.compile('^course-item-list-header')})
+    for stag in stags:
         assert stag.contents[0] is not None, "couldn't find section"
         untouched_fname = stag.contents[0].contents[1]
         section_name = clean_filename(untouched_fname, intact_fnames)
@@ -255,7 +304,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
             for fmt in lecture:
                 count = len(lecture[fmt])
                 for i, r in enumerate(lecture[fmt]):
-                    if (count == i + 1):
+                    if count == i + 1:
                         # for backward compatibility, we do not add the title
                         # to the filename (format_combine_number_resource and
                         # format_resource)
@@ -281,6 +330,49 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
     return sections
 
 
+def parse_on_demand_syllabus(session, page, reverse=False,
+                             intact_fnames=False):
+    """
+    Parses a Coursera on-demand course listing/syllabus page.
+    """
+    dom = json.loads(page)
+
+    logging.info('Parsing syllabus of on-demand course. '
+                 'This may take some time, be patient ...')
+    modules = []
+    json_modules = dom['courseMaterial']['elements']
+    for module in json_modules:
+        module_slug = module['slug']
+        sections = []
+        json_sections = module['elements']
+        for section in json_sections:
+            section_slug = section['slug']
+            lectures = []
+            json_lectures = section['elements']
+            for lecture in json_lectures:
+                lecture_slug = lecture['slug']
+                if lecture['content']['typeName'] == 'lecture':
+                    lecture_video_id = lecture['content']['definition']['videoId']
+                    video_content = get_on_demand_video_url(session, lecture_video_id)
+                    lecture_video_content = {}
+                    for key, value in video_content.items():
+                        lecture_video_content[key] = [(value, '')]
+
+                    if lecture_video_content:
+                        lectures.append((lecture_slug, lecture_video_content))
+
+            if lectures:
+                sections.append((section_slug, lectures))
+
+        if sections:
+            modules.append((module_slug, sections))
+
+    if modules and reverse:
+        modules.reverse()
+
+    return modules
+
+
 def download_about(session, class_name, path='', overwrite=False):
     """
     Download the 'about' metadata which is in JSON format and pretty-print it.
@@ -299,11 +391,62 @@ def download_about(session, class_name, path='', overwrite=False):
     # NOTE: should we create a directory with metadata?
     logging.info('Downloading about page from: %s', about_url)
     about_json = get_page(session, about_url)
-    data = json.loads(about_json)
+    data = json.loads(about_json)["elements"]
 
-    with open(about_fn, 'w') as about_file:
-        json_data = json.dumps(data, indent=4, separators=(',', ':'))
-        about_file.write(json_data)
+    for element in data:
+        if element["shortName"] == base_class_name:
+            with open(about_fn, 'w') as about_file:
+                json_data = json.dumps(element, indent=4,
+                                       separators=(',', ':'))
+                about_file.write(json_data)
+            break
+
+
+def is_course_complete(last_update):
+    rv = False
+    if last_update >= 0:
+        delta = time.time() - last_update
+        max_delta = total_seconds(datetime.timedelta(days=30))
+        if delta > max_delta:
+            rv = True
+    return rv
+
+
+def format_section(num, section, class_name, verbose_dirs):
+    sec = '%02d_%s' % (num, section)
+    if verbose_dirs:
+        sec = class_name.upper() + '_' + sec
+    return sec
+
+
+def format_resource(num, name, title, fmt):
+    if title:
+        title = '_' + title
+    return '%02d_%s%s.%s' % (num, name, title, fmt)
+
+
+def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
+    if title:
+        title = '_' + title
+    return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
+
+
+def find_resources_to_get(lecture, file_formats, resource_filter):
+    # Select formats to download
+    resources_to_get = []
+    for fmt, resources in iteritems(lecture):
+        if fmt in file_formats or 'all' in file_formats:
+            for r in resources:
+                if resource_filter and r[1] and not re.search(resource_filter, r[1]):
+                    logging.debug('Skipping b/c of rf: %s %s',
+                                  resource_filter, r[1])
+                    continue
+                resources_to_get.append((fmt, r[0], r[1]))
+        else:
+            logging.debug(
+                'Skipping b/c format %s not in %s', fmt, file_formats)
+
+    return resources_to_get
 
 
 def download_lectures(downloader,
@@ -321,37 +464,21 @@ def download_lectures(downloader,
                       combined_section_lectures_nums=False,
                       hooks=None,
                       playlist=False,
-                      intact_fnames=False
-                      ):
+                      intact_fnames=False):
     """
     Downloads lecture resources described by sections.
     Returns True if the class appears completed.
     """
     last_update = -1
 
-    def format_section(num, section):
-        sec = '%02d_%s' % (num, section)
-        if verbose_dirs:
-            sec = class_name.upper() + '_' + sec
-        return sec
-
-    def format_resource(num, name, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%s%s.%s' % (num, name, title, fmt)
-
-    def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
-        if title:
-            title = '_' + title
-        return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
-
     for (secnum, (section, lectures)) in enumerate(sections):
         if section_filter and not re.search(section_filter, section):
             logging.debug('Skipping b/c of sf: %s %s', section_filter,
                           section)
             continue
-        sec = os.path.join(path, class_name, format_section(secnum + 1,
-                                                            section))
+
+        sec = os.path.join(path, class_name,
+                           format_section(secnum + 1, section, class_name, verbose_dirs))
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
             if lecture_filter and not re.search(lecture_filter,
                                                 lecname):
@@ -362,19 +489,7 @@ def download_lectures(downloader,
             if not os.path.exists(sec):
                 mkdir_p(sec)
 
-            # Select formats to download
-            resources_to_get = []
-            for fmt, resources in iteritems(lecture):
-                if fmt in file_formats or 'all' in file_formats:
-                    for r in resources:
-                        if resource_filter and r[1] and not re.search(resource_filter, r[1]):
-                            logging.debug('Skipping b/c of rf: %s %s',
-                                          resource_filter, r[1])
-                            continue
-                        resources_to_get.append((fmt, r[0], r[1]))
-                else:
-                    logging.debug(
-                        'Skipping b/c format %s not in %s', fmt, file_formats)
+            resources_to_get = find_resources_to_get(lecture, file_formats, resource_filter)
 
             # write lecture resources
             for fmt, url, title in resources_to_get:
@@ -424,13 +539,10 @@ def download_lectures(downloader,
 
     # if we haven't updated any files in 1 month, we're probably
     # done with this course
-    if last_update >= 0:
-        delta = time.time() - last_update
-        max_delta = total_seconds(datetime.timedelta(days=30))
-        if delta > max_delta:
-            logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
-            return True
-    return False
+    rv = is_course_complete(last_update)
+    if rv:
+        logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
+    return rv
 
 
 def total_seconds(td):
@@ -440,10 +552,10 @@ def total_seconds(td):
     Added for backward compatibility, pre 2.7.
     """
     return (td.microseconds +
-           (td.seconds + td.days * 24 * 3600) * 10**6) // 10**6
+            (td.seconds + td.days * 24 * 3600) * 10 ** 6) // 10 ** 6
 
 
-def parseArgs():
+def parseArgs(args=None):
     """
     Parse the arguments/options passed to the program on the command line.
     """
@@ -486,12 +598,24 @@ def parseArgs():
                         default=None,
                         help='coursera password')
 
+    parser.add_argument('-k',
+                        '--keyring',
+                        dest='use_keyring',
+                        action='store_true',
+                        default=False,
+                        help='use keyring provided by operating system to '
+                             'save and load credentials')
     # optional
     parser.add_argument('--about',
                         dest='about',
                         action='store_true',
                         default=False,
                         help='download "about" metadata. (Default: False)')
+    parser.add_argument('--on-demand',
+                        dest='on_demand',
+                        action='store_true',
+                        default=False,
+                        help='get on-demand videos. (Default: False)')
     parser.add_argument('-b',
                         '--preview',
                         dest='preview',
@@ -657,7 +781,7 @@ def parseArgs():
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     # Initialize the logging system first so that other functions
     # can use it right away
@@ -674,6 +798,10 @@ def parseArgs():
     # turn list of strings into list
     args.file_formats = args.file_formats.split()
 
+    # decode path so we can work properly with cyrillic symbols on different
+    # versions on Python
+    args.path = decode_input(args.path)
+
     for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
         if getattr(args, bin):
             logging.error('The --%s option is deprecated, please use --%s',
@@ -681,6 +809,14 @@ def parseArgs():
             sys.exit(1)
 
     # check arguments
+    if args.use_keyring and args.password:
+        logging.warning('--keyring and --password cannot be specified together')
+        args.use_keyring = False
+
+    if args.use_keyring and not keyring:
+        logging.warning('The python module `keyring` not found.')
+        args.use_keyring = False
+
     if args.cookies_file and not os.path.exists(args.cookies_file):
         logging.error('Cookies file not found: %s', args.cookies_file)
         sys.exit(1)
@@ -689,7 +825,7 @@ def parseArgs():
         try:
             args.username, args.password = get_credentials(
                 username=args.username, password=args.password,
-                netrc=args.netrc)
+                netrc=args.netrc, use_keyring=args.use_keyring)
         except CredentialsError as e:
             logging.error(e)
             sys.exit(1)
@@ -703,18 +839,16 @@ def download_class(args, class_name):
     Returns True if the class appears completed.
     """
 
-    session = requests.Session()
+    session = get_session()
 
     if args.preview:
         # Todo, remove this.
         session.cookie_values = 'dummy=dummy'
     else:
-        get_cookies_for_class(
-            session,
-            class_name,
-            cookies_file=args.cookies_file,
-            username=args.username, password=args.password
-        )
+        get_cookies_for_class(session,
+                              class_name,
+                              cookies_file=args.cookies_file,
+                              username=args.username, password=args.password)
         session.cookie_values = make_cookie_values(session.cookies, class_name)
 
     # get the syllabus listing
@@ -730,23 +864,69 @@ def download_class(args, class_name):
     downloader = get_downloader(session, class_name, args)
 
     # obtain the resources
-    completed = download_lectures(
-        downloader,
-        class_name,
-        sections,
-        args.file_formats,
-        args.overwrite,
-        args.skip_download,
-        args.section_filter,
-        args.lecture_filter,
-        args.resource_filter,
-        args.path,
-        args.verbose_dirs,
-        args.preview,
-        args.combined_section_lectures_nums,
-        args.hooks,
-        args.playlist,
-        args.intact_fnames)
+    completed = download_lectures(downloader,
+                                  class_name,
+                                  sections,
+                                  args.file_formats,
+                                  args.overwrite,
+                                  args.skip_download,
+                                  args.section_filter,
+                                  args.lecture_filter,
+                                  args.resource_filter,
+                                  args.path,
+                                  args.verbose_dirs,
+                                  args.preview,
+                                  args.combined_section_lectures_nums,
+                                  args.hooks,
+                                  args.playlist,
+                                  args.intact_fnames)
+
+    return completed
+
+
+def download_on_demand_class(args, class_name):
+    """
+    Download all requested resources from the on-demand class
+    given in class_name. Returns True if the class appears completed.
+    """
+
+    session = get_session()
+    login(session, args.username, args.password)
+
+    # get the syllabus listing
+    page = get_on_demand_syllabus(session, class_name)
+
+    # parse it
+    modules = parse_on_demand_syllabus(session, page, args.reverse,
+                                       args.intact_fnames)
+
+    downloader = get_downloader(session, class_name, args)
+
+    # obtain the resources
+    completed = True
+    for idx, module in enumerate(modules):
+        module_name = '%02d_%s' % (idx + 1, module[0])
+        sections = module[1]
+
+        result = download_lectures(
+            downloader,
+            module_name,
+            sections,
+            args.file_formats,
+            args.overwrite,
+            args.skip_download,
+            args.section_filter,
+            args.lecture_filter,
+            args.resource_filter,
+            os.path.join(args.path, class_name),
+            args.verbose_dirs,
+            args.preview,
+            args.combined_section_lectures_nums,
+            args.hooks,
+            args.playlist,
+            args.intact_fnames
+        )
+        completed = completed and result
 
     return completed
 
@@ -766,7 +946,13 @@ def main():
     for class_name in args.class_names:
         try:
             logging.info('Downloading class: %s', class_name)
-            if download_class(args, class_name):
+            result = False
+            if args.on_demand:
+                result = download_on_demand_class(args, class_name)
+            else:
+                result = download_class(args, class_name)
+
+            if result:
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)

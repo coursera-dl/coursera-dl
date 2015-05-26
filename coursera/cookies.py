@@ -6,15 +6,16 @@ Cookie handling module.
 
 import logging
 import os
+import ssl
 
 import requests
-import six
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
-from .define import AUTH_URL, CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES
-from .utils import mkdir_p
-
+from .define import CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES, AUTH_URL_V3
+from .utils import mkdir_p, random_string
 
 # Monkey patch cookielib.Cookie.__init__.
 # Reason: The expires value may be a decimal string,
@@ -32,8 +33,7 @@ def __fixed_init__(self, version, name, value,
                    comment,
                    comment_url,
                    rest,
-                   rfc2109=False,
-                   ):
+                   rfc2109=False):
     if expires is not None:
         expires = float(expires)
     __orginal_init__(self, version, name, value,
@@ -46,7 +46,7 @@ def __fixed_init__(self, version, name, value,
                      comment,
                      comment_url,
                      rest,
-                     rfc2109=False,)
+                     rfc2109=False)
 
 cookielib.Cookie.__init__ = __fixed_init__
 
@@ -63,53 +63,67 @@ class AuthenticationFailed(BaseException):
     """
 
 
-def login(session, class_name, username, password):
+def login(session, username, password, class_name=None):
     """
-    Login on accounts.coursera.org with the given credentials.
+    Login on coursera.org with the given credentials.
     This adds the following cookies to the session:
         sessionid, maestro_login, maestro_login_flag
     """
 
+    logging.debug('Initiating login.')
     try:
         session.cookies.clear('.coursera.org')
+        logging.debug('Cleared .coursera.org cookies.')
     except KeyError:
-        pass
+        logging.debug('There were no .coursera.org cookies to be cleared.')
 
-    # Hit class url to obtain csrf_token
-    class_url = CLASS_URL.format(class_name=class_name)
-    r = requests.get(class_url, allow_redirects=False)
+    # Hit class url
+    if class_name is not None:
+        class_url = CLASS_URL.format(class_name=class_name)
+        r = requests.get(class_url, allow_redirects=False)
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            logging.error(e)
+            raise ClassNotFound(class_name)
 
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logging.error(e)
-        raise ClassNotFound(class_name)
-
-    csrftoken = r.cookies.get('csrf_token')
-
-    if not csrftoken:
-        raise AuthenticationFailed('Did not recieve csrf_token cookie.')
+    # csrftoken is simply a 20 char random string.
+    csrftoken = random_string(20)
 
     # Now make a call to the authenticator url.
+    csrf2cookie = 'csrf2_token_%s' % random_string(8)
+    csrf2token = random_string(24)
+    cookie = "csrftoken=%s; %s=%s" % (csrftoken, csrf2cookie, csrf2token)
+
+    logging.debug('Forging cookie header: %s.', cookie)
+
     headers = {
-        'Cookie': 'csrftoken=' + csrftoken,
-        'Referer': 'https://accounts.coursera.org/signin',
+        'Cookie': cookie,
         'X-CSRFToken': csrftoken,
+        'X-CSRF2-Cookie': csrf2cookie,
+        'X-CSRF2-Token': csrf2token,
     }
 
     data = {
         'email': username,
-        'password': password
+        'password': password,
+        'webrequest': 'true'
     }
 
-    r = session.post(AUTH_URL, data=data,
+    # Auth API V3
+    r = session.post(AUTH_URL_V3, data=data,
                      headers=headers, allow_redirects=False)
     try:
         r.raise_for_status()
-    except requests.exceptions.HTTPError:
-        raise AuthenticationFailed('Cannot login on accounts.coursera.org.')
 
-    logging.info('Logged in on accounts.coursera.org.')
+        # Some how the order of cookies parameters are important
+        # for coursera!!!
+        v = session.cookies.pop('CAUTH')
+        session.cookies.set('CAUTH', v)
+    except requests.exceptions.HTTPError:
+        raise AuthenticationFailed('Cannot login on coursera.org.')
+
+    logging.info('Logged in on coursera.org.')
 
 
 def down_the_wabbit_hole(session, class_name):
@@ -119,25 +133,16 @@ def down_the_wabbit_hole(session, class_name):
 
     auth_redirector_url = AUTH_REDIRECT_URL.format(class_name=class_name)
     r = session.get(auth_redirector_url)
+
+    logging.debug('Following %s to authenticate on class.coursera.org.',
+                  auth_redirector_url)
+
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError:
         raise AuthenticationFailed('Cannot login on class.coursera.org.')
 
-
-def _get_authentication_cookies(session, class_name,
-                                username, password):
-    try:
-        session.cookies.clear('class.coursera.org', '/' + class_name)
-    except KeyError:
-        pass
-
-    down_the_wabbit_hole(session, class_name)
-
-    enough = do_we_have_enough_cookies(session.cookies, class_name)
-
-    if not enough:
-        raise AuthenticationFailed('Did not find necessary cookies.')
+    logging.debug('Exiting "deep" authentication.')
 
 
 def get_authentication_cookies(session, class_name, username, password):
@@ -152,10 +157,19 @@ def get_authentication_cookies(session, class_name, username, password):
     if session.cookies.get('CAUTH', domain=".coursera.org"):
         logging.debug('Already logged in on accounts.coursera.org.')
     else:
-        login(session, class_name, username, password)
+        login(session, username, password, class_name=class_name)
 
-    _get_authentication_cookies(
-        session, class_name, username, password)
+    try:
+        session.cookies.clear('class.coursera.org', '/' + class_name)
+    except KeyError:
+        pass
+
+    down_the_wabbit_hole(session, class_name)
+
+    enough = do_we_have_enough_cookies(session.cookies, class_name)
+
+    if not enough:
+        raise AuthenticationFailed('Did not find necessary cookies.')
 
     logging.info('Found authentication cookies.')
 
@@ -238,6 +252,8 @@ def load_cookies_file(cookies_file):
     loader is very particular about this string.
     """
 
+    logging.debug('Loading cookie file %s into memory.', cookies_file)
+
     cookies = StringIO()
     cookies.write('# Netscape HTTP Cookie File')
     cookies.write(open(cookies_file, 'rU').read())
@@ -267,6 +283,9 @@ def get_cookies_from_cache(username):
     Returns a RequestsCookieJar containing the cached cookies for the given
     user.
     """
+
+    logging.debug('Trying to get cookies from the cache.')
+
     path = get_cookies_cache_path(username)
     cj = requests.cookies.RequestsCookieJar()
     try:
@@ -276,7 +295,7 @@ def get_cookies_from_cache(username):
         logging.debug(
             'Loaded cookies from %s', get_cookies_cache_path(username))
     except IOError:
-        pass
+        logging.debug('Could not load cookies from the cache.')
 
     return cj
 
@@ -317,3 +336,15 @@ def get_cookies_for_class(session, class_name,
         else:
             get_authentication_cookies(session, class_name, username, password)
             write_cookies_to_cache(session.cookies, username)
+
+
+class TLSAdapter(HTTPAdapter):
+    """
+    A customized HTTP Adapter which uses TLS v1.2 for encrypted
+    connections.
+    """
+    def init_poolmanager(self, connections, maxsize, block=False):
+        self.poolmanager = PoolManager(num_pools=connections,
+                                       maxsize=maxsize,
+                                       block=block,
+                                       ssl_version=ssl.PROTOCOL_TLSv1)

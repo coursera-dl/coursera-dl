@@ -10,6 +10,13 @@ import netrc
 import os
 import platform
 
+try:
+    import keyring
+except ImportError:
+    keyring = None
+
+KEYRING_SERVICE_NAME = 'coursera-dl'
+
 
 class CredentialsError(BaseException):
     """
@@ -27,7 +34,7 @@ def _getenv_or_empty(s):
     return os.getenv(s) or ""
 
 
-def get_config_paths(config_name): # pragma: no test
+def get_config_paths(config_name):  # pragma: no test
     """
     Returns a list of config files paths to try in order, given config file
     name and possibly a user-specified path.
@@ -129,7 +136,7 @@ def authenticate_through_netrc(path=None):
         'Did not find valid netrc file:\n' + error_messages)
 
 
-def get_credentials(username=None, password=None, netrc=None):
+def get_credentials(username=None, password=None, netrc=None, use_keyring=False):
     """
     Returns valid username, password tuple.
     Raises CredentialsError if username or password is missing.
@@ -143,8 +150,12 @@ def get_credentials(username=None, password=None, netrc=None):
             'Please provide a username with the -u option, '
             'or a .netrc file with the -n option.')
 
+    if not password and use_keyring:
+        password = keyring.get_password(KEYRING_SERVICE_NAME, username)
+
     if not password:
-        password = getpass.getpass(
-            'Coursera password for {0}: '.format(username))
+        password = getpass.getpass('Coursera password for {0}: '.format(username))
+        if use_keyring:
+            keyring.set_password(KEYRING_SERVICE_NAME, username, password)
 
     return username, password

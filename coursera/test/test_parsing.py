@@ -4,148 +4,112 @@
 """
 Test functionality of coursera module.
 """
-
+import json
 import os.path
-import unittest
+
+import pytest
 
 from six import iteritems
+from mock import patch, Mock, mock_open
 
 from coursera import coursera_dl
 
 
-class TestSyllabusParsing(unittest.TestCase):
+# JSon Handling
 
-    def setUp(self):
-        """
-        As setup, we mock some methods that would, otherwise, create
-        repeateadly many web requests.
-
-        More specifically, we mock:
-
-        * the search for hidden videos
-        * the actual download of videos
-        """
-
-        # Mock coursera_dl.grab_hidden_video_url
-        self.__grab_hidden_video_url = coursera_dl.grab_hidden_video_url
-
-        def new_grab_hidden_video_url(session, href):
-            """
-            Mock function to prevent network requests.
-            """
-            return None
-        coursera_dl.grab_hidden_video_url = new_grab_hidden_video_url
-
-        # Mock coursera_dl.get_video
-        self.__get_video = coursera_dl.get_video
-
-        def new_get_video(session, href):
-            """
-            Mock function to prevent network requests.
-            """
-            return None
-        coursera_dl.get_video = new_get_video
-
-    def tearDown(self):
-        """
-        We unmock the methods mocked in set up.
-        """
-        coursera_dl.grab_hidden_video_url = self.__grab_hidden_video_url
-        coursera_dl.get_video = self.__get_video
-
-    def _assert_parse(self, filename, num_sections, num_lectures,
-                      num_resources, num_videos):
-        filename = os.path.join(
-            os.path.dirname(__file__), "fixtures", "html",
-            filename)
-
-        with open(filename) as syllabus:
-            syllabus_page = syllabus.read()
-
-            sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
-
-            # section count
-            self.assertEqual(len(sections), num_sections)
-
-            # lecture count
-            lectures = [lec for sec in sections for lec in sec[1]]
-            self.assertEqual(len(lectures), num_lectures)
-
-            # resource count
-            resources = [(res[0], len(res[1]))
-                         for lec in lectures for res in iteritems(lec[1])]
-            self.assertEqual(sum(r for f, r in resources), num_resources)
-
-            # mp4 count
-            self.assertEqual(
-                sum(r for f, r in resources if f == "mp4"),
-                num_videos)
-
-    def test_parse(self):
-        self._assert_parse(
-            "regular-syllabus.html",
-            num_sections=23,
-            num_lectures=102,
-            num_resources=502,
-            num_videos=102)
-
-    def test_links_to_wikipedia(self):
-        self._assert_parse(
-            "links-to-wikipedia.html",
-            num_sections=5,
-            num_lectures=37,
-            num_resources=158,
-            num_videos=36)
-
-    def test_parse_preview(self):
-        self._assert_parse(
-            "preview.html",
-            num_sections=20,
-            num_lectures=106,
-            num_resources=106,
-            num_videos=106)
-
-    def test_sections_missed(self):
-        self._assert_parse(
-            "sections-not-to-be-missed.html",
-            num_sections=9,
-            num_lectures=61,
-            num_resources=224,
-            num_videos=61)
-
-    def test_sections_missed2(self):
-        self._assert_parse(
-            "sections-not-to-be-missed-2.html",
-            num_sections=20,
-            num_lectures=121,
-            num_resources=397,
-            num_videos=121)
-
-    def test_parse_classes_with_bs4(self):
-        classes = {
-            'datasci-001': (10, 97, 358, 97),  # issue 134
-            'startup-001': (4, 44, 136, 44),   # issue 137
-            'wealthofnations-001': (8, 74, 296, 74),  # issue 131
-            'malsoftware-001': (3, 18, 56, 16)  # issue 148
-        }
-
-        for class_, counts in iteritems(classes):
-            filename = "parsing-{0}-with-bs4.html".format(class_)
-            self._assert_parse(
-                filename,
-                num_sections=counts[0],
-                num_lectures=counts[1],
-                num_resources=counts[2],
-                num_videos=counts[3])
-
-    def test_multiple_resources_with_the_same_format(self):
-        self._assert_parse(
-            "multiple-resources-with-the-same-format.html",
-            num_sections=18,
-            num_lectures=97,
-            num_resources=478,
-            num_videos=97)
+@pytest.fixture
+def get_page(monkeypatch):
+    monkeypatch.setattr(coursera_dl, 'get_page', Mock())
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.fixture
+def json_path():
+    return os.path.join(os.path.dirname(__file__), "fixtures", "json")
+
+
+def test_that_should_not_dl_if_file_exist(get_page, json_path):
+    coursera_dl.get_page = Mock()
+    coursera_dl.download_about(object(), "matrix-002", json_path)
+    assert coursera_dl.get_page.called is False
+
+
+def test_that_we_parse_and_write_json_correctly(get_page, json_path):
+    unprocessed_json = os.path.join(os.path.dirname(__file__),
+                                    "fixtures", "json", "unprocessed.json")
+
+    raw_data = open(unprocessed_json).read()
+    coursera_dl.get_page = lambda x, y: raw_data
+    open_mock = mock_open()
+
+    with patch('coursera.coursera_dl.open', open_mock, create=True):
+        coursera_dl.download_about(object(), "networksonline-002", json_path)
+
+    about_json = os.path.join(json_path, 'networksonline-002-about.json')
+    open_mock.assert_called_once_with(about_json, 'w')
+
+    data = json.loads(open_mock().write.call_args[0][0])
+
+    assert data['id'] == 394
+    assert data['shortName'] == 'networksonline'
+
+
+# Test Syllabus Parsing
+
+@pytest.fixture
+def get_video(monkeypatch):
+    """
+    Mock some methods that would, otherwise, create repeateadly many web
+    requests.
+
+    More specifically, we mock:
+
+    * the search for hidden videos
+    * the actual download of videos
+    """
+
+    # Mock coursera_dl.grab_hidden_video_url
+    monkeypatch.setattr(coursera_dl, 'grab_hidden_video_url',
+                        lambda session, href: None)
+
+    # Mock coursera_dl.get_video
+    monkeypatch.setattr(coursera_dl, 'get_video',
+                        lambda session, href: None)
+
+
+@pytest.mark.parametrize(
+    "filename,num_sections,num_lectures,num_resources,num_videos", [
+        ("regular-syllabus.html", 23, 102, 502, 102),
+        ("links-to-wikipedia.html", 5, 37, 158, 36),
+        ("preview.html", 20, 106, 106, 106),
+        ("sections-not-to-be-missed.html", 9, 61, 224, 61),
+        ("sections-not-to-be-missed-2.html", 20, 121, 397, 121),
+        ("parsing-datasci-001-with-bs4.html", 10, 97, 358, 97),  # issue 134
+        ("parsing-startup-001-with-bs4.html", 4, 44, 136, 44),  # issue 137
+        ("parsing-wealthofnations-001-with-bs4.html", 8, 74, 296, 74),  # issue 131
+        ("parsing-malsoftware-001-with-bs4.html", 3, 18, 56, 16),  # issue 148
+        ("multiple-resources-with-the-same-format.html", 18, 97, 478, 97),
+    ]
+)
+def test_parse(get_video, filename, num_sections, num_lectures, num_resources, num_videos):
+    filename = os.path.join(os.path.dirname(__file__), "fixtures", "html",
+                            filename)
+
+    with open(filename) as syllabus:
+        syllabus_page = syllabus.read()
+
+        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
+
+        # section count
+        assert len(sections) == num_sections
+
+        # lecture count
+        lectures = [lec for sec in sections for lec in sec[1]]
+        assert len(lectures) == num_lectures
+
+        # resource count
+        resources = [(res[0], len(res[1]))
+                     for lec in lectures for res in iteritems(lec[1])]
+        assert sum(r for f, r in resources) == num_resources
+
+        # mp4 count
+        assert sum(r for f, r in resources if f == "mp4") == num_videos
