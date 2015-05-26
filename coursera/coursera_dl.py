@@ -172,6 +172,32 @@ def grab_hidden_video_url(session, href):
         return None
 
 
+def grab_more_subtitles(session, href):
+    """
+    Follow some extra redirects to grab more subtitles for the videos.  We
+    return a list of tuples, where each tuple is a pair of the form language
+    and URL. An example of a tuple:
+
+    ('pt',
+    'https://class.coursera.org/introfinance-005/lecture/subtitles?q=188_pt')
+    """
+    try:
+        page = get_page(session, href)
+    except requests.exceptions.HTTPError:
+        return None
+
+    soup = BeautifulSoup(page)
+    l = soup.find_all('track', attrs={'kind': 'subtitles'})
+
+    if l is not None:
+        subtitles = []
+        for i in l:
+            subtitles.append((i['srclang'], i['src']))
+        return subtitles
+    else:
+        return None
+
+
 def get_syllabus(session, class_name, local_page=False, preview=False):
     """
     Get the course listing webpage.
