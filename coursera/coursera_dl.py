@@ -906,13 +906,6 @@ def download_class(args, class_name):
 
     return completed
 
-def get_subtitles_languages(session, class_name, preview):
-    print class_name
-    class_type = 'preview' if preview else 'index'
-    page = CLASS_URL.format(class_name=class_name) + '/lecture/' + class_type
-    print page
-
-
 def download_on_demand_class(args, class_name):
     """
     Download all requested resources from the on-demand class
