@@ -85,12 +85,12 @@ def test_random_string():
         assert res == '2yW4Acq9'
 
 
-def test_fix_url_ads_sheme():
+def test_fix_url_adds_scheme():
     url = "www.coursera.org"
     assert utils.fix_url(url) == 'http://www.coursera.org'
 
 
-def test_fix_url_removes_sheme():
+def test_fix_url_removes_spaces():
     url = " www.coursera.org "
     assert utils.fix_url(url) == 'http://www.coursera.org'
 
