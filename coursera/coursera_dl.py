@@ -238,7 +238,8 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(session, page, reverse=False, intact_fnames=False):
+def parse_syllabus(session, page, reverse=False, intact_fnames=False,
+                   subtitle_language='en'):
     """
     Parses a Coursera course listing/syllabus page.  Each section is a week
     of classes.
@@ -270,6 +271,10 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False):
                 untouched_fname = a.get('title', '')
                 title = clean_filename(untouched_fname, intact_fnames)
                 fmt = get_anchor_format(href)
+                if fmt in ('srt','txt') and subtitle_language != 'en':
+                    title = title.replace('_en&format','_'+subtitle_language+'&format')
+                    href = href.replace('_en&format','_'+subtitle_language+'&format')
+
                 logging.debug('    %s %s', fmt, href)
                 if fmt:
                     lecture[fmt] = lecture.get(fmt, [])
@@ -373,13 +378,14 @@ def parse_on_demand_syllabus(session, page, reverse=False,
     return modules
 
 
-def download_about(session, class_name, path='', overwrite=False):
+def download_about(session, class_name, path='', overwrite=False,
+                   subtitle_language='en'):
     """
     Download the 'about' metadata which is in JSON format and pretty-print it.
     """
     about_fn = os.path.join(path, class_name + '-about.json')
     logging.debug('About file to be written to: %s', about_fn)
-    if os.path.exists(about_fn) and not overwrite:
+    if os.path.exists(about_fn) and not overwrite and subtitle_language == 'en':
         return
 
     # strip off course number on end e.g. ml-001 -> ml
@@ -399,8 +405,7 @@ def download_about(session, class_name, path='', overwrite=False):
                 json_data = json.dumps(element, indent=4,
                                        separators=(',', ':'))
                 about_file.write(json_data)
-            break
-
+                return element
 
 def is_course_complete(last_update):
     rv = False
@@ -780,6 +785,12 @@ def parseArgs(args=None):
                         action='store_true',
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
+    parser.add_argument('-sl',
+                        '--subtitle-language',
+                        dest='subtitle_language',
+                        action='store',
+                        default='en',
+                        help='Choose language to download subtitles')
 
     args = parser.parse_args(args)
 
@@ -838,7 +849,6 @@ def download_class(args, class_name):
     Download all requested resources from the class given in class_name.
     Returns True if the class appears completed.
     """
-
     session = get_session()
 
     if args.preview:
@@ -851,15 +861,28 @@ def download_class(args, class_name):
                               username=args.username, password=args.password)
         session.cookie_values = make_cookie_values(session.cookies, class_name)
 
+
+    subtitle_language = args.subtitle_language
+    if args.about or args.subtitle_language != 'en':
+        about = download_about(session,
+                               class_name,
+                               args.path,
+                               args.overwrite,
+                               args.subtitle_language)
+        # Check if subtitle is available
+        if not about["subtitleLanguagesCsv"]\
+               .split(',')\
+               .count(args.subtitle_language) :
+            logging.warning("Subtitle unavailable in specified language")
+            subtitle_language = "en"
+
     # get the syllabus listing
     page = get_syllabus(session, class_name, args.local_page, args.preview)
 
     # parse it
     sections = parse_syllabus(session, page, args.reverse,
-                              args.intact_fnames)
+                              args.intact_fnames, subtitle_language)
 
-    if args.about:
-        download_about(session, class_name, args.path, args.overwrite)
 
     downloader = get_downloader(session, class_name, args)
 
@@ -883,7 +906,6 @@ def download_class(args, class_name):
 
     return completed
 
-
 def download_on_demand_class(args, class_name):
     """
     Download all requested resources from the on-demand class
@@ -895,6 +917,8 @@ def download_on_demand_class(args, class_name):
 
     # get the syllabus listing
     page = get_on_demand_syllabus(session, class_name)
+
+
 
     # parse it
     modules = parse_on_demand_syllabus(session, page, args.reverse,
