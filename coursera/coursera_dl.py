@@ -86,7 +86,7 @@ assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
 assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
 
 
-def get_on_demand_video_url(session, video_id):
+def get_on_demand_video_url(session, video_id, subtitle_language='en'):
     """
     Return the download URL of on-demand course video.
     """
@@ -104,13 +104,18 @@ def get_on_demand_video_url(session, video_id):
     video_url = sources[0]['formatSources']['video/mp4']
     video_content['mp4'] = video_url
 
-    # english subtitles
+    # subtitles
     subtitles = dom.get('subtitles')
     if subtitles is not None:
-        en_subtitle_url = subtitles.get('en')
-        if en_subtitle_url is not None:
+        if subtitle_language != 'en' and subtitle_language not in subtitles:
+            logging.warning("Subtitle unavailable in '%s' language, moving "
+                            "back to 'en' subtitle", subtitle_language)
+            subtitle_language = 'en'
+
+        subtitle_url = subtitles.get(subtitle_language)
+        if subtitle_url is not None:
             # some subtitle urls are relative!
-            video_content['srt'] = make_coursera_absolute_url(en_subtitle_url)
+            video_content['srt'] = make_coursera_absolute_url(subtitle_url)
 
     return video_content
 
@@ -335,11 +340,12 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False,
     return sections
 
 
-def parse_on_demand_syllabus(session, page, reverse=False,
-                             intact_fnames=False):
+def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
+                             subtitle_language='en'):
     """
     Parses a Coursera on-demand course listing/syllabus page.
     """
+
     dom = json.loads(page)
 
     logging.info('Parsing syllabus of on-demand course. '
@@ -358,7 +364,9 @@ def parse_on_demand_syllabus(session, page, reverse=False,
                 lecture_slug = lecture['slug']
                 if lecture['content']['typeName'] == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
-                    video_content = get_on_demand_video_url(session, lecture_video_id)
+                    video_content = get_on_demand_video_url(session,
+                                                            lecture_video_id,
+                                                            subtitle_language)
                     lecture_video_content = {}
                     for key, value in video_content.items():
                         lecture_video_content[key] = [(value, '')]
@@ -917,8 +925,10 @@ def download_on_demand_class(args, class_name):
     page = get_on_demand_syllabus(session, class_name)
 
     # parse it
-    modules = parse_on_demand_syllabus(session, page, args.reverse,
-                                       args.intact_fnames)
+    modules = parse_on_demand_syllabus(session, page,
+                                       args.reverse,
+                                       args.intact_fnames,
+                                       args.subtitle_language)
 
     downloader = get_downloader(session, class_name, args)
 
