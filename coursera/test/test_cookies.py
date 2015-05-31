@@ -6,7 +6,6 @@ Test syllabus parsing.
 """
 
 import os.path
-import pytest
 import requests
 from six.moves import http_cookiejar as cookielib
 

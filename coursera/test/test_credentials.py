@@ -5,7 +5,6 @@ Test retrieving the credentials.
 """
 
 import os.path
-import pytest
 
 from coursera import credentials
 from .test_utils import assertRaises
