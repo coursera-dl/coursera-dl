@@ -479,7 +479,8 @@ def download_lectures(downloader,
                       combined_section_lectures_nums=False,
                       hooks=None,
                       playlist=False,
-                      intact_fnames=False):
+                      intact_fnames=False,
+                      ignored_formats=[]):
     """
     Downloads lecture resources described by sections.
     Returns True if the class appears completed.
@@ -508,6 +509,9 @@ def download_lectures(downloader,
 
             # write lecture resources
             for fmt, url, title in resources_to_get:
+                if fmt in ignored_formats:
+                    continue
+
                 if combined_section_lectures_nums:
                     lecfn = os.path.join(
                         sec,
@@ -801,6 +805,11 @@ def parseArgs(args=None):
                         action='store',
                         default='en',
                         help='Choose language to download subtitles')
+    parser.add_argument('--ignore-formats',
+                        dest='ignore_formats',
+                        action='store',
+                        default=None,
+                        help='Ignore certain file formats')
 
     args = parser.parse_args(args)
 
@@ -879,7 +888,7 @@ def download_class(args, class_name):
                                args.overwrite,
                                args.subtitle_language)
         # Check if subtitle is available
-        if not about["subtitleLanguagesCsv"].split(',').count(args.subtitle_language):
+        if not about or not about["subtitleLanguagesCsv"].split(',').count(args.subtitle_language):
             logging.warning("Subtitle unavailable in specified language")
             subtitle_language = "en"
 
@@ -891,6 +900,10 @@ def download_class(args, class_name):
                               args.intact_fnames, subtitle_language)
 
     downloader = get_downloader(session, class_name, args)
+
+    ignored_formats = []
+    if args.ignore_formats:
+        ignored_formats = args.ignore_formats.split(",")
 
     # obtain the resources
     completed = download_lectures(downloader,
@@ -908,7 +921,8 @@ def download_class(args, class_name):
                                   args.combined_section_lectures_nums,
                                   args.hooks,
                                   args.playlist,
-                                  args.intact_fnames)
+                                  args.intact_fnames,
+                                  ignored_formats)
 
     return completed
 
@@ -924,6 +938,10 @@ def download_on_demand_class(args, class_name):
 
     # get the syllabus listing
     page = get_on_demand_syllabus(session, class_name)
+
+    ignored_formats = []
+    if args.ignore_formats:
+        ignored_formats = args.ignore_formats.split(",")
 
     # parse it
     modules = parse_on_demand_syllabus(session, page,
@@ -955,7 +973,8 @@ def download_on_demand_class(args, class_name):
             args.combined_section_lectures_nums,
             args.hooks,
             args.playlist,
-            args.intact_fnames
+            args.intact_fnames,
+            ignored_formats
         )
         completed = completed and result
 
