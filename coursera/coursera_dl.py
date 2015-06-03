@@ -888,7 +888,7 @@ def download_class(args, class_name):
                                args.overwrite,
                                args.subtitle_language)
         # Check if subtitle is available
-        if not about["subtitleLanguagesCsv"].split(',').count(args.subtitle_language):
+        if not about or not about["subtitleLanguagesCsv"].split(',').count(args.subtitle_language):
             logging.warning("Subtitle unavailable in specified language")
             subtitle_language = "en"
 
