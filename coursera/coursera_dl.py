@@ -446,10 +446,18 @@ def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
     return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
 
 
-def find_resources_to_get(lecture, file_formats, resource_filter):
+def find_resources_to_get(lecture, file_formats, resource_filter, ignored_formats=[]):
     # Select formats to download
     resources_to_get = []
+
+    if len(ignored_formats):
+        logging.info("The following file formats will be ignored: " + ",".join(ignored_formats))
+
     for fmt, resources in iteritems(lecture):
+
+        if fmt in ignored_formats:
+            continue
+
         if fmt in file_formats or 'all' in file_formats:
             for r in resources:
                 if resource_filter and r[1] and not re.search(resource_filter, r[1]):
@@ -505,12 +513,13 @@ def download_lectures(downloader,
             if not os.path.exists(sec):
                 mkdir_p(sec)
 
-            resources_to_get = find_resources_to_get(lecture, file_formats, resource_filter)
+            resources_to_get = find_resources_to_get(lecture,
+                                                     file_formats,
+                                                     resource_filter,
+                                                     ignored_formats)
 
             # write lecture resources
             for fmt, url, title in resources_to_get:
-                if fmt in ignored_formats:
-                    continue
 
                 if combined_section_lectures_nums:
                     lecfn = os.path.join(
