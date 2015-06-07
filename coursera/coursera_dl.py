@@ -841,6 +841,7 @@ def parseArgs(args=None):
     # versions on Python
     args.path = decode_input(args.path)
 
+    # Handle deprecated options
     for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
         if getattr(args, bin):
             logging.error('The --%s option is deprecated, please use --%s',
