@@ -711,28 +711,6 @@ def parseArgs(args=None):
                         default=None,
                         help='use axel for downloading,'
                              ' optionally specify axel bin')
-    # We keep the wget_bin, ... options for backwards compatibility.
-    parser.add_argument('-w',
-                        '--wget_bin',
-                        dest='wget_bin',
-                        action='store',
-                        default=None,
-                        help='DEPRECATED, use --wget')
-    parser.add_argument('--curl_bin',
-                        dest='curl_bin',
-                        action='store',
-                        default=None,
-                        help='DEPRECATED, use --curl')
-    parser.add_argument('--aria2_bin',
-                        dest='aria2_bin',
-                        action='store',
-                        default=None,
-                        help='DEPRECATED, use --aria2')
-    parser.add_argument('--axel_bin',
-                        dest='axel_bin',
-                        action='store',
-                        default=None,
-                        help='DEPRECATED, use --axel')
     parser.add_argument('-o',
                         '--overwrite',
                         dest='overwrite',
@@ -840,13 +818,6 @@ def parseArgs(args=None):
     # decode path so we can work properly with cyrillic symbols on different
     # versions on Python
     args.path = decode_input(args.path)
-
-    # Handle deprecated options
-    for bin in ['wget_bin', 'curl_bin', 'aria2_bin', 'axel_bin']:
-        if getattr(args, bin):
-            logging.error('The --%s option is deprecated, please use --%s',
-                          bin, bin[:-4])
-            sys.exit(1)
 
     # check arguments
     if args.use_keyring and args.password:
