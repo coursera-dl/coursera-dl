@@ -67,11 +67,11 @@ from .cookies import (
     AuthenticationFailed, ClassNotFound,
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError, keyring
-from .define import CLASS_URL, ABOUT_URL, PATH_CACHE, \
-    OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL
+from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
+                     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL)
 from .downloaders import get_downloader
-from .utils import clean_filename, get_anchor_format, mkdir_p, fix_url, \
-    decode_input, make_coursera_absolute_url
+from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
+                    decode_input, make_coursera_absolute_url)
 
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
