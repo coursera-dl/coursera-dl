@@ -595,7 +595,7 @@ def parseArgs(args=None):
     parser.add_argument('class_names',
                         action='store',
                         nargs='+',
-                        help='name(s) of the class(es) (e.g. "nlp")')
+                        help='name(s) of the class(es) (e.g. "ml-005")')
 
     parser.add_argument('-c',
                         '--cookies_file',
