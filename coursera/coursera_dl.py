@@ -591,7 +591,6 @@ def parseArgs(args=None):
     parser = argparse.ArgumentParser(
         description='Download Coursera.org lecture material and resources.')
 
-
     # Basic options
     group_basic = parser.add_argument_group('Basic options')
 
@@ -639,7 +638,6 @@ def parseArgs(args=None):
                              action='store',
                              default='en',
                              help='Choose language to download subtitles. (Default: en)')
-
 
     # Selection of material to download
     group_material = parser.add_argument_group('Selection of material to download')
@@ -690,40 +688,42 @@ def parseArgs(args=None):
                                 help='only download resources which match this regex'
                                 ' (default: disabled)')
 
+    # Selection of material to download
+    group_external_dl = parser.add_argument_group('External downloaders')
 
+    group_external_dl.add_argument('--wget',
+                                   dest='wget',
+                                   action='store',
+                                   nargs='?',
+                                   const='wget',
+                                   default=None,
+                                   help='use wget for downloading,'
+                                   'optionally specify wget bin')
+    group_external_dl.add_argument('--curl',
+                                   dest='curl',
+                                   action='store',
+                                   nargs='?',
+                                   const='curl',
+                                   default=None,
+                                   help='use curl for downloading,'
+                                   ' optionally specify curl bin')
+    group_external_dl.add_argument('--aria2',
+                                   dest='aria2',
+                                   action='store',
+                                   nargs='?',
+                                   const='aria2c',
+                                   default=None,
+                                   help='use aria2 for downloading,'
+                                   ' optionally specify aria2 bin')
+    group_external_dl.add_argument('--axel',
+                                   dest='axel',
+                                   action='store',
+                                   nargs='?',
+                                   const='axel',
+                                   default=None,
+                                   help='use axel for downloading,'
+                                   ' optionally specify axel bin')
 
-    parser.add_argument('--wget',
-                        dest='wget',
-                        action='store',
-                        nargs='?',
-                        const='wget',
-                        default=None,
-                        help='use wget for downloading,'
-                             'optionally specify wget bin')
-    parser.add_argument('--curl',
-                        dest='curl',
-                        action='store',
-                        nargs='?',
-                        const='curl',
-                        default=None,
-                        help='use curl for downloading,'
-                             ' optionally specify curl bin')
-    parser.add_argument('--aria2',
-                        dest='aria2',
-                        action='store',
-                        nargs='?',
-                        const='aria2c',
-                        default=None,
-                        help='use aria2 for downloading,'
-                             ' optionally specify aria2 bin')
-    parser.add_argument('--axel',
-                        dest='axel',
-                        action='store',
-                        nargs='?',
-                        const='axel',
-                        default=None,
-                        help='use axel for downloading,'
-                             ' optionally specify axel bin')
     parser.add_argument('-o',
                         '--overwrite',
                         dest='overwrite',
@@ -731,65 +731,39 @@ def parseArgs(args=None):
                         default=False,
                         help='whether existing files should be overwritten'
                              ' (default: False)')
-    parser.add_argument('-l',
-                        '--process_local_page',
-                        dest='local_page',
-                        help='uses or creates local cached version of syllabus'
-                             ' page')
-    parser.add_argument('--skip-download',
-                        dest='skip_download',
-                        action='store_true',
-                        default=False,
-                        help='for debugging: skip actual downloading of files')
 
     parser.add_argument('--verbose-dirs',
                         dest='verbose_dirs',
                         action='store_true',
                         default=False,
                         help='include class name in section directory name')
-    parser.add_argument('--debug',
-                        dest='debug',
-                        action='store_true',
-                        default=False,
-                        help='print lots of debug information')
+
     parser.add_argument('--quiet',
                         dest='quiet',
                         action='store_true',
                         default=False,
                         help='omit as many messages as possible'
                              ' (only printing errors)')
+
     parser.add_argument('--add-class',
                         dest='add_class',
                         action='append',
                         default=[],
                         help='additional classes to get')
+
     parser.add_argument('-r',
                         '--reverse',
                         dest='reverse',
                         action='store_true',
                         default=False,
                         help='download sections in reverse order')
+
     parser.add_argument('--combined-section-lectures-nums',
                         dest='combined_section_lectures_nums',
                         action='store_true',
                         default=False,
                         help='include lecture and section name in final files')
-    parser.add_argument('--hook',
-                        dest='hooks',
-                        action='append',
-                        default=[],
-                        help='hooks to run when finished')
-    parser.add_argument('-pl',
-                        '--playlist',
-                        dest='playlist',
-                        action='store_true',
-                        default=False,
-                        help='generate M3U playlists for course weeks')
-    parser.add_argument('--clear-cache',
-                        dest='clear_cache',
-                        action='store_true',
-                        default=False,
-                        help='clear cached cookies')
+
     parser.add_argument('--unrestricted-filenames',
                         dest='intact_fnames',
                         action='store_true',
@@ -824,7 +798,50 @@ def parseArgs(args=None):
                                 help='use keyring provided by operating system to '
                                 'save and load credentials')
 
+    group_adv_auth.add_argument('--clear-cache',
+                                dest='clear_cache',
+                                action='store_true',
+                                default=False,
+                                help='clear cached cookies')
 
+    # Advanced miscellaneous options
+    group_adv_misc = parser.add_argument_group('Advanced miscellaneous options')
+
+    group_adv_misc.add_argument('--hook',
+                                dest='hooks',
+                                action='append',
+                                default=[],
+                                help='hooks to run when finished')
+
+    group_adv_misc.add_argument('-pl',
+                                '--playlist',
+                                dest='playlist',
+                                action='store_true',
+                                default=False,
+                                help='generate M3U playlists for course weeks')
+
+    # Debug options
+    group_debug = parser.add_argument_group('Debugging options')
+
+    group_debug.add_argument('--skip-download',
+                             dest='skip_download',
+                             action='store_true',
+                             default=False,
+                             help='for debugging: skip actual downloading of files')
+
+    group_debug.add_argument('--debug',
+                             dest='debug',
+                             action='store_true',
+                             default=False,
+                             help='print lots of debug information')
+
+    group_debug.add_argument('-l',  # FIXME: remove short option from rarely used ones
+                             '--process_local_page',
+                             dest='local_page',
+                             help='uses or creates local cached version of syllabus'
+                             ' page')
+
+    # Final parsing of the options
     args = parser.parse_args(args)
 
     # Initialize the logging system first so that other functions
