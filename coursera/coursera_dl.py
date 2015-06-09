@@ -591,94 +591,107 @@ def parseArgs(args=None):
     parser = argparse.ArgumentParser(
         description='Download Coursera.org lecture material and resources.')
 
-    # positional
-    parser.add_argument('class_names',
-                        action='store',
-                        nargs='+',
-                        help='name(s) of the class(es) (e.g. "ml-005")')
 
-    parser.add_argument('-c',
-                        '--cookies_file',
-                        dest='cookies_file',
-                        action='store',
-                        default=None,
-                        help='full path to the cookies.txt file')
-    parser.add_argument('-u',
-                        '--username',
-                        dest='username',
-                        action='store',
-                        default=None,
-                        help='coursera username')
-    parser.add_argument('-n',
-                        '--netrc',
-                        dest='netrc',
-                        nargs='?',
-                        action='store',
-                        const=True,
-                        default=False,
-                        help='use netrc for reading passwords, uses default'
-                             ' location if no path specified')
+    # Basic options
+    group_basic = parser.add_argument_group('Basic options')
 
-    parser.add_argument('-p',
-                        '--password',
-                        dest='password',
-                        action='store',
-                        default=None,
-                        help='coursera password')
+    group_basic.add_argument('class_names',
+                             action='store',
+                             nargs='+',
+                             help='name(s) of the class(es) (e.g. "ml-005")')
 
-    parser.add_argument('-k',
-                        '--keyring',
-                        dest='use_keyring',
-                        action='store_true',
-                        default=False,
-                        help='use keyring provided by operating system to '
-                             'save and load credentials')
-    # optional
-    parser.add_argument('--about',
-                        dest='about',
-                        action='store_true',
-                        default=False,
-                        help='download "about" metadata. (Default: False)')
-    parser.add_argument('--on-demand',
-                        dest='on_demand',
-                        action='store_true',
-                        default=False,
-                        help='get on-demand videos. (Default: False)')
-    parser.add_argument('-b',
-                        '--preview',
-                        dest='preview',
-                        action='store_true',
-                        default=False,
-                        help='get preview videos. (Default: False)')
-    parser.add_argument('-f',
-                        '--formats',
-                        dest='file_formats',
-                        action='store',
-                        default='all',
-                        help='file format extensions to be downloaded in'
-                             ' quotes space separated, e.g. "mp4 pdf" '
-                             '(default: special value "all")')
-    parser.add_argument('-sf',
-                        '--section_filter',
-                        dest='section_filter',
-                        action='store',
-                        default=None,
-                        help='only download sections which contain this'
-                             ' regex (default: disabled)')
-    parser.add_argument('-lf',
-                        '--lecture_filter',
-                        dest='lecture_filter',
-                        action='store',
-                        default=None,
-                        help='only download lectures which contain this regex'
-                             ' (default: disabled)')
-    parser.add_argument('-rf',
-                        '--resource_filter',
-                        dest='resource_filter',
-                        action='store',
-                        default=None,
-                        help='only download resources which match this regex'
-                             ' (default: disabled)')
+    group_basic.add_argument('-u',
+                             '--username',
+                             dest='username',
+                             action='store',
+                             default=None,
+                             help='coursera username')
+
+    group_basic.add_argument('-p',
+                             '--password',
+                             dest='password',
+                             action='store',
+                             default=None,
+                             help='coursera password')
+
+    group_basic.add_argument('--on-demand',
+                             dest='on_demand',
+                             action='store_true',
+                             default=False,
+                             help='get on-demand videos. (Default: False)')
+
+    group_basic.add_argument('-b',  # FIXME: kill this one-letter option
+                             '--preview',
+                             dest='preview',
+                             action='store_true',
+                             default=False,
+                             help='get videos from preview pages. (Default: False)')
+
+    group_basic.add_argument('--path',
+                             dest='path',
+                             action='store',
+                             default='',
+                             help='path to where to save the file. (Default: current directory)')
+
+    group_basic.add_argument('-sl',  # FIXME: deprecate this option
+                             '--subtitle-language',
+                             dest='subtitle_language',
+                             action='store',
+                             default='en',
+                             help='Choose language to download subtitles. (Default: en)')
+
+
+    # Selection of material to download
+    group_material = parser.add_argument_group('Selection of material to download')
+
+    group_material.add_argument('--about',  # FIXME: should be --about-course
+                                dest='about',
+                                action='store_true',
+                                default=False,
+                                help='download "about" metadata. (Default: False)')
+
+    group_material.add_argument('-f',
+                                '--formats',
+                                dest='file_formats',
+                                action='store',
+                                default='all',
+                                help='file format extensions to be downloaded in'
+                                ' quotes space separated, e.g. "mp4 pdf" '
+                                '(default: special value "all")')
+
+    group_material.add_argument('--ignore-formats',
+                                dest='ignore_formats',
+                                action='store',
+                                default=None,
+                                help='file format extensions of resources to ignore'
+                                ' (default: None)')
+
+    group_material.add_argument('-sf',  # FIXME: deprecate this option
+                                '--section_filter',
+                                dest='section_filter',
+                                action='store',
+                                default=None,
+                                help='only download sections which contain this'
+                                ' regex (default: disabled)')
+
+    group_material.add_argument('-lf',  # FIXME: deprecate this option
+                                '--lecture_filter',
+                                dest='lecture_filter',
+                                action='store',
+                                default=None,
+                                help='only download lectures which contain this regex'
+                                ' (default: disabled)')
+
+    group_material.add_argument('-rf',  # FIXME: deprecate this option
+                                '--resource_filter',
+                                dest='resource_filter',
+                                action='store',
+                                default=None,
+                                help='only download resources which match this regex'
+                                ' (default: disabled)')
+
+
+
     parser.add_argument('--wget',
                         dest='wget',
                         action='store',
@@ -728,11 +741,7 @@ def parseArgs(args=None):
                         action='store_true',
                         default=False,
                         help='for debugging: skip actual downloading of files')
-    parser.add_argument('--path',
-                        dest='path',
-                        action='store',
-                        default='',
-                        help='path to save the file')
+
     parser.add_argument('--verbose-dirs',
                         dest='verbose_dirs',
                         action='store_true',
@@ -786,17 +795,35 @@ def parseArgs(args=None):
                         action='store_true',
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
-    parser.add_argument('-sl',
-                        '--subtitle-language',
-                        dest='subtitle_language',
-                        action='store',
-                        default='en',
-                        help='Choose language to download subtitles')
-    parser.add_argument('--ignore-formats',
-                        dest='ignore_formats',
-                        action='store',
-                        default=None,
-                        help='Ignore certain file formats')
+
+    # Advanced authentication
+    group_adv_auth = parser.add_argument_group('Advanced authentication options')
+
+    group_adv_auth.add_argument('-c',
+                                '--cookies_file',
+                                dest='cookies_file',
+                                action='store',
+                                default=None,
+                                help='full path to the cookies.txt file')
+
+    group_adv_auth.add_argument('-n',
+                                '--netrc',
+                                dest='netrc',
+                                nargs='?',
+                                action='store',
+                                const=True,
+                                default=False,
+                                help='use netrc for reading passwords, uses default'
+                                ' location if no path specified')
+
+    group_adv_auth.add_argument('-k',
+                                '--keyring',
+                                dest='use_keyring',
+                                action='store_true',
+                                default=False,
+                                help='use keyring provided by operating system to '
+                                'save and load credentials')
+
 
     args = parser.parse_args(args)
 
