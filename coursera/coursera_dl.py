@@ -745,12 +745,6 @@ def parseArgs(args=None):
                         help='omit as many messages as possible'
                              ' (only printing errors)')
 
-    parser.add_argument('--add-class',
-                        dest='add_class',
-                        action='append',
-                        default=[],
-                        help='additional classes to get')
-
     parser.add_argument('-r',
                         '--reverse',
                         dest='reverse',
