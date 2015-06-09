@@ -65,7 +65,7 @@ def clean_filename(s, minimal_change=False):
     h = html_parser.HTMLParser()
     s = h.unescape(s)
 
-    # strip paren portions which contain trailing time length (...)
+    # Strip forbidden characters
     s = (
         s.replace(':', '-')
         .replace('/', '-')
