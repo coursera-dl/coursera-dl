@@ -11,7 +11,7 @@ import ssl
 import requests
 from requests.adapters import HTTPAdapter
 
-try:
+try:  # Workaround for broken Debian/Ubuntu packages? (See issue #331)
     from requests.packages.urllib3.poolmanager import PoolManager
 except ImportError:
     from urllib3.poolmanager import PoolManager
