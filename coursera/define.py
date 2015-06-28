@@ -15,16 +15,16 @@ CLASS_URL = 'https://class.coursera.org/{class_name}'
 OPENCOURSE_CONTENT_URL = 'https://www.coursera.org/api/opencourse.v1/course/{class_name}'
 OPENCOURSE_VIDEO_URL = 'https://www.coursera.org/api/opencourse.v1/video/{video_id}'
 
-ABOUT_URL = 'https://api.coursera.org/api/catalog.v1/courses?' \
-            'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,' \
-            'smallIconHover,universityLogo,universityLogoSt,video,videoId,' \
-            'aboutTheCourse,targetAudience,faq,courseSyllabus,courseFormat,' \
-            'suggestedReadings,instructor,estimatedClassWorkload,' \
-            'aboutTheInstructor,recommendedBackground,subtitleLanguagesCsv&' \
-            'q=search&query={class_name}'
+ABOUT_URL = ('https://api.coursera.org/api/catalog.v1/courses?'
+             'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,'
+             'smallIconHover,universityLogo,universityLogoSt,video,videoId,'
+             'aboutTheCourse,targetAudience,faq,courseSyllabus,courseFormat,'
+             'suggestedReadings,instructor,estimatedClassWorkload,'
+             'aboutTheInstructor,recommendedBackground,subtitleLanguagesCsv&'
+             'q=search&query={class_name}')
 
-AUTH_REDIRECT_URL = 'https://class.coursera.org/{class_name}' \
-                    '/auth/auth_redirector?type=login&subtype=normal'
+AUTH_REDIRECT_URL = ('https://class.coursera.org/{class_name}'
+                     '/auth/auth_redirector?type=login&subtype=normal')
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # define a per-user cache folder
