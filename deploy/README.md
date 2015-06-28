@@ -1,8 +1,8 @@
-# HOW TO LAUNCH CONTAINER:
+# How to launch the container
 
-1. [optional] Insert your username and password
-   to `.netrc` file if your plan to use `-n` option
-   (edit template in this directory).
+1. [optional] Insert your username and password in the `.netrc` file if you
+   plan to use the `-n` optionof `coursera-dl` (edit template in this
+   directory).
 2. Build Docker image:
    `./build.sh`
 3. Run Docker container to download courses A, B and C:
