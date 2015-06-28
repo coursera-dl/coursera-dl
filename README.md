@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/coursera-dl/coursera/badge.png)](https://coveralls.io/r/coursera-dl/coursera)
 [![Latest version on PyPI](https://img.shields.io/pypi/v/coursera.svg)](https://pypi.python.org/pypi/coursera)
 [![Downloads from PyPI](https://img.shields.io/pypi/dm/coursera.svg)](https://pypi.python.org/pypi/coursera)
-
+[![Code Climate](https://codeclimate.com/github/coursera-dl/coursera/badges/gpa.svg)](https://codeclimate.com/github/coursera-dl/coursera)
 
 # Introduction
 
