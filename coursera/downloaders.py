@@ -60,7 +60,7 @@ class Downloader(object):
 
 class ExternalDownloader(Downloader):
     """
-    Downloads files with an extrnal downloader.
+    Downloads files with an external downloader.
 
     We could possibly use python to stream files to disk,
     but this is slow compared to these external downloaders.
