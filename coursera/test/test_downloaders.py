@@ -184,7 +184,7 @@ def test_all_attempts_have_failed():
     class IObject(object):
         pass
 
-    class MockSession:
+    class MockSession(object):
 
         def get(self, url, stream=True):
             object_ = IObject()
