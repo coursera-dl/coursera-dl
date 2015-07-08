@@ -446,9 +446,12 @@ def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
     return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
 
 
-def find_resources_to_get(lecture, file_formats, resource_filter, ignored_formats=[]):
+def find_resources_to_get(lecture, file_formats, resource_filter, ignored_formats=None):
     # Select formats to download
     resources_to_get = []
+
+    if ignored_formats is None:
+        ignored_formats = []
 
     if len(ignored_formats):
         logging.info("The following file formats will be ignored: " + ",".join(ignored_formats))
@@ -488,7 +491,7 @@ def download_lectures(downloader,
                       hooks=None,
                       playlist=False,
                       intact_fnames=False,
-                      ignored_formats=[]):
+                      ignored_formats=None):
     """
     Downloads lecture resources described by sections.
     Returns True if the class appears completed.
