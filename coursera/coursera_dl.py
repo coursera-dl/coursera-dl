@@ -586,7 +586,7 @@ def total_seconds(td):
             (td.seconds + td.days * 24 * 3600) * 10 ** 6) // 10 ** 6
 
 
-def parseArgs(args=None):
+def parse_args(args=None):
     """
     Parse the arguments/options passed to the program on the command line.
     """
@@ -1008,7 +1008,7 @@ def main():
     Main entry point for execution as a program (instead of as a module).
     """
 
-    args = parseArgs()
+    args = parse_args()
     completed_classes = []
 
     mkdir_p(PATH_CACHE, 0o700)
