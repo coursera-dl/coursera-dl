@@ -33,28 +33,30 @@ class Downloader(object):
       >>> d.download('http://example.com', 'save/to/this/file')
     """
 
-    def _start_download(self, url, filename):
+    def _start_download(self, url, filename, resume):
         """
         Actual method to download the given url to the given file.
         This method should be implemented by the subclass.
         """
         raise NotImplementedError("Subclasses should implement this")
 
-    def download(self, url, filename):
+    def download(self, url, filename, resume=False):
         """
         Download the given url to the given file. When the download
         is aborted by the user, the partially downloaded file is also removed.
         """
 
         try:
-            self._start_download(url, filename)
+            self._start_download(url, filename, resume)
         except KeyboardInterrupt as e:
-            logging.info(
-                'Keyboard Interrupt -- Removing partial file: %s', filename)
-            try:
-                os.remove(filename)
-            except OSError:
-                pass
+            # keep the file if resume is True
+            if not resume:
+                logging.info('Keyboard Interrupt -- Removing partial file: %s',
+                             filename)
+                try:
+                    os.remove(filename)
+                except OSError:
+                    pass
             raise e
 
 
@@ -94,6 +96,13 @@ class ExternalDownloader(Downloader):
         if cookie_values:
             self._add_cookies(command, cookie_values)
 
+    def _enable_resume(self, command):
+        """
+        Enable resume feature
+        """
+
+        raise RuntimeError("Subclass should implement this")
+
     def _add_cookies(self, command, cookie_values):
         """
         Add the given cookie values to the command
@@ -107,9 +116,12 @@ class ExternalDownloader(Downloader):
         """
         raise NotImplementedError("Subclasses should implement this")
 
-    def _start_download(self, url, filename):
+    def _start_download(self, url, filename, resume):
         command = self._create_command(url, filename)
         self._prepare_cookies(command, url)
+        if resume:
+            self._enable_resume(command)
+
         logging.debug('Executing %s: %s', self.bin, command)
         try:
             subprocess.call(command)
@@ -126,6 +138,9 @@ class WgetDownloader(ExternalDownloader):
 
     bin = 'wget'
 
+    def _enable_resume(self, command):
+        command.extend(['-c', ])
+
     def _add_cookies(self, command, cookie_values):
         command.extend(['--header', "Cookie: " + cookie_values])
 
@@ -141,6 +156,9 @@ class CurlDownloader(ExternalDownloader):
 
     bin = 'curl'
 
+    def _enable_resume(self, command):
+        command.extend(['-C', '-'])
+
     def _add_cookies(self, command, cookie_values):
         command.extend(['--cookie', cookie_values])
 
@@ -155,6 +173,9 @@ class Aria2Downloader(ExternalDownloader):
     """
 
     bin = 'aria2c'
+
+    def _enable_resume(self, command):
+        command.extend(['-c', ])
 
     def _add_cookies(self, command, cookie_values):
         command.extend(['--header', "Cookie: " + cookie_values])
@@ -172,6 +193,10 @@ class AxelDownloader(ExternalDownloader):
     """
 
     bin = 'axel'
+
+    def _enable_resume(self, command):
+        logging.warn('Resume download not implemented for this '
+                     'downloader!')
 
     def _add_cookies(self, command, cookie_values):
         command.extend(['-H', "Cookie: " + cookie_values])
@@ -278,43 +303,75 @@ class NativeDownloader(Downloader):
     def __init__(self, session):
         self.session = session
 
-    def _start_download(self, url, filename):
-        logging.info('Downloading %s -> %s', url, filename)
+    def _start_download(self, url, filename, resume=False):
+        # resume has no meaning if the file doesn't exists!
+        resume = resume and os.path.exists(filename)
+
+        headers = {}
+        filesize = None
+        if resume:
+            filesize = os.path.getsize(filename)
+            headers['Range'] = 'bytes={}-'.format(filesize)
+            logging.info('Resume downloading %s -> %s', url, filename)
+        else:
+            logging.info('Downloading %s -> %s', url, filename)
 
         attempts_count = 0
         error_msg = ''
         while attempts_count < 5:
-            r = self.session.get(url, stream=True)
+            r = self.session.get(url, stream=True, headers=headers)
 
-            if r.status_code is not 200:
-                logging.warn(
-                    'Probably the file is missing from the AWS repository...'
-                    ' waiting.')
-
-                if r.reason:
-                    error_msg = r.reason + ' ' + str(r.status_code)
+            if r.status_code != 200:
+                # because in resume state we are downloadig only a
+                # portion of requested file, server may return
+                # following HTTP codes:
+                # 206: Partial Content
+                # 415: Requested Range Not Satisfiable
+                # which are OK for us.
+                if resume and r.status_code == 206:
+                    pass
+                elif resume and r.status_code == 416:
+                    logging.info('%s already downloaded', filename)
+                    r.close()
+                    return True
                 else:
-                    error_msg = 'HTTP Error ' + str(r.status_code)
+                    print(r.status_code)
+                    print(url)
+                    print(filesize)
+                    logging.warn('Probably the file is missing from the AWS '
+                                 'repository...  waiting.')
 
-                wait_interval = 2 ** (attempts_count + 1)
-                msg = 'Error downloading, will retry in {0} seconds ...'
-                print(msg.format(wait_interval))
-                time.sleep(wait_interval)
-                attempts_count += 1
-                continue
+                    if r.reason:
+                        error_msg = r.reason + ' ' + str(r.status_code)
+                    else:
+                        error_msg = 'HTTP Error ' + str(r.status_code)
+
+                    wait_interval = 2 ** (attempts_count + 1)
+                    msg = 'Error downloading, will retry in {0} seconds ...'
+                    print(msg.format(wait_interval))
+                    time.sleep(wait_interval)
+                    attempts_count += 1
+                    continue
+
+            if resume and r.status_code == 200:
+                # if the server returns HTTP code 200 while we are in
+                # resume mode, it means that the server does not support
+                # partial downloads.
+                resume = False
 
             content_length = r.headers.get('content-length')
-            progress = DownloadProgress(content_length)
             chunk_sz = 1048576
-            with open(filename, 'wb') as f:
-                progress.start()
-                while True:
-                    data = r.raw.read(chunk_sz, decode_content=True)
-                    if not data:
-                        progress.stop()
-                        break
-                    progress.report(r.raw.tell())
-                    f.write(data)
+            progress = DownloadProgress(content_length)
+            progress.start()
+            f = open(filename, 'ab') if resume else open(filename, 'wb')
+            while True:
+                data = r.raw.read(chunk_sz, decode_content=True)
+                if not data:
+                    progress.stop()
+                    break
+                progress.report(r.raw.tell())
+                f.write(data)
+            f.close()
             r.close()
             return True
 

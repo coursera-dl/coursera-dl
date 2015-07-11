@@ -70,7 +70,7 @@ def test_bin_not_found_raises_exception():
     d = downloaders.ExternalDownloader(None, bin='no_way_this_exists')
     d._prepare_cookies = lambda cmd, cv: None
     d._create_command = lambda x, y: ['no_way_this_exists']
-    assertRaises(OSError, d._start_download, 'url', 'filename')
+    assertRaises(OSError, d._start_download, 'url', 'filename', False)
 
 
 def test_bin_is_set():
@@ -186,7 +186,7 @@ def test_all_attempts_have_failed():
 
     class MockSession(object):
 
-        def get(self, url, stream=True):
+        def get(self, url, stream=True, headers={}):
             object_ = IObject()
             object_.status_code = 400
             object_.reason = None
@@ -197,7 +197,7 @@ def test_all_attempts_have_failed():
 
     session = MockSession()
     d = downloaders.NativeDownloader(session)
-    assert d._start_download('download_url', 'save_to') is False
+    assert d._start_download('download_url', 'save_to', False) is False
 
     time.sleep = _sleep
 
