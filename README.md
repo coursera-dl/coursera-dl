@@ -94,6 +94,13 @@ This will dowload [the latest released version][23] of the program from the
 [Python Package Index (PyPI)][22] along with *all* the necessary
 dependencies. At this point, you should be ready to start using it.
 
+If this does not work, because your python 2 version is too old (e.g. 2.7.5 on Ubuntu 14.4), try
+
+    apt-get install python3 python3-pip
+    pip3 install coursera
+
+instead.
+
 **Note 1:** Note that the PyPI package is called simply `coursera`, but the
 command-line is called `coursera-dl`. This is an unfortunate fact related to
 conflicting names.
