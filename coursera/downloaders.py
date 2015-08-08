@@ -139,7 +139,7 @@ class WgetDownloader(ExternalDownloader):
     bin = 'wget'
 
     def _enable_resume(self, command):
-        command.extend(['-c', ])
+        command.append('-c')
 
     def _add_cookies(self, command, cookie_values):
         command.extend(['--header', "Cookie: " + cookie_values])
@@ -175,7 +175,7 @@ class Aria2Downloader(ExternalDownloader):
     bin = 'aria2c'
 
     def _enable_resume(self, command):
-        command.extend(['-c', ])
+        command.append('-c')
 
     def _add_cookies(self, command, cookie_values):
         command.extend(['--header', "Cookie: " + cookie_values])
@@ -322,11 +322,11 @@ class NativeDownloader(Downloader):
             r = self.session.get(url, stream=True, headers=headers)
 
             if r.status_code != 200:
-                # because in resume state we are downloadig only a
+                # because in resume state we are downloading only a
                 # portion of requested file, server may return
                 # following HTTP codes:
                 # 206: Partial Content
-                # 415: Requested Range Not Satisfiable
+                # 416: Requested Range Not Satisfiable
                 # which are OK for us.
                 if resume and r.status_code == 206:
                     pass

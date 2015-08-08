@@ -228,7 +228,7 @@ you have to start the download process from the begining. If your
 download was interrupted by something other than KeyboardInterrupt
 (CTRL+C) like sudden system crash, partially downloaded files will
 remain on your disk and the next time you start the process again,
-these files will be discraded from download list!, therefor it's your
+these files will be discraded from download list!, therefore it's your
 job to delete them manually before next start. For this reason we
 added an option called `--resume` which continues your downloads from
 where they stopped:
@@ -240,7 +240,7 @@ This option can also be used with external downloaders:
 	coursera-dl --wget -u <user> -p <pass> --resume sdn1-001
 
 *Note 1*: Some external downloaders use their own built-in resume feature
-which may not be compatibale with others, so use them at your own risk.
+which may not be compatible with others, so use them at your own risk.
 
 *Note 2*: Remember that in resume mode, interrupted files **WON'T** be deleted from
 your disk.
