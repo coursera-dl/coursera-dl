@@ -33,6 +33,7 @@ def assertRaises(e, f, *a, **kw):
          'Week_1_BRANDING-__Marketing_Strategy_and_Brand_Positioning'),
         ('test &amp; &quot; adfas', 'test___adfas'),
         ('&nbsp;', ''),
+        ('☂℮﹩т ω☤☂ℌ Ṳᾔ☤ḉ◎ⅾε', '__')
     ]
 )
 def test_clean_filename(unclean, clean):
@@ -52,6 +53,7 @@ def test_clean_filename(unclean, clean):
          '  (Week 1) BRANDING-  Marketing Strategy and Brand Positioning'),
         ('test &amp; &quot; adfas', 'test & " adfas'),
         ('&nbsp;', u'\xa0'),
+        ('☂℮﹩т ω☤☂ℌ Ṳᾔ☤ḉ◎ⅾε', '☂℮﹩т ω☤☂ℌ Ṳᾔ☤ḉ◎ⅾε')
     ]
 )
 def test_clean_filename_minimal_change(unclean, clean):
