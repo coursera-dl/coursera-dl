@@ -17,10 +17,6 @@ from coursera import utils
 from coursera import coursera_dl
 
 
-def assertRaises(e, f, *a, **kw):
-    pytest.raises(e, f, *a, **kw)
-
-
 @pytest.mark.parametrize(
     "unclean,clean", [
         ('(23:90)', '23-90'),

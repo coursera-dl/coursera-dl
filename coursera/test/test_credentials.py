@@ -6,8 +6,10 @@ Test retrieving the credentials.
 
 import os.path
 
+import pytest
+
 from coursera import credentials
-from .test_utils import assertRaises
+
 
 NETRC = \
     os.path.join(os.path.dirname(__file__),
@@ -25,7 +27,7 @@ def test_authenticate_through_netrc_with_given_path():
 
 
 def test_authenticate_through_netrc_raises_exception():
-    assertRaises(
+    pytest.raises(
         credentials.CredentialsError,
         credentials.authenticate_through_netrc,
         NOT_NETRC)
@@ -38,7 +40,7 @@ def test_get_credentials_with_netrc():
 
 
 def test_get_credentials_with_invalid_netrc_raises_exception():
-    assertRaises(
+    pytest.raises(
         credentials.CredentialsError,
         credentials.get_credentials,
         netrc=NOT_NETRC)
@@ -65,7 +67,7 @@ def test_get_credentials_with_username_given(use_keyring=False):
 
 
 def test_get_credentials_without_username_given_raises_exception():
-    assertRaises(
+    pytest.raises(
         credentials.CredentialsError,
         credentials.get_credentials)
 

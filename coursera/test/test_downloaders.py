@@ -6,9 +6,8 @@ Test the downloaders.
 
 from coursera import downloaders
 from coursera import coursera_dl
-import pytest
 
-from .test_utils import assertRaises
+import pytest
 
 
 @pytest.fixture
@@ -63,14 +62,16 @@ def _ext_get_session():
 
 
 def test_bin_not_specified():
-    assertRaises(RuntimeError, downloaders.ExternalDownloader, None)
+
+    pytest.raises(RuntimeError, downloaders.ExternalDownloader, None)
 
 
 def test_bin_not_found_raises_exception():
     d = downloaders.ExternalDownloader(None, bin='no_way_this_exists')
     d._prepare_cookies = lambda cmd, cv: None
     d._create_command = lambda x, y: ['no_way_this_exists']
-    assertRaises(OSError, d._start_download, 'url', 'filename')
+
+    pytest.raises(OSError, d._start_download, 'url', 'filename')
 
 
 def test_bin_is_set():
@@ -112,7 +113,8 @@ def test_prepare_cookies_does_nothing():
 def test_start_command_raises_exception():
     d = downloaders.ExternalDownloader(None, bin='test')
     d._add_cookies = lambda cmd, cookie_values: None
-    assertRaises(
+
+    pytest.raises(
         NotImplementedError,
         d._create_command, 'url', 'filename')
 
