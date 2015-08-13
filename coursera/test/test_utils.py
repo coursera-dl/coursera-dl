@@ -202,7 +202,7 @@ def test_get_page():
     p = coursera_dl.get_page(session, 'http://www.not.here')
 
     session.get.assert_called_once_with('http://www.not.here')
-    page_obj.raise_for_status.assert_called_once()
+    page_obj.raise_for_status.assert_called_once_with()
     assert p == '<page/>'
 
 
