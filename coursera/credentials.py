@@ -36,7 +36,7 @@ def _getenv_or_empty(s):
 
 def get_config_paths(config_name):  # pragma: no test
     """
-    Returns a list of config files paths to try in order, given config file
+    Return a list of config files paths to try in order, given config file
     name and possibly a user-specified path.
 
     For Windows platforms, there are several paths that can be tried to
@@ -112,7 +112,8 @@ def get_config_paths(config_name):  # pragma: no test
 
 def authenticate_through_netrc(path=None):
     """
-    Returns the tuple user / password given a path for the .netrc file.
+    Return the tuple user / password given a path for the .netrc file.
+
     Raises CredentialsError if no valid netrc file is found.
     """
     errors = []
@@ -138,7 +139,8 @@ def authenticate_through_netrc(path=None):
 
 def get_credentials(username=None, password=None, netrc=None, use_keyring=False):
     """
-    Returns valid username, password tuple.
+    Return valid username, password tuple.
+
     Raises CredentialsError if username or password is missing.
     """
     if netrc:

@@ -71,6 +71,7 @@ class AuthenticationFailed(BaseException):
 def login(session, username, password, class_name=None):
     """
     Login on coursera.org with the given credentials.
+
     This adds the following cookies to the session:
         sessionid, maestro_login, maestro_login_flag
     """
@@ -181,7 +182,7 @@ def get_authentication_cookies(session, class_name, username, password):
 
 def do_we_have_enough_cookies(cj, class_name):
     """
-    Checks whether we have all the required cookies
+    Check whether we have all the required cookies
     to authenticate on class.coursera.org.
     """
     domain = 'class.coursera.org'
@@ -251,7 +252,7 @@ def find_cookies_for_class(cookies_file, class_name):
 
 def load_cookies_file(cookies_file):
     """
-    Loads the cookies file.
+    Load cookies file.
 
     We pre-pend the file with the special Netscape header because the cookie
     loader is very particular about this string.
@@ -307,8 +308,9 @@ def get_cookies_from_cache(username):
 
 def write_cookies_to_cache(cj, username):
     """
-    Saves the RequestsCookieJar to disk in the Mozilla cookies.txt file
-    format.  This prevents us from repeated authentications on the
+    Save RequestsCookieJar to disk in Mozilla's cookies.txt file format.
+
+    This prevents us from repeated authentications on the
     accounts.coursera.org and class.coursera.org/class_name sites.
     """
     mkdir_p(PATH_COOKIES, 0o700)
@@ -325,6 +327,7 @@ def get_cookies_for_class(session, class_name,
                           password=None):
     """
     Get the cookies for the given class.
+
     We do not validate the cookies if they are loaded from a cookies file
     because this is intented for debugging purposes or if the coursera
     authentication process has changed.
