@@ -357,7 +357,7 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [8]: http://stackoverflow.com/a/6031266/962311
 [9]: https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
 [10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
-[11]: https://github.com/coursera-dl/coursera/issues
+[11]: https://github.com/coursera-dl/coursera-dl/issues
 [12]: https://twitter.com/jplehmann
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
 [14]: http://www.tunapanda.org
