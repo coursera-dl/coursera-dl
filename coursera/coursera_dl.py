@@ -27,10 +27,11 @@
 
 
 """
-For downloading lecture resources such as videos for Coursera classes. Given
-a class name, username and password, it scrapes the course listing page to
-get the section (week) and lecture names, and then downloads the related
-materials into appropriately named files and directories.
+Module for downloading lecture resources such as videos for Coursera classes.
+
+Given a class name, username and password, it scrapes the course listing
+page to get the section (week) and lecture names, and then downloads the
+related materials into appropriately named files and directories.
 
 Examples:
   coursera-dl -u <user> -p <passwd> saas
@@ -124,8 +125,10 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en'):
 
 def get_syllabus_url(class_name, preview):
     """
-    Return the Coursera index/syllabus URL, depending on if we want to only
-    preview or if we are enrolled in the course.
+    Return the Coursera index/syllabus URL.
+
+    The returned result depends on if we want to only use a preview page or
+    if we are enrolled in the course.
     """
     class_type = 'preview' if preview else 'index'
     page = CLASS_URL.format(class_name=class_name) + '/lecture/' + class_type
@@ -163,8 +166,11 @@ def get_session():
 
 def grab_hidden_video_url(session, href):
     """
-    Follow some extra redirects to grab hidden video URLs (like those from
-    University of Washington).
+    Follow some extra redirects to grab hidden video URLs.
+
+    The first of these "hidden" videos were seen in courses from the
+    University of Washington, but others appeared after that (like in the
+    course Social Psychology).
     """
     try:
         page = get_page(session, href)
@@ -237,7 +243,7 @@ def transform_preview_url(a):
 
 def get_video(session, url):
     """
-    Parses a Coursera video page
+    Parse a Coursera video page.
     """
 
     page = get_page(session, url)
@@ -248,8 +254,9 @@ def get_video(session, url):
 def parse_syllabus(session, page, reverse=False, intact_fnames=False,
                    subtitle_language='en'):
     """
-    Parses a Coursera course listing/syllabus page.  Each section is a week
-    of classes.
+    Parse a Coursera course listing/syllabus page.
+
+    Each section is a week of classes.
     """
 
     sections = []
@@ -345,7 +352,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False,
 def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                              subtitle_language='en'):
     """
-    Parses a Coursera on-demand course listing/syllabus page.
+    Parse a Coursera on-demand course listing/syllabus page.
     """
 
     dom = json.loads(page)
@@ -419,6 +426,16 @@ def download_about(session, class_name, path='', overwrite=False,
 
 
 def is_course_complete(last_update):
+    """
+    Determine is the course is likely to have been terminated or not.
+
+    We return True if the timestamp given by last_update is 30 days or older
+    than today's date.  Otherwise, we return True.
+
+    The intended use case for this is to detect if a given courses has not
+    seen any update in the last 30 days or more.  Otherwise, we return True,
+    since it is probably too soon to declare the course complete.
+    """
     rv = False
     if last_update >= 0:
         delta = time.time() - last_update
@@ -448,7 +465,9 @@ def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
 
 
 def find_resources_to_get(lecture, file_formats, resource_filter, ignored_formats=None):
-    # Select formats to download
+    """
+    Select formats to download.
+    """
     resources_to_get = []
 
     if ignored_formats is None:
@@ -494,8 +513,9 @@ def download_lectures(downloader,
                       intact_fnames=False,
                       ignored_formats=None):
     """
-    Downloads lecture resources described by sections.
-    Returns True if the class appears completed.
+    Download lecture resources described by sections.
+
+    Returns True if the class appears completed, False otherwise.
     """
     last_update = -1
 
@@ -889,6 +909,7 @@ def parse_args(args=None):
 def download_class(args, class_name):
     """
     Download all requested resources from the class given in class_name.
+
     Returns True if the class appears completed.
     """
     session = get_session()
@@ -952,8 +973,9 @@ def download_class(args, class_name):
 
 def download_on_demand_class(args, class_name):
     """
-    Download all requested resources from the on-demand class
-    given in class_name. Returns True if the class appears completed.
+    Download all requested resources from the on-demand class given in class_name.
+
+    Returns True if the class appears completed.
     """
 
     session = get_session()
