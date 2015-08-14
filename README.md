@@ -20,15 +20,15 @@ etc) for Coursera classes.  Given one or more class names and account credential
 it obtains week and class names from the *lectures* page, and then downloads
 the related materials into appropriately named files and directories.
 
-Why is this helpful?  A utility like [`wget`][2] can work, but has the
+Why is this helpful?  A utility like [wget][2] can work, but has the
 following limitations:
 
-1. Video names have numbers in them, but this does not correspond to the
-   actual order.  Manually renaming them is a pain that is best left for
-   computers.
+1. Video names have numbers in them, but this does not correspond to
+    the actual order.  Manually renaming them is a pain that is best left
+    for computers.
 2. Using names from the syllabus page provides more informative names.
-3. Using wget in a for loop picks up extra videos which are not
-   posted/linked, and these are sometimes duplicates.
+3. Using `wget` in a for loop picks up extra videos which are not
+    posted/linked, and these are sometimes duplicates.
 
 Browser extensions like *DownloadThemAll* is another possibility, but
 `coursera-dl` provides more features such as appropriately named files.
@@ -107,7 +107,7 @@ to use the option `--user` to `pip install`, if you need can.
 ## Alternative ways of installing missing dependencies
 
 We strongly recommend that you consider installing Python packages with
-[`pip`][17], as in it is the current [preferred method][18], unless directed
+[pip][17], as in it is the current [preferred method][18], unless directed
 otherwise by one of the project members (for instance, when testing or
 debugging a new feature or using the source code directly from our git
 repository).  If you are using `pip`, you can directly install all the
@@ -193,8 +193,8 @@ class names, as well as any additional parameters:
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ comnetworks-002
     Display help:                coursera-dl --help
 
-    Note: Some of the options like `-sf` and `-f` may not work with on-demand course.
-    Downloading on-demand courses are mutually exclusive with regular courses.
+**Note:** Some of the options like `-sf` and `-f` may not work with on-demand courses.
+Downloading on-demand courses are mutually exclusive with regular courses.
 
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
@@ -227,7 +227,7 @@ characters" (e.g., `<`, `>`, `#`, `&`, `|` and so on), then you may have to
 escape them from your shell. With bash or other Bourne-shell clones (and
 probably with many other shells) one of the better ways to do so is to
 enclose your password in single quotes, so that you don't run into
-problems.  See issue #213 for more information.
+problems.  See [issue #213][issue213] for more information.
 
 # Troubleshooting
 
@@ -248,16 +248,16 @@ one of the following actions solve your problem:
   little while after the course is completed, while other courses may retain
   the materials up to a next session/offering of the same course (to avoid
   problems with academic dishonesty, apparently).
-
-  In short, it is not guaranteed that you will be able to download after the
-  course is finished and this is, unfortunately, nothing that we can help
-  you with.
+    
+    In short, it is not guaranteed that you will be able to download after the
+    course is finished and this is, unfortunately, nothing that we can help
+    you with.
 
 * Make sure you have installed and/or updated all of your dependencies
   according to the `requirements.txt` file as described above.
 
-* One can export a Netscape-style cookies file with a browser extension
-  ([1][9], [2][10]) and use it with the `-c` option. This comes in handy
+* One can export a Netscape-style cookies file with a browser extension ([1][9], [2][10])
+  and use it with the `-c` option. This comes in handy
   when the authentication via password is not working (the authentication
   process changes now and then).
 
@@ -266,30 +266,31 @@ one of the following actions solve your problem:
   `.netrc` file).
 
 * For courses that have not started yet, but have had a previous iteration
-  sometimes a preview is available, containing all the classes from the
-  last course. These files can be downloaded by passing the -b parameter.
+  sometimes a preview is available, containing all the classes from the last
+  course. These files can be downloaded by passing the `--preview`
+  parameter.
 
-* If you get an error like `Could not find class: <CLASS_NAME>`:
+* If you get an error like `Could not find class: <CLASS_NAME>`, then:
     * Verify that the name of the course is correct. Current class
-      names in coursera are composed by a short course name e.g. `class`
-      and the current version of the course (a number). For example, for a
-      class named `class`, you would have to use `class-001`, `class-002`
-      etc.
+    names in coursera are composed by a short course name e.g. `class` and
+    the current version of the course (a number). For example, for a
+    class named `class`, you would have to use `class-001`, `class-002`
+    etc.
     * Second, verify that you are enrolled in the course. You won't be
-      able to access the course materials if you are not officially
-      enrolled and agreed to the honor course *via the website*.
+    able to access the course materials if you are not officially
+    enrolled and agreed to the honor course *via the website*.
 
 * If:
-  - You get an error when using `-n` to specify that you want to use a
-    `.netrc` file and,
-  - You want the script to use your default netrc file and,
-  - You get a message saying `coursera-dl: error: too few arguments`
-
-  Then you should specify `--` as an argument after `-n`, that is, `-n --`
-  or change the order in which you pass the arguments to the script, so that
-  the argument after `-n` begins with an hyphen (`-`).  Otherwise, Python's
-  `argparse` module will think that what you are passing is the name of the
-  netrc file that you want to use. See issue #162.
+    * You get an error when using `-n` to specify that you want to use a
+      `.netrc` file and,
+    * You want the script to use your default netrc file and,
+    * You get a message saying `coursera-dl: error: too few arguments`  
+    
+      Then you should specify `--` as an argument after `-n`, that is, `-n --`
+      or change the order in which you pass the arguments to the script, so that
+      the argument after `-n` begins with an hyphen (`-`).  Otherwise, Python's
+      `argparse` module will think that what you are passing is the name of the
+      netrc file that you want to use. See issue #162.
 
 # Filing an issue/Reporting a bug
 
@@ -369,5 +370,6 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [21]: https://twitter.com/rtdbrito
 [22]: http://pypi.python.org/
 [23]: http://pypi.python.org/pypi/coursera
+[issue213]: https://github.com/coursera-dl/coursera-dl/issues/213
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
