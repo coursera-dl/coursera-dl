@@ -10,7 +10,7 @@ import os
 from fabric.api import (env, local, task)
 
 if not os.path.exists('README.rst'):
-    local('pandoc --from=markdown --to=rst --output=README.rst README.md')
+    local('pandoc --from=markdown_github --to=rst --output=README.rst README.md')
 
 env.projname = local("python setup.py --name", capture=True)
 env.version = local("python setup.py --version", capture=True)
@@ -28,7 +28,7 @@ def mkdirs(path):
 
 @task
 def create_rst_doc():
-    local('pandoc --from=markdown --to=rst --output=README.rst README.md')
+    local('pandoc --from=markdown_github --to=rst --output=README.rst README.md')
 
 
 @task
