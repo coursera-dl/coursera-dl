@@ -281,10 +281,10 @@ one of the following actions solve your problem:
   little while after the course is completed, while other courses may retain
   the materials up to a next session/offering of the same course (to avoid
   problems with academic dishonesty, apparently).
-    
-    In short, it is not guaranteed that you will be able to download after the
-    course is finished and this is, unfortunately, nothing that we can help
-    you with.
+  <br><br>
+  In short, it is not guaranteed that you will be able to download after the
+  course is finished and this is, unfortunately, nothing that we can help
+  you with.
 
 * Make sure you have installed and/or updated all of your dependencies
   according to the `requirements.txt` file as described above.
