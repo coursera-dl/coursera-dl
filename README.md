@@ -94,7 +94,8 @@ This will dowload [the latest released version][23] of the program from the
 [Python Package Index (PyPI)][22] along with *all* the necessary
 dependencies. At this point, you should be ready to start using it.
 
-If this does not work, because your python 2 version is too old (e.g. 2.7.5 on Ubuntu 14.4), try
+If this does not work, because your Python 2 version is too old (e.g. 2.7.5
+on Ubuntu 14.4), try:
 
     apt-get install python3 python3-pip
     pip3 install coursera
@@ -229,6 +230,8 @@ instead.  This is especially convenient, as typing usernames (email
 addresses) and passwords directly on the command line can get tiresome (even
 more if you happened to choose a "strong" password).
 
+## Resuming downloads
+
 In default mode when you interrupt the download process by pressing
 CTRL+C, partially downloaded files will be deleted from your disk and
 you have to start the download process from the begining. If your
@@ -329,8 +332,8 @@ enough information so that you can help us help you:
 
 * Is the problem happening with the latest version of the script?
 * What operating system are you using?
-* Do you have all the recommended versions of the modules? See them in
-  the file `requirements.txt`.
+* Do you have all the recommended versions of the modules? See them in the
+  file `requirements.txt`.
 * What is the course that you are trying to access?
 * What is the precise command line that you are using (feel free to hide
   your username and password with asterisks, but leave all other
