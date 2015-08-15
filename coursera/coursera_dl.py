@@ -511,7 +511,8 @@ def download_lectures(downloader,
                       hooks=None,
                       playlist=False,
                       intact_fnames=False,
-                      ignored_formats=None):
+                      ignored_formats=None,
+                      resume=False):
     """
     Download lecture resources described by sections.
 
@@ -554,10 +555,10 @@ def download_lectures(downloader,
                     lecfn = os.path.join(
                         sec, format_resource(lecnum + 1, lecname, title, fmt))
 
-                if overwrite or not os.path.exists(lecfn):
+                if overwrite or not os.path.exists(lecfn) or resume:
                     if not skip_download:
                         logging.info('Downloading: %s', lecfn)
-                        downloader.download(url, lecfn)
+                        downloader.download(url, lecfn, resume=resume)
                     else:
                         open(lecfn, 'w').close()  # touch
                     last_update = time.time()
@@ -747,6 +748,12 @@ def parse_args(args=None):
                                    default=None,
                                    help='use axel for downloading,'
                                    ' optionally specify axel bin')
+
+    parser.add_argument('--resume',
+                        dest='resume',
+                        action='store_true',
+                        default=False,
+                        help='resume incomplete downloads (default: False)')
 
     parser.add_argument('-o',
                         '--overwrite',
@@ -966,7 +973,8 @@ def download_class(args, class_name):
                                   args.hooks,
                                   args.playlist,
                                   args.intact_fnames,
-                                  ignored_formats)
+                                  ignored_formats,
+                                  args.resume)
 
     return completed
 
@@ -1019,7 +1027,8 @@ def download_on_demand_class(args, class_name):
             args.hooks,
             args.playlist,
             args.intact_fnames,
-            ignored_formats
+            ignored_formats,
+            args.resume
         )
         completed = completed and result
 
