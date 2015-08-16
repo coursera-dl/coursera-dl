@@ -9,9 +9,9 @@ from setuptools import setup
 
 
 def read_file(filename, alt=None):
-    '''
+    """
     Read the contents of filename or give an alternative result instead.
-    '''
+    """
     lines = None
     try:
         with open(filename) as f:
