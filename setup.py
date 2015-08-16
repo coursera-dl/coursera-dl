@@ -57,8 +57,8 @@ long_description = read_file(
     'Generate README.rst from README.md via pandoc!\n\nExample: '
     'pandoc --from=markdown_github --to=rst --output=README.rst README.md'
 )
-install_requires = read_file('requirements.txt')
-install_dev_requires = read_file('requirements-dev.txt')
+requirements = read_file('requirements.txt')
+dev_requirements = read_file('requirements-dev.txt')
 
 trove_classifiers = [
     'Development Status :: 4 - Beta',
@@ -87,9 +87,9 @@ setup(
     license='LGPL',
     url='https://github.com/coursera-dl/coursera',
 
-    install_requires=install_requires,
+    install_requires=requirements,
     extras_require=dict(
-        dev=install_dev_requires
+        dev=dev_requirements
     ),
 
     description='Script for downloading Coursera.org videos and naming them.',
