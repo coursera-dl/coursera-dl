@@ -83,6 +83,9 @@ def login(session, username, password, class_name=None):
     except KeyError:
         logging.debug('There were no .coursera.org cookies to be cleared.')
 
+    on_demand_warning = [':\nWhen trying to dowload an on-demand course, ',
+                         'use the --on-demand option. ',
+                         'See README.md for details.']
     # Hit class url
     if class_name is not None:
         class_url = CLASS_URL.format(class_name=class_name)
@@ -91,7 +94,7 @@ def login(session, username, password, class_name=None):
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
             logging.error(e)
-            raise ClassNotFound(class_name)
+            raise ClassNotFound(class_name + ''.join(on_demand_warning))
 
     # csrftoken is simply a 20 char random string.
     csrftoken = random_string(20)
