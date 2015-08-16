@@ -15,7 +15,7 @@ def read_file(filename, alt=None):
     lines = None
     try:
         with open(filename) as f:
-            lines = f.readlines()
+            lines = f.read()
     except IOError:
         lines = [] if alt is None else alt
     return lines
