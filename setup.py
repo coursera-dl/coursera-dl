@@ -23,7 +23,7 @@ def generate_readme_rst():
 
     pandoc_cmd = [
         'pandoc',
-        '--from=markdown_github',
+        '--from=markdown',
         '--to=rst',
         '--output=README.rst',
         'README.md'
