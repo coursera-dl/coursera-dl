@@ -44,12 +44,10 @@ from coursera changed, or they implemented a new kind of course).
 # Check for potential bugs
 
 Please, help keep the code tidy by checking for any potential bugs with the
-help of [`pep8`][pep8], [`pyflakes`][pyflakes], and [`pylint`][pylint].  If
-you know of any other good tools for analyzing the code, let me know about
-them!
+help of [`flake8`][flake8], and [`pylint`][pylint].  If you know of any
+other good tools for analyzing the code, let me know about them!
 
-[pep8]: https://pypi.python.org/pypi/pep8
-[pyflakes]: https://pypi.python.org/pypi/pyflakes/
+[flake8]: https://pypi.python.org/pypi/flake8
 [pylint]: https://pypi.python.org/pypi/pylint
 
 If you happen to find any issue reported by these programs, I welcome you to
