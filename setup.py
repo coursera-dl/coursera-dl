@@ -5,7 +5,35 @@
 #   ./venv/bin/pip install --editable .
 #   ./venv/bin/pip install --editable .[dev]  # with dev requirements, too
 
+from __future__ import print_function
+
+import subprocess
+import sys
+
 from setuptools import setup
+
+
+def generate_readme_rst():
+    """
+    Generate README.rst from README.md via pandoc.
+
+    In case of errors, we show a message having the error that we got and
+    exit the program.
+    """
+
+    pandoc_cmd = [
+        'pandoc',
+        '--from=markdown_github',
+        '--to=rst',
+        '--output=README.rst',
+        'README.md'
+    ]
+
+    try:
+        subprocess.call(pandoc_cmd)
+    except IOError as e:
+        print('Could not run "pandoc". Error: %s' % e, file=sys.stderr)
+        sys.exit(1)
 
 
 def read_file(filename, alt=None):
@@ -21,6 +49,8 @@ def read_file(filename, alt=None):
         lines = [] if alt is None else alt
     return lines
 
+
+generate_readme_rst()
 
 long_description = read_file(
     'README.rst',
