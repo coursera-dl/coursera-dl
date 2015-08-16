@@ -39,6 +39,8 @@ I've downloaded many other good videos such as those from Khan Academy.
 
 # Features
 
+  * Support for both regular (i.e., time-based) courses as well as on-demand
+    courses.
   * Intentionally detailed names, so that it will display and sort properly
     on most interfaces (e.g., MX Video, or [VLC][4] on Android devices).
   * Regex-based section (week) and lecture name filters to download only
@@ -46,8 +48,6 @@ I've downloaded many other good videos such as those from Khan Academy.
   * File format extension filter to grab resource types you want.
   * Login credentials accepted on command-line or from `.netrc` file.
   * Core functionality tested on Linux, Mac and Windows.
-  * Support for both regular (i.e., time-based) courses as well as on-demand
-    courses.
 
 # Disclaimer
 
