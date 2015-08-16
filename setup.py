@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-
-from setuptools import setup
-
+#
 # you can install this to a local test virtualenv like so:
 #   virtualenv venv
 #   ./venv/bin/pip install --editable .
 #   ./venv/bin/pip install --editable .[dev]  # with dev requirements, too
+
+from setuptools import setup
 
 
 def read_file(filename, alt=None):
@@ -13,6 +13,7 @@ def read_file(filename, alt=None):
     Read the contents of filename or give an alternative result instead.
     """
     lines = None
+
     try:
         with open(filename) as f:
             lines = f.read()
