@@ -87,6 +87,7 @@ def release():
     build()
     print("Releasing %s version %s." % (env.projname, env.version))
     local("git tag %s" % env.version)
+    local('gpg --detach-sign --armor dist/coursera-*.tar.gz*')
     local('twine upload dist/coursera-*.tar.gz*')
     local("git push")
     local("git push --tags")
