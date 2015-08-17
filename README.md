@@ -42,7 +42,7 @@ I've downloaded many other good videos such as those from Khan Academy.
   * Support for both regular (i.e., time-based) courses as well as on-demand
     courses.
   * Intentionally detailed names, so that it will display and sort properly
-    on most interfaces (e.g., MX Video, or [VLC][4] on Android devices).
+    on most interfaces (e.g., [VLC][4] or MX Video on Android devices).
   * Regex-based section (week) and lecture name filters to download only
     certain resources.
   * File format extension filter to grab resource types you want.
