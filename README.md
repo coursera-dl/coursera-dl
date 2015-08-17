@@ -72,6 +72,9 @@ enrolled in the class of interest. (At present/May of 2015, we test
 automatically the execution of the program with Python versions 2.6, 2.7,
 Pypy, 3.2, 3.3, and 3.4).
 
+**Note:** We *strongly* recommend that you use a Python 3 interpreter (3.4
+or later).
+
 On any operating system, ensure that the Python executable location is added
 to your `PATH` environment variable and, once you have the dependencies
 installed (see next section), for a *basic* usage, you will need to invoke
@@ -111,6 +114,15 @@ globally on your machine (i.e., with root/administrator privileges), as the
 installed modules may conflict with other Python applications that you have
 installed in your system (or they can interfere with `coursera-dl`).  Prefer
 to use the option `--user` to `pip install`, if you need can.
+
+**Note 3:** As already mentioned, we *strongly* recommend that you use a new
+Python 3 interpreter (e.g., 3.4 or later), since Python 3 has better support
+for SSL/TLS (for secure connections) than earlier versions.<br/>
+If you must use Python 2, be sure that you have at least Python 2.7.9 (later
+versions are OK).<br/>
+Otherwise, you can still use `coursera-dl`, but you will have to install the
+extra package `ndg-httpsclient`, which may involve compilation (at least on
+Linux systems).
 
 ## Alternative ways of installing missing dependencies
 
