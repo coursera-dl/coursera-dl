@@ -170,8 +170,8 @@ Python interpreter that you can.
 
 ### Installing dependencies on your own
 
-**Warning:** This method is not recommended unless you know what you are
-doing.
+**Warning:** This method is not recommended unless you have experience
+working with multiple Python environments.
 
 You can use the `pip` program to install the dependencies on your own.  They
 are all listed in the `requirements.txt` file (and the extra dependencies
