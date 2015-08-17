@@ -188,8 +188,8 @@ asks you to install extra packages for debugging purposes.
 
 Once again, before filing bug reports, if you installed the dependencies on
 your own, please check that the versions of your modules are at least those
-recommended according to the `requirements.txt` file (and,
-`requirements-dev.txt` file, if applicable).
+listed in the `requirements.txt` file (and, `requirements-dev.txt` file, if
+applicable).
 
 ## Create an account with Coursera
 
