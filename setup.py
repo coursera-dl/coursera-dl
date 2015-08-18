@@ -7,6 +7,7 @@
 
 from __future__ import print_function
 
+import os.path
 import subprocess
 import sys
 
@@ -29,6 +30,8 @@ def generate_readme_rst():
         'README.md'
     ]
 
+    if os.path.exists('README.rst'):
+        return
     try:
         subprocess.call(pandoc_cmd)
     except IOError as e:
