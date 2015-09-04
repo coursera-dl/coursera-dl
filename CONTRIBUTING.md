@@ -69,3 +69,19 @@ options applies:
 2. Even if I know about the tool, I may not know how to use it, or how it
    would make me more productive.  Educate me and we all will gain from a
    better project.
+
+----
+
+# Short (and incomplete) cheat-sheet for contributions
+
+## To start contributing
+
+Fork the repository using github (there's a button) and clone *your* copy to
+your local machine for your personal modifications. Let's say that your
+github username is `username`:
+
+```
+git clone https://github.com/username/coursera-dl
+cd coursera-dl
+git checkout -b my-new-branch
+```
