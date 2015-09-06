@@ -88,7 +88,8 @@ assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
 assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
 
 
-def get_on_demand_video_url(session, video_id, subtitle_language='en'):
+def get_on_demand_video_url(session, video_id, subtitle_language='en',
+                            resolution='540p'):
     """
     Return the download URL of on-demand course video.
     """
@@ -105,6 +106,23 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en'):
     sources = dom['sources']
     sources.sort(key=lambda src: src['resolution'])
     sources.reverse()
+
+    # Try to select resolution requested by the user.
+    filtered_sources = [source
+                        for source in sources
+                        if source['resolution'] == resolution]
+
+    if len(filtered_sources) == 0:
+        # We will just use the 'vanilla' version of sources here, instead of
+        # filtered_sources.
+        logging.warn('Requested resolution %s not availaboe for <%s>. '
+                     'Downloading highest resolution available instead.',
+                     resolution, video_id)
+    else:
+        logging.info('Proceeding with download of resolution %s of <%s>.',
+                     resolution, video_id)
+        sources = filtered_sources
+
     video_url = sources[0]['formatSources']['video/mp4']
     video_content['mp4'] = video_url
 
