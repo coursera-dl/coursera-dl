@@ -85,3 +85,8 @@ git clone https://github.com/username/coursera-dl
 cd coursera-dl
 git checkout -b my-new-branch
 ```
+
+## Making your changes
+
+Initiate a *new* branch on your local repository copy.
+
