@@ -114,7 +114,7 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en'):
     if subtitles is not None:
         if subtitle_language != 'en' and subtitle_language not in subtitles:
             logging.warning("Subtitle unavailable in '%s' language for video "
-                            "with video id: [%s], moving back to 'en' "
+                            "with video id: [%s], falling back to 'en' "
                             "subtitle", subtitle_language, video_id)
             subtitle_language = 'en'
 
