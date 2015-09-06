@@ -96,10 +96,12 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en'):
     url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
     page = get_page(session, url)
 
+    logging.debug('Parsing JSON for video_id <%s>.', video_id)
     video_content = {}
     dom = json.loads(page)
 
     # videos
+    logging.info('Gathering video URLs for video_id <%s>.', video_id)
     sources = dom['sources']
     sources.sort(key=lambda src: src['resolution'])
     sources.reverse()
@@ -107,6 +109,7 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en'):
     video_content['mp4'] = video_url
 
     # subtitles
+    logging.info('Gathering subtitle URLs for video_id <%s>.', video_id)
     subtitles = dom.get('subtitles')
     if subtitles is not None:
         if subtitle_language != 'en' and subtitle_language not in subtitles:
