@@ -371,7 +371,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False,
 
 
 def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
-                             subtitle_language='en'):
+                             subtitle_language='en', video_resolution=None):
     """
     Parse a Coursera on-demand course listing/syllabus page.
     """
@@ -396,7 +396,8 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                     lecture_video_id = lecture['content']['definition']['videoId']
                     video_content = get_on_demand_video_url(session,
                                                             lecture_video_id,
-                                                            subtitle_language)
+                                                            subtitle_language,
+                                                            video_resolution)
                     lecture_video_content = {}
                     for key, value in video_content.items():
                         lecture_video_content[key] = [(value, '')]
@@ -533,7 +534,8 @@ def download_lectures(downloader,
                       playlist=False,
                       intact_fnames=False,
                       ignored_formats=None,
-                      resume=False):
+                      resume=False,
+                      video_resolution='540p'):
     """
     Download lecture resources described by sections.
 
@@ -1003,7 +1005,8 @@ def download_class(args, class_name):
                                   args.playlist,
                                   args.intact_fnames,
                                   ignored_formats,
-                                  args.resume)
+                                  args.resume,
+                                  args.video_resolution)
 
     return completed
 
@@ -1029,7 +1032,8 @@ def download_on_demand_class(args, class_name):
     modules = parse_on_demand_syllabus(session, page,
                                        args.reverse,
                                        args.intact_fnames,
-                                       args.subtitle_language)
+                                       args.subtitle_language,
+                                       args.video_resolution)
 
     downloader = get_downloader(session, class_name, args)
 
