@@ -34,7 +34,7 @@ def generate_readme_rst():
         return
     try:
         subprocess.call(pandoc_cmd)
-    except IOError as e:
+    except (IOError, OSError) as e:
         print('Could not run "pandoc". Error: %s' % e, file=sys.stderr)
         sys.exit(1)
 
