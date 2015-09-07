@@ -734,6 +734,14 @@ def parse_args(args=None):
                                 help='only download resources which match this regex'
                                 ' (default: disabled)')
 
+    group_material.add_argument('--video-resolution',
+                                dest='video_resolution',
+                                action='store',
+                                default='540p',
+                                help='video resolution to download (default: 540p); '
+                                'only valid for on-demand courses; '
+                                'only values allowed: 360p, 540p, 720p')
+
     # Selection of material to download
     group_external_dl = parser.add_argument_group('External downloaders')
 
