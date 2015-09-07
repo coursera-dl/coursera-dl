@@ -36,7 +36,7 @@ def generate_readme_rst():
         subprocess.call(pandoc_cmd)
     except (IOError, OSError) as e:
         print('Could not run "pandoc". Error: %s' % e, file=sys.stderr)
-        sys.exit(1)
+        print('Generating only a stub instead of the real documentation.')
 
 
 def read_file(filename, alt=None):
