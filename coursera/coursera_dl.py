@@ -88,7 +88,8 @@ assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
 assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
 
 
-def get_on_demand_video_url(session, video_id, subtitle_language='en'):
+def get_on_demand_video_url(session, video_id, subtitle_language='en',
+                            resolution='540p'):
     """
     Return the download URL of on-demand course video.
     """
@@ -96,22 +97,42 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en'):
     url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
     page = get_page(session, url)
 
+    logging.debug('Parsing JSON for video_id <%s>.', video_id)
     video_content = {}
     dom = json.loads(page)
 
     # videos
+    logging.info('Gathering video URLs for video_id <%s>.', video_id)
     sources = dom['sources']
     sources.sort(key=lambda src: src['resolution'])
     sources.reverse()
+
+    # Try to select resolution requested by the user.
+    filtered_sources = [source
+                        for source in sources
+                        if source['resolution'] == resolution]
+
+    if len(filtered_sources) == 0:
+        # We will just use the 'vanilla' version of sources here, instead of
+        # filtered_sources.
+        logging.warn('Requested resolution %s not availaboe for <%s>. '
+                     'Downloading highest resolution available instead.',
+                     resolution, video_id)
+    else:
+        logging.info('Proceeding with download of resolution %s of <%s>.',
+                     resolution, video_id)
+        sources = filtered_sources
+
     video_url = sources[0]['formatSources']['video/mp4']
     video_content['mp4'] = video_url
 
     # subtitles
+    logging.info('Gathering subtitle URLs for video_id <%s>.', video_id)
     subtitles = dom.get('subtitles')
     if subtitles is not None:
         if subtitle_language != 'en' and subtitle_language not in subtitles:
             logging.warning("Subtitle unavailable in '%s' language for video "
-                            "with video id: [%s], moving back to 'en' "
+                            "with video id: [%s], falling back to 'en' "
                             "subtitle", subtitle_language, video_id)
             subtitle_language = 'en'
 
@@ -350,7 +371,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False,
 
 
 def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
-                             subtitle_language='en'):
+                             subtitle_language='en', video_resolution=None):
     """
     Parse a Coursera on-demand course listing/syllabus page.
     """
@@ -375,7 +396,8 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                     lecture_video_id = lecture['content']['definition']['videoId']
                     video_content = get_on_demand_video_url(session,
                                                             lecture_video_id,
-                                                            subtitle_language)
+                                                            subtitle_language,
+                                                            video_resolution)
                     lecture_video_content = {}
                     for key, value in video_content.items():
                         lecture_video_content[key] = [(value, '')]
@@ -512,7 +534,8 @@ def download_lectures(downloader,
                       playlist=False,
                       intact_fnames=False,
                       ignored_formats=None,
-                      resume=False):
+                      resume=False,
+                      video_resolution='540p'):
     """
     Download lecture resources described by sections.
 
@@ -712,6 +735,14 @@ def parse_args(args=None):
                                 default=None,
                                 help='only download resources which match this regex'
                                 ' (default: disabled)')
+
+    group_material.add_argument('--video-resolution',
+                                dest='video_resolution',
+                                action='store',
+                                default='540p',
+                                help='video resolution to download (default: 540p); '
+                                'only valid for on-demand courses; '
+                                'only values allowed: 360p, 540p, 720p')
 
     # Selection of material to download
     group_external_dl = parser.add_argument_group('External downloaders')
@@ -974,7 +1005,8 @@ def download_class(args, class_name):
                                   args.playlist,
                                   args.intact_fnames,
                                   ignored_formats,
-                                  args.resume)
+                                  args.resume,
+                                  args.video_resolution)
 
     return completed
 
@@ -1000,7 +1032,8 @@ def download_on_demand_class(args, class_name):
     modules = parse_on_demand_syllabus(session, page,
                                        args.reverse,
                                        args.intact_fnames,
-                                       args.subtitle_language)
+                                       args.subtitle_language,
+                                       args.video_resolution)
 
     downloader = get_downloader(session, class_name, args)
 
