@@ -17,3 +17,4 @@ you have at least one contribution to the project.
 * Jonas De Taeye
 * Rogério Theodoro de Brito
 * Mohammad Amin Solhizadeh
+* Victor Westmann
