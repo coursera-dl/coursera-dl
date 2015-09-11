@@ -7,8 +7,6 @@ rem Usage: see "Running the script" section of the README for sample commands.
 rem Run "coursera-dl" in the current folder as working directory (where "%~dp0" is the
 rem location of this .bat file) via Python, passing all user-specified arguments ("%*")
 
-rem This command does not work on Windows paths with spaces
-rem python %~dp0\coursera-dl %*
-
-rem Changed to this command. That does work with spaces in path. YAY! (Victor Westmann 2015-11-09 1:01 AM)
-python coursera-dl %*
+rem Fixed the issue of spaces in the PATH name adding quotes before the batch Windows commands for drive and path. It should work fine now.
+rem This issue was tested with pretty nasty path names (i.e. "t h i s i s t e r r i b l e") and it worked.
+python "%~dp0\coursera-dl" %*
