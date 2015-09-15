@@ -389,7 +389,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 
 # Contact
 
-Please, post bugs and issues on [github][11]. Send other comments to RogC)rio
+Please, post bugs and issues on [github][11]. Send other comments to Rogério
 Theodoro de Brito (the current maintainer): rbrito@ime.usp.br (twitter:
 [@rtdbrito][21]) or to John Lehmann (the original author): first last at
 geemail dotcom (twitter: [@jplehmann][12]).
