@@ -286,6 +286,8 @@ one of the following actions solve your problem:
 * To download an On Demand course, use the `--on-demand` option of the
   program.
 
+* To download a course that has a URL starting `https://www.coursera.org/learn/`, use the `--on-demand` option of the program.
+
 * Have you tried to clean the cached cookies/credentials with the
   `--clear-cache` option?
 
@@ -387,7 +389,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 
 # Contact
 
-Please, post bugs and issues on [github][11]. Send other comments to Rogério
+Please, post bugs and issues on [github][11]. Send other comments to RogC)rio
 Theodoro de Brito (the current maintainer): rbrito@ime.usp.br (twitter:
 [@rtdbrito][21]) or to John Lehmann (the original author): first last at
 geemail dotcom (twitter: [@jplehmann][12]).
