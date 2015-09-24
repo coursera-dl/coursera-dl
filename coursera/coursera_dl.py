@@ -665,7 +665,9 @@ def parse_args(args=None):
                              dest='on_demand',
                              action='store_true',
                              default=False,
-                             help='get on-demand videos. (Default: False)')
+                             help='[DEPRECATED] get on-demand videos. Do not use'
+                             ' this option, it is deprecated. The script will'
+                             ' try to detect course type automatically.')
 
     group_basic.add_argument('-b',  # FIXME: kill this one-letter option
                              '--preview',
@@ -944,9 +946,10 @@ def parse_args(args=None):
     return args
 
 
-def download_class(args, class_name):
+def download_old_style_class(args, class_name):
     """
     Download all requested resources from the class given in class_name.
+    Old style classes are classes located at class.coursera.org.
 
     Returns True if the class appears completed.
     """
@@ -1068,6 +1071,19 @@ def download_on_demand_class(args, class_name):
     return completed
 
 
+def download_class(args, class_name):
+    """
+    Try to download class as if it were an old style class, and if it fails,
+    try it as an on-demand class.
+
+    Returns True if the class appears completed.
+    """
+    try:
+        return download_old_style_class(args, class_name)
+    except ClassNotFound:
+        return download_on_demand_class(args, class_name)
+
+
 def main():
     """
     Main entry point for execution as a program (instead of as a module).
@@ -1079,17 +1095,15 @@ def main():
     mkdir_p(PATH_CACHE, 0o700)
     if args.clear_cache:
         shutil.rmtree(PATH_CACHE)
+    if args.on_demand:
+        logging.warning('--on-demand option is deprecated and is not required'
+                        ' anymore. Do not use this option. It will be removed'
+                        'in the future.')
 
     for class_name in args.class_names:
         try:
             logging.info('Downloading class: %s', class_name)
-            result = False
-            if args.on_demand:
-                result = download_on_demand_class(args, class_name)
-            else:
-                result = download_class(args, class_name)
-
-            if result:
+            if download_class(args, class_name):
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
