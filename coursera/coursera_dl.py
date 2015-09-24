@@ -206,9 +206,9 @@ def grab_hidden_video_url(session, href):
         return None
 
 
-def get_syllabus(session, class_name, local_page=False, preview=False):
+def get_old_style_syllabus(session, class_name, local_page=False, preview=False):
     """
-    Get the course listing webpage.
+    Get the old style course listing webpage.
 
     If we are instructed to use a local page and it already exists, then
     that page is used instead of performing a download.  If we are
@@ -262,9 +262,9 @@ def transform_preview_url(a):
         return None
 
 
-def get_video(session, url):
+def get_old_style_video(session, url):
     """
-    Parse a Coursera video page.
+    Parse a old style Coursera video page.
     """
 
     page = get_page(session, url)
@@ -272,10 +272,10 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(session, page, reverse=False, intact_fnames=False,
-                   subtitle_language='en'):
+def parse_old_style_syllabus(session, page, reverse=False, intact_fnames=False,
+                             subtitle_language='en'):
     """
-    Parse a Coursera course listing/syllabus page.
+    Parse an old style Coursera course listing/syllabus page.
 
     Each section is a week of classes.
     """
@@ -320,7 +320,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False,
                 lecture_page = transform_preview_url(href)
                 if lecture_page:
                     try:
-                        href = get_video(session, lecture_page)
+                        href = get_old_style_video(session, lecture_page)
                         lecture['mp4'] = lecture.get('mp4', [])
                         lecture['mp4'].append((fix_url(href), ''))
                     except TypeError:
@@ -978,11 +978,12 @@ def download_old_style_class(args, class_name):
             subtitle_language = "en"
 
     # get the syllabus listing
-    page = get_syllabus(session, class_name, args.local_page, args.preview)
+    page = get_old_style_syllabus(session, class_name,
+                                  args.local_page, args.preview)
 
     # parse it
-    sections = parse_syllabus(session, page, args.reverse,
-                              args.intact_fnames, subtitle_language)
+    sections = parse_old_style_syllabus(session, page, args.reverse,
+                                        args.intact_fnames, subtitle_language)
 
     downloader = get_downloader(session, class_name, args)
 

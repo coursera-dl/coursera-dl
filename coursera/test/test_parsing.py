@@ -56,7 +56,7 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 # Test Syllabus Parsing
 
 @pytest.fixture
-def get_video(monkeypatch):
+def get_old_style_video(monkeypatch):
     """
     Mock some methods that would, otherwise, create repeateadly many web
     requests.
@@ -71,8 +71,8 @@ def get_video(monkeypatch):
     monkeypatch.setattr(coursera_dl, 'grab_hidden_video_url',
                         lambda session, href: None)
 
-    # Mock coursera_dl.get_video
-    monkeypatch.setattr(coursera_dl, 'get_video',
+    # Mock coursera_dl.get_old_style_video
+    monkeypatch.setattr(coursera_dl, 'get_old_style_video',
                         lambda session, href: None)
 
 
@@ -90,14 +90,15 @@ def get_video(monkeypatch):
         ("multiple-resources-with-the-same-format.html", 18, 97, 478, 97),
     ]
 )
-def test_parse(get_video, filename, num_sections, num_lectures, num_resources, num_videos):
+def test_parse(get_old_style_video, filename, num_sections, num_lectures,
+               num_resources, num_videos):
     filename = os.path.join(os.path.dirname(__file__), "fixtures", "html",
                             filename)
 
     with open(filename) as syllabus:
         syllabus_page = syllabus.read()
 
-        sections = coursera_dl.parse_syllabus(None, syllabus_page, None)
+        sections = coursera_dl.parse_old_style_syllabus(None, syllabus_page, None)
 
         # section count
         assert len(sections) == num_sections
