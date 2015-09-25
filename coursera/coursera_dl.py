@@ -950,6 +950,8 @@ def download_old_style_class(args, class_name):
     """
     Download all requested resources from the class given in class_name.
     Old style classes are classes located at class.coursera.org.
+    Read more about course types here:
+    https://learner.coursera.help/hc/en-us/articles/203879739-Course-Types
 
     Returns True if the class appears completed.
     """
@@ -1080,8 +1082,10 @@ def download_class(args, class_name):
     Returns True if the class appears completed.
     """
     try:
+        logging.debug('Downloading old style class %s', class_name)
         return download_old_style_class(args, class_name)
     except ClassNotFound:
+        logging.debug('Downloading new style (on demand) class %s', class_name)
         return download_on_demand_class(args, class_name)
 
 
