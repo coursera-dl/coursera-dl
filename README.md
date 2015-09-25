@@ -286,6 +286,8 @@ one of the following actions solve your problem:
 * To download an On Demand course, use the `--on-demand` option of the
   program.
 
+* To download a course that has a URL starting `https://www.coursera.org/learn/`, use the `--on-demand` option of the program.
+
 * Have you tried to clean the cached cookies/credentials with the
   `--clear-cache` option?
 
