@@ -206,9 +206,9 @@ def grab_hidden_video_url(session, href):
         return None
 
 
-def get_syllabus(session, class_name, local_page=False, preview=False):
+def get_old_style_syllabus(session, class_name, local_page=False, preview=False):
     """
-    Get the course listing webpage.
+    Get the old style course listing webpage.
 
     If we are instructed to use a local page and it already exists, then
     that page is used instead of performing a download.  If we are
@@ -262,9 +262,9 @@ def transform_preview_url(a):
         return None
 
 
-def get_video(session, url):
+def get_old_style_video(session, url):
     """
-    Parse a Coursera video page.
+    Parse a old style Coursera video page.
     """
 
     page = get_page(session, url)
@@ -272,10 +272,10 @@ def get_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_syllabus(session, page, reverse=False, intact_fnames=False,
-                   subtitle_language='en'):
+def parse_old_style_syllabus(session, page, reverse=False, intact_fnames=False,
+                             subtitle_language='en'):
     """
-    Parse a Coursera course listing/syllabus page.
+    Parse an old style Coursera course listing/syllabus page.
 
     Each section is a week of classes.
     """
@@ -320,7 +320,7 @@ def parse_syllabus(session, page, reverse=False, intact_fnames=False,
                 lecture_page = transform_preview_url(href)
                 if lecture_page:
                     try:
-                        href = get_video(session, lecture_page)
+                        href = get_old_style_video(session, lecture_page)
                         lecture['mp4'] = lecture.get('mp4', [])
                         lecture['mp4'].append((fix_url(href), ''))
                     except TypeError:
@@ -665,7 +665,9 @@ def parse_args(args=None):
                              dest='on_demand',
                              action='store_true',
                              default=False,
-                             help='get on-demand videos. (Default: False)')
+                             help='[DEPRECATED] get on-demand videos. Do not use'
+                             ' this option, it is deprecated. The script will'
+                             ' try to detect course type automatically.')
 
     group_basic.add_argument('-b',  # FIXME: kill this one-letter option
                              '--preview',
@@ -944,9 +946,12 @@ def parse_args(args=None):
     return args
 
 
-def download_class(args, class_name):
+def download_old_style_class(args, class_name):
     """
     Download all requested resources from the class given in class_name.
+    Old style classes are classes located at class.coursera.org.
+    Read more about course types here:
+    https://learner.coursera.help/hc/en-us/articles/203879739-Course-Types
 
     Returns True if the class appears completed.
     """
@@ -975,11 +980,12 @@ def download_class(args, class_name):
             subtitle_language = "en"
 
     # get the syllabus listing
-    page = get_syllabus(session, class_name, args.local_page, args.preview)
+    page = get_old_style_syllabus(session, class_name,
+                                  args.local_page, args.preview)
 
     # parse it
-    sections = parse_syllabus(session, page, args.reverse,
-                              args.intact_fnames, subtitle_language)
+    sections = parse_old_style_syllabus(session, page, args.reverse,
+                                        args.intact_fnames, subtitle_language)
 
     downloader = get_downloader(session, class_name, args)
 
@@ -1068,6 +1074,21 @@ def download_on_demand_class(args, class_name):
     return completed
 
 
+def download_class(args, class_name):
+    """
+    Try to download class as if it were an old style class, and if it fails,
+    try it as an on-demand class.
+
+    Returns True if the class appears completed.
+    """
+    try:
+        logging.debug('Downloading old style class %s', class_name)
+        return download_old_style_class(args, class_name)
+    except ClassNotFound:
+        logging.debug('Downloading new style (on demand) class %s', class_name)
+        return download_on_demand_class(args, class_name)
+
+
 def main():
     """
     Main entry point for execution as a program (instead of as a module).
@@ -1079,17 +1100,15 @@ def main():
     mkdir_p(PATH_CACHE, 0o700)
     if args.clear_cache:
         shutil.rmtree(PATH_CACHE)
+    if args.on_demand:
+        logging.warning('--on-demand option is deprecated and is not required'
+                        ' anymore. Do not use this option. It will be removed'
+                        'in the future.')
 
     for class_name in args.class_names:
         try:
             logging.info('Downloading class: %s', class_name)
-            result = False
-            if args.on_demand:
-                result = download_on_demand_class(args, class_name)
-            else:
-                result = download_class(args, class_name)
-
-            if result:
+            if download_class(args, class_name):
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
