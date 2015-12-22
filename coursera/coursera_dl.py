@@ -126,20 +126,29 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en',
     video_url = sources[0]['formatSources']['video/mp4']
     video_content['mp4'] = video_url
 
-    # subtitles
-    logging.info('Gathering subtitle URLs for video_id <%s>.', video_id)
-    subtitles = dom.get('subtitles')
-    if subtitles is not None:
-        if subtitle_language != 'en' and subtitle_language not in subtitles:
-            logging.warning("Subtitle unavailable in '%s' language for video "
-                            "with video id: [%s], falling back to 'en' "
-                            "subtitle", subtitle_language, video_id)
-            subtitle_language = 'en'
+    # subtitles and transcripts
+    subtitle_nodes = [
+        ('subtitles',    'srt', 'subtitle'),
+        ('subtitlesTxt', 'txt', 'transcript'),
+    ]
+    for (subtitle_node, subtitle_extension, subtitle_description) in subtitle_nodes:
+        logging.info('Gathering %s URLs for video_id <%s>.', subtitle_description, video_id)
+        subtitles = dom.get(subtitle_node)
+        if subtitles is not None:
+            if subtitle_language == 'all':
+                for current_subtitle_language in subtitles:
+                    video_content[current_subtitle_language + '.' + subtitle_extension] = make_coursera_absolute_url(subtitles.get(current_subtitle_language))
+            else:
+                if subtitle_language != 'en' and subtitle_language not in subtitles:
+                    logging.warning("%s unavailable in '%s' language for video "
+                                    "with video id: [%s], falling back to 'en' "
+                                    "%s", subtitle_description.capitalize(), subtitle_language, video_id, subtitle_description)
+                subtitle_language = 'en'
 
-        subtitle_url = subtitles.get(subtitle_language)
-        if subtitle_url is not None:
-            # some subtitle urls are relative!
-            video_content['srt'] = make_coursera_absolute_url(subtitle_url)
+                subtitle_url = subtitles.get(subtitle_language)
+                if subtitle_url is not None:
+                    # some subtitle urls are relative!
+                    video_content[subtitle_extension] = make_coursera_absolute_url(subtitle_url)
 
     return video_content
 
@@ -500,6 +509,10 @@ def find_resources_to_get(lecture, file_formats, resource_filter, ignored_format
 
     for fmt, resources in iteritems(lecture):
 
+        fmt0 = fmt
+        if '.' in fmt:
+            fmt = fmt.split('.')[1]
+
         if fmt in ignored_formats:
             continue
 
@@ -509,7 +522,7 @@ def find_resources_to_get(lecture, file_formats, resource_filter, ignored_format
                     logging.debug('Skipping b/c of rf: %s %s',
                                   resource_filter, r[1])
                     continue
-                resources_to_get.append((fmt, r[0], r[1]))
+                resources_to_get.append((fmt0, r[0], r[1]))
         else:
             logging.debug(
                 'Skipping b/c format %s not in %s', fmt, file_formats)
@@ -687,7 +700,8 @@ def parse_args(args=None):
                              dest='subtitle_language',
                              action='store',
                              default='en',
-                             help='Choose language to download subtitles. (Default: en)')
+                             help='Choose language to download subtitles and transcripts. (Default: en)'
+                             'Use special value "all" to download all available.')
 
     # Selection of material to download
     group_material = parser.add_argument_group('Selection of material to download')
