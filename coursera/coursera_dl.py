@@ -148,7 +148,7 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en',
                 subtitle_url = subtitles.get(subtitle_language)
                 if subtitle_url is not None:
                     # some subtitle urls are relative!
-                    video_content[subtitle_extension] = make_coursera_absolute_url(subtitle_url)
+                    video_content[subtitle_language + '.' + subtitle_extension] = make_coursera_absolute_url(subtitle_url)
 
     return video_content
 
@@ -699,8 +699,8 @@ def parse_args(args=None):
                              '--subtitle-language',
                              dest='subtitle_language',
                              action='store',
-                             default='en',
-                             help='Choose language to download subtitles and transcripts. (Default: en)'
+                             default='all',
+                             help='Choose language to download subtitles and transcripts. (Default: all)'
                              'Use special value "all" to download all available.')
 
     # Selection of material to download
