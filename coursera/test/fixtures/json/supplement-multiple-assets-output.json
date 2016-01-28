@@ -1,0 +1,18 @@
+{
+  "pdf": [
+    [
+      "https://d396qusza40orc.cloudfront.net/phoenixassets/ml-foundations/deeplearning-annotated.pdf",
+      "deeplearning-annotated"
+    ],
+    [
+      "http://www.cs.ubc.ca/~lowe/papers/iccv99.pdf",
+      "iccv99"
+    ]
+  ],
+  "zip": [
+    [
+      "https://d396qusza40orc.cloudfront.net/phoenixassets/course1-for-students/people_wiki.gl.zip",
+      "people_wiki.gl"
+    ]
+  ]
+}

@@ -114,3 +114,20 @@ def test_parse(get_old_style_video, filename, num_sections, num_lectures,
 
         # mp4 count
         assert sum(r for f, r in resources if f == "mp4") == num_videos
+
+
+@patch('coursera.coursera_dl.get_page')
+def test_get_on_demand_supplement_url_accumulates_assets(mocked):
+    input = open(
+        os.path.join(os.path.dirname(__file__),
+                     "fixtures", "json", "supplement-multiple-assets-input.json")).read()
+    expected_output = json.load(open(
+        os.path.join(os.path.dirname(__file__),
+                     "fixtures", "json", "supplement-multiple-assets-output.json")))
+    mocked.return_value = input
+    output = coursera_dl.get_on_demand_supplement_url(
+        'session', 'course_id', 'element_id')
+
+    # This is the easiest way to convert nested tuples to lists
+    output = json.loads(json.dumps(output))
+    assert expected_output == output
