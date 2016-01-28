@@ -12,6 +12,10 @@ import string
 import sys
 
 import six
+from bs4 import BeautifulSoup as BeautifulSoup_
+
+# Force us of bs4 with html5lib
+BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
 from .define import COURSERA_URL
 
@@ -135,3 +139,52 @@ def make_coursera_absolute_url(url):
         return urljoin(COURSERA_URL, url)
 
     return url
+
+
+def extract_supplement_links(page):
+    """
+    Extract supplement links from the html page that contains <a> tags
+    with href attribute.
+
+    @param page: HTML page.
+    @type page: str
+
+    @return: Dictionary with supplement links grouped by extension.
+    @rtype: {
+        '<extension1>': [
+            ('<link1>', ''),
+            ('<link2>', '')
+        ],
+        'extension2': [
+            ('<link3>', ''),
+            ('<link4>', '')
+        ]
+    }
+    """
+    soup = BeautifulSoup(page)
+    links = [item['href']
+             for item in soup.find_all('a') if 'href' in item.attrs]
+    links = sorted(list(set(links)))
+    supplement_links = {}
+
+    for link in links:
+        filename, extension = os.path.splitext(link)
+        # Some courses put links to sites in supplement section, e.g.:
+        # http://pandas.pydata.org/
+        if extension is '':
+            continue
+
+        # Make lowercase and cut the leading/trailing dot
+        extension = extension.lower().strip('.')
+        basename = os.path.basename(filename)
+        if extension not in supplement_links:
+            supplement_links[extension] = []
+        # Putting basename into the second slot of the tuple is important
+        # because that will allow to download many supplements within a
+        # single lecture, e.g.:
+        # 01_slides-presented-in-this-module.pdf
+        # 01_slides-presented-in-this-module_Dalal-cvpr05.pdf
+        # 01_slides-presented-in-this-module_LM-3dtexton.pdf
+        supplement_links[extension].append((link, basename))
+
+    return supplement_links

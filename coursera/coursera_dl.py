@@ -59,10 +59,6 @@ from distutils.version import LooseVersion as V
 import requests
 
 from six import iteritems
-from bs4 import BeautifulSoup as BeautifulSoup_
-
-# Force us of bs4 with html5lib
-BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
 
 from .cookies import (
@@ -70,10 +66,12 @@ from .cookies import (
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError, keyring
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
-                     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL)
+                     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL,
+                     OPENCOURSE_SUPPLEMENT_URL)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
-                    decode_input, make_coursera_absolute_url)
+                    decode_input, make_coursera_absolute_url,
+                    extract_supplement_links, BeautifulSoup)
 
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -86,6 +84,40 @@ import six
 assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
 assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
 assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
+
+
+def get_on_demand_supplement_url(session, course_id, element_id):
+    """
+    Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
+    and so on).
+
+    @see extract_supplement_links
+    """
+    url = OPENCOURSE_SUPPLEMENT_URL.format(
+        course_id=course_id, element_id=element_id)
+    page = get_page(session, url)
+
+    dom = json.loads(page)
+    supplement_content = {}
+
+    # Supplement content has structure as follows:
+    # 'linked' {
+    #   'openCourseAssets.v1' [ {
+    #       'definition' {
+    #           'value'
+
+    for asset in dom['linked']['openCourseAssets.v1']:
+        value = asset['definition']['value']
+        more = extract_supplement_links(value)
+
+        for fmt, items in iteritems(more):
+            # We need to merge possible several supplement content results
+            if fmt in supplement_content:
+                supplement_content[fmt].extend(more[fmt])
+            else:
+                supplement_content[fmt] = more[fmt]
+
+    return supplement_content
 
 
 def get_on_demand_video_url(session, video_id, subtitle_language='en',
@@ -382,6 +414,8 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                  'This may take some time, be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
+    course_id = dom['id']
+
     for module in json_modules:
         module_slug = module['slug']
         sections = []
@@ -404,6 +438,11 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
 
                     if lecture_video_content:
                         lectures.append((lecture_slug, lecture_video_content))
+                elif lecture['content']['typeName'] == 'supplement':
+                    element_id = lecture['id']
+                    supplement_content = get_on_demand_supplement_url(
+                        session, course_id, element_id)
+                    lectures.append((lecture_slug, supplement_content))
 
             if lectures:
                 sections.append((section_slug, lectures))
