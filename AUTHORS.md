@@ -18,3 +18,4 @@ you have at least one contribution to the project.
 * Rogério Theodoro de Brito
 * Mohammad Amin Solhizadeh
 * Victor Westmann
+* Yuri Bochkarev
