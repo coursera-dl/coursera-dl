@@ -115,7 +115,7 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en',
     if len(filtered_sources) == 0:
         # We will just use the 'vanilla' version of sources here, instead of
         # filtered_sources.
-        logging.warn('Requested resolution %s not availaboe for <%s>. '
+        logging.warn('Requested resolution %s not available for <%s>. '
                      'Downloading highest resolution available instead.',
                      resolution, video_id)
     else:
@@ -1103,7 +1103,7 @@ def main():
     if args.on_demand:
         logging.warning('--on-demand option is deprecated and is not required'
                         ' anymore. Do not use this option. It will be removed'
-                        'in the future.')
+                        ' in the future.')
 
     for class_name in args.class_names:
         try:
