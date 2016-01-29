@@ -66,12 +66,13 @@ from .cookies import (
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError, keyring
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
-                     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL,
-                     OPENCOURSE_SUPPLEMENT_URL)
+                     OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     decode_input, make_coursera_absolute_url,
-                    extract_supplement_links, BeautifulSoup)
+                    BeautifulSoup)
+from .network import get_page
+from .api import CourseraOnDemand
 
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -84,40 +85,6 @@ import six
 assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
 assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
 assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
-
-
-def get_on_demand_supplement_url(session, course_id, element_id):
-    """
-    Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
-    and so on).
-
-    @see extract_supplement_links
-    """
-    url = OPENCOURSE_SUPPLEMENT_URL.format(
-        course_id=course_id, element_id=element_id)
-    page = get_page(session, url)
-
-    dom = json.loads(page)
-    supplement_content = {}
-
-    # Supplement content has structure as follows:
-    # 'linked' {
-    #   'openCourseAssets.v1' [ {
-    #       'definition' {
-    #           'value'
-
-    for asset in dom['linked']['openCourseAssets.v1']:
-        value = asset['definition']['value']
-        more = extract_supplement_links(value)
-
-        for fmt, items in iteritems(more):
-            # We need to merge possible several supplement content results
-            if fmt in supplement_content:
-                supplement_content[fmt].extend(more[fmt])
-            else:
-                supplement_content[fmt] = more[fmt]
-
-    return supplement_content
 
 
 def get_on_demand_video_url(session, video_id, subtitle_language='en',
@@ -188,22 +155,6 @@ def get_syllabus_url(class_name, preview):
     logging.debug('Using %s mode with page: %s', class_type, page)
 
     return page
-
-
-def get_page(session, url):
-    """
-    Download an HTML page using the requests session.
-    """
-
-    r = session.get(url)
-
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logging.error("Error %s getting page %s", e, url)
-        raise
-
-    return r.text
 
 
 def get_session():
@@ -414,7 +365,7 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                  'This may take some time, be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
-    course_id = dom['id']
+    course = CourseraOnDemand(session, dom)
 
     for module in json_modules:
         module_slug = module['slug']
@@ -426,7 +377,9 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
             json_lectures = section['elements']
             for lecture in json_lectures:
                 lecture_slug = lecture['slug']
-                if lecture['content']['typeName'] == 'lecture':
+                typename = lecture['content']['typeName']
+
+                if typename == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
                     video_content = get_on_demand_video_url(session,
                                                             lecture_video_id,
@@ -438,11 +391,16 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
 
                     if lecture_video_content:
                         lectures.append((lecture_slug, lecture_video_content))
-                elif lecture['content']['typeName'] == 'supplement':
-                    element_id = lecture['id']
-                    supplement_content = get_on_demand_supplement_url(
-                        session, course_id, element_id)
-                    lectures.append((lecture_slug, supplement_content))
+                elif typename == 'supplement':
+                    supplement_content = course.extract_files_from_supplement(
+                        lecture['id'])
+                    if supplement_content:
+                        lectures.append((lecture_slug, supplement_content))
+                elif typename in ('gradedProgramming', 'ungradedProgramming'):
+                    supplement_content = course.extract_files_from_programming(
+                        lecture['id'])
+                    if supplement_content:
+                        lectures.append((lecture_slug, supplement_content))
 
             if lectures:
                 sections.append((section_slug, lectures))
