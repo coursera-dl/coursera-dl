@@ -16,6 +16,7 @@ import six
 from mock import Mock
 from coursera import utils
 from coursera import coursera_dl
+from coursera import api
 
 
 @pytest.mark.parametrize(
@@ -230,7 +231,8 @@ def test_extract_supplement_links(input, output):
     page_text = open(input_filename).read()
     expected_output = json.load(open(output_filename))
 
-    output = utils.extract_supplement_links(page_text)
+    course = api.CourseraOnDemand(session=None, course_json={'id': 0})
+    output = course._extract_supplement_links(page_text)
     # This is the easiest way to convert nested tuples to lists
     output = json.loads(json.dumps(output))
 
