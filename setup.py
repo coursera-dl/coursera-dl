@@ -89,7 +89,7 @@ setup(
     maintainer_email='rbrito@ime.usp.br',
 
     license='LGPL',
-    url='https://github.com/coursera-dl/coursera',
+    url='https://github.com/coursera-dl/coursera-dl',
 
     install_requires=requirements,
     extras_require=dict(
