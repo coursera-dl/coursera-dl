@@ -58,7 +58,7 @@ generate_readme_rst()
 long_description = read_file(
     'README.rst',
     'Generate README.rst from README.md via pandoc!\n\nExample: '
-    'pandoc --from=markdown_github --to=rst --output=README.rst README.md'
+    'pandoc --from=markdown --to=rst --output=README.rst README.md'
 )
 requirements = read_file('requirements.txt')
 dev_requirements = read_file('requirements-dev.txt')

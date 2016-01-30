@@ -9,7 +9,7 @@ import os
 
 from fabric.api import (env, local, task)
 
-MD2RST='pandoc --from=markdown_github --to=rst --output=README.rst README.md'
+MD2RST='pandoc --from=markdown --to=rst --output=README.rst README.md'
 
 if not os.path.exists('README.rst'):
     local(MD2RST)
