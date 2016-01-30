@@ -84,7 +84,7 @@ trove_classifiers = [
 
 setup(
     name='coursera',
-    version='0.5.0',
+    version='0.5.1',
     maintainer='Rogério Theodoro de Brito',
     maintainer_email='rbrito@ime.usp.br',
 
