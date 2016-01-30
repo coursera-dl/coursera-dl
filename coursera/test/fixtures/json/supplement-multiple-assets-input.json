@@ -1,0 +1,34 @@
+{
+  "elements": [
+    {
+      "id": "qi9mnkIJEeWC4g7VhG4bTQ~lVBJT",
+      "courseId": "qi9mnkIJEeWC4g7VhG4bTQ",
+      "itemId": "lVBJT"
+    }
+  ],
+  "paging": null,
+  "linked": {
+    "openCourseAssets.v1": [
+      {
+        "id": "qi9mnkIJEeWC4g7VhG4bTQ~lVBJT",
+        "courseId": "qi9mnkIJEeWC4g7VhG4bTQ",
+        "itemId": "lVBJT",
+        "definition": {
+          "value": "<co-content><text>For those interested, the slides presented in the videos for this module can be downloaded here:  <a href=\"https://d396qusza40orc.cloudfront.net/phoenixassets/ml-foundations/deeplearning-annotated.pdf\">deeplearning-annotated.pdf</a></text></co-content>",
+          "dtdId": "supplement/1"
+        },
+        "typeName": "cml"
+      },
+      {
+        "id": "qi9mnkIJEeWC4g7VhG4bTQ~lVBJT",
+        "courseId": "qi9mnkIJEeWC4g7VhG4bTQ",
+        "itemId": "lVBJT",
+        "definition": {
+          "value": "<co-content><text>Some useful papers on computer vision:</text><text>SIFT [Lowe '99]: <a href=\"http://www.cs.ubc.ca/~lowe/papers/iccv99.pdf\"/> more content <a href=\"https://d396qusza40orc.cloudfront.net/phoenixassets/course1-for-students/people_wiki.gl.zip\"/></text></co-content>",
+          "dtdId": "supplement/1"
+        },
+        "typeName": "cml"
+      }
+    ]
+  }
+}

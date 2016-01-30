@@ -12,6 +12,10 @@ import string
 import sys
 
 import six
+from bs4 import BeautifulSoup as BeautifulSoup_
+
+# Force us of bs4 with html5lib
+BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
 from .define import COURSERA_URL
 

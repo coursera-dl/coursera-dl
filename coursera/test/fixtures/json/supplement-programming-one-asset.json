@@ -1,0 +1,40 @@
+{
+  "elements": [
+    {
+      "id": "01XLylXyEeWKXg4Y7_tPaw~UzPbw",
+      "courseId": "01XLylXyEeWKXg4Y7_tPaw",
+      "itemId": "UzPbw",
+      "submissionLearnerSchema": {
+        "typeName": "multipart",
+        "definition": {
+          "assignmentInstructions": {
+            "typeName": "cml",
+            "definition": {
+              "dtdId": "assess/1",
+              "value": "<co-content><text/><asset id=\"yeJ7Q8VAEeWPRQ4YsSEORQ\" name=\"statement-pca\" extension=\"pdf\" assetType=\"generic\"/><text><text/></co-content>"
+            }
+          },
+          "parts": {
+            "0D5bF": {
+              "title": "Какая компания имеет наибольший вес в первой компоненте?",
+              "order": 2,
+              "maxScore": 1
+            },
+            "ic9JA": {
+              "title": "Вычислите коэффициент корреляции Пирсона между значением по первой компоненте и индексом Доу-Джонса.",
+              "order": 1,
+              "maxScore": 1
+            },
+            "KSD5u": {
+              "title": "Сколько компонент достаточно, чтобы описать 90% дисперсии?",
+              "order": 0,
+              "maxScore": 1
+            }
+          }
+        }
+      }
+    }
+  ],
+  "paging": null,
+  "linked": null
+}

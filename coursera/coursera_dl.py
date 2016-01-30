@@ -59,10 +59,6 @@ from distutils.version import LooseVersion as V
 import requests
 
 from six import iteritems
-from bs4 import BeautifulSoup as BeautifulSoup_
-
-# Force us of bs4 with html5lib
-BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
 
 from .cookies import (
@@ -73,7 +69,10 @@ from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
                      OPENCOURSE_CONTENT_URL, OPENCOURSE_VIDEO_URL)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
-                    decode_input, make_coursera_absolute_url)
+                    decode_input, make_coursera_absolute_url,
+                    BeautifulSoup)
+from .network import get_page
+from .api import CourseraOnDemand
 
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -115,7 +114,7 @@ def get_on_demand_video_url(session, video_id, subtitle_language='en',
     if len(filtered_sources) == 0:
         # We will just use the 'vanilla' version of sources here, instead of
         # filtered_sources.
-        logging.warn('Requested resolution %s not availaboe for <%s>. '
+        logging.warn('Requested resolution %s not available for <%s>. '
                      'Downloading highest resolution available instead.',
                      resolution, video_id)
     else:
@@ -156,22 +155,6 @@ def get_syllabus_url(class_name, preview):
     logging.debug('Using %s mode with page: %s', class_type, page)
 
     return page
-
-
-def get_page(session, url):
-    """
-    Download an HTML page using the requests session.
-    """
-
-    r = session.get(url)
-
-    try:
-        r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logging.error("Error %s getting page %s", e, url)
-        raise
-
-    return r.text
 
 
 def get_session():
@@ -382,6 +365,8 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                  'This may take some time, be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
+    course = CourseraOnDemand(session, dom)
+
     for module in json_modules:
         module_slug = module['slug']
         sections = []
@@ -392,7 +377,9 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
             json_lectures = section['elements']
             for lecture in json_lectures:
                 lecture_slug = lecture['slug']
-                if lecture['content']['typeName'] == 'lecture':
+                typename = lecture['content']['typeName']
+
+                if typename == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
                     video_content = get_on_demand_video_url(session,
                                                             lecture_video_id,
@@ -404,6 +391,16 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
 
                     if lecture_video_content:
                         lectures.append((lecture_slug, lecture_video_content))
+                elif typename == 'supplement':
+                    supplement_content = course.extract_files_from_supplement(
+                        lecture['id'])
+                    if supplement_content:
+                        lectures.append((lecture_slug, supplement_content))
+                elif typename in ('gradedProgramming', 'ungradedProgramming'):
+                    supplement_content = course.extract_files_from_programming(
+                        lecture['id'])
+                    if supplement_content:
+                        lectures.append((lecture_slug, supplement_content))
 
             if lectures:
                 sections.append((section_slug, lectures))
@@ -1103,7 +1100,7 @@ def main():
     if args.on_demand:
         logging.warning('--on-demand option is deprecated and is not required'
                         ' anymore. Do not use this option. It will be removed'
-                        'in the future.')
+                        ' in the future.')
 
     for class_name in args.class_names:
         try:

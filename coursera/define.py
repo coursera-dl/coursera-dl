@@ -14,6 +14,13 @@ AUTH_URL_V3 = 'https://www.coursera.org/api/login/v3'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
 OPENCOURSE_CONTENT_URL = 'https://www.coursera.org/api/opencourse.v1/course/{class_name}'
 OPENCOURSE_VIDEO_URL = 'https://www.coursera.org/api/opencourse.v1/video/{video_id}'
+OPENCOURSE_SUPPLEMENT_URL = 'https://www.coursera.org/api/onDemandSupplements.v1/'\
+    '{course_id}~{element_id}?includes=asset&fields=openCourseAssets.v1%28typeName%29,openCourseAssets.v1%28definition%29'
+OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL = \
+    'https://www.coursera.org/api/onDemandProgrammingLearnerAssignments.v1/{course_id}~{element_id}?fields=submissionLearnerSchema'
+OPENCOURSE_ASSET_URL = \
+    'https://www.coursera.org/api/assetUrls.v1?ids={ids}'
+
 
 ABOUT_URL = ('https://api.coursera.org/api/catalog.v1/courses?'
              'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,'
