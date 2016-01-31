@@ -11,11 +11,12 @@ from six.moves.urllib_parse import quote_plus
 
 from six import iteritems
 
-from .utils import BeautifulSoup
+from .utils import BeautifulSoup, make_coursera_absolute_url
 from .network import get_page
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
-                     OPENCOURSE_ASSET_URL)
+                     OPENCOURSE_ASSET_URL,
+                     OPENCOURSE_VIDEO_URL)
 
 
 class CourseraOnDemand(object):
@@ -38,6 +39,77 @@ class CourseraOnDemand(object):
         """
         self._session = session
         self._course_id = course_id
+
+    def extract_links_from_lecture(self,
+                                   video_id, subtitle_language='en',
+                                   resolution='540p', assets=None):
+        """
+        Return the download URL of on-demand course video.
+        """
+        if assets is None:
+            assets = []
+
+        url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
+        page = get_page(self._session, url)
+
+        logging.debug('Parsing JSON for video_id <%s>.', video_id)
+        video_content = {}
+        dom = json.loads(page)
+
+        # videos
+        logging.info('Gathering video URLs for video_id <%s>.', video_id)
+        sources = dom['sources']
+        sources.sort(key=lambda src: src['resolution'])
+        sources.reverse()
+
+        # Try to select resolution requested by the user.
+        filtered_sources = [source
+                            for source in sources
+                            if source['resolution'] == resolution]
+
+        if len(filtered_sources) == 0:
+            # We will just use the 'vanilla' version of sources here, instead of
+            # filtered_sources.
+            logging.warn('Requested resolution %s not available for <%s>. '
+                         'Downloading highest resolution available instead.',
+                         resolution, video_id)
+        else:
+            logging.info('Proceeding with download of resolution %s of <%s>.',
+                         resolution, video_id)
+            sources = filtered_sources
+
+        video_url = sources[0]['formatSources']['video/mp4']
+        video_content['mp4'] = video_url
+
+        # subtitles and transcripts
+        subtitle_nodes = [
+            ('subtitles',    'srt', 'subtitle'),
+            ('subtitlesTxt', 'txt', 'transcript'),
+        ]
+        for (subtitle_node, subtitle_extension, subtitle_description) in subtitle_nodes:
+            logging.info('Gathering %s URLs for video_id <%s>.', subtitle_description, video_id)
+            subtitles = dom.get(subtitle_node)
+            if subtitles is not None:
+                if subtitle_language == 'all':
+                    for current_subtitle_language in subtitles:
+                        video_content[current_subtitle_language + '.' + subtitle_extension] = make_coursera_absolute_url(subtitles.get(current_subtitle_language))
+                else:
+                    if subtitle_language != 'en' and subtitle_language not in subtitles:
+                        logging.warning("%s unavailable in '%s' language for video "
+                                        "with video id: [%s], falling back to 'en' "
+                                        "%s", subtitle_description.capitalize(), subtitle_language, video_id, subtitle_description)
+                        subtitle_language = 'en'
+
+                    subtitle_url = subtitles.get(subtitle_language)
+                    if subtitle_url is not None:
+                        # some subtitle urls are relative!
+                        video_content[subtitle_language + '.' + subtitle_extension] = make_coursera_absolute_url(subtitle_url)
+
+        lecture_video_content = {}
+        for key, value in video_content.items():
+            lecture_video_content[key] = [(value, '')]
+
+        return lecture_video_content
 
     def extract_links_from_programming(self, element_id):
         """
