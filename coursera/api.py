@@ -26,63 +26,77 @@ class CourseraOnDemand(object):
     old-style Coursera classes. This API is by no means complete.
     """
 
-    def __init__(self, session, course_json):
+    def __init__(self, session, course_id):
         """
         Initialize Coursera OnDemand API.
 
         @param session: Current session that holds cookies and so on.
         @type session: requests.Session
+
+        @param course_id: Course ID from course json.
+        @type course_id: str
         """
         self._session = session
-        self._course_json = course_json
+        self._course_id = course_id
 
-        self._course_id = self._course_json['id']
-
-    def extract_files_from_programming(self, element_id):
+    def extract_links_from_programming(self, element_id):
         """
-        Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
-        and so on) extracted from graded programming assignment.
+        Return a dictionary with links to supplement files (pdf, csv, zip,
+        ipynb, html and so on) extracted from graded programming assignment.
 
         @param element_id: Element ID to extract files from.
         @type element_id: str
 
-        @return: @see CourseraOnDemand._extract_supplement_links
+        @return: @see CourseraOnDemand._extract_links_from_text
         """
         logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
 
         # Instructions contain text which in turn contains asset tags
         # which describe supplementary files.
-        instructions = ''.join(self._extract_assignment_instructions(element_id))
-        if not instructions:
+        text = ''.join(self._extract_assignment_text(element_id))
+        if not text:
             return {}
 
-        # Extract asset tags from instructions text
-        asset_map = self._extract_assets(instructions)
-        ids = list(iterkeys(asset_map))
-        if not ids:
-            return {}
-
-        # asset tags contain asset names and ids. We need to make another
-        # HTTP request to get asset URL.
-        asset_urls = self._extract_asset_urls(ids)
-
-        supplement_links = {}
-
-        # Build supplement links, providing nice titles along the way
-        for asset in asset_urls:
-            title = asset_map[asset['id']]['name']
-            extension = asset_map[asset['id']]['extension']
-            if extension not in supplement_links:
-                supplement_links[extension] = []
-            supplement_links[extension].append((asset['url'], title))
-
+        supplement_links = self._extract_links_from_text(text)
         return supplement_links
 
-    def _extract_assets(self, text):
+    def extract_links_from_supplement(self, element_id):
         """
-        Extract assets from text into a convenient form.
+        Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
+        and so on) extracted from supplement page.
 
-        @param text: Text to extract assets from.
+        @return: @see CourseraOnDemand._extract_links_from_text
+        """
+        logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
+
+        url = OPENCOURSE_SUPPLEMENT_URL.format(
+            course_id=self._course_id, element_id=element_id)
+        page = get_page(self._session, url)
+
+        dom = json.loads(page)
+        supplement_content = {}
+
+        # Supplement content has structure as follows:
+        # 'linked' {
+        #   'openCourseAssets.v1' [ {
+        #       'definition' {
+        #           'value'
+
+        for asset in dom['linked']['openCourseAssets.v1']:
+            value = asset['definition']['value']
+            # Supplement lecture types are known to contain both <asset> tags
+            # and <a href> tags (depending on the course), so we extract
+            # both of them.
+            self._extend_supplement_links(
+                supplement_content, self._extract_links_from_text(value))
+
+        return supplement_content
+
+    def _extract_asset_tags(self, text):
+        """
+        Extract asset tags from text into a convenient form.
+
+        @param text: Text to extract asset tags from.
         @type text: str
 
         @return: Asset map.
@@ -90,17 +104,18 @@ class CourseraOnDemand(object):
             '<id>': {
                 'name': '<name>',
                 'extension': '<extension>'
-            }
+            },
+            ...
         }
         """
         soup = BeautifulSoup(text)
-        asset_map = {}
+        asset_tags_map = {}
 
         for asset in soup.find_all('asset'):
-            asset_map[asset['id']] = {'name': asset['name'],
-                                      'extension': asset['extension']}
+            asset_tags_map[asset['id']] = {'name': asset['name'],
+                                           'extension': asset['extension']}
 
-        return asset_map
+        return asset_tags_map
 
     def _extract_asset_urls(self, asset_ids):
         """
@@ -124,14 +139,14 @@ class CourseraOnDemand(object):
                  'url': element['url']}
                 for element in dom['elements']]
 
-    def _extract_assignment_instructions(self, element_id):
+    def _extract_assignment_text(self, element_id):
         """
-        Extract assignment instructions.
+        Extract assignment text (instructions).
 
         @param element_id: Element id to extract assignment instructions from.
         @type element_id: str
 
-        @return: List of assignment instructions.
+        @return: List of assignment text (instructions).
         @rtype: [str]
         """
         url = OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL.format(
@@ -143,48 +158,77 @@ class CourseraOnDemand(object):
                 ['assignmentInstructions']['definition']['value']
                 for element in dom['elements']]
 
-    def extract_files_from_supplement(self, element_id):
+    def _extract_links_from_text(self, text):
         """
-        Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
-        and so on) extracted from supplement page.
+        Extract supplement links from the html text. Links may be provided
+        in two ways:
+            1. <a> tags with href attribute
+            2. <asset> tags with id attribute (requires additional request
+               to get the direct URL to the asset file)
 
-        @return: @see CourseraOnDemand._extract_supplement_links
+        @param text: HTML text.
+        @type text: str
+
+        @return: Dictionary with supplement links grouped by extension.
+        @rtype: {
+            '<extension1>': [
+                ('<link1>', '<title1>'),
+                ('<link2>', '<title2')
+            ],
+            'extension2': [
+                ('<link3>', '<title3>'),
+                ('<link4>', '<title4>')
+            ],
+            ...
+        }
         """
-        logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
+        supplement_links = self._extract_links_from_a_tags_in_text(text)
 
-        url = OPENCOURSE_SUPPLEMENT_URL.format(
-            course_id=self._course_id, element_id=element_id)
-        page = get_page(self._session, url)
+        self._extend_supplement_links(
+            supplement_links,
+            self._extract_links_from_asset_tags_in_text(text))
 
-        dom = json.loads(page)
-        supplement_content = {}
+        return supplement_links
 
-        # Supplement content has structure as follows:
-        # 'linked' {
-        #   'openCourseAssets.v1' [ {
-        #       'definition' {
-        #           'value'
-
-        for asset in dom['linked']['openCourseAssets.v1']:
-            value = asset['definition']['value']
-            more = self._extract_supplement_links(value)
-
-            for fmt, items in iteritems(more):
-                # We need to merge possible several supplement content results
-                if fmt in supplement_content:
-                    supplement_content[fmt].extend(more[fmt])
-                else:
-                    supplement_content[fmt] = more[fmt]
-
-        return supplement_content
-
-    def _extract_supplement_links(self, page):
+    def _extract_links_from_asset_tags_in_text(self, text):
         """
-        Extract supplement links from the html page that contains <a> tags
+        Scan the text and extract asset tags and links to corresponding
+        files.
+
+        @param text: Page text.
+        @type text: str
+
+        @return: @see CourseraOnDemand._extract_links_from_text
+        """
+        # Extract asset tags from instructions text
+        asset_tags_map = self._extract_asset_tags(text)
+        ids = list(iterkeys(asset_tags_map))
+        if not ids:
+            return {}
+
+        # asset tags contain asset names and ids. We need to make another
+        # HTTP request to get asset URL.
+        asset_urls = self._extract_asset_urls(ids)
+
+        supplement_links = {}
+
+        # Build supplement links, providing nice titles along the way
+        for asset in asset_urls:
+            title = asset_tags_map[asset['id']]['name']
+            extension = asset_tags_map[asset['id']]['extension']
+            if extension not in supplement_links:
+                supplement_links[extension] = []
+            supplement_links[extension].append((asset['url'], title))
+
+        return supplement_links
+
+    def _extract_links_from_a_tags_in_text(self, text):
+        """
+        Extract supplement links from the html text that contains <a> tags
         with href attribute.
 
-        @param page: HTML page.
-        @type page: str
+        @param text: HTML text.
+        @type text: str
 
         @return: Dictionary with supplement links grouped by extension.
         @rtype: {
@@ -198,7 +242,7 @@ class CourseraOnDemand(object):
             ]
         }
         """
-        soup = BeautifulSoup(page)
+        soup = BeautifulSoup(text)
         links = [item['href']
                  for item in soup.find_all('a') if 'href' in item.attrs]
         links = sorted(list(set(links)))
@@ -225,3 +269,20 @@ class CourseraOnDemand(object):
             supplement_links[extension].append((link, basename))
 
         return supplement_links
+
+    def _extend_supplement_links(self, destination, source):
+        """
+        Extends (merges) two dictionaries with supplement_links.
+
+        @param destination: Destination dictionary that will be extended.
+        @type destination: @see CourseraOnDemand._extract_links_from_text
+
+        @param source: Source dictionary that will be used to extend
+            destination dictionary.
+        @type source: @see CourseraOnDemand._extract_links_from_text
+        """
+        for key, value in iteritems(source):
+            if key not in destination:
+                destination[key] = value
+            else:
+                destination[key].extend(value)

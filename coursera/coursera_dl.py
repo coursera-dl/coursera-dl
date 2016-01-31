@@ -374,7 +374,7 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                  'This may take some time, be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
-    course = CourseraOnDemand(session, dom)
+    course = CourseraOnDemand(session, dom['id'])
 
     for module in json_modules:
         module_slug = module['slug']
@@ -401,12 +401,13 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                     if lecture_video_content:
                         lectures.append((lecture_slug, lecture_video_content))
                 elif typename == 'supplement':
-                    supplement_content = course.extract_files_from_supplement(
+                    supplement_content = course.extract_links_from_supplement(
                         lecture['id'])
                     if supplement_content:
                         lectures.append((lecture_slug, supplement_content))
+
                 elif typename in ('gradedProgramming', 'ungradedProgramming'):
-                    supplement_content = course.extract_files_from_programming(
+                    supplement_content = course.extract_links_from_programming(
                         lecture['id'])
                     if supplement_content:
                         lectures.append((lecture_slug, supplement_content))
