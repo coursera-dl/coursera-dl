@@ -16,6 +16,8 @@ from .network import get_page
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
+                     OPENCOURSE_ASSETS_URL,
+                     OPENCOURSE_API_ASSETS_V1_URL,
                      OPENCOURSE_VIDEO_URL)
 
 
@@ -44,10 +46,142 @@ class CourseraOnDemand(object):
                                    video_id, subtitle_language='en',
                                    resolution='540p', assets=None):
         """
-        Return the download URL of on-demand course video.
+        Return the download URLs of on-demand course video.
+
+        @param video_id: Video ID.
+        @type video_id: str
+
+        @param subtitle_language: Subtitle language.
+        @type subtitle_language: str
+
+        @param resolution: Preferred video resolution.
+        @type resolution: str
+
+        @param assets: List of assets that may present in the video.
+        @type assets: [str]
+
+        @return: @see CourseraOnDemand._extract_links_from_text
         """
         if assets is None:
             assets = []
+
+        links = self._extract_videos_and_subtitles_from_lecture(
+            video_id, subtitle_language, resolution)
+
+        assets = self._normalize_assets(assets)
+        self._extend_supplement_links(
+            links, self._extract_links_from_lecture_assets(assets))
+
+        return links
+
+    def _normalize_assets(self, assets):
+        """
+        Perform asset normalization. For some reason, assets that are sometimes
+        present in lectures, have "@1" at the end of their id. Such "uncut"
+        asset id when fed to OPENCOURSE_ASSETS_URL results in error that says:
+        "Routing error: 'get-all' not implemented". To avoid that, the last
+        two characters from asset id are cut off and after that that method
+        works fine. It looks like, Web UI is doing the same.
+
+        @param assets: List of asset ids.
+        @type assets: [str]
+
+        @return: Normalized list of asset ids (without trailing "@1")
+        @rtype: [str]
+        """
+        new_assets = []
+
+        for asset in assets:
+            # For example: giAxucdaEeWJTQ5WTi8YJQ@1
+            if len(asset) == 24:
+                # Turn it into: giAxucdaEeWJTQ5WTi8YJQ
+                asset = asset[:-2]
+            new_assets.append(asset)
+
+        return new_assets
+
+    def _extract_links_from_lecture_assets(self, asset_ids):
+        """
+        Extract links to files of the asset ids.
+
+        @param asset_ids: List of asset ids.
+        @type asset_ids: [str]
+
+        @return: @see CourseraOnDemand._extract_links_from_text
+        """
+        links = {}
+
+        def _add_asset(name, url, destination):
+            filename, extension = os.path.splitext(name)
+            if extension is '':
+                return
+
+            extension = extension.lower().strip('.')
+            basename = os.path.basename(filename)
+
+            if extension not in destination:
+                destination[extension] = []
+            destination[extension].append((url, basename))
+
+        for asset_id in asset_ids:
+            for open_course_asset_id in self._get_open_course_asset_ids(asset_id):
+                for asset in self._get_asset_urls(open_course_asset_id):
+                    _add_asset(asset['name'], asset['url'], links)
+
+        return links
+
+    def _get_open_course_asset_ids(self, asset_id):
+        """
+        Get asset ids (sub ids) that are children of the parent asset_id.
+
+        @param asset_id: Asset ID.
+        @type asset_id: str
+
+        @return: List of asset IDs.
+        @rtype: [str]
+        """
+        url = OPENCOURSE_ASSETS_URL.format(id=asset_id)
+        page = get_page(self._session, url)
+        logging.debug('Parsing JSON for asset_id <%s>.', asset_id)
+        dom = json.loads(page)
+
+        # Structure is as follows:
+        # elements [ {
+        #   definition {
+        #       assetId
+        return [element['definition']['assetId']
+                for element in dom['elements']]
+
+    def _get_asset_urls(self, asset_id):
+        """
+        Get list of asset urls and file names.
+
+        @param asset_id: Asset ID.
+        @type asset_id: str
+
+        @return List of dictionaries with asset file names and urls.
+        @rtype [{
+            'name': '<filename.ext>'
+            'url': '<url>'
+        }]
+        """
+        url = OPENCOURSE_API_ASSETS_V1_URL.format(id=asset_id)
+        page = get_page(self._session, url)
+        dom = json.loads(page)
+
+        # Structure is as follows:
+        # elements [ {
+        #   name
+        #   url {
+        #       url
+        return [{'name': element['name'],
+                 'url': element['url']['url']}
+                for element in dom['elements']]
+
+    def _extract_videos_and_subtitles_from_lecture(self,
+                                                   video_id,
+                                                   subtitle_language='en',
+                                                   resolution='540p'):
 
         url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
         page = get_page(self._session, url)
@@ -106,7 +240,7 @@ class CourseraOnDemand(object):
                         video_content[subtitle_language + '.' + subtitle_extension] = make_coursera_absolute_url(subtitle_url)
 
         lecture_video_content = {}
-        for key, value in video_content.items():
+        for key, value in iteritems(video_content):
             lecture_video_content[key] = [(value, '')]
 
         return lecture_video_content
