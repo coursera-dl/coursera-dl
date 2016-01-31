@@ -15,3 +15,5 @@ venv2
 venv3
 .idea
 .python-version
+.ipynb_checkpoints
+.ropeproject
