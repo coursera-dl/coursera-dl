@@ -18,6 +18,8 @@ from coursera import utils
 from coursera import coursera_dl
 from coursera import api
 
+from coursera.test.utils import slurp_fixture
+
 
 @pytest.mark.parametrize(
     "unclean,clean", [
@@ -226,13 +228,11 @@ def test_grab_hidden_video_url():
     ]
 )
 def test_extract_supplement_links(input, output):
-    input_filename = os.path.join(os.path.dirname(__file__), "fixtures", input)
-    output_filename = os.path.join(os.path.dirname(__file__), "fixtures", output)
-    page_text = open(input_filename).read()
-    expected_output = json.load(open(output_filename))
+    page_text = slurp_fixture(input)
+    expected_output = json.loads(slurp_fixture(output))
 
-    course = api.CourseraOnDemand(session=None, course_json={'id': 0})
-    output = course._extract_supplement_links(page_text)
+    course = api.CourseraOnDemand(session=None, course_id='0')
+    output = course._extract_links_from_text(page_text)
     # This is the easiest way to convert nested tuples to lists
     output = json.loads(json.dumps(output))
 
