@@ -13,7 +13,6 @@ matrix:
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
-  - pip install -r requirements-travis.txt
   - pip install coveralls
 # command to run tests
 script: py.test coursera/test -v --cov coursera --cov-report html
