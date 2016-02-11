@@ -1,0 +1,36 @@
+{
+  "csv": [
+    [
+      "https://d3c33hcgiwev3.cloudfront.net/_82b4a9f66c689b3d40dd25ebd761b07f_close_prices.csv?Expires=1454198400&Signature=bfgnJPMO7gugESqp6LRRdO-HP0X8~Y19GK9BGPjdU4bJQlR79iDLNgNMlAaCb3GhzyBAqv~46zr1XPY8VLY-QY2E0mnPVXlNLzgnS6Ypf2i~2J4jpI5UpGS4tuyT3mKxweaMttgTl3YvQFqSZX9an-TZRCDjgu57ucKfSAHkwRc_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A",
+      "close_prices"
+    ],
+    [
+      "https://d3c33hcgiwev3.cloudfront.net/_82b4a9f66c689b3d40dd25ebd761b07f_djia_index.csv?Expires=1454198400&Signature=ev67ad4IofngeNCBOxHN1bQ3DVQ48puKT7cW0-yHR7FlcypM9~12mnBKOkmD8yaiZlXCR8Mf5CY1KckPSHZKnxOqtgRacy7Ez5qvG1w50QIH0~NDMMZMD2uXgcnssv1ISiuMAST51~Qdlu5HwY8TL6zYTn56QEQbT9xe80V4TVc_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A",
+      "djia_index"
+    ]
+  ],
+  "html": [
+    [
+      "http://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.corrcoef.html",
+      "numpy.corrcoef"
+    ]
+  ],
+  "html\\": [
+    [
+      "http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html\\",
+      "sklearn.decomposition.PCA"
+    ]
+  ],
+  "pdf": [
+    [
+      "https://d3c33hcgiwev3.cloudfront.net/_3cdeda0745801a9686d7f5601010fb0c_statement-pca.pdf?Expires=1454198400&Signature=h5uo5XCq8DN-X6jf9VpJXj5-0M3LfBQmgf6LamlkrmH9YexVGjbVc3McRfvivJ9eQDXPo~ZujKw7YLc8BnCjDZA5hfwpF5q2J7dk4-ssK2ZA2-AIAukuURURZqFypiR7qbEFUHtDnWlSP16Q59X8D1g-PtVIEMUop4fgvGs3Px4_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A",
+      "statement-pca"
+    ]
+  ],
+  "transform": [
+    [
+      "http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA.transform",
+      "sklearn.decomposition.PCA.html#sklearn.decomposition.PCA"
+    ]
+  ]
+}

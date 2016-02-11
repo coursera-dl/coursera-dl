@@ -126,8 +126,8 @@ def test_get_on_demand_supplement_url_accumulates_assets(mocked):
         os.path.join(os.path.dirname(__file__),
                      "fixtures", "json", "supplement-multiple-assets-output.json")))
     mocked.return_value = input
-    course = api.CourseraOnDemand(session=None, course_json={'id': 0})
-    output = course.extract_files_from_supplement('element_id')
+    course = api.CourseraOnDemand(session=None, course_id='0')
+    output = course.extract_links_from_supplement('element_id')
 
     # This is the easiest way to convert nested tuples to lists
     output = json.loads(json.dumps(output))
