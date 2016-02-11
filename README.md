@@ -39,8 +39,8 @@ I've downloaded many other good videos such as those from Khan Academy.
 
 # Features
 
-  * Support for both regular (i.e., time-based) courses as well as on-demand
-    courses.
+  * Support for all kinds of courses (i.e., "Old Platform"/time-based as
+    well as "New Platform"/on-demand courses).
   * Intentionally detailed names, so that it will display and sort properly
     on most interfaces (e.g., [VLC][4] or MX Video on Android devices).
   * Regex-based section (week) and lecture name filters to download only
@@ -203,7 +203,6 @@ credentials (e.g. email address and password or a `~/.netrc` file), the
 class names, as well as any additional parameters:
 
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
-    On-Demand course:            coursera-dl -u <user> -p <pass> --on-demand calculus1
     Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
     Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" crypto-004
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" ml-2012-002
@@ -213,9 +212,6 @@ class names, as well as any additional parameters:
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ comnetworks-002
     Display help:                coursera-dl --help
 
-**Note:** Some of the options like `-sf` and `-f` may not work with on-demand courses.
-Downloading on-demand courses are mutually exclusive with regular courses.
-
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
       Update:                  coursera-dl -n --path CURRENT `\ls CURRENT`
@@ -224,9 +220,7 @@ Downloading on-demand courses are mutually exclusive with regular courses.
 may experience problems.  Be sure to escape the `ls` command (use `\ls`) to
 assure that no special characters get sent to the script.
 
-Note that we *do* support the new On Demand classes. You have to use the
-option `--on-demand` for that purpose. You also have to download those
-classes *separately* for regular, time-based classes.
+Note that we *do* support the New Platform ("on-demand") classes.
 
 On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username (i.e., your email address) and password every
@@ -282,9 +276,6 @@ one of the following actions solve your problem:
 * Make sure the class name you are using corresponds to the resource name
   used in the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
-
-* To download an On Demand course, use the `--on-demand` option of the
-  program.
 
 * Have you tried to clean the cached cookies/credentials with the
   `--clear-cache` option?
