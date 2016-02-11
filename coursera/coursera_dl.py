@@ -542,7 +542,7 @@ def download_lectures(downloader,
 
             for (_path, subdirs, files) in os.walk(sec):
                 os.chdir(_path)
-                globbed_videos = glob.glob("*.mp4")
+                globbed_videos = sorted(glob.glob("*.mp4"))
                 m3u_name = os.path.split(_path)[1] + ".m3u"
 
                 if len(globbed_videos):
