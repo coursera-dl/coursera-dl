@@ -144,7 +144,9 @@ def make_coursera_absolute_url(url):
 
 def extend_supplement_links(destination, source):
     """
-    Extends (merges) two dictionaries with supplement_links.
+    Extends (merges) destination dictionary with supplement_links
+    from source dictionary. Values are expected to be lists, or any
+    data structure that has `extend` method.
 
     @param destination: Destination dictionary that will be extended.
     @type destination: @see CourseraOnDemand._extract_links_from_text
