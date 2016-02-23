@@ -149,8 +149,13 @@ class CourseraOnDemand(object):
         # elements [ {
         #   definition {
         #       assetId
+
+        # FIXME (rbrito): Study closer how are the JSON documents that can get us
+        # here.
+
         return [element['definition']['assetId']
-                for element in dom['elements']]
+                for element in dom['elements']
+                if element['definition'].get('assetId', None)]
 
     def _get_asset_urls(self, asset_id):
         """
