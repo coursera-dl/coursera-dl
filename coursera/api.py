@@ -6,12 +6,11 @@ downloader.
 import os
 import json
 import logging
-from six import iterkeys
+from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
-from six import iteritems
-
-from .utils import BeautifulSoup, make_coursera_absolute_url
+from .utils import (BeautifulSoup, make_coursera_absolute_url,
+                    extend_supplement_links)
 from .network import get_page
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -69,7 +68,7 @@ class CourseraOnDemand(object):
             video_id, subtitle_language, resolution)
 
         assets = self._normalize_assets(assets)
-        self._extend_supplement_links(
+        extend_supplement_links(
             links, self._extract_links_from_lecture_assets(assets))
 
         return links
@@ -257,8 +256,8 @@ class CourseraOnDemand(object):
         """
         logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        # Instructions contain text which in turn contains asset tags
-        # which describe supplementary files.
+        # Assignment text (instructions) contains asset tags which describe
+        # supplementary files.
         text = ''.join(self._extract_assignment_text(element_id))
         if not text:
             return {}
@@ -293,7 +292,7 @@ class CourseraOnDemand(object):
             # Supplement lecture types are known to contain both <asset> tags
             # and <a href> tags (depending on the course), so we extract
             # both of them.
-            self._extend_supplement_links(
+            extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
 
         return supplement_content
@@ -302,7 +301,8 @@ class CourseraOnDemand(object):
         """
         Extract asset tags from text into a convenient form.
 
-        @param text: Text to extract asset tags from.
+        @param text: Text to extract asset tags from. This text contains HTML
+            code that is parsed by BeautifulSoup.
         @type text: str
 
         @return: Asset map.
@@ -390,7 +390,7 @@ class CourseraOnDemand(object):
         """
         supplement_links = self._extract_links_from_a_tags_in_text(text)
 
-        self._extend_supplement_links(
+        extend_supplement_links(
             supplement_links,
             self._extract_links_from_asset_tags_in_text(text))
 
@@ -475,20 +475,3 @@ class CourseraOnDemand(object):
             supplement_links[extension].append((link, basename))
 
         return supplement_links
-
-    def _extend_supplement_links(self, destination, source):
-        """
-        Extends (merges) two dictionaries with supplement_links.
-
-        @param destination: Destination dictionary that will be extended.
-        @type destination: @see CourseraOnDemand._extract_links_from_text
-
-        @param source: Source dictionary that will be used to extend
-            destination dictionary.
-        @type source: @see CourseraOnDemand._extract_links_from_text
-        """
-        for key, value in iteritems(source):
-            if key not in destination:
-                destination[key] = value
-            else:
-                destination[key].extend(value)

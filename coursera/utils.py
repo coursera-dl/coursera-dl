@@ -20,6 +20,7 @@ BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 from .define import COURSERA_URL
 
 from six.moves import html_parser
+from six import iteritems
 
 #  six.moves doesn’t support urlparse
 if six.PY3:  # pragma: no cover
@@ -139,3 +140,21 @@ def make_coursera_absolute_url(url):
         return urljoin(COURSERA_URL, url)
 
     return url
+
+
+def extend_supplement_links(destination, source):
+    """
+    Extends (merges) two dictionaries with supplement_links.
+
+    @param destination: Destination dictionary that will be extended.
+    @type destination: @see CourseraOnDemand._extract_links_from_text
+
+    @param source: Source dictionary that will be used to extend
+        destination dictionary.
+    @type source: @see CourseraOnDemand._extract_links_from_text
+    """
+    for key, value in iteritems(source):
+        if key not in destination:
+            destination[key] = value
+        else:
+            destination[key].extend(value)
