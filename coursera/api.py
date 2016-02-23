@@ -123,37 +123,78 @@ class CourseraOnDemand(object):
             destination[extension].append((url, basename))
 
         for asset_id in asset_ids:
-            for open_course_asset_id in self._get_open_course_asset_ids(asset_id):
-                for asset in self._get_asset_urls(open_course_asset_id):
-                    _add_asset(asset['name'], asset['url'], links)
+            for asset in self._get_asset_urls(asset_id):
+                _add_asset(asset['name'], asset['url'], links)
 
         return links
 
-    def _get_open_course_asset_ids(self, asset_id):
+    def _get_asset_urls(self, asset_id):
         """
-        Get asset ids (sub ids) that are children of the parent asset_id.
+        Get list of asset urls and file names. This method may internally
+        use _get_open_course_asset_urls to extract `asset` element types.
 
         @param asset_id: Asset ID.
         @type asset_id: str
 
-        @return: List of asset IDs.
-        @rtype: [str]
+        @return List of dictionaries with asset file names and urls.
+        @rtype [{
+            'name': '<filename.ext>'
+            'url': '<url>'
+        }]
         """
         url = OPENCOURSE_ASSETS_URL.format(id=asset_id)
         page = get_page(self._session, url)
         logging.debug('Parsing JSON for asset_id <%s>.', asset_id)
         dom = json.loads(page)
 
-        # Structure is as follows:
-        # elements [ {
-        #   definition {
-        #       assetId
-        return [element['definition']['assetId']
-                for element in dom['elements']]
+        urls = []
 
-    def _get_asset_urls(self, asset_id):
+        for element in dom['elements']:
+            typeName = element['typeName']
+            definition = element['definition']
+
+            # Elements of `asset` types look as follows:
+            #
+            # {'elements': [{'definition': {'assetId': 'gtSfvscoEeW7RxKvROGwrw',
+            #                               'name': 'Презентация к лекции'},
+            #                'id': 'phxNlMcoEeWXCQ4nGuQJXw',
+            #                'typeName': 'asset'}],
+            #  'linked': None,
+            #  'paging': None}
+            #
+            if typeName == 'asset':
+                open_course_asset_id = definition['assetId']
+                for asset in self._get_open_course_asset_urls(open_course_asset_id):
+                    urls.append({'name': asset['name'],
+                                 'url': asset['url']})
+
+            # Elements of `url` types look as follows:
+            #
+            # {'elements': [{'definition': {'name': 'What motivates you.pptx',
+            #                               'url': 'https://d396qusza40orc.cloudfront.net/learning/Powerpoints/2-4A_What_motivates_you.pptx'},
+            #                'id': '0hixqpWJEeWQkg5xdHApow',
+            #                'typeName': 'url'}],
+            #  'linked': None,
+            #  'paging': None}
+            #
+            elif typeName == 'url':
+                urls.append({'name': definition['name'],
+                             'url': definition['url']})
+
+            else:
+                logging.warning(
+                    'Unknown asset typeName: %s\ndom: %s\n'
+                    'If you think the downloader missed some '
+                    'files, please report the issue here:\n'
+                    'https://github.com/coursera-dl/coursera-dl/issues/new',
+                    typeName, json.dumps(dom, indent=4))
+
+        return urls
+
+    def _get_open_course_asset_urls(self, asset_id):
         """
-        Get list of asset urls and file names.
+        Get list of asset urls and file names. This method only works
+        with asset_ids extracted internally by _get_asset_urls method.
 
         @param asset_id: Asset ID.
         @type asset_id: str
