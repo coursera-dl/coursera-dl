@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf8 :
 """
 This module contains implementations of different APIs that are used by the
 downloader.
