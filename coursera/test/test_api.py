@@ -61,13 +61,36 @@ def test_ondemand_programming_supplement_three_assets(get_page, course):
 
 
 @patch('coursera.api.get_page')
-def test_extract_links_from_lecture_assets(get_page, course):
+def test_extract_links_from_lecture_assets_typename_asset(get_page, course):
     open_course_assets_reply = slurp_fixture('json/supplement-open-course-assets-reply.json')
     api_assets_v1_reply = slurp_fixture('json/supplement-api-assets-v1-reply.json')
     get_page.side_effect = [open_course_assets_reply, api_assets_v1_reply]
 
     expected_output = json.loads(slurp_fixture('json/supplement-extract-links-from-lectures-output.json'))
     assets = ['giAxucdaEeWJTQ5WTi8YJQ']
+    output = course._extract_links_from_lecture_assets(assets)
+    output = json.loads(json.dumps(output))
+    assert expected_output == output
+
+
+@patch('coursera.api.get_page')
+def test_extract_links_from_lecture_assets_typname_url_and_asset(get_page, course):
+    """
+    This test makes sure that _extract_links_from_lecture_assets grabs url
+    links both from typename == 'asset' and == 'url'.
+    """
+    get_page.side_effect = [
+        slurp_fixture('json/supplement-open-course-assets-typename-url-reply-1.json'),
+        slurp_fixture('json/supplement-open-course-assets-typename-url-reply-2.json'),
+        slurp_fixture('json/supplement-open-course-assets-typename-url-reply-3.json'),
+        slurp_fixture('json/supplement-open-course-assets-typename-url-reply-4.json'),
+        slurp_fixture('json/supplement-open-course-assets-typename-url-reply-5.json'),
+    ]
+
+    expected_output = json.loads(slurp_fixture('json/supplement-extract-links-from-lectures-url-asset-output.json'))
+    assets = ['Yry0spSKEeW8oA5fR3afVQ',
+              'kMQyUZSLEeWj-hLVp2Pm8w',
+              'xkAloZmJEeWjYA4jOOgP8Q']
     output = course._extract_links_from_lecture_assets(assets)
     output = json.loads(json.dumps(output))
     assert expected_output == output

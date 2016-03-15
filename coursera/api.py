@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf8 :
 """
 This module contains implementations of different APIs that are used by the
 downloader.
@@ -6,12 +7,11 @@ downloader.
 import os
 import json
 import logging
-from six import iterkeys
+from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
-from six import iteritems
-
-from .utils import BeautifulSoup, make_coursera_absolute_url
+from .utils import (BeautifulSoup, make_coursera_absolute_url,
+                    extend_supplement_links)
 from .network import get_page
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -69,7 +69,7 @@ class CourseraOnDemand(object):
             video_id, subtitle_language, resolution)
 
         assets = self._normalize_assets(assets)
-        self._extend_supplement_links(
+        extend_supplement_links(
             links, self._extract_links_from_lecture_assets(assets))
 
         return links
@@ -124,37 +124,78 @@ class CourseraOnDemand(object):
             destination[extension].append((url, basename))
 
         for asset_id in asset_ids:
-            for open_course_asset_id in self._get_open_course_asset_ids(asset_id):
-                for asset in self._get_asset_urls(open_course_asset_id):
-                    _add_asset(asset['name'], asset['url'], links)
+            for asset in self._get_asset_urls(asset_id):
+                _add_asset(asset['name'], asset['url'], links)
 
         return links
 
-    def _get_open_course_asset_ids(self, asset_id):
+    def _get_asset_urls(self, asset_id):
         """
-        Get asset ids (sub ids) that are children of the parent asset_id.
+        Get list of asset urls and file names. This method may internally
+        use _get_open_course_asset_urls to extract `asset` element types.
 
         @param asset_id: Asset ID.
         @type asset_id: str
 
-        @return: List of asset IDs.
-        @rtype: [str]
+        @return List of dictionaries with asset file names and urls.
+        @rtype [{
+            'name': '<filename.ext>'
+            'url': '<url>'
+        }]
         """
         url = OPENCOURSE_ASSETS_URL.format(id=asset_id)
         page = get_page(self._session, url)
         logging.debug('Parsing JSON for asset_id <%s>.', asset_id)
         dom = json.loads(page)
 
-        # Structure is as follows:
-        # elements [ {
-        #   definition {
-        #       assetId
-        return [element['definition']['assetId']
-                for element in dom['elements']]
+        urls = []
 
-    def _get_asset_urls(self, asset_id):
+        for element in dom['elements']:
+            typeName = element['typeName']
+            definition = element['definition']
+
+            # Elements of `asset` types look as follows:
+            #
+            # {'elements': [{'definition': {'assetId': 'gtSfvscoEeW7RxKvROGwrw',
+            #                               'name': 'Презентация к лекции'},
+            #                'id': 'phxNlMcoEeWXCQ4nGuQJXw',
+            #                'typeName': 'asset'}],
+            #  'linked': None,
+            #  'paging': None}
+            #
+            if typeName == 'asset':
+                open_course_asset_id = definition['assetId']
+                for asset in self._get_open_course_asset_urls(open_course_asset_id):
+                    urls.append({'name': asset['name'],
+                                 'url': asset['url']})
+
+            # Elements of `url` types look as follows:
+            #
+            # {'elements': [{'definition': {'name': 'What motivates you.pptx',
+            #                               'url': 'https://d396qusza40orc.cloudfront.net/learning/Powerpoints/2-4A_What_motivates_you.pptx'},
+            #                'id': '0hixqpWJEeWQkg5xdHApow',
+            #                'typeName': 'url'}],
+            #  'linked': None,
+            #  'paging': None}
+            #
+            elif typeName == 'url':
+                urls.append({'name': definition['name'],
+                             'url': definition['url']})
+
+            else:
+                logging.warning(
+                    'Unknown asset typeName: %s\ndom: %s\n'
+                    'If you think the downloader missed some '
+                    'files, please report the issue here:\n'
+                    'https://github.com/coursera-dl/coursera-dl/issues/new',
+                    typeName, json.dumps(dom, indent=4))
+
+        return urls
+
+    def _get_open_course_asset_urls(self, asset_id):
         """
-        Get list of asset urls and file names.
+        Get list of asset urls and file names. This method only works
+        with asset_ids extracted internally by _get_asset_urls method.
 
         @param asset_id: Asset ID.
         @type asset_id: str
@@ -257,8 +298,8 @@ class CourseraOnDemand(object):
         """
         logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        # Instructions contain text which in turn contains asset tags
-        # which describe supplementary files.
+        # Assignment text (instructions) contains asset tags which describe
+        # supplementary files.
         text = ''.join(self._extract_assignment_text(element_id))
         if not text:
             return {}
@@ -293,7 +334,7 @@ class CourseraOnDemand(object):
             # Supplement lecture types are known to contain both <asset> tags
             # and <a href> tags (depending on the course), so we extract
             # both of them.
-            self._extend_supplement_links(
+            extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
 
         return supplement_content
@@ -302,7 +343,8 @@ class CourseraOnDemand(object):
         """
         Extract asset tags from text into a convenient form.
 
-        @param text: Text to extract asset tags from.
+        @param text: Text to extract asset tags from. This text contains HTML
+            code that is parsed by BeautifulSoup.
         @type text: str
 
         @return: Asset map.
@@ -390,7 +432,7 @@ class CourseraOnDemand(object):
         """
         supplement_links = self._extract_links_from_a_tags_in_text(text)
 
-        self._extend_supplement_links(
+        extend_supplement_links(
             supplement_links,
             self._extract_links_from_asset_tags_in_text(text))
 
@@ -475,20 +517,3 @@ class CourseraOnDemand(object):
             supplement_links[extension].append((link, basename))
 
         return supplement_links
-
-    def _extend_supplement_links(self, destination, source):
-        """
-        Extends (merges) two dictionaries with supplement_links.
-
-        @param destination: Destination dictionary that will be extended.
-        @type destination: @see CourseraOnDemand._extract_links_from_text
-
-        @param source: Source dictionary that will be used to extend
-            destination dictionary.
-        @type source: @see CourseraOnDemand._extract_links_from_text
-        """
-        for key, value in iteritems(source):
-            if key not in destination:
-                destination[key] = value
-            else:
-                destination[key].extend(value)
