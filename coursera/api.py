@@ -67,7 +67,7 @@ class CourseraOnDemand(object):
 
         links = self._extract_videos_and_subtitles_from_lecture(
             video_id, subtitle_language, resolution)
-
+				
         assets = self._normalize_assets(assets)
         self._extend_supplement_links(
             links, self._extract_links_from_lecture_assets(assets))
@@ -124,10 +124,15 @@ class CourseraOnDemand(object):
             destination[extension].append((url, basename))
 
         for asset_id in asset_ids:
+            for a in self._get_asset_urls(asset_id, 0):
+                _add_asset(a['name'], a['url'], links)
+            	
             for open_course_asset_id in self._get_open_course_asset_ids(asset_id):
-                for asset in self._get_asset_urls(open_course_asset_id):
+                for asset in self._get_asset_urls(open_course_asset_id, 1):
                     _add_asset(asset['name'], asset['url'], links)
 
+
+				
         return links
 
     def _get_open_course_asset_ids(self, asset_id):
@@ -149,10 +154,14 @@ class CourseraOnDemand(object):
         # elements [ {
         #   definition {
         #       assetId
-        return [element['definition']['assetId']
-                for element in dom['elements']]
+        subids = []
+        
+        for element in dom['elements']:
+            if element['typeName'] != 'url':
+                subids.append(element['definition']['assetId'])
+        return subids
 
-    def _get_asset_urls(self, asset_id):
+    def _get_asset_urls(self, asset_id, bIsSubAsset):
         """
         Get list of asset urls and file names.
 
@@ -165,18 +174,34 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        url = OPENCOURSE_API_ASSETS_V1_URL.format(id=asset_id)
-        page = get_page(self._session, url)
-        dom = json.loads(page)
+        ret = []
+        if bIsSubAsset:
+            url = OPENCOURSE_API_ASSETS_V1_URL.format(id=asset_id)
+            page = get_page(self._session, url)
+            dom = json.loads(page)
 
-        # Structure is as follows:
-        # elements [ {
-        #   name
-        #   url {
-        #       url
-        return [{'name': element['name'],
-                 'url': element['url']['url']}
-                for element in dom['elements']]
+            # Structure is as follows:
+            # elements [ {
+            #   name
+            #   url {
+            #       url
+        
+            
+            for element in dom['elements']:
+                if element['typeName'] == 'url':
+                    ret.append({'name': element['name'], 'url': element['url']['url']})
+        else:
+            url = OPENCOURSE_ASSETS_URL.format(id=asset_id)
+            page = get_page(self._session, url)
+            dom = json.loads(page)
+            print("--->")
+            print(dom)
+            print("---<")
+            for element in dom['elements']:
+                if element['typeName'] == 'url':
+                    ret.append({'name': element['definition']['name'], 'url': element['definition']['url']})
+                
+        return ret
 
     def _extract_videos_and_subtitles_from_lecture(self,
                                                    video_id,
