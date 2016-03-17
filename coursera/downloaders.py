@@ -16,6 +16,7 @@ import requests
 import subprocess
 import sys
 import time
+import re
 
 from six import iteritems
 
@@ -363,6 +364,17 @@ class NativeDownloader(Downloader):
             chunk_sz = 1048576
             progress = DownloadProgress(content_length)
             progress.start()
+            
+            #print("--->")
+            #print(filename)
+            #print("<---")
+            m = re.match(r'^(.+)\?(.+=.+&?)*$', filename)
+            if m != None:
+                filename = m.group(1)
+            #print("--->new file name")
+            #print(filename)
+            #print("<---")                             
+            
             f = open(filename, 'ab') if resume else open(filename, 'wb')
             while True:
                 data = r.raw.read(chunk_sz, decode_content=True)
