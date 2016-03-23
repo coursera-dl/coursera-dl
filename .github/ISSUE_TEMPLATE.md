@@ -1,4 +1,4 @@
-🚨Please review the [Troubleshooting](../README.md#troubleshooting) section
+🚨Please review the [Troubleshooting](../#troubleshooting) section
 before reporting any issue. Don't forget to check also the current issues to
 avoid duplicates.
 
