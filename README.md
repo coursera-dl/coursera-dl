@@ -321,12 +321,38 @@ one of the following actions solve your problem:
       `.netrc` file and,
     * You want the script to use your default netrc file and,
     * You get a message saying `coursera-dl: error: too few arguments`  
-    
+
       Then you should specify `--` as an argument after `-n`, that is, `-n --`
       or change the order in which you pass the arguments to the script, so that
       the argument after `-n` begins with an hyphen (`-`).  Otherwise, Python's
       `argparse` module will think that what you are passing is the name of the
       netrc file that you want to use. See issue #162.
+
+* If your password has spaces, don't forget to write it using quotes.
+
+* Have you installed the right project ?
+
+**Warning**: If you installed the script using PyPi (pip) please verify that you
+installed the correct project. We had to use a different name in pip because our
+original name was already taken. Remember to install it using:
+
+    pip install coursera
+
+# Reporting issues
+
+Before reporting any issue please follow the steps below:
+
+1. Verify that you are running the latest version of the script, and the
+recommended versions of its dependencies, see them in the file
+`requirements.txt`.  Use the following command if in doubt:
+
+        pip install --upgrade coursera
+
+2. If the problem persists, feel free to [open an issue][issue] in our
+bugtracker, please fill the issue template with *as much information as
+possible*.
+
+[issue]: https://github.com/coursera-dl/coursera-dl/issues
 
 # Filing an issue/Reporting a bug
 

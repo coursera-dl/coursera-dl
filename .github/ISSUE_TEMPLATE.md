@@ -1,3 +1,7 @@
+🚨Please review the [Troubleshooting](README.md#Troubleshooting) section
+before reporting any issue. Don't forget to check also the current issues to
+avoid duplicates.
+
 ### Subject of the issue
 Describe your issue here.
 
@@ -7,8 +11,18 @@ Describe your issue here.
 * coursera-dl version:
 
 ### Steps to reproduce
-Tell us how to reproduce this issue. Please provide us the course name, and the
-specific information if possible.
+Tell us how to reproduce this issue, please don't forget to include
+enough information so that you can help us help you:
+
+* Is the problem happening with the latest version of the script?
+* Do you have all the recommended versions of the modules? See them in the
+  file `requirements.txt`.
+* What is the course that you are trying to access?
+* What is the precise command line that you are using (don't forget to obfuscate
+  your username and password, but leave all other information untouched).
+* What are the precise messages that you get? Please, use the `--debug`
+  option before posting the messages as a bug report. Please, copy and paste
+  them.  Don't reword/paraphrase the messages.
 
 ### Expected behaviour
 Tell us what should happen.
