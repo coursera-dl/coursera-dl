@@ -331,12 +331,13 @@ one of the following actions solve your problem:
 * If your password has spaces, don't forget to write it using quotes.
 
 * Have you installed the right project ?
-
-**Warning**: If you installed the script using PyPi (pip) please verify that you
-installed the correct project. We had to use a different name in pip because our
-original name was already taken. Remember to install it using:
-
-    pip install coursera
+  <br><br>
+  **Warning**: If you installed the script using PyPi (pip) please verify that
+  you installed the correct project. We had to use a different name in pip
+  because our original name was already taken. Remember to install it using:
+  ```
+      pip install coursera
+  ```
 
 # Reporting issues
 
