@@ -363,6 +363,14 @@ class NativeDownloader(Downloader):
             chunk_sz = 1048576
             progress = DownloadProgress(content_length)
             progress.start()
+            # IOError fix for filenames with ? and backslash (\) which don't get 
+            # downloaded and interrupt the complete download process
+            if (filename.find('?') != -1):
+                filename = filename.replace('?','')
+            test_for_slash = '\\' in r"%r" % filename
+            if (test_for_slash == True):
+                filename = repr(filename).replace("\\","")
+            # End of ? and \ fix
             f = open(filename, 'ab') if resume else open(filename, 'wb')
             while True:
                 data = r.raw.read(chunk_sz, decode_content=True)
