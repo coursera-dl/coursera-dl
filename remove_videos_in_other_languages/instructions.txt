@@ -1,0 +1,6 @@
+If your primary language is English and the courses downloaded by the script came in multiple languages, you can delete them by doing this:
+
+1. Grant executable permissions to the remove_extra_lang.sh:
+   chmod +x remove_extra_lang.sh
+2. Execute it on the folder in which you would like to delete the extra videos:
+   ./remove_extra_lang.sh
