@@ -521,7 +521,7 @@ def download_lectures(downloader,
                 else:
                     lecfn = os.path.join(
                         sec, format_resource(lecnum + 1, lecname, title, fmt))
-
+                lecfn = lecfn[0:250]
                 if overwrite or not os.path.exists(lecfn) or resume:
                     if not skip_download:
                         logging.info('Downloading: %s', lecfn)
