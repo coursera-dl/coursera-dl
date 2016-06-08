@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup as BeautifulSoup_
 # Force us of bs4 with html5lib
 BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
-from .define import COURSERA_URL
+from .define import COURSERA_URL, INSTRUCTIONS_CSS
 
 from six.moves import html_parser
 from six import iteritems
@@ -57,6 +57,45 @@ def is_debug_run():
     @rtype: bool
     """
     return logging.getLogger().isEnabledFor(logging.DEBUG)
+
+
+def prettify_instructions(text):
+    """
+    Prettify instructions text to make it more suitable for offline reading.
+
+    @param text: HTML (kinda) text to prettify.
+    @type text: str
+
+    @return: Prettified HTML with several markup tags replaced with HTML
+        equivalents.
+    @rtype: str
+    """
+    soup = BeautifulSoup(text)
+
+    # 1. Inject basic CSS style
+    css_soup = BeautifulSoup(INSTRUCTIONS_CSS)
+    soup.head.append(css_soup)
+
+    # 2. Replace <text> with <p>
+    while soup.find('text'):
+        soup.find('text').name = 'p'
+
+    # 3. Replace <heading level="1"> with <h1>
+    while soup.find('heading'):
+        heading = soup.find('heading')
+        heading.name = 'h%s' % heading.attrs.get('level', '1')
+
+    # 4. Replace <code> with <pre>
+    while soup.find('code'):
+        soup.find('code').name = 'pre'
+
+    # 5. Replace <list> with <ol> or <ul>
+    while soup.find('list'):
+        list_ = soup.find('list')
+        type_ = list_.attrs.get('bullettype', 'numbers')
+        list_.name = 'ol' if type_ == 'numbers' else 'ul'
+
+    return soup.prettify()
 
 
 def random_string(length):

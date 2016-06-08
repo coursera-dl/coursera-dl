@@ -66,7 +66,7 @@ from .cookies import (
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError, keyring
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
-                     OPENCOURSE_CONTENT_URL)
+                     OPENCOURSE_CONTENT_URL, IN_MEMORY_MARKER)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     decode_input, BeautifulSoup, is_debug_run)
@@ -549,9 +549,14 @@ def download_lectures(downloader,
 
                 if overwrite or not os.path.exists(lecfn) or resume:
                     if not skip_download:
-                        logging.info('Downloading: %s', lecfn)
-                        if not url.startswith('mailto:'):
-                            downloader.download(url, lecfn, resume=resume)
+                        if url.startswith(IN_MEMORY_MARKER):
+                            page_content = url[len(IN_MEMORY_MARKER):]
+                            with open(lecfn, 'w') as file_object:
+                                file_object.write(page_content)
+                        elif:
+                            if not url.startswith('mailto:'):
+                                logging.info('Downloading: %s', lecfn)
+                                downloader.download(url, lecfn, resume=resume)
                     else:
                         open(lecfn, 'w').close()  # touch
                     last_update = time.time()
