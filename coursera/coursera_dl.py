@@ -71,7 +71,7 @@ from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     decode_input, BeautifulSoup)
 from .network import get_page
-from .api import CourseraOnDemand
+from .api import CourseraOnDemand, OnDemandCourseMaterialItems
 
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -308,7 +308,9 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                  'This may take some time, be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
-    course = CourseraOnDemand(session, dom['id'])
+    course = CourseraOnDemand(session=session, course_id=dom['id'])
+    ondemand_material_items = OnDemandCourseMaterialItems.create(
+        session=session, course_name=dom['slug'])
 
     for module in json_modules:
         module_slug = module['slug']
@@ -318,6 +320,15 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
             section_slug = section['slug']
             lectures = []
             json_lectures = section['elements']
+
+            # Certain modules may be empty-looking programming assignments
+            # e.g. in data-structures, algorithms-on-graphs ondemand courses
+            if not json_lectures:
+                lesson_id = section['id']
+                lecture = ondemand_material_items.get(lesson_id)
+                if lecture is not None:
+                    json_lectures = [lecture]
+
             for lecture in json_lectures:
                 lecture_slug = lecture['slug']
                 typename = lecture['content']['typeName']

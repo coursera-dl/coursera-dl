@@ -113,6 +113,11 @@ OPENCOURSE_ASSETS_URL = \
 OPENCOURSE_API_ASSETS_V1_URL = \
     'https://www.coursera.org/api/assets.v1/{id}'
 
+OPENCOURSE_ONDEMAND_COURSE_MATERIALS = \
+    'https://www.coursera.org/api/onDemandCourseMaterials.v1/?'\
+        'q=slug&slug={class_name}&includes=moduleIds%2ClessonIds%2CpassableItemGroups%2CpassableItemGroupChoices%2CpassableLessonElements%2CitemIds%2Ctracks'\
+        '&fields=moduleIds%2ConDemandCourseMaterialModules.v1(name%2Cslug%2Cdescription%2CtimeCommitment%2ClessonIds%2Coptional)%2ConDemandCourseMaterialLessons.v1(name%2Cslug%2CtimeCommitment%2CelementIds%2Coptional%2CtrackId)%2ConDemandCourseMaterialPassableItemGroups.v1(requiredPassedCount%2CpassableItemGroupChoiceIds%2CtrackId)%2ConDemandCourseMaterialPassableItemGroupChoices.v1(name%2Cdescription%2CitemIds)%2ConDemandCourseMaterialPassableLessonElements.v1(gradingWeight)%2ConDemandCourseMaterialItems.v1(name%2Cslug%2CtimeCommitment%2Ccontent%2CisLocked%2ClockableByItem%2CitemLockedReasonCode%2CtrackId)%2ConDemandCourseMaterialTracks.v1(passablesCount)'\
+        '&showLockedItems=true'
 
 ABOUT_URL = ('https://api.coursera.org/api/catalog.v1/courses?'
              'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,'

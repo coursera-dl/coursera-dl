@@ -18,7 +18,76 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_ASSET_URL,
                      OPENCOURSE_ASSETS_URL,
                      OPENCOURSE_API_ASSETS_V1_URL,
+                     OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                      OPENCOURSE_VIDEO_URL)
+
+
+class OnDemandCourseMaterialItems(object):
+    """
+    Helper class that allows accessing lecture JSONs by lesson IDs.
+    """
+    def __init__(self, items):
+        """
+        Initialization. Build a map from lessonId to Lecture (item)
+
+        @param items: linked.OnDemandCourseMaterialItems key of
+            OPENCOURSE_ONDEMAND_COURSE_MATERIALS response.
+        @type items: dict
+        """
+        # Build a map of lessonId => Item
+        self._items = dict((item['lessonId'], item) for item in items)
+
+    @staticmethod
+    def create(session, course_name):
+        """
+        Create an instance using a session and a course_name.
+
+        @param session: Requests session.
+        @type session: requests.Session
+
+        @param course_name: Course name (slug) from course json.
+        @type course_name: str
+
+        @return: Instance of OnDemandCourseMaterialItems
+        @rtype: OnDemandCourseMaterialItems
+        """
+
+        url = OPENCOURSE_ONDEMAND_COURSE_MATERIALS.format(class_name=course_name)
+        page = get_page(session, url)
+        dom = json.loads(page)
+        return OnDemandCourseMaterialItems(
+            dom['linked']['onDemandCourseMaterialItems.v1'])
+
+    def get(self, lesson_id):
+        """
+        Return lecture by lesson ID.
+
+        @param lesson_id: Lesson ID.
+        @type lesson_id: str
+
+        @return: Lesson JSON.
+        @rtype: dict
+        Example:
+        {
+          "id": "AUd0k",
+          "moduleId": "0MGvs",
+          "lessonId": "QgCuM",
+          "name": "Programming Assignment 1: Decomposition of Graphs",
+          "slug": "programming-assignment-1-decomposition-of-graphs",
+          "timeCommitment": 10800000,
+          "content": {
+            "typeName": "gradedProgramming",
+            "definition": {
+              "programmingAssignmentId": "zHzR5yhHEeaE0BKOcl4zJQ@2",
+              "gradingWeight": 20
+            }
+          },
+          "isLocked": true,
+          "itemLockedReasonCode": "PREMIUM",
+          "trackId": "core"
+        },
+        """
+        return self._items.get(lesson_id)
 
 
 class CourseraOnDemand(object):
