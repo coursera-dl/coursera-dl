@@ -69,7 +69,7 @@ from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
                      OPENCOURSE_CONTENT_URL)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
-                    decode_input, BeautifulSoup)
+                    decode_input, BeautifulSoup, is_debug_run)
 from .network import get_page
 from .api import CourseraOnDemand, OnDemandCourseMaterialItems
 
@@ -303,6 +303,7 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
     """
 
     dom = json.loads(page)
+    course_name = dom['slug']
 
     logging.info('Parsing syllabus of on-demand course. '
                  'This may take some time, be patient ...')
@@ -310,7 +311,13 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
     json_modules = dom['courseMaterial']['elements']
     course = CourseraOnDemand(session=session, course_id=dom['id'])
     ondemand_material_items = OnDemandCourseMaterialItems.create(
-        session=session, course_name=dom['slug'])
+        session=session, course_name=course_name)
+
+    if is_debug_run():
+        with open('%s-syllabus-raw.json' % course_name, 'w') as file_object:
+            json.dump(dom, file_object, indent=4)
+        with open('%s-course-material-items.json' % course_name, 'w') as file_object:
+            json.dump(ondemand_material_items._items, file_object, indent=4)
 
     for module in json_modules:
         module_slug = module['slug']
@@ -996,6 +1003,10 @@ def download_on_demand_class(args, class_name):
                                        args.intact_fnames,
                                        args.subtitle_language,
                                        args.video_resolution)
+
+    if is_debug_run():
+        with open('%s-syllabus-parsed.json' % class_name, 'w') as file_object:
+            json.dump(modules, file_object, indent=4)
 
     downloader = get_downloader(session, class_name, args)
 
