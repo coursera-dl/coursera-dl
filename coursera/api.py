@@ -11,7 +11,7 @@ from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
-                    extend_supplement_links)
+                    extend_supplement_links, prettify_instructions)
 from .network import get_page
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -19,7 +19,10 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_ASSETS_URL,
                      OPENCOURSE_API_ASSETS_V1_URL,
                      OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
-                     OPENCOURSE_VIDEO_URL)
+                     OPENCOURSE_VIDEO_URL,
+
+                     IN_MEMORY_EXTENSION,
+                     IN_MEMORY_MARKER)
 
 
 class OnDemandCourseMaterialItems(object):
@@ -405,6 +408,11 @@ class CourseraOnDemand(object):
             # both of them.
             extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
+
+            instruction = (IN_MEMORY_MARKER + prettify_instructions(value),
+                           'instructions')
+            extend_supplement_links(
+                supplement_content, {IN_MEMORY_EXTENSION: [instruction]})
 
         return supplement_content
 

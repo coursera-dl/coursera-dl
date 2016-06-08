@@ -140,3 +140,29 @@ else:
 
 PATH_CACHE = os.path.join(tempfile.gettempdir(), _USER + "_coursera_dl_cache")
 PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')
+
+#: This extension is used to save contents of supplementary instructions.
+IN_MEMORY_EXTENSION = 'html'
+
+#: This marker is added in front of a URL when supplementary instructions
+#: are passed from parser to downloader. URL field fill contain the data
+#: that will be stored to a file. The marker should be removed from URL
+#: field first.
+IN_MEMORY_MARKER = '#inmemory#'
+
+#: CSS that is usen to prettify instructions
+INSTRUCTIONS_CSS = '''
+<style>
+pre {
+    display: block;
+    margin: 20px;
+    background: #424242;
+    color: #fff;
+    font-size: 13px;
+    white-space: pre-wrap;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    border: 1px solid #ccc;
+}
+</style>
+'''
