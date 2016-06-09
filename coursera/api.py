@@ -6,12 +6,13 @@ downloader.
 
 import os
 import json
+import base64
 import logging
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
-                    extend_supplement_links, prettify_instructions)
+                    extend_supplement_links)
 from .network import get_page
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -20,6 +21,8 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_API_ASSETS_V1_URL,
                      OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                      OPENCOURSE_VIDEO_URL,
+
+                     INSTRUCTIONS_CSS,
 
                      IN_MEMORY_EXTENSION,
                      IN_MEMORY_MARKER)
@@ -145,6 +148,83 @@ class CourseraOnDemand(object):
             links, self._extract_links_from_lecture_assets(assets))
 
         return links
+
+    def _prettify_instructions(self, text):
+        """
+        Prettify instructions text to make it more suitable for offline reading.
+
+        @param text: HTML (kinda) text to prettify.
+        @type text: str
+
+        @return: Prettified HTML with several markup tags replaced with HTML
+            equivalents.
+        @rtype: str
+        """
+        soup = BeautifulSoup(text)
+        self._convert_instructions_basic(soup)
+        self._convert_instructions_images(soup)
+        return soup.prettify()
+
+    def _convert_instructions_basic(self, soup):
+        """
+        Perform basic conversion of instructions markup. This includes
+        replacement of several textual markup tags with their HTML equivalents.
+
+        @param soup: BeautifulSoup instance.
+        @type soup: BeautifulSoup
+        """
+        # 1. Inject basic CSS style
+        css_soup = BeautifulSoup(INSTRUCTIONS_CSS)
+        soup.head.append(css_soup)
+
+        # 2. Replace <text> with <p>
+        while soup.find('text'):
+            soup.find('text').name = 'p'
+
+        # 3. Replace <heading level="1"> with <h1>
+        while soup.find('heading'):
+            heading = soup.find('heading')
+            heading.name = 'h%s' % heading.attrs.get('level', '1')
+
+        # 4. Replace <code> with <pre>
+        while soup.find('code'):
+            soup.find('code').name = 'pre'
+
+        # 5. Replace <list> with <ol> or <ul>
+        while soup.find('list'):
+            list_ = soup.find('list')
+            type_ = list_.attrs.get('bullettype', 'numbers')
+            list_.name = 'ol' if type_ == 'numbers' else 'ul'
+
+    def _convert_instructions_images(self, soup):
+        """
+        Convert images of instructions markup. Images are downloaded,
+        base64-encoded and inserted into <img> tags.
+
+        @param soup: BeautifulSoup instance.
+        @type soup: BeautifulSoup
+        """
+        # 6. Replace <img> assets with actual image contents
+        images = [image for image in soup.find_all('img')
+                  if image.attrs.get('assetid') is not None]
+        if not images:
+            return
+
+        asset_ids = [image.attrs.get('assetid') for image in images]
+        ids = ','.join(asset_ids)
+
+        url = OPENCOURSE_API_ASSETS_V1_URL.format(id=ids)
+        page = get_page(self._session, url)
+        asset_list = json.loads(page)
+
+        asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
+        for image in images:
+            url = asset_map[image['assetid']]['url']['url']
+            request = self._session.get(url)
+            if request.status_code == 200:
+                content_type = request.headers.get('Content-Type', 'image/png')
+                encoded64 = base64.b64encode(request.content).decode()
+                image['src'] = 'data:%s;base64,%s' % (content_type, encoded64)
 
     def _normalize_assets(self, assets):
         """
@@ -378,7 +458,7 @@ class CourseraOnDemand(object):
 
         supplement_links = self._extract_links_from_text(text)
 
-        instructions = (IN_MEMORY_MARKER + prettify_instructions(text),
+        instructions = (IN_MEMORY_MARKER + self._prettify_instructions(text),
                        'instructions')
         extend_supplement_links(
             supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
@@ -397,8 +477,8 @@ class CourseraOnDemand(object):
         url = OPENCOURSE_SUPPLEMENT_URL.format(
             course_id=self._course_id, element_id=element_id)
         page = get_page(self._session, url)
-
         dom = json.loads(page)
+
         supplement_content = {}
 
         # Supplement content has structure as follows:
@@ -415,7 +495,7 @@ class CourseraOnDemand(object):
             extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
 
-            instructions = (IN_MEMORY_MARKER + prettify_instructions(value),
+            instructions = (IN_MEMORY_MARKER + self._prettify_instructions(value),
                            'instructions')
             extend_supplement_links(
                 supplement_content, {IN_MEMORY_EXTENSION: [instructions]})
@@ -483,8 +563,8 @@ class CourseraOnDemand(object):
         url = OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL.format(
             course_id=self._course_id, element_id=element_id)
         page = get_page(self._session, url)
-
         dom = json.loads(page)
+
         return [element['submissionLearnerSchema']['definition']
                 ['assignmentInstructions']['definition']['value']
                 for element in dom['elements']]
