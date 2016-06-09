@@ -3,6 +3,7 @@ This module contains utility functions that operate on the network, download
 some data and so on.
 """
 
+import json
 import logging
 
 import requests
