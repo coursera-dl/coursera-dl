@@ -111,7 +111,7 @@ OPENCOURSE_ASSETS_URL = \
 #   "linked": null
 # }
 OPENCOURSE_API_ASSETS_V1_URL = \
-    'https://www.coursera.org/api/assets.v1/{id}'
+    'https://www.coursera.org/api/assets.v1?ids={id}'
 
 OPENCOURSE_ONDEMAND_COURSE_MATERIALS = \
     'https://www.coursera.org/api/onDemandCourseMaterials.v1/?'\
