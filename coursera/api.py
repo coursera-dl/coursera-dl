@@ -13,7 +13,7 @@ from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links)
-from .network import get_page
+from .network import get_page, get_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
@@ -58,9 +58,8 @@ class OnDemandCourseMaterialItems(object):
         @rtype: OnDemandCourseMaterialItems
         """
 
-        url = OPENCOURSE_ONDEMAND_COURSE_MATERIALS.format(class_name=course_name)
-        page = get_page(session, url)
-        dom = json.loads(page)
+        dom = get_page_json(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
+                            class_name=course_name)
         return OnDemandCourseMaterialItems(
             dom['linked']['onDemandCourseMaterialItems.v1'])
 
@@ -211,13 +210,10 @@ class CourseraOnDemand(object):
             return
 
         asset_ids = [image.attrs.get('assetid') for image in images]
-        ids = ','.join(asset_ids)
-
-        url = OPENCOURSE_API_ASSETS_V1_URL.format(id=ids)
-        page = get_page(self._session, url)
-        asset_list = json.loads(page)
-
+        asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
+                                   id=','.join(asset_ids))
         asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
+
         for image in images:
             url = asset_map[image['assetid']]['url']['url']
             request = self._session.get(url)
@@ -295,10 +291,8 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        url = OPENCOURSE_ASSETS_URL.format(id=asset_id)
-        page = get_page(self._session, url)
+        dom = get_page_json(self._session, OPENCOURSE_ASSETS_URL, id=asset_id)
         logging.debug('Parsing JSON for asset_id <%s>.', asset_id)
-        dom = json.loads(page)
 
         urls = []
 
@@ -358,9 +352,7 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        url = OPENCOURSE_API_ASSETS_V1_URL.format(id=asset_id)
-        page = get_page(self._session, url)
-        dom = json.loads(page)
+        dom = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL, id=asset_id)
 
         # Structure is as follows:
         # elements [ {
@@ -376,12 +368,10 @@ class CourseraOnDemand(object):
                                                    subtitle_language='en',
                                                    resolution='540p'):
 
-        url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
-        page = get_page(self._session, url)
+        dom = get_page_json(self._session, OPENCOURSE_VIDEO_URL, video_id=video_id)
 
         logging.debug('Parsing JSON for video_id <%s>.', video_id)
         video_content = {}
-        dom = json.loads(page)
 
         # videos
         logging.info('Gathering video URLs for video_id <%s>.', video_id)
@@ -474,10 +464,8 @@ class CourseraOnDemand(object):
         """
         logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        url = OPENCOURSE_SUPPLEMENT_URL.format(
-            course_id=self._course_id, element_id=element_id)
-        page = get_page(self._session, url)
-        dom = json.loads(page)
+        dom = get_page_json(self._session, OPENCOURSE_SUPPLEMENT_URL,
+                            course_id=self._course_id, element_id=element_id)
 
         supplement_content = {}
 
@@ -541,10 +529,8 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        ids = quote_plus(','.join(asset_ids))
-        url = OPENCOURSE_ASSET_URL.format(ids=ids)
-        page = get_page(self._session, url)
-        dom = json.loads(page)
+        dom = get_page_json(self._session, OPENCOURSE_ASSET_URL,
+                            ids=quote_plus(','.join(asset_ids)))
 
         return [{'id': element['id'],
                  'url': element['url']}
@@ -560,10 +546,9 @@ class CourseraOnDemand(object):
         @return: List of assignment text (instructions).
         @rtype: [str]
         """
-        url = OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL.format(
-            course_id=self._course_id, element_id=element_id)
-        page = get_page(self._session, url)
-        dom = json.loads(page)
+        dom = get_page_json(self._session, OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
+                            course_id=self._course_id, element_id=element_id)
+
 
         return [element['submissionLearnerSchema']['definition']
                 ['assignmentInstructions']['definition']['value']
