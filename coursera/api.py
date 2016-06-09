@@ -377,6 +377,12 @@ class CourseraOnDemand(object):
             return {}
 
         supplement_links = self._extract_links_from_text(text)
+
+        instructions = (IN_MEMORY_MARKER + prettify_instructions(text),
+                       'instructions')
+        extend_supplement_links(
+            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+
         return supplement_links
 
     def extract_links_from_supplement(self, element_id):
@@ -409,10 +415,10 @@ class CourseraOnDemand(object):
             extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
 
-            instruction = (IN_MEMORY_MARKER + prettify_instructions(value),
+            instructions = (IN_MEMORY_MARKER + prettify_instructions(value),
                            'instructions')
             extend_supplement_links(
-                supplement_content, {IN_MEMORY_EXTENSION: [instruction]})
+                supplement_content, {IN_MEMORY_EXTENSION: [instructions]})
 
         return supplement_content
 
