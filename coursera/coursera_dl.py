@@ -727,6 +727,11 @@ def parse_args(args=None):
                                    default=None,
                                    help='use axel for downloading,'
                                    ' optionally specify axel bin')
+    group_external_dl.add_argument('--downloader-arguments',
+                                   dest='downloader_arguments',
+                                   default='',
+                                   help='additional arguments passed to the'
+                                   ' downloader')
 
     parser.add_argument('--resume',
                         dest='resume',
@@ -872,6 +877,9 @@ def parse_args(args=None):
         # by some external script while logging may output excessive information
         print(__version__)
         sys.exit(0)
+
+    # turn list of strings into list
+    args.downloader_arguments = args.downloader_arguments.split()
 
     # turn list of strings into list
     args.file_formats = args.file_formats.split()

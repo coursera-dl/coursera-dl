@@ -74,9 +74,10 @@ class ExternalDownloader(Downloader):
     # External downloader binary
     bin = None
 
-    def __init__(self, session, bin=None):
+    def __init__(self, session, bin=None, downloader_arguments=None):
         self.session = session
         self.bin = bin or self.__class__.bin
+        self.downloader_arguments = downloader_arguments or []
 
         if not self.bin:
             raise RuntimeError("No bin specified")
@@ -118,6 +119,7 @@ class ExternalDownloader(Downloader):
 
     def _start_download(self, url, filename, resume):
         command = self._create_command(url, filename)
+        command.extend(self.downloader_arguments)
         self._prepare_cookies(command, url)
         if resume:
             self._enable_resume(command)
@@ -395,6 +397,7 @@ def get_downloader(session, class_name, args):
 
     for bin, class_ in iteritems(external):
         if getattr(args, bin):
-            return class_(session, bin=getattr(args, bin))
+            return class_(session, bin=getattr(args, bin),
+                          downloader_arguments=args.downloader_arguments)
 
     return NativeDownloader(session)
