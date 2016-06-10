@@ -13,6 +13,8 @@ import sys
 
 from setuptools import setup
 
+from coursera import __version__
+
 
 def generate_readme_rst():
     """
@@ -84,7 +86,7 @@ trove_classifiers = [
 
 setup(
     name='coursera',
-    version='0.5.2',
+    version=__version__,
     maintainer='Rogério Theodoro de Brito',
     maintainer_email='rbrito@ime.usp.br',
 

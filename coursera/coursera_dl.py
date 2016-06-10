@@ -72,6 +72,7 @@ from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     decode_input, BeautifulSoup)
 from .network import get_page
 from .api import CourseraOnDemand
+from coursera import __version__
 
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
@@ -838,6 +839,12 @@ def parse_args(args=None):
                              default=False,
                              help='print lots of debug information')
 
+    group_debug.add_argument('--version',
+                             dest='version',
+                             action='store_true',
+                             default=False,
+                             help='display version and exit')
+
     group_debug.add_argument('-l',  # FIXME: remove short option from rarely used ones
                              '--process_local_page',
                              dest='local_page',
@@ -858,6 +865,13 @@ def parse_args(args=None):
     else:
         logging.basicConfig(level=logging.INFO,
                             format='%(message)s')
+
+    # show version?
+    if args.version:
+        # we use print (not logging) function because version may be used
+        # by some external script while logging may output excessive information
+        print(__version__)
+        sys.exit(0)
 
     # turn list of strings into list
     args.file_formats = args.file_formats.split()
@@ -1040,6 +1054,7 @@ def main():
     """
 
     args = parse_args()
+    logging.info('coursera_dl version %s' % __version__)
     completed_classes = []
 
     mkdir_p(PATH_CACHE, 0o700)
