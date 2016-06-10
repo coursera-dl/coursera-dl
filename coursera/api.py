@@ -22,7 +22,7 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                      OPENCOURSE_VIDEO_URL,
 
-                     INSTRUCTIONS_CSS,
+                     INSTRUCTIONS_HTML_INJECTION,
 
                      IN_MEMORY_EXTENSION,
                      IN_MEMORY_MARKER)
@@ -173,7 +173,7 @@ class CourseraOnDemand(object):
         @type soup: BeautifulSoup
         """
         # 1. Inject basic CSS style
-        css_soup = BeautifulSoup(INSTRUCTIONS_CSS)
+        css_soup = BeautifulSoup(INSTRUCTIONS_HTML_INJECTION)
         soup.head.append(css_soup)
 
         # 2. Replace <text> with <p>
