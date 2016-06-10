@@ -53,6 +53,7 @@ import shutil
 import subprocess
 import sys
 import time
+import codecs
 
 from distutils.version import LooseVersion as V
 
@@ -313,7 +314,7 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
     course_name = dom['slug']
 
     logging.info('Parsing syllabus of on-demand course. '
-                 'This may take some time, be patient ...')
+                 'This may take some time, please be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
     course = CourseraOnDemand(session=session, course_id=dom['id'])
@@ -551,7 +552,7 @@ def download_lectures(downloader,
                     if not skip_download:
                         if url.startswith(IN_MEMORY_MARKER):
                             page_content = url[len(IN_MEMORY_MARKER):]
-                            with open(lecfn, 'w') as file_object:
+                            with codecs.open(lecfn, 'w', 'utf-8') as file_object:
                                 file_object.write(page_content)
                         elif:
                             if not url.startswith('mailto:'):

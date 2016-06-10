@@ -151,7 +151,7 @@ IN_MEMORY_EXTENSION = 'html'
 IN_MEMORY_MARKER = '#inmemory#'
 
 #: CSS that is usen to prettify instructions
-INSTRUCTIONS_CSS = '''
+INSTRUCTIONS_HTML_INJECTION = '''
 <style>
 pre {
     display: block;
@@ -165,4 +165,18 @@ pre {
     border: 1px solid #ccc;
 }
 </style>
+
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ['$','$'] ],
+      displayMath: [ ["\\\\[","\\\\]"] ],
+      processEscapes: true
+    }
+  });
+</script>
 '''
