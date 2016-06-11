@@ -526,7 +526,8 @@ def download_lectures(downloader,
                 if overwrite or not os.path.exists(lecfn) or resume:
                     if not skip_download:
                         logging.info('Downloading: %s', lecfn)
-                        downloader.download(url, lecfn, resume=resume)
+                        if not url.startswith('mailto:'):
+                            downloader.download(url, lecfn, resume=resume)
                     else:
                         open(lecfn, 'w').close()  # touch
                     last_update = time.time()
