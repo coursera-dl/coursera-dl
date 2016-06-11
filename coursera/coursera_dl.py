@@ -70,7 +70,7 @@ from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     decode_input, BeautifulSoup)
-from .network import get_page
+from .network import get_page, get_page_and_url
 from .api import CourseraOnDemand
 from coursera import __version__
 
@@ -145,8 +145,13 @@ def get_old_style_syllabus(session, class_name, local_page=False, preview=False)
 
     if not (local_page and os.path.exists(local_page)):
         url = get_syllabus_url(class_name, preview)
-        page = get_page(session, url)
+        page, final_url = get_page_and_url(session, url)
         logging.info('Downloaded %s (%d bytes)', url, len(page))
+
+        if "/learn/" in final_url:
+            # got redirected to a on-demand course page,
+            # abort and let on_demand download run
+            raise ClassNotFound
 
         # cache the page if we're in 'local' mode
         if local_page:
