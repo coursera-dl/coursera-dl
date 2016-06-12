@@ -347,10 +347,16 @@ This is a known error, please do not report about this error message! The proble
 sudo apt-get install build-essential python-dev libssl-dev libffi-dev
 pip install --user urllib3 pyasn1 ndg-httpsclient pyOpenSSL
 ```
-If the error remains, try installing coursera-dl from github following this instruction: https://github.com/coursera-dl/coursera-dl#alternative-installation-method-for-unix-systems
+If the error remains, try installing coursera-dl from github following this instruction:
+https://github.com/coursera-dl/coursera-dl#alternative-installation-method-for-unix-systems
 
 If you still have the problem, please read the following issues for more ideas on how to fix it:
-[#330](https://github.com/coursera-dl/coursera-dl/issues/330) [#377](https://github.com/coursera-dl/coursera-dl/issues/377)
+[#330](https://github.com/coursera-dl/coursera-dl/issues/330)
+[#377](https://github.com/coursera-dl/coursera-dl/issues/377)
+[#329](https://github.com/coursera-dl/coursera-dl/issues/329)
+
+This is also worth reading:
+https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning
 
 # Reporting issues
 

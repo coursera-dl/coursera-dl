@@ -70,6 +70,7 @@ from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
                      OPENCOURSE_CONTENT_URL, IN_MEMORY_MARKER)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
+                    print_ssl_error_message,
                     decode_input, BeautifulSoup, is_debug_run)
 
 from .network import get_page, get_page_and_url
@@ -1115,6 +1116,11 @@ def main():
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
+        except requests.exceptions.SSLError as e:
+            logging.error('SSLError %s', e)
+            print_ssl_error_message(e)
+            if is_debug_run():
+                raise
         except ClassNotFound as cnf:
             logging.error('Could not find class: %s', cnf)
         except AuthenticationFailed as af:

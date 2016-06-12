@@ -172,3 +172,21 @@ def extend_supplement_links(destination, source):
             destination[key] = value
         else:
             destination[key].extend(value)
+
+
+def print_ssl_error_message(exception):
+    """
+    Print SSLError message with URL to instructions on how to fix it.
+    """
+    message = """
+#####################################################################
+# ATTENTION! PLEASE READ THIS!
+#
+# The following error has just occurred:
+# %s %s
+#
+# Please read instructions on how to fix this error here:
+# https://github.com/coursera-dl/coursera-dl#sslerror-errno-1-_sslc504-error14094410ssl-routinesssl3_read_bytessslv3-alert-handshake-failure
+#####################################################################
+""" % (type(exception).__name__, str(exception))
+    logging.error(message)
