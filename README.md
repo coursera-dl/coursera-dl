@@ -93,7 +93,7 @@ the command:
     pip install coursera
 
 
-This will dowload [the latest released version][23] of the program from the
+This will download [the latest released version][23] of the program from the
 [Python Package Index (PyPI)][22] along with *all* the necessary
 dependencies. At this point, you should be ready to start using it.
 
