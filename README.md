@@ -339,6 +339,19 @@ one of the following actions solve your problem:
       pip install coursera
   ```
 
+### SSLError: [Errno 1] _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure
+
+This is a known error, please do not report about this error message! The problem is in **YOUR** environment. To fix it, do the following:
+
+``` bash
+sudo apt-get install build-essential python-dev libssl-dev libffi-dev
+pip install --user urllib3 pyasn1 ndg-httpsclient pyOpenSSL
+```
+If the error remains, try installing coursera-dl from github following this instruction: https://github.com/coursera-dl/coursera-dl#alternative-installation-method-for-unix-systems
+
+If you still have the problem, please read the following issues for more ideas on how to fix it:
+[#330](https://github.com/coursera-dl/coursera-dl/issues/330) [#377](https://github.com/coursera-dl/coursera-dl/issues/377)
+
 # Reporting issues
 
 Before reporting any issue please follow the steps below:
