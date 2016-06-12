@@ -554,7 +554,7 @@ def download_lectures(downloader,
                             page_content = url[len(IN_MEMORY_MARKER):]
                             with codecs.open(lecfn, 'w', 'utf-8') as file_object:
                                 file_object.write(page_content)
-                        elif:
+                        else:
                             if not url.startswith('mailto:'):
                                 logging.info('Downloading: %s', lecfn)
                                 downloader.download(url, lecfn, resume=resume)
