@@ -488,6 +488,29 @@ def find_resources_to_get(lecture, file_formats, resource_filter, ignored_format
     return resources_to_get
 
 
+def create_m3u_playlist(section_dir):
+    """
+    Create M3U playlist with contents of `section_dir`/*.mp4. The playlist
+    will be created in that directory.
+
+    @param section_dir: Path where to scan for *.mp4 files.
+    @type section_dir: str
+    """
+    path_to_return = os.getcwd()
+
+    for (_path, subdirs, files) in os.walk(section_dir):
+        os.chdir(_path)
+        globbed_videos = sorted(glob.glob("*.mp4"))
+        m3u_name = os.path.split(_path)[1] + ".m3u"
+
+        if len(globbed_videos):
+            with open(m3u_name, "w") as m3u:
+                for video in globbed_videos:
+                    m3u.write(video + "\n")
+            os.chdir(path_to_return)
+    os.chdir(path_to_return)
+
+
 def download_lectures(downloader,
                       class_name,
                       sections,
@@ -520,8 +543,8 @@ def download_lectures(downloader,
                           section)
             continue
 
-        sec = os.path.join(path, class_name,
-                           format_section(secnum + 1, section, class_name, verbose_dirs))
+        section_dir = os.path.join(path, class_name,
+                      format_section(secnum + 1, section, class_name, verbose_dirs))
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
             if lecture_filter and not re.search(lecture_filter,
                                                 lecname):
@@ -529,8 +552,8 @@ def download_lectures(downloader,
                               lecname)
                 continue
 
-            if not os.path.exists(sec):
-                mkdir_p(sec)
+            if not os.path.exists(section_dir):
+                mkdir_p(section_dir)
 
             resources_to_get = find_resources_to_get(lecture,
                                                      file_formats,
@@ -542,12 +565,12 @@ def download_lectures(downloader,
 
                 if combined_section_lectures_nums:
                     lecfn = os.path.join(
-                        sec,
+                        section_dir,
                         format_combine_number_resource(
                             secnum + 1, lecnum + 1, lecname, title, fmt))
                 else:
                     lecfn = os.path.join(
-                        sec, format_resource(lecnum + 1, lecname, title, fmt))
+                        section_dir, format_resource(lecnum + 1, lecname, title, fmt))
 
                 if overwrite or not os.path.exists(lecfn) or resume:
                     if not skip_download:
@@ -571,23 +594,12 @@ def download_lectures(downloader,
         # After fetching resources, create a playlist in M3U format with the
         # videos downloaded.
         if playlist:
-            path_to_return = os.getcwd()
-
-            for (_path, subdirs, files) in os.walk(sec):
-                os.chdir(_path)
-                globbed_videos = sorted(glob.glob("*.mp4"))
-                m3u_name = os.path.split(_path)[1] + ".m3u"
-
-                if len(globbed_videos):
-                    with open(m3u_name, "w") as m3u:
-                        for video in globbed_videos:
-                            m3u.write(video + "\n")
-                    os.chdir(path_to_return)
+            create_m3u_playlist(section_dir)
 
         if hooks:
             for hook in hooks:
-                logging.info('Running hook %s for section %s.', hook, sec)
-                os.chdir(sec)
+                logging.info('Running hook %s for section %s.', hook, section_dir)
+                os.chdir(section_dir)
                 subprocess.call(hook)
 
     # if we haven't updated any files in 1 month, we're probably
