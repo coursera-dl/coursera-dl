@@ -111,8 +111,13 @@ OPENCOURSE_ASSETS_URL = \
 #   "linked": null
 # }
 OPENCOURSE_API_ASSETS_V1_URL = \
-    'https://www.coursera.org/api/assets.v1/{id}'
+    'https://www.coursera.org/api/assets.v1?ids={id}'
 
+OPENCOURSE_ONDEMAND_COURSE_MATERIALS = \
+    'https://www.coursera.org/api/onDemandCourseMaterials.v1/?'\
+        'q=slug&slug={class_name}&includes=moduleIds%2ClessonIds%2CpassableItemGroups%2CpassableItemGroupChoices%2CpassableLessonElements%2CitemIds%2Ctracks'\
+        '&fields=moduleIds%2ConDemandCourseMaterialModules.v1(name%2Cslug%2Cdescription%2CtimeCommitment%2ClessonIds%2Coptional)%2ConDemandCourseMaterialLessons.v1(name%2Cslug%2CtimeCommitment%2CelementIds%2Coptional%2CtrackId)%2ConDemandCourseMaterialPassableItemGroups.v1(requiredPassedCount%2CpassableItemGroupChoiceIds%2CtrackId)%2ConDemandCourseMaterialPassableItemGroupChoices.v1(name%2Cdescription%2CitemIds)%2ConDemandCourseMaterialPassableLessonElements.v1(gradingWeight)%2ConDemandCourseMaterialItems.v1(name%2Cslug%2CtimeCommitment%2Ccontent%2CisLocked%2ClockableByItem%2CitemLockedReasonCode%2CtrackId)%2ConDemandCourseMaterialTracks.v1(passablesCount)'\
+        '&showLockedItems=true'
 
 ABOUT_URL = ('https://api.coursera.org/api/catalog.v1/courses?'
              'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,'
@@ -135,3 +140,43 @@ else:
 
 PATH_CACHE = os.path.join(tempfile.gettempdir(), _USER + "_coursera_dl_cache")
 PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')
+
+#: This extension is used to save contents of supplementary instructions.
+IN_MEMORY_EXTENSION = 'html'
+
+#: This marker is added in front of a URL when supplementary instructions
+#: are passed from parser to downloader. URL field fill contain the data
+#: that will be stored to a file. The marker should be removed from URL
+#: field first.
+IN_MEMORY_MARKER = '#inmemory#'
+
+#: CSS that is usen to prettify instructions
+INSTRUCTIONS_HTML_INJECTION = '''
+<style>
+pre {
+    display: block;
+    margin: 20px;
+    background: #424242;
+    color: #fff;
+    font-size: 13px;
+    white-space: pre-wrap;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    border: 1px solid #ccc;
+}
+</style>
+
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ['$','$'] ],
+      displayMath: [ ["\\\\[","\\\\]"] ],
+      processEscapes: true
+    }
+  });
+</script>
+'''

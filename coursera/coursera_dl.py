@@ -53,6 +53,7 @@ import shutil
 import subprocess
 import sys
 import time
+import codecs
 
 from distutils.version import LooseVersion as V
 
@@ -66,12 +67,13 @@ from .cookies import (
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError, keyring
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
-                     OPENCOURSE_CONTENT_URL)
+                     OPENCOURSE_CONTENT_URL, IN_MEMORY_MARKER)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
-                    decode_input, BeautifulSoup)
+                    decode_input, BeautifulSoup, is_debug_run)
+
 from .network import get_page, get_page_and_url
-from .api import CourseraOnDemand
+from .api import CourseraOnDemand, OnDemandCourseMaterialItems
 from coursera import __version__
 
 # URL containing information about outdated modules
@@ -309,12 +311,21 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
     """
 
     dom = json.loads(page)
+    course_name = dom['slug']
 
     logging.info('Parsing syllabus of on-demand course. '
-                 'This may take some time, be patient ...')
+                 'This may take some time, please be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
-    course = CourseraOnDemand(session, dom['id'])
+    course = CourseraOnDemand(session=session, course_id=dom['id'])
+    ondemand_material_items = OnDemandCourseMaterialItems.create(
+        session=session, course_name=course_name)
+
+    if is_debug_run():
+        with open('%s-syllabus-raw.json' % course_name, 'w') as file_object:
+            json.dump(dom, file_object, indent=4)
+        with open('%s-course-material-items.json' % course_name, 'w') as file_object:
+            json.dump(ondemand_material_items._items, file_object, indent=4)
 
     for module in json_modules:
         module_slug = module['slug']
@@ -324,6 +335,15 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
             section_slug = section['slug']
             lectures = []
             json_lectures = section['elements']
+
+            # Certain modules may be empty-looking programming assignments
+            # e.g. in data-structures, algorithms-on-graphs ondemand courses
+            if not json_lectures:
+                lesson_id = section['id']
+                lecture = ondemand_material_items.get(lesson_id)
+                if lecture is not None:
+                    json_lectures = [lecture]
+
             for lecture in json_lectures:
                 lecture_slug = lecture['slug']
                 typename = lecture['content']['typeName']
@@ -530,9 +550,14 @@ def download_lectures(downloader,
 
                 if overwrite or not os.path.exists(lecfn) or resume:
                     if not skip_download:
-                        logging.info('Downloading: %s', lecfn)
-                        if not url.startswith('mailto:'):
-                            downloader.download(url, lecfn, resume=resume)
+                        if url.startswith(IN_MEMORY_MARKER):
+                            page_content = url[len(IN_MEMORY_MARKER):]
+                            with codecs.open(lecfn, 'w', 'utf-8') as file_object:
+                                file_object.write(page_content)
+                        else:
+                            if not url.startswith('mailto:'):
+                                logging.info('Downloading: %s', lecfn)
+                                downloader.download(url, lecfn, resume=resume)
                     else:
                         open(lecfn, 'w').close()  # touch
                     last_update = time.time()
@@ -1013,6 +1038,10 @@ def download_on_demand_class(args, class_name):
                                        args.intact_fnames,
                                        args.subtitle_language,
                                        args.video_resolution)
+
+    if is_debug_run():
+        with open('%s-syllabus-parsed.json' % class_name, 'w') as file_object:
+            json.dump(modules, file_object, indent=4)
 
     downloader = get_downloader(session, class_name, args)
 

@@ -9,15 +9,13 @@
       "djia_index"
     ]
   ],
-  "html": [
+  "html2": [
     [
-      "http://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.corrcoef.html",
+      "http://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.corrcoef.html2",
       "numpy.corrcoef"
-    ]
-  ],
-  "html\\": [
+    ],
     [
-      "http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html\\",
+      "http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html2",
       "sklearn.decomposition.PCA"
     ]
   ],

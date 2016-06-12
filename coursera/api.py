@@ -6,19 +6,93 @@ downloader.
 
 import os
 import json
+import base64
 import logging
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links)
-from .network import get_page
+from .network import get_page, get_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
                      OPENCOURSE_ASSETS_URL,
                      OPENCOURSE_API_ASSETS_V1_URL,
-                     OPENCOURSE_VIDEO_URL)
+                     OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
+                     OPENCOURSE_VIDEO_URL,
+
+                     INSTRUCTIONS_HTML_INJECTION,
+
+                     IN_MEMORY_EXTENSION,
+                     IN_MEMORY_MARKER)
+
+
+class OnDemandCourseMaterialItems(object):
+    """
+    Helper class that allows accessing lecture JSONs by lesson IDs.
+    """
+    def __init__(self, items):
+        """
+        Initialization. Build a map from lessonId to Lecture (item)
+
+        @param items: linked.OnDemandCourseMaterialItems key of
+            OPENCOURSE_ONDEMAND_COURSE_MATERIALS response.
+        @type items: dict
+        """
+        # Build a map of lessonId => Item
+        self._items = dict((item['lessonId'], item) for item in items)
+
+    @staticmethod
+    def create(session, course_name):
+        """
+        Create an instance using a session and a course_name.
+
+        @param session: Requests session.
+        @type session: requests.Session
+
+        @param course_name: Course name (slug) from course json.
+        @type course_name: str
+
+        @return: Instance of OnDemandCourseMaterialItems
+        @rtype: OnDemandCourseMaterialItems
+        """
+
+        dom = get_page_json(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
+                            class_name=course_name)
+        return OnDemandCourseMaterialItems(
+            dom['linked']['onDemandCourseMaterialItems.v1'])
+
+    def get(self, lesson_id):
+        """
+        Return lecture by lesson ID.
+
+        @param lesson_id: Lesson ID.
+        @type lesson_id: str
+
+        @return: Lesson JSON.
+        @rtype: dict
+        Example:
+        {
+          "id": "AUd0k",
+          "moduleId": "0MGvs",
+          "lessonId": "QgCuM",
+          "name": "Programming Assignment 1: Decomposition of Graphs",
+          "slug": "programming-assignment-1-decomposition-of-graphs",
+          "timeCommitment": 10800000,
+          "content": {
+            "typeName": "gradedProgramming",
+            "definition": {
+              "programmingAssignmentId": "zHzR5yhHEeaE0BKOcl4zJQ@2",
+              "gradingWeight": 20
+            }
+          },
+          "isLocked": true,
+          "itemLockedReasonCode": "PREMIUM",
+          "trackId": "core"
+        },
+        """
+        return self._items.get(lesson_id)
 
 
 class CourseraOnDemand(object):
@@ -73,6 +147,80 @@ class CourseraOnDemand(object):
             links, self._extract_links_from_lecture_assets(assets))
 
         return links
+
+    def _prettify_instructions(self, text):
+        """
+        Prettify instructions text to make it more suitable for offline reading.
+
+        @param text: HTML (kinda) text to prettify.
+        @type text: str
+
+        @return: Prettified HTML with several markup tags replaced with HTML
+            equivalents.
+        @rtype: str
+        """
+        soup = BeautifulSoup(text)
+        self._convert_instructions_basic(soup)
+        self._convert_instructions_images(soup)
+        return soup.prettify()
+
+    def _convert_instructions_basic(self, soup):
+        """
+        Perform basic conversion of instructions markup. This includes
+        replacement of several textual markup tags with their HTML equivalents.
+
+        @param soup: BeautifulSoup instance.
+        @type soup: BeautifulSoup
+        """
+        # 1. Inject basic CSS style
+        css_soup = BeautifulSoup(INSTRUCTIONS_HTML_INJECTION)
+        soup.head.append(css_soup)
+
+        # 2. Replace <text> with <p>
+        while soup.find('text'):
+            soup.find('text').name = 'p'
+
+        # 3. Replace <heading level="1"> with <h1>
+        while soup.find('heading'):
+            heading = soup.find('heading')
+            heading.name = 'h%s' % heading.attrs.get('level', '1')
+
+        # 4. Replace <code> with <pre>
+        while soup.find('code'):
+            soup.find('code').name = 'pre'
+
+        # 5. Replace <list> with <ol> or <ul>
+        while soup.find('list'):
+            list_ = soup.find('list')
+            type_ = list_.attrs.get('bullettype', 'numbers')
+            list_.name = 'ol' if type_ == 'numbers' else 'ul'
+
+    def _convert_instructions_images(self, soup):
+        """
+        Convert images of instructions markup. Images are downloaded,
+        base64-encoded and inserted into <img> tags.
+
+        @param soup: BeautifulSoup instance.
+        @type soup: BeautifulSoup
+        """
+        # 6. Replace <img> assets with actual image contents
+        images = [image for image in soup.find_all('img')
+                  if image.attrs.get('assetid') is not None]
+        if not images:
+            return
+
+        asset_ids = [image.attrs.get('assetid') for image in images]
+        asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
+                                   id=','.join(asset_ids))
+        asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
+
+        for image in images:
+            url = asset_map[image['assetid']]['url']['url']
+            request = self._session.get(url)
+            if request.status_code == 200:
+                content_type = request.headers.get('Content-Type', 'image/png')
+                encoded64 = base64.b64encode(request.content).decode()
+                image['src'] = 'data:%s;base64,%s' % (content_type, encoded64)
 
     def _normalize_assets(self, assets):
         """
@@ -143,10 +291,8 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        url = OPENCOURSE_ASSETS_URL.format(id=asset_id)
-        page = get_page(self._session, url)
+        dom = get_page_json(self._session, OPENCOURSE_ASSETS_URL, id=asset_id)
         logging.debug('Parsing JSON for asset_id <%s>.', asset_id)
-        dom = json.loads(page)
 
         urls = []
 
@@ -206,9 +352,7 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        url = OPENCOURSE_API_ASSETS_V1_URL.format(id=asset_id)
-        page = get_page(self._session, url)
-        dom = json.loads(page)
+        dom = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL, id=asset_id)
 
         # Structure is as follows:
         # elements [ {
@@ -224,12 +368,10 @@ class CourseraOnDemand(object):
                                                    subtitle_language='en',
                                                    resolution='540p'):
 
-        url = OPENCOURSE_VIDEO_URL.format(video_id=video_id)
-        page = get_page(self._session, url)
+        dom = get_page_json(self._session, OPENCOURSE_VIDEO_URL, video_id=video_id)
 
         logging.debug('Parsing JSON for video_id <%s>.', video_id)
         video_content = {}
-        dom = json.loads(page)
 
         # videos
         logging.info('Gathering video URLs for video_id <%s>.', video_id)
@@ -305,6 +447,12 @@ class CourseraOnDemand(object):
             return {}
 
         supplement_links = self._extract_links_from_text(text)
+
+        instructions = (IN_MEMORY_MARKER + self._prettify_instructions(text),
+                       'instructions')
+        extend_supplement_links(
+            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+
         return supplement_links
 
     def extract_links_from_supplement(self, element_id):
@@ -316,11 +464,9 @@ class CourseraOnDemand(object):
         """
         logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        url = OPENCOURSE_SUPPLEMENT_URL.format(
-            course_id=self._course_id, element_id=element_id)
-        page = get_page(self._session, url)
+        dom = get_page_json(self._session, OPENCOURSE_SUPPLEMENT_URL,
+                            course_id=self._course_id, element_id=element_id)
 
-        dom = json.loads(page)
         supplement_content = {}
 
         # Supplement content has structure as follows:
@@ -336,6 +482,11 @@ class CourseraOnDemand(object):
             # both of them.
             extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
+
+            instructions = (IN_MEMORY_MARKER + self._prettify_instructions(value),
+                           'instructions')
+            extend_supplement_links(
+                supplement_content, {IN_MEMORY_EXTENSION: [instructions]})
 
         return supplement_content
 
@@ -378,10 +529,8 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        ids = quote_plus(','.join(asset_ids))
-        url = OPENCOURSE_ASSET_URL.format(ids=ids)
-        page = get_page(self._session, url)
-        dom = json.loads(page)
+        dom = get_page_json(self._session, OPENCOURSE_ASSET_URL,
+                            ids=quote_plus(','.join(asset_ids)))
 
         return [{'id': element['id'],
                  'url': element['url']}
@@ -397,11 +546,10 @@ class CourseraOnDemand(object):
         @return: List of assignment text (instructions).
         @rtype: [str]
         """
-        url = OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL.format(
-            course_id=self._course_id, element_id=element_id)
-        page = get_page(self._session, url)
+        dom = get_page_json(self._session, OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
+                            course_id=self._course_id, element_id=element_id)
 
-        dom = json.loads(page)
+
         return [element['submissionLearnerSchema']['definition']
                 ['assignmentInstructions']['definition']['value']
                 for element in dom['elements']]

@@ -10,6 +10,8 @@ import random
 import re
 import string
 import sys
+import logging
+import json
 
 import six
 from bs4 import BeautifulSoup as BeautifulSoup_
@@ -46,6 +48,16 @@ if six.PY2:
 else:
     def decode_input(x):
         return x
+
+
+def is_debug_run():
+    """
+    Check whether we're running with DEBUG loglevel.
+
+    @return: True if running with DEBUG loglevel.
+    @rtype: bool
+    """
+    return logging.getLogger().isEnabledFor(logging.DEBUG)
 
 
 def random_string(length):
