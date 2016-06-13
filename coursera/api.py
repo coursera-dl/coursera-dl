@@ -215,7 +215,7 @@ class CourseraOnDemand(object):
         asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
 
         for image in images:
-            url = asset_map[image['assetid']]['url']['url']
+            url = asset_map[image['assetid']]['url']['url'].strip()
             request = self._session.get(url)
             if request.status_code == 200:
                 content_type = request.headers.get('Content-Type', 'image/png')
@@ -264,8 +264,9 @@ class CourseraOnDemand(object):
             if extension is '':
                 return
 
-            extension = extension.lower().strip('.')
+            extension = extension.lower().strip('.').strip()
             basename = os.path.basename(filename)
+            url = url.strip()
 
             if extension not in destination:
                 destination[extension] = []
@@ -312,8 +313,8 @@ class CourseraOnDemand(object):
             if typeName == 'asset':
                 open_course_asset_id = definition['assetId']
                 for asset in self._get_open_course_asset_urls(open_course_asset_id):
-                    urls.append({'name': asset['name'],
-                                 'url': asset['url']})
+                    urls.append({'name': asset['name'].strip(),
+                                 'url': asset['url'].strip()})
 
             # Elements of `url` types look as follows:
             #
@@ -325,8 +326,8 @@ class CourseraOnDemand(object):
             #  'paging': None}
             #
             elif typeName == 'url':
-                urls.append({'name': definition['name'],
-                             'url': definition['url']})
+                urls.append({'name': definition['name'].strip(),
+                             'url': definition['url'].strip()})
 
             else:
                 logging.warning(
@@ -359,8 +360,8 @@ class CourseraOnDemand(object):
         #   name
         #   url {
         #       url
-        return [{'name': element['name'],
-                 'url': element['url']['url']}
+        return [{'name': element['name'].strip(),
+                 'url': element['url']['url'].strip()}
                 for element in dom['elements']]
 
     def _extract_videos_and_subtitles_from_lecture(self,
@@ -533,7 +534,7 @@ class CourseraOnDemand(object):
                             ids=quote_plus(','.join(asset_ids)))
 
         return [{'id': element['id'],
-                 'url': element['url']}
+                 'url': element['url'].strip()}
                 for element in dom['elements']]
 
     def _extract_assignment_text(self, element_id):
@@ -611,10 +612,11 @@ class CourseraOnDemand(object):
         # Build supplement links, providing nice titles along the way
         for asset in asset_urls:
             title = asset_tags_map[asset['id']]['name']
-            extension = asset_tags_map[asset['id']]['extension']
+            extension = asset_tags_map[asset['id']]['extension'].strip()
+            url = asset['url'].strip()
             if extension not in supplement_links:
                 supplement_links[extension] = []
-            supplement_links[extension].append((asset['url'], title))
+            supplement_links[extension].append((url, title))
 
         return supplement_links
 
@@ -639,20 +641,22 @@ class CourseraOnDemand(object):
         }
         """
         soup = BeautifulSoup(text)
-        links = [item['href']
+        links = [item['href'].strip()
                  for item in soup.find_all('a') if 'href' in item.attrs]
         links = sorted(list(set(links)))
         supplement_links = {}
 
         for link in links:
             filename, extension = os.path.splitext(link)
+            filename = filename.strip()
+            extension = extension.strip()
             # Some courses put links to sites in supplement section, e.g.:
             # http://pandas.pydata.org/
             if extension is '':
                 continue
 
             # Make lowercase and cut the leading/trailing dot
-            extension = extension.lower().strip('.')
+            extension = extension.lower().strip('.').strip()
             basename = os.path.basename(filename)
             if extension not in supplement_links:
                 supplement_links[extension] = []
