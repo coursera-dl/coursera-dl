@@ -13,7 +13,7 @@ from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url)
-from .network import get_page, get_page_json
+from .network import get_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,

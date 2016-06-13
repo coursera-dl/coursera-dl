@@ -515,6 +515,123 @@ def create_m3u_playlist(section_dir):
     os.chdir(path_to_return)
 
 
+def handle_resource(downloader,
+                    lecture_filename,
+                    fmt,
+                    url,
+                    overwrite,
+                    resume,
+                    skip_download,
+                    section_dir,
+                    skipped_urls,
+                    last_update):
+    """
+    Handle resource. This function builds up resource file name and
+    downloads it if necessary.
+
+    @param downloader: Resource downloader instance.
+    @type downloader: downloaders.Downloader
+
+    @param fmt: Format of the resource (pdf, csv, etc)
+    @type fmt: str
+
+    @param url: URL of the resource.
+    @type url: str
+
+    @param overwrite: Flag that indicates whether files should be overwritten.
+    @type overwrite: bool
+
+    @param resume: Flag that indicates whether download should be resumed.
+    @type resume: bool
+
+    @param skip_download: Flag that indicates whether download should be skipped.
+    @type skip_download: bool
+
+    @param section_dir: Path to current section directory.
+    @type section_dir: str
+
+    @param skipped_urls: List of skipped urls to update.
+    @type skipped_urls: None or list
+
+    @param last_update: Latest mtime across files.
+    @type last_update: timestamp
+
+    @return: Updated latest mtime.
+    @rtype: timestamp
+    """
+    # Decide whether we need to download it
+    if overwrite or not os.path.exists(lecture_filename) or resume:
+        if not skip_download:
+            if url.startswith(IN_MEMORY_MARKER):
+                page_content = url[len(IN_MEMORY_MARKER):]
+                logging.info('Saving page contents to: %s', lecture_filename)
+                with codecs.open(lecture_filename, 'w', 'utf-8') as file_object:
+                    file_object.write(page_content)
+            else:
+                if skipped_urls is not None and skip_format_url(fmt, url):
+                    skipped_urls.append(url)
+                else:
+                    logging.info('Downloading: %s', lecture_filename)
+                    downloader.download(url, lecture_filename, resume=resume)
+        else:
+            open(lecture_filename, 'w').close()  # touch
+        last_update = time.time()
+    else:
+        logging.info('%s already downloaded', lecture_filename)
+        # if this file hasn't been modified in a long time,
+        # record that time
+        last_update = max(last_update, os.path.getmtime(lecture_filename))
+
+    return last_update
+
+
+def get_lecture_filename(combined_section_lectures_nums,
+                         section_dir,
+                         secnum,
+                         lecnum,
+                         lecname,
+                         title,
+                         fmt):
+    """
+    Prepare a destination lecture filename.
+
+    @param combined_section_lectures_nums: Flag that indicates whether
+        section lectures should have combined numbering.
+    @type combined_section_lectures_nums: bool
+
+    @param section_dir: Path to current section directory.
+    @type section_dir: str
+
+    @param secnum: Section number.
+    @type secnum: int
+
+    @param lecnum: Lecture number.
+    @type lecnum: int
+
+    @param lecname: Lecture name.
+    @type lecname: str
+
+    @param title: Resource title.
+    @type title: str
+
+    @param fmt: Format of the resource (pdf, csv, etc)
+    @type fmt: str
+
+    @return: Lecture file name.
+    @rtype: str
+    """
+    # Format lecture file name
+    if combined_section_lectures_nums:
+        lecture_filename = os.path.join(
+            section_dir,
+            format_combine_number_resource(
+                secnum + 1, lecnum + 1, lecname, title, fmt))
+    else:
+        lecture_filename = os.path.join(
+            section_dir, format_resource(lecnum + 1, lecname, title, fmt))
+    return lecture_filename
+
+
 def download_lectures(downloader,
                       class_name,
                       sections,
@@ -567,36 +684,13 @@ def download_lectures(downloader,
 
             # write lecture resources
             for fmt, url, title in resources_to_get:
-
-                if combined_section_lectures_nums:
-                    lecfn = os.path.join(
-                        section_dir,
-                        format_combine_number_resource(
-                            secnum + 1, lecnum + 1, lecname, title, fmt))
-                else:
-                    lecfn = os.path.join(
-                        section_dir, format_resource(lecnum + 1, lecname, title, fmt))
-
-                if overwrite or not os.path.exists(lecfn) or resume:
-                    if not skip_download:
-                        if url.startswith(IN_MEMORY_MARKER):
-                            page_content = url[len(IN_MEMORY_MARKER):]
-                            with codecs.open(lecfn, 'w', 'utf-8') as file_object:
-                                file_object.write(page_content)
-                        else:
-                            if skipped_urls is not None and skip_format_url(fmt, url):
-                                skipped_urls.append(url)
-                            else:
-                                logging.info('Downloading: %s', lecfn)
-                                downloader.download(url, lecfn, resume=resume)
-                    else:
-                        open(lecfn, 'w').close()  # touch
-                    last_update = time.time()
-                else:
-                    logging.info('%s already downloaded', lecfn)
-                    # if this file hasn't been modified in a long time,
-                    # record that time
-                    last_update = max(last_update, os.path.getmtime(lecfn))
+                lecture_filename = get_lecture_filename(
+                    combined_section_lectures_nums,
+                    section_dir, secnum, lecnum, lecname, title, fmt)
+                last_update = handle_resource(
+                    downloader, lecture_filename, fmt, url,
+                    overwrite, resume, skip_download,
+                    section_dir, skipped_urls, last_update)
 
         # After fetching resources, create a playlist in M3U format with the
         # videos downloaded.
