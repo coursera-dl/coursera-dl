@@ -75,6 +75,7 @@ from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
 
 from .network import get_page, get_page_and_url
 from .api import CourseraOnDemand, OnDemandCourseMaterialItems
+from .filter import skip_format_url
 from coursera import __version__
 
 # URL containing information about outdated modules
@@ -532,6 +533,7 @@ def download_lectures(downloader,
                       intact_fnames=False,
                       ignored_formats=None,
                       resume=False,
+                      skipped_urls=None,
                       video_resolution='540p'):
     """
     Download lecture resources described by sections.
@@ -582,7 +584,9 @@ def download_lectures(downloader,
                             with codecs.open(lecfn, 'w', 'utf-8') as file_object:
                                 file_object.write(page_content)
                         else:
-                            if not url.startswith('mailto:'):
+                            if skipped_urls is not None and skip_format_url(fmt, url):
+                                skipped_urls.append(url)
+                            else:
                                 logging.info('Downloading: %s', lecfn)
                                 downloader.download(url, lecfn, resume=resume)
                     else:
@@ -610,6 +614,7 @@ def download_lectures(downloader,
     rv = is_course_complete(last_update)
     if rv:
         logging.info('COURSE PROBABLY COMPLETE: ' + class_name)
+
     return rv
 
 
@@ -1062,6 +1067,8 @@ def download_on_demand_class(args, class_name):
     downloader = get_downloader(session, class_name, args)
 
     # obtain the resources
+
+    skipped_urls = []
     completed = True
     for idx, module in enumerate(modules):
         module_name = '%02d_%s' % (idx + 1, module[0])
@@ -1085,9 +1092,19 @@ def download_on_demand_class(args, class_name):
             args.playlist,
             args.intact_fnames,
             ignored_formats,
-            args.resume
+            args.resume,
+            skipped_urls
         )
         completed = completed and result
+
+    # Print skipped URLs if any
+    if skipped_urls:
+        logging.info('The following URLs (%d) have been skipped and not '
+                     'downloaded:' % len(skipped_urls))
+        logging.info('-' * 80)
+        for url in skipped_urls:
+            logging.info(url)
+        logging.info('-' * 80)
 
     return completed
 
