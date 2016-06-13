@@ -349,6 +349,9 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                 lecture_slug = lecture['slug']
                 typename = lecture['content']['typeName']
 
+                logging.info('Processing lecture %s/%s/%s' % (
+                    module_slug, section_slug, lecture_slug))
+
                 if typename == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
                     assets = lecture['content']['definition'].get('assets', [])

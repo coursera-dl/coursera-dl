@@ -375,7 +375,7 @@ class CourseraOnDemand(object):
         video_content = {}
 
         # videos
-        logging.info('Gathering video URLs for video_id <%s>.', video_id)
+        logging.debug('Gathering video URLs for video_id <%s>.', video_id)
         sources = dom['sources']
         sources.sort(key=lambda src: src['resolution'])
         sources.reverse()
@@ -392,8 +392,8 @@ class CourseraOnDemand(object):
                          'Downloading highest resolution available instead.',
                          resolution, video_id)
         else:
-            logging.info('Proceeding with download of resolution %s of <%s>.',
-                         resolution, video_id)
+            logging.debug('Proceeding with download of resolution %s of <%s>.',
+                          resolution, video_id)
             sources = filtered_sources
 
         video_url = sources[0]['formatSources']['video/mp4']
@@ -405,7 +405,7 @@ class CourseraOnDemand(object):
             ('subtitlesTxt', 'txt', 'transcript'),
         ]
         for (subtitle_node, subtitle_extension, subtitle_description) in subtitle_nodes:
-            logging.info('Gathering %s URLs for video_id <%s>.', subtitle_description, video_id)
+            logging.debug('Gathering %s URLs for video_id <%s>.', subtitle_description, video_id)
             subtitles = dom.get(subtitle_node)
             if subtitles is not None:
                 if subtitle_language == 'all':
@@ -439,7 +439,7 @@ class CourseraOnDemand(object):
 
         @return: @see CourseraOnDemand._extract_links_from_text
         """
-        logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
+        logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
 
         # Assignment text (instructions) contains asset tags which describe
         # supplementary files.
@@ -463,7 +463,7 @@ class CourseraOnDemand(object):
 
         @return: @see CourseraOnDemand._extract_links_from_text
         """
-        logging.info('Gathering supplement URLs for element_id <%s>.', element_id)
+        logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
 
         dom = get_page_json(self._session, OPENCOURSE_SUPPLEMENT_URL,
                             course_id=self._course_id, element_id=element_id)
