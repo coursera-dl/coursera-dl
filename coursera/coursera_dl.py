@@ -658,7 +658,7 @@ def parse_args(args=None):
                              default=None,
                              help='coursera password')
 
-    group_basic.add_argument('--on-demand',
+    group_basic.add_argument('--on-demand', # FIXME: remove this option
                              dest='on_demand',
                              action='store_true',
                              default=False,
@@ -743,6 +743,13 @@ def parse_args(args=None):
                                 help='video resolution to download (default: 540p); '
                                 'only valid for on-demand courses; '
                                 'only values allowed: 360p, 540p, 720p')
+
+    group_material.add_argument('--disable-url-skipping',
+                                dest='disable_url_skipping',
+                                action='store_true',
+                                default=False,
+                                help='disable URL skipping, all URLs will be '
+                                'downloaded (default: False)')
 
     # Selection of material to download
     group_external_dl = parser.add_argument_group('External downloaders')
@@ -1093,7 +1100,7 @@ def download_on_demand_class(args, class_name):
             args.intact_fnames,
             ignored_formats,
             args.resume,
-            skipped_urls
+            None if args.disable_url_skipping else skipped_urls
         )
         completed = completed and result
 
@@ -1101,6 +1108,8 @@ def download_on_demand_class(args, class_name):
     if skipped_urls:
         logging.info('The following URLs (%d) have been skipped and not '
                      'downloaded:' % len(skipped_urls))
+        logging.info('(if you want to download these URLs anyway, please '
+                     'add "--disable-url-skipping" option)')
         logging.info('-' * 80)
         for url in skipped_urls:
             logging.info(url)
