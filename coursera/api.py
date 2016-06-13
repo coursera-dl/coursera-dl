@@ -260,7 +260,7 @@ class CourseraOnDemand(object):
         links = {}
 
         def _add_asset(name, url, destination):
-            filename, extension = os.path.splitext(name)
+            filename, extension = os.path.splitext(clean_url(name))
             if extension is '':
                 return
 
