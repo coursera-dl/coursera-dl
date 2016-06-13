@@ -12,7 +12,7 @@ from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
-                    extend_supplement_links)
+                    extend_supplement_links, clean_url)
 from .network import get_page, get_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -647,9 +647,7 @@ class CourseraOnDemand(object):
         supplement_links = {}
 
         for link in links:
-            filename, extension = os.path.splitext(link)
-            filename = filename.strip()
-            extension = extension.strip()
+            filename, extension = os.path.splitext(clean_url(link))
             # Some courses put links to sites in supplement section, e.g.:
             # http://pandas.pydata.org/
             if extension is '':

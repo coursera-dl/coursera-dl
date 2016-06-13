@@ -24,11 +24,5 @@
       "https://d3c33hcgiwev3.cloudfront.net/_3cdeda0745801a9686d7f5601010fb0c_statement-pca.pdf?Expires=1454198400&Signature=h5uo5XCq8DN-X6jf9VpJXj5-0M3LfBQmgf6LamlkrmH9YexVGjbVc3McRfvivJ9eQDXPo~ZujKw7YLc8BnCjDZA5hfwpF5q2J7dk4-ssK2ZA2-AIAukuURURZqFypiR7qbEFUHtDnWlSP16Q59X8D1g-PtVIEMUop4fgvGs3Px4_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A",
       "statement-pca"
     ]
-  ],
-  "transform": [
-    [
-      "http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA.transform",
-      "sklearn.decomposition.PCA.html#sklearn.decomposition.PCA"
-    ]
   ]
 }

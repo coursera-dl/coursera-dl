@@ -23,6 +23,8 @@ from .define import COURSERA_URL
 
 from six.moves import html_parser
 from six import iteritems
+from six.moves.urllib.parse import ParseResult
+from six.moves.urllib_parse import urlparse
 
 #  six.moves doesn’t support urlparse
 if six.PY3:  # pragma: no cover
@@ -124,6 +126,24 @@ def mkdir_p(path, mode=0o777):
             pass
         else:
             raise
+
+
+def clean_url(url):
+    """
+    Remove params, query and fragment parts from URL so that `os.path.basename`
+    and `os.path.splitext` can work correctly.
+
+    @param url: URL to clean.
+    @type url: str
+
+    @return: Cleaned URL.
+    @rtype: str
+    """
+    parsed = urlparse(url.strip())
+    reconstructed = ParseResult(
+        parsed.scheme, parsed.netloc, parsed.path,
+        params='', query='', fragment='')
+    return reconstructed.geturl()
 
 
 def fix_url(url):
