@@ -149,7 +149,7 @@ following steps (create/adapt first the directory
     virtualenv my-coursera
     cd my-coursera
     source bin/activate
-    git clone https://github.com/coursera-dl/coursera
+    git clone https://github.com/coursera-dl/coursera-dl
     cd coursera
     pip install -r requirements.txt
     ./coursera-dl ...
@@ -430,28 +430,28 @@ Theodoro de Brito (the current maintainer): rbrito@ime.usp.br (twitter:
 geemail dotcom (twitter: [@jplehmann][12]).
 
 [1]: https://www.coursera.org
-[2]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
-[3]: https://rg3.github.com/youtube-dl
+[2]: https://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
+[3]: http://rg3.github.io/youtube-dl
 [4]: https://f-droid.org/repository/browse/?fdid=org.videolan.vlc
-[5]: http://www.crummy.com/software/BeautifulSoup
-[6]: http://pypi.python.org/pypi/argparse
-[7]: http://pypi.python.org/pypi/setuptools
+[5]: https://www.crummy.com/software/BeautifulSoup
+[6]: https://pypi.python.org/pypi/argparse
+[7]: https://pypi.python.org/pypi/setuptools
 [8]: http://stackoverflow.com/a/6031266/962311
-[9]: https://chrome.google.com/webstore/detail/lopabhfecdfhgogdbojmaicoicjekelh
-[10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
+[9]: https://chrome.google.com/webstore/detail/cookietxt-export/lopabhfecdfhgogdbojmaicoicjekelh
+[10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies/
 [11]: https://github.com/coursera-dl/coursera-dl/issues
 [12]: https://twitter.com/jplehmann
-[13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
+[13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform/
 [14]: http://www.tunapanda.org
 [15]: https://github.com/html5lib/html5lib-python
 [16]: http://docs.python-requests.org/en/latest/
-[17]: http://www.pip-installer.org/en/latest/
-[18]: http://python-distribute.org/pip_distribute.png
+[17]: https://pip.pypa.io/en/latest/
+[18]: http://ww45.python-distribute.org/pip_distribute.png
 [19]: https://pypi.python.org/pypi/six/
 [20]: https://www.coursera.org/about/terms
 [21]: https://twitter.com/rtdbrito
-[22]: http://pypi.python.org/
-[23]: http://pypi.python.org/pypi/coursera
+[22]: https://pypi.python.org/
+[23]: https://pypi.python.org/pypi/coursera
 [issue213]: https://github.com/coursera-dl/coursera-dl/issues/213
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
