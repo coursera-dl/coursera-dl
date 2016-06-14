@@ -651,6 +651,7 @@ def download_lectures(downloader,
                       ignored_formats=None,
                       resume=False,
                       skipped_urls=None,
+                      failed_urls=None,
                       video_resolution='540p'):
     """
     Download lecture resources described by sections.
@@ -687,10 +688,22 @@ def download_lectures(downloader,
                 lecture_filename = get_lecture_filename(
                     combined_section_lectures_nums,
                     section_dir, secnum, lecnum, lecname, title, fmt)
-                last_update = handle_resource(
-                    downloader, lecture_filename, fmt, url,
-                    overwrite, resume, skip_download,
-                    section_dir, skipped_urls, last_update)
+                try:
+                    last_update = handle_resource(
+                        downloader, lecture_filename, fmt, url,
+                        overwrite, resume, skip_download,
+                        section_dir, skipped_urls, last_update)
+                except requests.exceptions.RequestException as e:
+                    logging.error('The following error has occurred while '
+                                  'downloading URL %s: %s' % (url, str(e)))
+                    if failed_urls is None:
+                        logging.info('If you want to ignore HTTP errors, '
+                                     'please use "--ignore-http-errors" option')
+                        raise
+                    else:
+                        failed_urls.append(url)
+
+
 
         # After fetching resources, create a playlist in M3U format with the
         # videos downloaded.
@@ -837,6 +850,16 @@ def parse_args(args=None):
                                 help='video resolution to download (default: 540p); '
                                 'only valid for on-demand courses; '
                                 'only values allowed: 360p, 540p, 720p')
+
+    group_material.add_argument('--ignore-http-errors',
+                                dest='ignore_http_errors',
+                                action='store_true',
+                                default=False,
+                                help='ignore http errors so that an error does '
+                                'not stop course downloading process. Please '
+                                'note that this option only affects internal '
+                                'downloader during resource download stage, '
+                                'not syllabus parsing stage (default: False)')
 
     group_material.add_argument('--disable-url-skipping',
                                 dest='disable_url_skipping',
@@ -1170,6 +1193,8 @@ def download_on_demand_class(args, class_name):
     # obtain the resources
 
     skipped_urls = []
+    failed_urls = []
+
     completed = True
     for idx, module in enumerate(modules):
         module_name = '%02d_%s' % (idx + 1, module[0])
@@ -1194,7 +1219,8 @@ def download_on_demand_class(args, class_name):
             args.intact_fnames,
             ignored_formats,
             args.resume,
-            None if args.disable_url_skipping else skipped_urls
+            None if args.disable_url_skipping else skipped_urls,
+            failed_urls if args.ignore_http_errors else None
         )
         completed = completed and result
 
@@ -1206,6 +1232,16 @@ def download_on_demand_class(args, class_name):
                      'add "--disable-url-skipping" option)')
         logging.info('-' * 80)
         for url in skipped_urls:
+            logging.info(url)
+        logging.info('-' * 80)
+
+    # Print failed URLs if any
+    # FIXME: should we set non-zero exit code if we have failed URLs?
+    if failed_urls:
+        logging.info('The following URLs (%d) could not be downloaded:' %
+                     len(failed_urls))
+        logging.info('-' * 80)
+        for url in failed_urls:
             logging.info(url)
         logging.info('-' * 80)
 
