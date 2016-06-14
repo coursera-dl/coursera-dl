@@ -208,7 +208,7 @@ def get_old_style_video(session, url):
     return soup.find(attrs={'type': re.compile('^video/mp4')})['src']
 
 
-def parse_old_style_syllabus(session, page, reverse=False, intact_fnames=False,
+def parse_old_style_syllabus(session, page, reverse=False, unrestricted_filenames=False,
                              subtitle_language='en'):
     """
     Parse an old style Coursera course listing/syllabus page.
@@ -224,7 +224,7 @@ def parse_old_style_syllabus(session, page, reverse=False, intact_fnames=False,
     for stag in stags:
         assert stag.contents[0] is not None, "couldn't find section"
         untouched_fname = stag.contents[0].contents[1]
-        section_name = clean_filename(untouched_fname, intact_fnames)
+        section_name = clean_filename(untouched_fname, unrestricted_filenames)
         logging.info(section_name)
         lectures = []  # resources for 1 lecture
 
@@ -232,7 +232,7 @@ def parse_old_style_syllabus(session, page, reverse=False, intact_fnames=False,
         for vtag in stag.nextSibling.findAll('li'):
             assert vtag.a.contents[0], "couldn't get lecture name"
             untouched_fname = vtag.a.contents[0]
-            vname = clean_filename(untouched_fname, intact_fnames)
+            vname = clean_filename(untouched_fname, unrestricted_filenames)
             logging.info('  %s', vname)
             lecture = {}
             lecture_page = None
@@ -240,7 +240,7 @@ def parse_old_style_syllabus(session, page, reverse=False, intact_fnames=False,
             for a in vtag.findAll('a'):
                 href = fix_url(a['href'])
                 untouched_fname = a.get('title', '')
-                title = clean_filename(untouched_fname, intact_fnames)
+                title = clean_filename(untouched_fname, unrestricted_filenames)
                 fmt = get_anchor_format(href)
                 if fmt in ('srt', 'txt') and subtitle_language != 'en':
                     title = title.replace('_en&format', '_' + subtitle_language + '&format')
@@ -306,7 +306,7 @@ def parse_old_style_syllabus(session, page, reverse=False, intact_fnames=False,
     return sections
 
 
-def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
+def parse_on_demand_syllabus(session, page, reverse=False, unrestricted_filenames=False,
                              subtitle_language='en', video_resolution=None):
     """
     Parse a Coursera on-demand course listing/syllabus page.
@@ -319,7 +319,8 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                  'This may take some time, please be patient ...')
     modules = []
     json_modules = dom['courseMaterial']['elements']
-    course = CourseraOnDemand(session=session, course_id=dom['id'])
+    course = CourseraOnDemand(session=session, course_id=dom['id'],
+                              unrestricted_filenames=unrestricted_filenames)
     ondemand_material_items = OnDemandCourseMaterialItems.create(
         session=session, course_name=course_name)
 
@@ -630,6 +631,9 @@ def get_lecture_filename(combined_section_lectures_nums,
     else:
         lecture_filename = os.path.join(
             section_dir, format_resource(lecnum + 1, lecname, title, fmt))
+
+    # Remove illegal characters
+
     return lecture_filename
 
 
@@ -648,7 +652,7 @@ def download_lectures(downloader,
                       combined_section_lectures_nums=False,
                       hooks=None,
                       playlist=False,
-                      intact_fnames=False,
+                      unrestricted_filenames=False,
                       ignored_formats=None,
                       resume=False,
                       skipped_urls=None,
@@ -951,7 +955,7 @@ def parse_args(args=None):
                         help='include lecture and section name in final files')
 
     parser.add_argument('--unrestricted-filenames',
-                        dest='intact_fnames',
+                        dest='unrestricted_filenames',
                         action='store_true',
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
@@ -1129,7 +1133,7 @@ def download_old_style_class(args, class_name):
 
     # parse it
     sections = parse_old_style_syllabus(session, page, args.reverse,
-                                        args.intact_fnames, subtitle_language)
+                                        args.unrestricted_filenames, subtitle_language)
 
     downloader = get_downloader(session, class_name, args)
 
@@ -1153,7 +1157,7 @@ def download_old_style_class(args, class_name):
                                   args.combined_section_lectures_nums,
                                   args.hooks,
                                   args.playlist,
-                                  args.intact_fnames,
+                                  args.unrestricted_filenames,
                                   ignored_formats,
                                   args.resume,
                                   args.video_resolution)
@@ -1181,7 +1185,7 @@ def download_on_demand_class(args, class_name):
     # parse it
     modules = parse_on_demand_syllabus(session, page,
                                        args.reverse,
-                                       args.intact_fnames,
+                                       args.unrestricted_filenames,
                                        args.subtitle_language,
                                        args.video_resolution)
 
@@ -1217,7 +1221,7 @@ def download_on_demand_class(args, class_name):
             args.combined_section_lectures_nums,
             args.hooks,
             args.playlist,
-            args.intact_fnames,
+            args.unrestricted_filenames,
             ignored_formats,
             args.resume,
             None if args.disable_url_skipping else skipped_urls,

@@ -24,7 +24,7 @@ from .define import COURSERA_URL
 from six.moves import html_parser
 from six import iteritems
 from six.moves.urllib.parse import ParseResult
-from six.moves.urllib_parse import urlparse
+from six.moves.urllib_parse import unquote_plus
 
 #  six.moves doesn’t support urlparse
 if six.PY3:  # pragma: no cover
@@ -83,6 +83,7 @@ def clean_filename(s, minimal_change=False):
     # First, deal with URL encoded strings
     h = html_parser.HTMLParser()
     s = h.unescape(s)
+    s = unquote_plus(s)
 
     # Strip forbidden characters
     s = (

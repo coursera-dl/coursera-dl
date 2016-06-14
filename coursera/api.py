@@ -12,7 +12,7 @@ from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
-                    extend_supplement_links, clean_url)
+                    extend_supplement_links, clean_url, clean_filename)
 from .network import get_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -103,7 +103,7 @@ class CourseraOnDemand(object):
     old-style Coursera classes. This API is by no means complete.
     """
 
-    def __init__(self, session, course_id):
+    def __init__(self, session, course_id, unrestricted_filenames=False):
         """
         Initialize Coursera OnDemand API.
 
@@ -112,9 +112,16 @@ class CourseraOnDemand(object):
 
         @param course_id: Course ID from course json.
         @type course_id: str
+
+        @param unrestricted_filenames: Flag that indicates whether grabbed
+            file names should endure stricter character filtering. @see
+            `clean_filename` for the details.
+        @type unrestricted_filenames: bool
         """
         self._session = session
         self._course_id = course_id
+
+        self._unrestricted_filenames = unrestricted_filenames
 
     def extract_links_from_lecture(self,
                                    video_id, subtitle_language='en',
@@ -209,12 +216,17 @@ class CourseraOnDemand(object):
         if not images:
             return
 
+        # Get assetid attribute from all images
         asset_ids = [image.attrs.get('assetid') for image in images]
+
+        # Downloaded information about image assets (image IDs)
         asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
                                    id=','.join(asset_ids))
+        # Create a map "asset_id => asset" for easier access
         asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
 
         for image in images:
+            # Download each image and encode it using base64
             url = asset_map[image['assetid']]['url']['url'].strip()
             request = self._session.get(url)
             if request.status_code == 200:
@@ -264,8 +276,12 @@ class CourseraOnDemand(object):
             if extension is '':
                 return
 
-            extension = extension.lower().strip('.').strip()
-            basename = os.path.basename(filename)
+            extension = clean_filename(
+                extension.lower().strip('.').strip(),
+                self._unrestricted_filenames)
+            basename = clean_filename(
+                os.path.basename(filename),
+                self._unrestricted_filenames)
             url = url.strip()
 
             if extension not in destination:
@@ -611,8 +627,12 @@ class CourseraOnDemand(object):
 
         # Build supplement links, providing nice titles along the way
         for asset in asset_urls:
-            title = asset_tags_map[asset['id']]['name']
-            extension = asset_tags_map[asset['id']]['extension'].strip()
+            title = clean_filename(
+                asset_tags_map[asset['id']]['name'],
+                self._unrestricted_filenames)
+            extension = clean_filename(
+                asset_tags_map[asset['id']]['extension'].strip(),
+                self._unrestricted_filenames)
             url = asset['url'].strip()
             if extension not in supplement_links:
                 supplement_links[extension] = []
@@ -654,8 +674,12 @@ class CourseraOnDemand(object):
                 continue
 
             # Make lowercase and cut the leading/trailing dot
-            extension = extension.lower().strip('.').strip()
-            basename = os.path.basename(filename)
+            extension = clean_filename(
+                extension.lower().strip('.').strip(),
+                self._unrestricted_filenames)
+            basename = clean_filename(
+                os.path.basename(filename),
+                self._unrestricted_filenames)
             if extension not in supplement_links:
                 supplement_links[extension] = []
             # Putting basename into the second slot of the tuple is important
