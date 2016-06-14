@@ -331,10 +331,12 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
 
     for module in json_modules:
         module_slug = module['slug']
+        logging.info('Processing module  %s' % module_slug)
         sections = []
         json_sections = module['elements']
         for section in json_sections:
             section_slug = section['slug']
+            logging.info('Processing section     %s' % section_slug)
             lectures = []
             json_lectures = section['elements']
 
@@ -350,8 +352,7 @@ def parse_on_demand_syllabus(session, page, reverse=False, intact_fnames=False,
                 lecture_slug = lecture['slug']
                 typename = lecture['content']['typeName']
 
-                logging.info('Processing lecture %s/%s/%s' % (
-                    module_slug, section_slug, lecture_slug))
+                logging.info('Processing lecture         %s' % lecture_slug)
 
                 if typename == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
