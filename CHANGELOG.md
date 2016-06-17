@@ -22,3 +22,4 @@ Bugfixes:
   - Stricter filename cleaning in on-demand course parser
   - Better URL filtering
   - Detect SSL errors and suggest link to the solution in the output
+  - Added workaround for "Filename is too long" on Windows
