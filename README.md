@@ -335,6 +335,32 @@ one of the following actions solve your problem:
       pip install coursera-dl
   ```
 
+### Windows: Failed to create process
+
+In `C:\Users\<user>\AppData\Local\Programs\Python\Python35-32\Scripts`
+or wherever Python installed (above is default for Windows)
+edit below file in idle: (right click on script name and select 'edit with idle in menu)
+
+```
+coursera-dl-script
+```
+
+from
+
+```
+#!c:\users\<user>\appdata\local\programs\python\python35-32\python.exe
+```
+
+to
+
+```
+#"!c:\users\<user>\appdata\local\programs\python\python35-32\python.exe"
+```
+
+(add quotes). This is a known pip bug.
+
+Source: [issue #500][issue500] [StackOverflow][pipinstallerbug]
+
 ### SSLError: [Errno 1] _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure
 
 This is a known error, please do not report about this error message! The problem is in **YOUR** environment. To fix it, do the following:
@@ -449,5 +475,7 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [22]: https://pypi.python.org/
 [23]: https://pypi.python.org/pypi/coursera-dl
 [issue213]: https://github.com/coursera-dl/coursera-dl/issues/213
+[issue500]: https://github.com/coursera-dl/coursera-dl/issues/500
+[pipinstallerbug]: http://stackoverflow.com/questions/31808180/installing-pyinstaller-via-pip-leads-to-failed-to-create-process
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera-dl/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
