@@ -404,9 +404,9 @@ class CourseraOnDemand(object):
         if len(filtered_sources) == 0:
             # We will just use the 'vanilla' version of sources here, instead of
             # filtered_sources.
-            logging.warn('Requested resolution %s not available for <%s>. '
-                         'Downloading highest resolution available instead.',
-                         resolution, video_id)
+            logging.warning('Requested resolution %s not available for <%s>. '
+                            'Downloading highest resolution available instead.',
+                            resolution, video_id)
         else:
             logging.debug('Proceeding with download of resolution %s of <%s>.',
                           resolution, video_id)
@@ -466,7 +466,7 @@ class CourseraOnDemand(object):
         supplement_links = self._extract_links_from_text(text)
 
         instructions = (IN_MEMORY_MARKER + self._prettify_instructions(text),
-                       'instructions')
+                        'instructions')
         extend_supplement_links(
             supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
 
@@ -501,7 +501,7 @@ class CourseraOnDemand(object):
                 supplement_content, self._extract_links_from_text(value))
 
             instructions = (IN_MEMORY_MARKER + self._prettify_instructions(value),
-                           'instructions')
+                            'instructions')
             extend_supplement_links(
                 supplement_content, {IN_MEMORY_EXTENSION: [instructions]})
 

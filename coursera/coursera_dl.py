@@ -57,10 +57,13 @@ import codecs
 
 from distutils.version import LooseVersion as V
 
-import requests
 
+# Test versions of some critical modules.
+# We may, perhaps, want to move these elsewhere.
+import bs4
+import six
 from six import iteritems
-
+import requests
 
 from .cookies import (
     AuthenticationFailed, ClassNotFound,
@@ -79,13 +82,9 @@ from .filter import skip_format_url
 
 from coursera import __version__
 
+
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
-
-# Test versions of some critical modules.
-# We may, perhaps, want to move these elsewhere.
-import bs4
-import six
 
 assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
 assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
@@ -261,7 +260,7 @@ def parse_old_style_syllabus(session, page, reverse=False, unrestricted_filename
                         lecture['mp4'] = lecture.get('mp4', [])
                         lecture['mp4'].append((fix_url(href), ''))
                     except TypeError:
-                        logging.warn(
+                        logging.warning(
                             'Could not get resource: %s', lecture_page)
 
             # Special case: we possibly have hidden video links---thanks to
@@ -333,12 +332,12 @@ def parse_on_demand_syllabus(session, page, reverse=False, unrestricted_filename
 
     for module in json_modules:
         module_slug = module['slug']
-        logging.info('Processing module  %s' % module_slug)
+        logging.info('Processing module  %s', module_slug)
         sections = []
         json_sections = module['elements']
         for section in json_sections:
             section_slug = section['slug']
-            logging.info('Processing section     %s' % section_slug)
+            logging.info('Processing section     %s', section_slug)
             lectures = []
             json_lectures = section['elements']
 
@@ -354,7 +353,7 @@ def parse_on_demand_syllabus(session, page, reverse=False, unrestricted_filename
                 lecture_slug = lecture['slug']
                 typename = lecture['content']['typeName']
 
-                logging.info('Processing lecture         %s' % lecture_slug)
+                logging.info('Processing lecture         %s', lecture_slug)
 
                 if typename == 'lecture':
                     lecture_video_id = lecture['content']['definition']['videoId']
@@ -633,8 +632,6 @@ def get_lecture_filename(combined_section_lectures_nums,
         lecture_filename = os.path.join(
             section_dir, format_resource(lecnum + 1, lecname, title, fmt))
 
-    # Remove illegal characters
-
     return lecture_filename
 
 
@@ -672,8 +669,9 @@ def download_lectures(downloader,
                           section)
             continue
 
-        section_dir = os.path.join(path, class_name,
-                      format_section(secnum + 1, section, class_name, verbose_dirs))
+        section_dir = os.path.join(
+            path, class_name,
+            format_section(secnum + 1, section, class_name, verbose_dirs))
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
             if lecture_filter and not re.search(lecture_filter,
                                                 lecname):
@@ -704,7 +702,7 @@ def download_lectures(downloader,
                         section_dir, skipped_urls, last_update)
                 except requests.exceptions.RequestException as e:
                     logging.error('The following error has occurred while '
-                                  'downloading URL %s: %s' % (url, str(e)))
+                                  'downloading URL %s: %s', url, str(e))
                     if failed_urls is None:
                         logging.info('If you want to ignore HTTP errors, '
                                      'please use "--ignore-http-errors" option')
@@ -1236,7 +1234,7 @@ def download_on_demand_class(args, class_name):
     # Print skipped URLs if any
     if skipped_urls:
         logging.info('The following URLs (%d) have been skipped and not '
-                     'downloaded:' % len(skipped_urls))
+                     'downloaded:', len(skipped_urls))
         logging.info('(if you want to download these URLs anyway, please '
                      'add "--disable-url-skipping" option)')
         logging.info('-' * 80)
@@ -1247,7 +1245,7 @@ def download_on_demand_class(args, class_name):
     # Print failed URLs if any
     # FIXME: should we set non-zero exit code if we have failed URLs?
     if failed_urls:
-        logging.info('The following URLs (%d) could not be downloaded:' %
+        logging.info('The following URLs (%d) could not be downloaded:',
                      len(failed_urls))
         logging.info('-' * 80)
         for url in failed_urls:
@@ -1278,7 +1276,7 @@ def main():
     """
 
     args = parse_args()
-    logging.info('coursera_dl version %s' % __version__)
+    logging.info('coursera_dl version %s', __version__)
     completed_classes = []
 
     mkdir_p(PATH_CACHE, 0o700)

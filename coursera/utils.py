@@ -11,7 +11,6 @@ import re
 import string
 import sys
 import logging
-import json
 
 import six
 from bs4 import BeautifulSoup as BeautifulSoup_

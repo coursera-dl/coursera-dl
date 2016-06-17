@@ -36,12 +36,12 @@ RE_VALID_FORMATS = re.compile(VALID_FORMATS, re.VERBOSE)
 RE_NON_SIMPLE_FORMAT = re.compile(NON_SIMPLE_FORMAT)
 
 
-def skip_format_url(format, url):
+def skip_format_url(format_, url):
     """
     Checks whether a give format/url should be skipped and not downloaded.
 
-    @param format: Filename format (extension).
-    @type format: str (e.g. html, txt, zip, pdf)
+    @param format_: Filename format (extension).
+    @type format_: str (e.g. html, txt, zip, pdf)
 
     @param url: URL.
     @type url: str
@@ -50,7 +50,7 @@ def skip_format_url(format, url):
     @rtype bool
     """
     # Do not download empty formats
-    if '' == format:
+    if format_ == '':
         return True
 
     # Do not download email addresses
@@ -58,12 +58,12 @@ def skip_format_url(format, url):
         return True
 
     # These are trusted manually added formats, do not skip them
-    if RE_VALID_FORMATS.match(format):
+    if RE_VALID_FORMATS.match(format_):
         return False
 
     # Simple formats only contain letters, numbers, "_" and "-"
     # If this a non simple format?
-    if RE_NON_SIMPLE_FORMAT.match(format):
+    if RE_NON_SIMPLE_FORMAT.match(format_):
         return True
 
     # Is this a link to the site root?
