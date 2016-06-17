@@ -6,6 +6,25 @@
 [![Downloads from PyPI](https://img.shields.io/pypi/dm/coursera-dl.svg)](https://pypi.python.org/pypi/coursera-dl)
 [![Code Climate](https://codeclimate.com/github/coursera-dl/coursera-dl/badges/gpa.svg)](https://codeclimate.com/github/coursera-dl/coursera-dl)
 
+- [Introduction](#introduction)
+- [Features](#features)
+- [Disclaimer](#disclaimer)
+- [Installation instructions](#installation-instructions)
+    - [Recommended installation method for all Operating Systems](l#recommended-installation-method-for-all-operating-systems)
+    - [Alternative ways of installing missing dependencies](#alternative-ways-of-installing-missing-dependencies)
+        - [Alternative installation method for Unix systems](#alternative-installation-method-for-unix-systems)
+        - [Installing dependencies on your own](#installing-dependencies-on-your-own)
+    - [Create an account with Coursera](#create-an-account-with-coursera)
+    - [Running the script](#running-the-script)
+    - [Resuming downloads](#resuming-downloads)
+- [Troubleshooting](#troubleshooting)
+    - [Windows: Failed to create process](#windows-failed-to-create-process)
+    - [SSLError: Errno 1 _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure](#sslerror-errno-1-_sslc504-error14094410ssl-routinesssl3_read_bytessslv3-alert-handshake-failure)
+- [Reporting issues](#reporting-issues)
+- [Filing an issue/Reporting a bug](#filing-an-issuereporting-a-bug)
+- [Feedback](#feedback)
+- [Contact](#contact)
+
 # Introduction
 
 [Coursera][1] is arguably the leader in *massive open online courses* (MOOC)
