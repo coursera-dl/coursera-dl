@@ -90,7 +90,7 @@ particular courses that you want to use with `coursera-dl`.
 From a command line (preferrably, from a virtual environment), simply issue
 the command:
 
-    pip install coursera
+    pip install coursera-dl
 
 
 This will download [the latest released version][23] of the program from the
@@ -101,21 +101,17 @@ If this does not work, because your Python 2 version is too old (e.g. 2.7.5
 on Ubuntu 14.4), try:
 
     apt-get install python3 python3-pip
-    pip3 install coursera
+    pip3 install coursera-dl
 
 instead.
 
-**Note 1:** Note that the PyPI package is called simply `coursera`, but the
-command-line is called `coursera-dl`. This is an unfortunate fact related to
-conflicting names.
-
-**Note 2:** We strongly recommend that you *don't* install the package
+**Note 1:** We strongly recommend that you *don't* install the package
 globally on your machine (i.e., with root/administrator privileges), as the
 installed modules may conflict with other Python applications that you have
 installed in your system (or they can interfere with `coursera-dl`).  Prefer
 to use the option `--user` to `pip install`, if you need can.
 
-**Note 3:** As already mentioned, we *strongly* recommend that you use a new
+**Note 2:** As already mentioned, we *strongly* recommend that you use a new
 Python 3 interpreter (e.g., 3.4 or later), since Python 3 has better support
 for SSL/TLS (for secure connections) than earlier versions.<br/>
 If you must use Python 2, be sure that you have at least Python 2.7.9 (later
@@ -336,7 +332,7 @@ one of the following actions solve your problem:
   you installed the correct project. We had to use a different name in pip
   because our original name was already taken. Remember to install it using:
   ```
-      pip install coursera
+      pip install coursera-dl
   ```
 
 ### SSLError: [Errno 1] _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure
@@ -366,7 +362,7 @@ Before reporting any issue please follow the steps below:
 recommended versions of its dependencies, see them in the file
 `requirements.txt`.  Use the following command if in doubt:
 
-        pip install --upgrade coursera
+        pip install --upgrade coursera-dl
 
 2. If the problem persists, feel free to [open an issue][issue] in our
 bugtracker, please fill the issue template with *as much information as
@@ -451,7 +447,7 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [20]: https://www.coursera.org/about/terms
 [21]: https://twitter.com/rtdbrito
 [22]: https://pypi.python.org/
-[23]: https://pypi.python.org/pypi/coursera
+[23]: https://pypi.python.org/pypi/coursera-dl
 [issue213]: https://github.com/coursera-dl/coursera-dl/issues/213
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera-dl/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

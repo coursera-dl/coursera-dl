@@ -85,7 +85,7 @@ trove_classifiers = [
 ]
 
 setup(
-    name='coursera',
+    name='coursera-dl',
     version=__version__,
     maintainer='Rogério Theodoro de Brito',
     maintainer_email='rbrito@ime.usp.br',
@@ -100,7 +100,7 @@ setup(
 
     description='Script for downloading Coursera.org videos and naming them.',
     long_description=long_description,
-    keywords=['coursera', 'download', 'education', 'MOOCs', 'video'],
+    keywords=['coursera-dl', 'coursera', 'download', 'education', 'MOOCs', 'video'],
     classifiers=trove_classifiers,
 
     packages=["coursera"],
