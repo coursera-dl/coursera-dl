@@ -70,12 +70,13 @@ from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
                      OPENCOURSE_CONTENT_URL, IN_MEMORY_MARKER)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
-                    print_ssl_error_message,
+                    print_ssl_error_message, normalize_path,
                     decode_input, BeautifulSoup, is_debug_run)
 
 from .network import get_page, get_page_and_url
 from .api import CourseraOnDemand, OnDemandCourseMaterialItems
 from .filter import skip_format_url
+
 from coursera import __version__
 
 # URL containing information about outdated modules
@@ -681,7 +682,7 @@ def download_lectures(downloader,
                 continue
 
             if not os.path.exists(section_dir):
-                mkdir_p(section_dir)
+                mkdir_p(normalize_path(section_dir))
 
             resources_to_get = find_resources_to_get(lecture,
                                                      file_formats,
@@ -693,6 +694,9 @@ def download_lectures(downloader,
                 lecture_filename = get_lecture_filename(
                     combined_section_lectures_nums,
                     section_dir, secnum, lecnum, lecname, title, fmt)
+
+                lecture_filename = normalize_path(lecture_filename)
+
                 try:
                     last_update = handle_resource(
                         downloader, lecture_filename, fmt, url,

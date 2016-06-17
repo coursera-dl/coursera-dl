@@ -104,6 +104,25 @@ def clean_filename(s, minimal_change=False):
     return ''.join(c for c in s if c in valid_chars)
 
 
+def normalize_path(path):
+    """
+    Normalizes path on Windows OS. This means prepending
+    <backslash><backslash>?<backslash> to the path to get access to
+    Win32 device namespace instead of Win32 file namespace.
+    See https://msdn.microsoft.com/en-us/library/aa365247%28v=vs.85%29.aspx#maxpath
+
+    @param path: Path to normalize.
+    @type path: str
+
+    @return: Normalized path.
+    @rtype str
+    """
+    if sys.platform != 'win32':
+        return path
+
+    return u'\\\\?\\' + os.path.abspath(path)
+
+
 def get_anchor_format(a):
     """
     Extract the resource file-type format from the anchor.
