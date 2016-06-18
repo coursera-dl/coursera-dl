@@ -20,6 +20,7 @@
 - [Troubleshooting](#troubleshooting)
     - [Windows: Failed to create process](#windows-failed-to-create-process)
     - [SSLError: Errno 1 _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure](#sslerror-errno-1-_sslc504-error14094410ssl-routinesssl3_read_bytessslv3-alert-handshake-failure)
+    - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
 - [Reporting issues](#reporting-issues)
 - [Filing an issue/Reporting a bug](#filing-an-issuereporting-a-bug)
 - [Feedback](#feedback)
@@ -354,7 +355,23 @@ one of the following actions solve your problem:
       pip install coursera-dl
   ```
 
-### Windows: Failed to create process
+## Found 0 sections and 0 lectures on this page
+
+First of all, make sure you are enrolled to the course you want to download.
+
+Many old courses have already closed enrollment so often it's not an
+option. In this case, try downloading with `--preview` option. Some
+courses allow to download lecture materials without enrolling, but
+it's not common and is not guaranteed to work for every course.
+
+Finally, you can download the videos if you have, at least, the index
+file that lists all the course materials. Maybe your friend who is enrolled
+could save that course page for you. In that case use the `--process_local_page`
+option.
+
+If none of the above works for you, there is nothing we can do.
+
+## Windows: Failed to create process
 
 In `C:\Users\<user>\AppData\Local\Programs\Python\Python35-32\Scripts`
 or wherever Python installed (above is default for Windows)
@@ -380,7 +397,7 @@ to
 
 Source: [issue #500][issue500] [StackOverflow][pipinstallerbug]
 
-### SSLError: [Errno 1] _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure
+## SSLError: [Errno 1] _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure
 
 This is a known error, please do not report about this error message! The problem is in **YOUR** environment. To fix it, do the following:
 
