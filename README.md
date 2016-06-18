@@ -18,9 +18,9 @@
     - [Running the script](#running-the-script)
     - [Resuming downloads](#resuming-downloads)
 - [Troubleshooting](#troubleshooting)
+    - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
     - [Windows: Failed to create process](#windows-failed-to-create-process)
     - [SSLError: Errno 1 _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure](#sslerror-errno-1-_sslc504-error14094410ssl-routinesssl3_read_bytessslv3-alert-handshake-failure)
-    - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
 - [Reporting issues](#reporting-issues)
 - [Filing an issue/Reporting a bug](#filing-an-issuereporting-a-bug)
 - [Feedback](#feedback)
@@ -368,6 +368,8 @@ Finally, you can download the videos if you have, at least, the index
 file that lists all the course materials. Maybe your friend who is enrolled
 could save that course page for you. In that case use the `--process_local_page`
 option.
+
+Alternatively you may want to try this Chrome extension: https://chrome.google.com/webstore/detail/coursera-materials-downlo/ijkboagofaehocnjacacdhdcbbcpilih
 
 If none of the above works for you, there is nothing we can do.
 
