@@ -163,7 +163,7 @@ def get_old_style_syllabus(session, class_name, local_page=False, preview=False)
                 f.write(page.encode("utf-8"))
     else:
         with open(local_page) as f:
-            page = f.read().decode("utf-8")
+            page = decode_input(f.read())
         logging.info('Read (%d bytes) from local file', len(page))
 
     return page
@@ -1119,14 +1119,18 @@ def download_old_style_class(args, class_name):
 
     subtitle_language = args.subtitle_language
     if args.about or args.subtitle_language != 'en':
-        about = download_about(session,
-                               class_name,
-                               args.path,
-                               args.overwrite,
-                               args.subtitle_language)
-        # Check if subtitle is available
-        if not about or not about["subtitleLanguagesCsv"].split(',').count(args.subtitle_language):
-            logging.warning("Subtitle unavailable in specified language")
+        try:
+            about = download_about(session,
+                                   class_name,
+                                   args.path,
+                                   args.overwrite,
+                                   args.subtitle_language)
+            # Check if subtitle is available
+            if not about or not about["subtitleLanguagesCsv"].split(',').count(args.subtitle_language):
+                logging.warning("Subtitle unavailable in specified language")
+                subtitle_language = "en"
+        except requests.exceptions.HTTPError as e:
+            logging.info('Could not download about page, falling back to English subtitles')
             subtitle_language = "en"
 
     # get the syllabus listing
