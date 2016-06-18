@@ -141,6 +141,8 @@ else:
 PATH_CACHE = os.path.join(tempfile.gettempdir(), _USER + "_coursera_dl_cache")
 PATH_COOKIES = os.path.join(PATH_CACHE, 'cookies')
 
+WINDOWS_UNC_PREFIX = u'\\\\?\\'
+
 #: This extension is used to save contents of supplementary instructions.
 IN_MEMORY_EXTENSION = 'html'
 

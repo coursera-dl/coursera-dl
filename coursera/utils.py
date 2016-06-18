@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup as BeautifulSoup_
 # Force us of bs4 with html5lib
 BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
-from .define import COURSERA_URL
+from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
 
 from six.moves import html_parser
 from six import iteritems
@@ -119,7 +119,10 @@ def normalize_path(path):
     if sys.platform != 'win32':
         return path
 
-    return u'\\\\?\\' + os.path.abspath(path)
+    if path.startswith(WINDOWS_UNC_PREFIX):
+        return path
+
+    return WINDOWS_UNC_PREFIX + os.path.abs(path)
 
 
 def get_anchor_format(a):
