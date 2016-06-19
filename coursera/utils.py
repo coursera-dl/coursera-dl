@@ -122,7 +122,7 @@ def normalize_path(path):
     if path.startswith(WINDOWS_UNC_PREFIX):
         return path
 
-    return WINDOWS_UNC_PREFIX + os.path.abs(path)
+    return WINDOWS_UNC_PREFIX + os.path.abspath(path)
 
 
 def get_anchor_format(a):
