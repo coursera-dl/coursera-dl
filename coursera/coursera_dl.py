@@ -70,7 +70,8 @@ from .cookies import (
     get_cookies_for_class, make_cookie_values, login, TLSAdapter)
 from .credentials import get_credentials, CredentialsError, keyring
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
-                     OPENCOURSE_CONTENT_URL, IN_MEMORY_MARKER)
+                     OPENCOURSE_CONTENT_URL, IN_MEMORY_MARKER,
+                     FORMAT_MAX_LENGTH, TITLE_MAX_LENGTH)
 from .downloaders import get_downloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     print_ssl_error_message, normalize_path,
@@ -622,6 +623,12 @@ def get_lecture_filename(combined_section_lectures_nums,
     @return: Lecture file name.
     @rtype: str
     """
+    # FIXME: this is a quick and dirty solution to Filename too long
+    # problem. We need to think of a more general way to solve this
+    # issue.
+    fmt = fmt[:FORMAT_MAX_LENGTH]
+    title = title[:TITLE_MAX_LENGTH]
+
     # Format lecture file name
     if combined_section_lectures_nums:
         lecture_filename = os.path.join(

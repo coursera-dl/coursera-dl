@@ -152,6 +152,12 @@ IN_MEMORY_EXTENSION = 'html'
 #: field first.
 IN_MEMORY_MARKER = '#inmemory#'
 
+#: These are hard limits for format (file extension) and
+#: title (file name) lengths to avoid too long file names
+#: (longer than 255 characters)
+FORMAT_MAX_LENGTH = 20
+TITLE_MAX_LENGTH = 200
+
 #: CSS that is usen to prettify instructions
 INSTRUCTIONS_HTML_INJECTION = '''
 <style>
