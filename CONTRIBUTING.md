@@ -63,7 +63,7 @@ take a few paragraphs to tell us why we would like to change.
 If we are not using something, it is most likely that one of the following
 options applies:
 
-1. I (@rbrito) may know even know that what you are proposing exists or have
+1. I (@rbrito) may not even know that what you are proposing exists or have
    not yet "seen the light" as to why I should use it instead of using what
    I am currently using.
 2. Even if I know about the tool, I may not know how to use it, or how it
