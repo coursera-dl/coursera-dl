@@ -1,6 +1,14 @@
 # Change Log
 
-## 0.6.0 (YYYY-MM-DD)
+## 0.6.1 (2016-06-20)
+
+Bugfixes:
+  - When using `--process_local_page` option, errors downloading About
+    page will not stop course download
+  - Limit file name part to 200 characters and file extension part to 20
+    characters to alleviate "Filename is too long" issue
+
+## 0.6.0 (2016-06-17)
 
 Features:
   - Descriptions of assignments are saved in more cases (different courses
