@@ -10,7 +10,7 @@
 - [Features](#features)
 - [Disclaimer](#disclaimer)
 - [Installation instructions](#installation-instructions)
-    - [Recommended installation method for all Operating Systems](l#recommended-installation-method-for-all-operating-systems)
+    - [Recommended installation method for all Operating Systems](#recommended-installation-method-for-all-operating-systems)
     - [Alternative ways of installing missing dependencies](#alternative-ways-of-installing-missing-dependencies)
         - [Alternative installation method for Unix systems](#alternative-installation-method-for-unix-systems)
         - [Installing dependencies on your own](#installing-dependencies-on-your-own)
