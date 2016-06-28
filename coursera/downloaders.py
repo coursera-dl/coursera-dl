@@ -37,6 +37,9 @@ class Downloader(object):
         """
         Actual method to download the given url to the given file.
         This method should be implemented by the subclass.
+
+        @:return True on success; False on failure to download.
+
         """
         raise NotImplementedError("Subclasses should implement this")
 
@@ -44,10 +47,13 @@ class Downloader(object):
         """
         Download the given url to the given file. When the download
         is aborted by the user, the partially downloaded file is also removed.
+
+        @:return True on success; False on failure to download.
+
         """
 
         try:
-            self._start_download(url, filename, resume)
+            return self._start_download(url, filename, resume)
         except KeyboardInterrupt as e:
             # keep the file if resume is True
             if not resume:
@@ -118,6 +124,9 @@ class ExternalDownloader(Downloader):
         raise NotImplementedError("Subclasses should implement this")
 
     def _start_download(self, url, filename, resume):
+        """
+          @:return True on success; False on failure to download.
+        """
         command = self._create_command(url, filename)
         command.extend(self.downloader_arguments)
         self._prepare_cookies(command, url)
@@ -126,7 +135,12 @@ class ExternalDownloader(Downloader):
 
         logging.debug('Executing %s: %s', self.bin, command)
         try:
-            subprocess.call(command)
+            ret_num = subprocess.call(command)
+            logging.debug("External call return value is " + str(ret_num))
+            if ret_num == 0:
+              return True
+            else:
+              return False
         except OSError as e:
             msg = "{0}. Are you sure that '{1}' is the right bin?".format(
                 e, self.bin)
@@ -183,8 +197,12 @@ class Aria2Downloader(ExternalDownloader):
         command.extend(['--header', "Cookie: " + cookie_values])
 
     def _create_command(self, url, filename):
-        return [self.bin, url, '-o', filename,
+        path, file = os.path.split(filename)
+        logging.debug("PATH: \"{}\"; FILE: \"{}\"".format(path, file))
+
+        return [self.bin, url, '-d', path, '-o', file, '--allow-overwrite=true',
                 '--check-certificate=false', '--log-level=notice',
+#                '--check-certificate=false', '--log-level=debug', '--console-log-level=debug',
                 '--max-connection-per-server=4', '--min-split-size=1M']
 
 
@@ -300,6 +318,9 @@ class NativeDownloader(Downloader):
     'Native' python downloader -- slower than the external downloaders.
 
     :param session: Requests session.
+
+    @:return True on success; False on failure to download.
+
     """
 
     def __init__(self, session):
@@ -348,7 +369,7 @@ class NativeDownloader(Downloader):
                     else:
                         error_msg = 'HTTP Error ' + str(r.status_code)
 
-                    wait_interval = 2 ** (attempts_count + 1)
+                    wait_interval = 1.5 ** (attempts_count + 1)
                     msg = 'Error downloading, will retry in {0} seconds ...'
                     print(msg.format(wait_interval))
                     time.sleep(wait_interval)
