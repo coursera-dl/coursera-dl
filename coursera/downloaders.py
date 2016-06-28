@@ -198,7 +198,7 @@ class Aria2Downloader(ExternalDownloader):
 
     def _create_command(self, url, filename):
         path, file = os.path.split(filename)
-        logging.debug("PATH: \"{}\"; FILE: \"{}\"".format(path, file))
+#        logging.debug("PATH: \"{}\"; FILE: \"{}\"".format(path, file))
 
         return [self.bin, url, '-d', path, '-o', file, '--allow-overwrite=true',
                 '--check-certificate=false', '--log-level=notice',
