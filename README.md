@@ -17,7 +17,7 @@
     - [Create an account with Coursera](#create-an-account-with-coursera)
     - [Running the script](#running-the-script)
     - [Resuming downloads](#resuming-downloads)
-- [List of some known Old courses to their full names](#list-of-known-courses)
+- [List of some known old courses](#list-of-some-known-old-courses)
 - [Troubleshooting](#troubleshooting)
     - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
     - [Windows: Failed to create process](#windows-failed-to-create-process)
@@ -285,7 +285,7 @@ probably with many other shells) one of the better ways to do so is to
 enclose your password in single quotes, so that you don't run into
 problems.  See [issue #213][issue213] for more information.
 
-# List of known Old courses to their full names
+# List of some known old courses
 
 * "Automata by Jeff Ullman" -> automata-002
 * "Introduction to Logic by Michael Genesereth" -> intrologic-006
@@ -294,24 +294,12 @@ problems.  See [issue #213][issue213] for more information.
 * "Pattern-Oriented Software Architectures for Concurrent and Networked Software" -> posasoftware-001
 * "Introduction to Mathematical Thinking by Dr. Keith Devlin Stanford University" -> maththink-2012-001
 * "Model Thinking by Scott Page University of Michigan" -> model-thinking
-* "Probabilistic Graphical Models by Daphne Koller" -> pgm-2012-002
-* 
+* "Probabilistic Graphical Models by Daphne Koller" -> pgm-003
 * "Calculus: Single Variable Part 1 - Functions University of Pennsylvania" (on demand) -> single-variable-calculus
 * "Introduction to Public Speaking by University of Washington" -> public-speaking
-* "Introduction to Logic by Michael Genesereth" -> intrologic-2012-002
 * "Calculus One by The Ohio State University" -> calculus1
-* "Calculus One by The Ohio State University" (on demand) -> combinatorial-game-theory
 * "Learning How to Learn: Powerful mental tools to help you master tough subjects" -> learning-how-to-learn
-
-* "Programming Mobile Applications for Android Handheld Systems Part 1" -> androidpart1
-* "Programming Mobile Applications for Android Handheld Systems Part 2" -> androidpart2
-* "Programming Mobile Services for Android Handheld Systems: Concurrency" -> posaconcurrency
-* "Programming Mobile Services for Android Handheld Systems: Communication" -> posacommunication
 * "Programming Cloud Services for Android Handheld Systems: Security" -> mobilecloudsecurity
-* "Natural Language Processing by Michael Collins Columbia University" -> nlangp
-
-
-
 
 # Troubleshooting
 
