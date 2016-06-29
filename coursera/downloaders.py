@@ -12,12 +12,15 @@ from __future__ import print_function
 import logging
 import math
 import os
+import re
 import requests
 import subprocess
 import sys
 import time
 
 from six import iteritems
+
+from .utils import clean_filename
 
 
 class Downloader(object):
@@ -45,6 +48,18 @@ class Downloader(object):
         Download the given url to the given file. When the download
         is aborted by the user, the partially downloaded file is also removed.
         """
+
+        logging.debug('"raw" filename: <%s>.', filename)
+        filename = clean_filename(filename, minimal_change=True, keep_slashes=True)
+        logging.debug('filename after cleaning: <%s>.', filename)
+
+        # FIXME (rbrito): This should, perhaps, be included clean_filename
+        # m = re.match(r'^(.+)\?(.+=.+&?)*$', filename)
+        m = re.match(r'^([^?#]+)[?#]?.*$', filename)
+        if m != None:
+            filename = m.group(1)
+
+        logging.debug('filename after get parameter removal: <%s>.', filename)
 
         try:
             self._start_download(url, filename, resume)
