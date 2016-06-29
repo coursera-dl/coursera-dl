@@ -61,6 +61,13 @@ class Downloader(object):
 
         logging.debug('filename after get parameter removal: <%s>.', filename)
 
+        # FIXME (rbrito): This is pretty arbitrary and quite possibly wrong,
+        # as we don't even take extensions into account.
+        if len(filename) > 255:
+            filename = filename[:252] + '...'
+
+        logging.debug('filename after trimming: <%s>', filename)
+
         try:
             self._start_download(url, filename, resume)
         except KeyboardInterrupt as e:
