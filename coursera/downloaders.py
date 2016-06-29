@@ -385,6 +385,7 @@ class NativeDownloader(Downloader):
             chunk_sz = 1048576
             progress = DownloadProgress(content_length)
             progress.start()
+
             f = open(filename, 'ab') if resume else open(filename, 'wb')
             while True:
                 data = r.raw.read(chunk_sz, decode_content=True)
