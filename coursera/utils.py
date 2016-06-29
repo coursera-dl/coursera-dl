@@ -24,9 +24,9 @@ from six import iteritems
 
 #  six.moves doesn’t support urlparse
 if six.PY3:  # pragma: no cover
-    from urllib.parse import urlparse, urljoin
+    from urllib.parse import urlparse, urljoin, unquote
 else:
-    from urlparse import urlparse, urljoin
+    from urlparse import urlparse, urljoin, unquote
 
 # Python3 (and six) don't provide string
 if six.PY3:
@@ -57,26 +57,38 @@ def random_string(length):
     return ''.join(random.choice(valid_chars) for i in range(length))
 
 
-def clean_filename(s, minimal_change=False):
+def clean_filename(s, minimal_change=False, keep_slashes=False):
     """
     Sanitize a string to be used as a filename.
 
     If minimal_change is set to true, then we only strip the bare minimum of
     characters that are problematic for filesystems (namely, ':', '/' and
     '\x00', '\n').
+
+    If keep_slashes is set to True, we don't remove the '/' characters, as
+    we may be receiving a full filename.
     """
 
     # First, deal with URL encoded strings
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
+    # h = html_parser.HTMLParser()
+    s = unquote(s)
 
     # Strip forbidden characters
     s = (
         s.replace(':', '-')
-        .replace('/', '-')
         .replace('\x00', '-')
         .replace('\n', '')
     )
+
+    # FIXME (rbrito): As a very special case, we keep, for the moment,
+    # slashes in the names (this should really be Python's directory
+    # separator character)
+    #
+    # Furthermore, we should (perhaps?) only be operating on the basename of
+    # the files, not on the entire filenames. This should be discussed
+    # further with other people reviewing the proposed changes.
+    if not keep_slashes:
+        s = s.replace('/', '-')
 
     if minimal_change:
         return s
