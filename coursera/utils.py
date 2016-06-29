@@ -61,7 +61,7 @@ def clean_filename(s, minimal_change=False, keep_slashes=False):
     """
     Sanitize a string to be used as a filename.
 
-    If minimal_change is set to true, then we only strip the bare minimum of
+    If minimal_change is set to True, then we only strip the bare minimum of
     characters that are problematic for filesystems (namely, ':', '/' and
     '\x00', '\n').
 
