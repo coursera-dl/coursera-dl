@@ -717,8 +717,6 @@ def download_lectures(downloader,
                     else:
                         failed_urls.append(url)
 
-
-
         # After fetching resources, create a playlist in M3U format with the
         # videos downloaded.
         if playlist:
@@ -1154,6 +1152,9 @@ def download_old_style_class(args, class_name):
     if args.ignore_formats:
         ignored_formats = args.ignore_formats.split(",")
 
+    skipped_urls = []
+    failed_urls = []
+
     # obtain the resources
     completed = download_lectures(downloader,
                                   class_name,
@@ -1173,7 +1174,14 @@ def download_old_style_class(args, class_name):
                                   args.unrestricted_filenames,
                                   ignored_formats,
                                   args.resume,
+                                  None if args.disable_url_skipping else skipped_urls,
+                                  failed_urls if args.ignore_http_errors else None,
                                   args.video_resolution)
+
+    if skipped_urls:
+        print_skipped_urls(skipped_urls)
+    if failed_urls:
+        print_failed_urls(failed_urls)
 
     return completed
 
@@ -1244,26 +1252,34 @@ def download_on_demand_class(args, class_name):
 
     # Print skipped URLs if any
     if skipped_urls:
-        logging.info('The following URLs (%d) have been skipped and not '
-                     'downloaded:', len(skipped_urls))
-        logging.info('(if you want to download these URLs anyway, please '
-                     'add "--disable-url-skipping" option)')
-        logging.info('-' * 80)
-        for url in skipped_urls:
-            logging.info(url)
-        logging.info('-' * 80)
+        print_skipped_urls(skipped_urls)
 
     # Print failed URLs if any
     # FIXME: should we set non-zero exit code if we have failed URLs?
     if failed_urls:
-        logging.info('The following URLs (%d) could not be downloaded:',
-                     len(failed_urls))
-        logging.info('-' * 80)
-        for url in failed_urls:
-            logging.info(url)
-        logging.info('-' * 80)
+        print_failed_urls(failed_urls)
 
     return completed
+
+
+def print_skipped_urls(skipped_urls):
+    logging.info('The following URLs (%d) have been skipped and not '
+                    'downloaded:', len(skipped_urls))
+    logging.info('(if you want to download these URLs anyway, please '
+                    'add "--disable-url-skipping" option)')
+    logging.info('-' * 80)
+    for url in skipped_urls:
+        logging.info(url)
+    logging.info('-' * 80)
+
+
+def print_failed_urls(failed_urls):
+    logging.info('The following URLs (%d) could not be downloaded:',
+                    len(failed_urls))
+    logging.info('-' * 80)
+    for url in failed_urls:
+        logging.info(url)
+    logging.info('-' * 80)
 
 
 def download_class(args, class_name):
