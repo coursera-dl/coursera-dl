@@ -202,3 +202,22 @@ That's essentially it.
 There are many other tricks/steps in the git workflow, but these are the
 basics that I (@rbrito) think that will suffice for a start.  If you want a
 few details more, feel free to ask me to include them here.
+
+# Release process
+
+This section is for project maintainers.
+
+DRAFT
+
+1. Run tests locally
+2. Run the script on several courses to check sanity
+3. Update CHANGELOG.md, increment version, put what you've added to the
+   changelog into commit message. This way it gets it way into releases page
+   with a nice description of the changes.
+   `git add ... & git ci -m 'Bump version (old_version -> new_version)'`
+4. `git tag new_version`
+5. `git push && git push --tags`
+6. `pandoc --from=markdown --to=rst --output=README.rst README.md`.
+   I think this is required for PyPI description to look nice.
+7. `python setup.py sdist` to build the package
+8. `twine upload dist/coursera-dl-0.6.1.tar.gz` to deploy the package.
