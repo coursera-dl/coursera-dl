@@ -72,7 +72,7 @@ from .credentials import get_credentials, CredentialsError, keyring
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE,
                      OPENCOURSE_CONTENT_URL, IN_MEMORY_MARKER,
                      FORMAT_MAX_LENGTH, TITLE_MAX_LENGTH)
-from .downloaders import get_downloader
+from .downloaders import (get_downloader, NativeDownloader)
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     print_ssl_error_message, normalize_path,
                     decode_input, BeautifulSoup, is_debug_run)
@@ -160,10 +160,10 @@ def get_old_style_syllabus(session, class_name, local_page=False, preview=False)
 
         # cache the page if we're in 'local' mode
         if local_page:
-            with open(local_page, 'w') as f:
+            with open(local_page, 'wb') as f:
                 f.write(page.encode("utf-8"))
     else:
-        with open(local_page) as f:
+        with open(local_page, 'rb') as f:
             page = decode_input(f.read())
         logging.info('Read (%d bytes) from local file', len(page))
 
@@ -561,8 +561,12 @@ def handle_resource(downloader,
 
     @return: Updated latest mtime.
     @rtype: timestamp
+
+    @:return True on success; False on failure to download.
+
     """
     # Decide whether we need to download it
+    ret_val = True
     if overwrite or not os.path.exists(lecture_filename) or resume:
         if not skip_download:
             if url.startswith(IN_MEMORY_MARKER):
@@ -572,10 +576,15 @@ def handle_resource(downloader,
                     file_object.write(page_content)
             else:
                 if skipped_urls is not None and skip_format_url(fmt, url):
-                    skipped_urls.append(url)
+                    logging.info('Skipping URL: %s', url)
+                    skipped_urls.append([url, lecture_filename])
                 else:
-                    logging.info('Downloading: %s', lecture_filename)
-                    downloader.download(url, lecture_filename, resume=resume)
+                    # This is logging helpful with external downloaders,
+                    # that don't print it themselves.
+                    logging.info('\n--->')
+                    logging.info('Downloading From: %s', url)
+                    logging.info('Downloading To: %s', lecture_filename)
+                    ret_val = downloader.download(url, lecture_filename, resume=resume)
         else:
             open(lecture_filename, 'w').close()  # touch
         last_update = time.time()
@@ -585,7 +594,7 @@ def handle_resource(downloader,
         # record that time
         last_update = max(last_update, os.path.getmtime(lecture_filename))
 
-    return last_update
+    return last_update, ret_val
 
 
 def get_lecture_filename(combined_section_lectures_nums,
@@ -686,8 +695,11 @@ def download_lectures(downloader,
                               lecname)
                 continue
 
+            print("section_dir:" + section_dir)
+
             if not os.path.exists(section_dir):
-                mkdir_p(normalize_path(section_dir))
+#                mkdir_p(normalize_path(section_dir))
+                mkdir_p(section_dir)
 
             resources_to_get = find_resources_to_get(lecture,
                                                      file_formats,
@@ -700,13 +712,15 @@ def download_lectures(downloader,
                     combined_section_lectures_nums,
                     section_dir, secnum, lecnum, lecname, title, fmt)
 
-                lecture_filename = normalize_path(lecture_filename)
+#                lecture_filename = normalize_path(lecture_filename)
 
                 try:
-                    last_update = handle_resource(
+                    last_update, success = handle_resource(
                         downloader, lecture_filename, fmt, url,
                         overwrite, resume, skip_download,
                         section_dir, skipped_urls, last_update)
+                    if not success and failed_urls is not None:
+                        failed_urls.append([url, lecture_filename])
                 except requests.exceptions.RequestException as e:
                     logging.error('The following error has occurred while '
                                   'downloading URL %s: %s', url, str(e))
@@ -715,7 +729,7 @@ def download_lectures(downloader,
                                      'please use "--ignore-http-errors" option')
                         raise
                     else:
-                        failed_urls.append(url)
+                        failed_urls.append([url, lecture_filename])
 
 
 
@@ -1150,6 +1164,12 @@ def download_old_style_class(args, class_name):
 
     downloader = get_downloader(session, class_name, args)
 
+    root_path = os.path.abspath(args.path)
+    if type(downloader) is NativeDownloader:
+      root_path = normalize_path(args.path)
+
+    logging.debug("root_path: %s" % root_path)
+
     ignored_formats = []
     if args.ignore_formats:
         ignored_formats = args.ignore_formats.split(",")
@@ -1164,7 +1184,7 @@ def download_old_style_class(args, class_name):
                                   args.section_filter,
                                   args.lecture_filter,
                                   args.resource_filter,
-                                  args.path,
+                                  root_path,
                                   args.verbose_dirs,
                                   args.preview,
                                   args.combined_section_lectures_nums,
@@ -1208,6 +1228,13 @@ def download_on_demand_class(args, class_name):
 
     downloader = get_downloader(session, class_name, args)
 
+    root_path = os.path.abspath(args.path)
+    if type(downloader) is NativeDownloader:
+      root_path = normalize_path(args.path)
+
+    logging.debug("root_path: %s" % root_path)
+    logging.debug("joined path: %s" % os.path.join(root_path, class_name))
+
     # obtain the resources
 
     skipped_urls = []
@@ -1228,7 +1255,8 @@ def download_on_demand_class(args, class_name):
             args.section_filter,
             args.lecture_filter,
             args.resource_filter,
-            os.path.join(args.path, class_name),
+#            os.path.join(args.path, class_name),
+            os.path.join(root_path, class_name),
             args.verbose_dirs,
             args.preview,
             args.combined_section_lectures_nums,
@@ -1238,30 +1266,50 @@ def download_on_demand_class(args, class_name):
             ignored_formats,
             args.resume,
             None if args.disable_url_skipping else skipped_urls,
-            failed_urls if args.ignore_http_errors else None
+            failed_urls
         )
         completed = completed and result
 
-    # Print skipped URLs if any
+    # Make skipped URL log message if any
+    skipped_log_msg = ""
     if skipped_urls:
-        logging.info('The following URLs (%d) have been skipped and not '
-                     'downloaded:', len(skipped_urls))
-        logging.info('(if you want to download these URLs anyway, please '
-                     'add "--disable-url-skipping" option)')
-        logging.info('-' * 80)
-        for url in skipped_urls:
-            logging.info(url)
-        logging.info('-' * 80)
+        skipped_log_msg += 'The following URLs (%d) have been skipped and not downloaded:\n' % len(skipped_urls)
+        skipped_log_msg += '(if you want to download these URLs anyway, please '
+        skipped_log_msg += 'add "--disable-url-skipping" option)\n'
+        skipped_log_msg += '-' * 80 + '\n'
+        for url, target_path in skipped_urls:
+            skipped_log_msg += url + '\n    ' + target_path + '\n'
+        skipped_log_msg += '-' * 80
 
-    # Print failed URLs if any
+    # Make failed URL log message if any
     # FIXME: should we set non-zero exit code if we have failed URLs?
+    failed_log_msg = ""
     if failed_urls:
-        logging.info('The following URLs (%d) could not be downloaded:',
-                     len(failed_urls))
-        logging.info('-' * 80)
-        for url in failed_urls:
-            logging.info(url)
-        logging.info('-' * 80)
+        failed_log_msg += 'The following URLs (%d) could not be downloaded:\n' % len(failed_urls)
+        failed_log_msg += '-' * 80 + '\n'
+        for url, target_path in failed_urls:
+            failed_log_msg += url + '\n    ' + target_path + '\n'
+        failed_log_msg += '-' * 80
+
+    # Now write any log messages to console and file
+    # FIXME: Use a configured filename
+    if skipped_log_msg != "" or failed_log_msg != "":
+        name_time_string =\
+          "SkippedOrFailed_{}.txt".format(time.strftime("%Y%m%d-%H%M%S", time.localtime()))
+        skipped_failed_path = os.path.join(args.path, class_name, name_time_string)
+        with open(skipped_failed_path, "w+") as f:
+            if skipped_log_msg != "":
+                logging.info("")
+                logging.info(skipped_log_msg)
+                f.write(skipped_log_msg)
+                f.write("\n\n")
+            if failed_log_msg != "":
+                 logging.info("")
+                 logging.info(failed_log_msg)
+                 f.write(failed_log_msg)
+                 f.write("\n")
+            logging.info("")
+            logging.info("Skipped and/or Failed URLs also written to %s" % skipped_failed_path)
 
     return completed
 
