@@ -863,16 +863,6 @@ def parse_args(args=None):
                                 'only valid for on-demand courses; '
                                 'only values allowed: 360p, 540p, 720p')
 
-    group_material.add_argument('--ignore-http-errors',
-                                dest='ignore_http_errors',
-                                action='store_true',
-                                default=False,
-                                help='ignore http errors so that an error does '
-                                'not stop course downloading process. Please '
-                                'note that this option only affects internal '
-                                'downloader during resource download stage, '
-                                'not syllabus parsing stage (default: False)')
-
     group_material.add_argument('--disable-url-skipping',
                                 dest='disable_url_skipping',
                                 action='store_true',
@@ -1175,7 +1165,7 @@ def download_old_style_class(args, class_name):
                                   ignored_formats,
                                   args.resume,
                                   None if args.disable_url_skipping else skipped_urls,
-                                  failed_urls if args.ignore_http_errors else None,
+                                  failed_urls,
                                   args.video_resolution)
 
     if skipped_urls:
@@ -1246,7 +1236,7 @@ def download_on_demand_class(args, class_name):
             ignored_formats,
             args.resume,
             None if args.disable_url_skipping else skipped_urls,
-            failed_urls if args.ignore_http_errors else None
+            failed_urls
         )
         completed = completed and result
 
