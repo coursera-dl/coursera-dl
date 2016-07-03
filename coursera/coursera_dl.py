@@ -1284,17 +1284,12 @@ def print_failed_urls(failed_urls):
 
 def download_class(args, class_name):
     """
-    Try to download class as if it were an old style class, and if it fails,
-    try it as an on-demand class.
+    Try to download on-demand class.
 
     Returns True if the class appears completed.
     """
-    try:
-        logging.debug('Downloading old style class %s', class_name)
-        return download_old_style_class(args, class_name)
-    except ClassNotFound:
-        logging.debug('Downloading new style (on demand) class %s', class_name)
-        return download_on_demand_class(args, class_name)
+    logging.debug('Downloading new style (on demand) class %s', class_name)
+    return download_on_demand_class(args, class_name)
 
 
 def main():
