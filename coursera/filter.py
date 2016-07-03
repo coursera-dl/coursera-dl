@@ -57,6 +57,11 @@ def skip_format_url(format_, url):
     if ('mailto:' in url) and ('@' in url):
         return True
 
+    # Is this localhost?
+    parsed = urlparse(url)
+    if parsed.hostname == 'localhost':
+        return True
+
     # These are trusted manually added formats, do not skip them
     if RE_VALID_FORMATS.match(format_):
         return False
@@ -67,7 +72,6 @@ def skip_format_url(format_, url):
         return True
 
     # Is this a link to the site root?
-    parsed = urlparse(url)
     if parsed.path in ('', '/'):
         return True
 
