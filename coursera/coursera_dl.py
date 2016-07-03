@@ -78,6 +78,7 @@ from .network import get_page, get_page_and_url
 from .api import CourseraOnDemand, OnDemandCourseMaterialItems
 from .filter import skip_format_url
 from .commandline import parse_args
+from .extractors import CourseraExtractor
 
 from coursera import __version__
 
@@ -164,18 +165,6 @@ def get_old_style_syllabus(session, class_name, local_page=False, preview=False)
         with open(local_page) as f:
             page = decode_input(f.read())
         logging.info('Read (%d bytes) from local file', len(page))
-
-    return page
-
-
-def get_on_demand_syllabus(session, class_name):
-    """
-    Get the on-demand course listing webpage.
-    """
-
-    url = OPENCOURSE_CONTENT_URL.format(class_name=class_name)
-    page = get_page(session, url)
-    logging.info('Downloaded %s (%d bytes)', url, len(page))
 
     return page
 
@@ -303,90 +292,6 @@ def parse_old_style_syllabus(session, page, reverse=False, unrestricted_filename
                       'please re-run with the `--clear-cache` option.')
 
     return sections
-
-
-def parse_on_demand_syllabus(session, page, reverse=False, unrestricted_filenames=False,
-                             subtitle_language='en', video_resolution=None):
-    """
-    Parse a Coursera on-demand course listing/syllabus page.
-    """
-
-    dom = json.loads(page)
-    course_name = dom['slug']
-
-    logging.info('Parsing syllabus of on-demand course. '
-                 'This may take some time, please be patient ...')
-    modules = []
-    json_modules = dom['courseMaterial']['elements']
-    course = CourseraOnDemand(session=session, course_id=dom['id'],
-                              unrestricted_filenames=unrestricted_filenames)
-    ondemand_material_items = OnDemandCourseMaterialItems.create(
-        session=session, course_name=course_name)
-
-    if is_debug_run():
-        with open('%s-syllabus-raw.json' % course_name, 'w') as file_object:
-            json.dump(dom, file_object, indent=4)
-        with open('%s-course-material-items.json' % course_name, 'w') as file_object:
-            json.dump(ondemand_material_items._items, file_object, indent=4)
-
-    for module in json_modules:
-        module_slug = module['slug']
-        logging.info('Processing module  %s', module_slug)
-        sections = []
-        json_sections = module['elements']
-        for section in json_sections:
-            section_slug = section['slug']
-            logging.info('Processing section     %s', section_slug)
-            lectures = []
-            json_lectures = section['elements']
-
-            # Certain modules may be empty-looking programming assignments
-            # e.g. in data-structures, algorithms-on-graphs ondemand courses
-            if not json_lectures:
-                lesson_id = section['id']
-                lecture = ondemand_material_items.get(lesson_id)
-                if lecture is not None:
-                    json_lectures = [lecture]
-
-            for lecture in json_lectures:
-                lecture_slug = lecture['slug']
-                typename = lecture['content']['typeName']
-
-                logging.info('Processing lecture         %s', lecture_slug)
-
-                if typename == 'lecture':
-                    lecture_video_id = lecture['content']['definition']['videoId']
-                    assets = lecture['content']['definition'].get('assets', [])
-
-                    links = course.extract_links_from_lecture(
-                        lecture_video_id, subtitle_language,
-                        video_resolution, assets)
-
-                    if links:
-                        lectures.append((lecture_slug, links))
-
-                elif typename == 'supplement':
-                    supplement_content = course.extract_links_from_supplement(
-                        lecture['id'])
-                    if supplement_content:
-                        lectures.append((lecture_slug, supplement_content))
-
-                elif typename in ('gradedProgramming', 'ungradedProgramming'):
-                    supplement_content = course.extract_links_from_programming(
-                        lecture['id'])
-                    if supplement_content:
-                        lectures.append((lecture_slug, supplement_content))
-
-            if lectures:
-                sections.append((section_slug, lectures))
-
-        if sections:
-            modules.append((module_slug, sections))
-
-    if modules and reverse:
-        modules.reverse()
-
-    return modules
 
 
 def download_about(session, class_name, path='', overwrite=False,
@@ -837,22 +742,30 @@ def download_on_demand_class(args, class_name):
     Returns True if the class appears completed.
     """
 
-    session = get_session()
-    login(session, args.username, args.password)
-
-    # get the syllabus listing
-    page = get_on_demand_syllabus(session, class_name)
-
     ignored_formats = []
     if args.ignore_formats:
         ignored_formats = args.ignore_formats.split(",")
 
+    session = get_session()
+    extractor = CourseraExtractor(session, args.username, args.password)
+
+    # login(session, args.username, args.password)
+
+    # get the syllabus listing
+    # page = get_on_demand_syllabus(session, class_name)
+
     # parse it
-    modules = parse_on_demand_syllabus(session, page,
-                                       args.reverse,
-                                       args.unrestricted_filenames,
-                                       args.subtitle_language,
-                                       args.video_resolution)
+    # modules = parse_on_demand_syllabus(session, page,
+    #                                    args.reverse,
+    #                                    args.unrestricted_filenames,
+    #                                    args.subtitle_language,
+    #                                    args.video_resolution)
+
+    modules = extractor.get_modules(class_name,
+                                    args.reverse,
+                                    args.unrestricted_filenames,
+                                    args.subtitle_language,
+                                    args.video_resolution)
 
     if is_debug_run():
         with open('%s-syllabus-parsed.json' % class_name, 'w') as file_object:
