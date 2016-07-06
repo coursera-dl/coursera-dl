@@ -1,0 +1,27 @@
+version: 1.0.{build}
+
+shallow_clone: true
+
+build:
+  verbosity: detailed
+
+environment:
+  matrix:
+    - PYTHON: "C:/Python27"
+    # Python 3.4 has outdated pip
+    # - PYTHON: "C:/Python34"
+    - PYTHON: "C:/Python35"
+
+init:
+  - "ECHO %PYTHON%"
+  - ps: "ls C:/Python*"
+
+install:
+  # FIXME: updating pip fails with PermissionError
+  # - "%PYTHON%/Scripts/pip.exe install -U pip setuptools"
+  - "%PYTHON%/Scripts/pip.exe install -e ."
+
+test_script:
+  - "%PYTHON%/Scripts/pip.exe --version"
+  # - "%PYTHON%/Scripts/http.exe --debug"
+  - "%PYTHON%/python.exe setup.py test"
