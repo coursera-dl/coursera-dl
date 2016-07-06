@@ -16,8 +16,8 @@ environment:
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
-    PANDOC_URL: "https://github.com/jgm/pandoc/releases/download/1.17.1/pandoc-1.17.1-1-windows.msi"
-    PANDOC_MSI: "C:\\pandoc.msi"
+    #PANDOC_URL: "https://github.com/jgm/pandoc/releases/download/1.17.1/pandoc-1.17.1-1-windows.msi"
+    #PANDOC_MSI: "C:\\pandoc.msi"
 
   matrix:
     # Pre-installed Python versions, which Appveyor may upgrade to
@@ -90,8 +90,8 @@ install:
   - "%CMD_IN_ENV% pip install -r requirements-dev.txt"
 
   # Install pandoc
-  - ps: Start-FileDownload "%PANDOC_URL%" -FileName "%PANDOC_MSI%"
-  - msiexec /i "%PANDOC_MSI%" /qn /log C:\install.log
+  - ps: Start-FileDownload 'https://github.com/jgm/pandoc/releases/download/1.17.1/pandoc-1.17.1-1-windows.msi' -FileName 'C:\pandoc.msi'
+  - msiexec /i C:\pandoc.msi /qn /log C:\install.log
     #INSTALLLOCATION=C:\MongoDB
 
   # FIXME: updating pip fails with PermissionError
