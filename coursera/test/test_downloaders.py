@@ -6,6 +6,7 @@ Test the downloaders.
 
 from coursera import downloaders
 from coursera import coursera_dl
+from coursera.filter import find_resources_to_get
 
 import pytest
 
@@ -21,7 +22,7 @@ def sample_bag():
 
 
 def test_collect_all_resources(sample_bag):
-    res = coursera_dl.find_resources_to_get(sample_bag, 'all', None)
+    res = find_resources_to_get(sample_bag, 'all', None)
 
     assert [('mp4', 'h://url1/lc1.mp4', 'video'),
             ('pdf', 'h://url2/lc2.pdf', 'slides'),
@@ -29,13 +30,13 @@ def test_collect_all_resources(sample_bag):
 
 
 def test_collect_only_pdfs(sample_bag):
-    res = coursera_dl.find_resources_to_get(sample_bag, 'pdf', None)
+    res = find_resources_to_get(sample_bag, 'pdf', None)
 
     assert [('pdf', 'h://url2/lc2.pdf', 'slides')] == sorted(res)
 
 
 def test_collect_with_filtering(sample_bag):
-    res = coursera_dl.find_resources_to_get(sample_bag, 'all', 'de')
+    res = find_resources_to_get(sample_bag, 'all', 'de')
     res = sorted(res)
 
     assert [('mp4', 'h://url1/lc1.mp4', 'video'),

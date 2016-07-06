@@ -4,24 +4,22 @@
 This module provides utility functions that are used within the script.
 """
 
-import errno
 import os
-import random
 import re
-import string
 import sys
+import time
+import errno
+import random
+import string
 import logging
+import datetime
 
-import six
+
 from bs4 import BeautifulSoup as BeautifulSoup_
 
-# Force us of bs4 with html5lib
-BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
-
-from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
-
-from six.moves import html_parser
+import six
 from six import iteritems
+from six.moves import html_parser
 from six.moves.urllib.parse import ParseResult
 from six.moves.urllib_parse import unquote_plus
 
@@ -38,6 +36,11 @@ if six.PY3:
 else:
     from string import letters as string_ascii_letters
     from string import digits as string_digits
+
+from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
+
+# Force us of bs4 with html5lib
+BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
 
 
 if six.PY2:
@@ -182,6 +185,36 @@ def fix_url(url):
         url = "http://" + url
 
     return url
+
+
+def is_course_complete(last_update):
+    """
+    Determine is the course is likely to have been terminated or not.
+
+    We return True if the timestamp given by last_update is 30 days or older
+    than today's date.  Otherwise, we return True.
+
+    The intended use case for this is to detect if a given courses has not
+    seen any update in the last 30 days or more.  Otherwise, we return True,
+    since it is probably too soon to declare the course complete.
+    """
+    rv = False
+    if last_update >= 0:
+        delta = time.time() - last_update
+        max_delta = total_seconds(datetime.timedelta(days=30))
+        if delta > max_delta:
+            rv = True
+    return rv
+
+
+def total_seconds(td):
+    """
+    Compute total seconds for a timedelta.
+
+    Added for backward compatibility, pre 2.7.
+    """
+    return (td.microseconds +
+            (td.seconds + td.days * 24 * 3600) * 10 ** 6) // 10 ** 6
 
 
 def make_coursera_absolute_url(url):

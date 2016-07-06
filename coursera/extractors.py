@@ -65,7 +65,7 @@ class CourseraExtractor(PlatformExtractor):
         course_name = dom['slug']
 
         logging.info('Parsing syllabus of on-demand course. '
-                    'This may take some time, please be patient ...')
+                     'This may take some time, please be patient ...')
         modules = []
         json_modules = dom['courseMaterial']['elements']
         course = CourseraOnDemand(session=self._session, course_id=dom['id'],

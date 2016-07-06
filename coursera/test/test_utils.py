@@ -19,6 +19,9 @@ from coursera import coursera_dl
 from coursera import api
 
 from coursera.test.utils import slurp_fixture
+from coursera.formatting import (format_section, format_resource,
+                                 format_combine_number_resource)
+from coursera.utils import total_seconds, is_course_complete
 
 
 @pytest.mark.parametrize(
@@ -98,32 +101,32 @@ def test_fix_url_removes_spaces():
 
 
 def test_format_combine_resource_works_correctly():
-    rv = coursera_dl.format_combine_number_resource(5, 4, "Moving_the_furniture", 'The_Basics', "mp4")
+    rv = format_combine_number_resource(5, 4, "Moving_the_furniture", 'The_Basics', "mp4")
     assert '05_04_Moving_the_furniture_The_Basics.mp4' == rv
 
 
 def test_format_combine_resource_works_correctly_without_title():
-    rv = coursera_dl.format_combine_number_resource(5, 1, "Introduction", '', "mp4")
+    rv = format_combine_number_resource(5, 1, "Introduction", '', "mp4")
     assert '05_01_Introduction.mp4' == rv
 
 
 def test_format_resource_works_correctly():
-    rv = coursera_dl.format_resource(2, "Washing", "Dishes", "mp9")
+    rv = format_resource(2, "Washing", "Dishes", "mp9")
     assert '02_Washing_Dishes.mp9' == rv
 
 
 def test_format_resource_works_correctly_without_title():
-    rv = coursera_dl.format_resource(1, "Introduction", '', "mp2")
+    rv = format_resource(1, "Introduction", '', "mp2")
     assert '01_Introduction.mp2' == rv
 
 
 def test_format_section_works_correctly():
-    rv = coursera_dl.format_section(9, 'bob', 'WEAVING', False)
+    rv = format_section(9, 'bob', 'WEAVING', False)
     assert '09_bob' == rv
 
 
 def test_format_section_works_correctly_with_verbose():
-    rv = coursera_dl.format_section(9, 'bill', 'WEAVING', True)
+    rv = format_section(9, 'bill', 'WEAVING', True)
     assert 'WEAVING_09_bill' == rv
 
 
@@ -146,25 +149,25 @@ def test_decode_input():
 
 
 def test_total_seconds():
-    ts = coursera_dl.total_seconds(datetime.timedelta(days=30))
+    ts = total_seconds(datetime.timedelta(days=30))
     assert ts == 2592000
 
 
 def test_is_course_complete_should_give_false_if_there_was_recent_update():
 
-    delta = coursera_dl.total_seconds(datetime.timedelta(days=29))
+    delta = total_seconds(datetime.timedelta(days=29))
     tm = time() - delta
 
-    rv = coursera_dl.is_course_complete(tm)
+    rv = is_course_complete(tm)
     assert rv is False
 
 
 def test_is_course_complete_should_give_true_if_there_was_no_recent_update():
 
-    delta = coursera_dl.total_seconds(datetime.timedelta(days=31))
+    delta = total_seconds(datetime.timedelta(days=31))
     tm = time() - delta
 
-    rv = coursera_dl.is_course_complete(tm)
+    rv = is_course_complete(tm)
     assert rv is True
 
 

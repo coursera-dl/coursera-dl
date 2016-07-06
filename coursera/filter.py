@@ -3,7 +3,9 @@ This module contains filtering functions.
 """
 
 import re
+import logging
 
+from six import iteritems
 from six.moves.urllib_parse import urlparse
 
 
@@ -77,3 +79,38 @@ def skip_format_url(format_, url):
 
     # Do not skip
     return False
+
+
+def find_resources_to_get(lecture, file_formats, resource_filter, ignored_formats=None):
+    """
+    Select formats to download.
+    """
+    resources_to_get = []
+
+    if ignored_formats is None:
+        ignored_formats = []
+
+    if len(ignored_formats):
+        logging.info("The following file formats will be ignored: " + ",".join(ignored_formats))
+
+    for fmt, resources in iteritems(lecture):
+
+        fmt0 = fmt
+        if '.' in fmt:
+            fmt = fmt.split('.')[1]
+
+        if fmt in ignored_formats:
+            continue
+
+        if fmt in file_formats or 'all' in file_formats:
+            for r in resources:
+                if resource_filter and r[1] and not re.search(resource_filter, r[1]):
+                    logging.debug('Skipping b/c of rf: %s %s',
+                                  resource_filter, r[1])
+                    continue
+                resources_to_get.append((fmt0, r[0], r[1]))
+        else:
+            logging.debug(
+                'Skipping b/c format %s not in %s', fmt, file_formats)
+
+    return resources_to_get
