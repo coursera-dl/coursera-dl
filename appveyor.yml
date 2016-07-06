@@ -17,7 +17,7 @@ environment:
     # See: http://stackoverflow.com/a/13751649/163740
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
     PANDOC_URL: "https://github.com/jgm/pandoc/releases/download/1.17.1/pandoc-1.17.1-1-windows.msi"
-    PANDOC_MSI: "C:\pandoc.msi"
+    PANDOC_MSI: "C:\\pandoc.msi"
 
   matrix:
     # Pre-installed Python versions, which Appveyor may upgrade to
