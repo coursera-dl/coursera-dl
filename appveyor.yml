@@ -1,3 +1,8 @@
+#
+# Most of this settings are taken from here:
+# https://github.com/ogrisel/python-appveyor-demo/blob/master/appveyor.yml
+#
+
 version: 1.0.{build}
 
 shallow_clone: true
@@ -6,22 +11,96 @@ build:
   verbosity: detailed
 
 environment:
+  global:
+    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+    # /E:ON and /V:ON options are not enabled in the batch script intepreter
+    # See: http://stackoverflow.com/a/13751649/163740
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
+
   matrix:
-    - PYTHON: "C:/Python27"
-    # Python 3.4 has outdated pip
-    # - PYTHON: "C:/Python34"
-    - PYTHON: "C:/Python35"
+    # Pre-installed Python versions, which Appveyor may upgrade to
+    # a later point release.
+    # See: http://www.appveyor.com/docs/installed-software#python
+
+    - PYTHON: "C:\\Python26"
+      PYTHON_VERSION: "2.6.x" # currently 2.6.6
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python26-x64"
+      PYTHON_VERSION: "2.6.x" # currently 2.6.6
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7.x" # currently 2.7.11
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7.x" # currently 2.7.11
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python33"
+      PYTHON_VERSION: "3.3.x" # currently 3.3.5
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python33-x64"
+      PYTHON_VERSION: "3.3.x" # currently 3.3.5
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4.x" # currently 3.4.3
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4.x" # currently 3.4.3
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5.x" # currently 3.5.1
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5.x" # currently 3.5.1
+      PYTHON_ARCH: "64"
 
 init:
   - "ECHO %PYTHON%"
   - ps: "ls C:/Python*"
 
 install:
+  # Prepend newly installed Python to the PATH of this build (this cannot be
+  # done from inside the powershell script as it would require to restart
+  # the parent CMD process).
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+
+  - ECHO "Filesystem root:"
+  - ps: "ls \"C:/\""
+
+  # Check that we have the expected version and architecture for Python
+  - "python --version"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+
+  # Upgrade to the latest version of pip to avoid it displaying warnings
+  # about it being out of date.
+  - "pip install --disable-pip-version-check --user --upgrade pip"
+
+  # Install requirements
+  - "%CMD_IN_ENV% pip install -r requirements.txt"
+  - "%CMD_IN_ENV% pip install -r requirements-dev.txt"
+
   # FIXME: updating pip fails with PermissionError
   # - "%PYTHON%/Scripts/pip.exe install -U pip setuptools"
-  - "%PYTHON%/Scripts/pip.exe install -e ."
+  # - "%PYTHON%/Scripts/pip.exe install -e ."
+
+build_script:
+  # Build the compiled extension (not present for our project)
+  - "%CMD_IN_ENV% python setup.py build"
 
 test_script:
-  - "%PYTHON%/Scripts/pip.exe --version"
-  # - "%PYTHON%/Scripts/http.exe --debug"
-  - "%PYTHON%/python.exe setup.py test"
+  # Run the project tests
+  - "%CMD_IN_ENV% py.test"
+
+after_test:
+  # If tests are successful, create binary packages for the project.
+  - "%CMD_IN_ENV% python setup.py sdist"
+  - "%CMD_IN_ENV% python setup.py bdist_wheel"
+  - ps: "ls dist"
