@@ -1,5 +1,5 @@
 #
-# Most of this settings are taken from here:
+# Most of these settings are taken from here:
 # https://github.com/ogrisel/python-appveyor-demo/blob/master/appveyor.yml
 #
 
@@ -97,7 +97,7 @@ build_script:
 
 test_script:
   # Run the project tests
-  - "%CMD_IN_ENV% py.test"
+  - "%CMD_IN_ENV% py.test -vv"
 
 after_test:
   # If tests are successful, create binary packages for the project.
