@@ -30,12 +30,16 @@ def json_path():
 
 
 def test_that_should_not_dl_if_file_exist(get_page, json_path):
+    pytest.skip()
+
     coursera_dl.get_page = Mock()
     coursera_dl.download_about(object(), "matrix-002", json_path)
     assert coursera_dl.get_page.called is False
 
 
 def test_that_we_parse_and_write_json_correctly(get_page, json_path):
+    pytest.skip()
+
     unprocessed_json = os.path.join(os.path.dirname(__file__),
                                     "fixtures", "json", "unprocessed.json")
 
@@ -59,6 +63,7 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 
 @pytest.fixture
 def get_old_style_video(monkeypatch):
+    pytest.skip()
     """
     Mock some methods that would, otherwise, create repeateadly many web
     requests.
@@ -78,22 +83,24 @@ def get_old_style_video(monkeypatch):
                         lambda session, href: None)
 
 
-@pytest.mark.parametrize(
-    "filename,num_sections,num_lectures,num_resources,num_videos", [
-        ("regular-syllabus.html", 23, 102, 502, 102),
-        ("links-to-wikipedia.html", 5, 37, 158, 36),
-        ("preview.html", 20, 106, 106, 106),
-        ("sections-not-to-be-missed.html", 9, 61, 224, 61),
-        ("sections-not-to-be-missed-2.html", 20, 121, 397, 121),
-        ("parsing-datasci-001-with-bs4.html", 10, 97, 358, 97),  # issue 134
-        ("parsing-startup-001-with-bs4.html", 4, 44, 136, 44),  # issue 137
-        ("parsing-wealthofnations-001-with-bs4.html", 8, 74, 296, 74),  # issue 131
-        ("parsing-malsoftware-001-with-bs4.html", 3, 18, 56, 16),  # issue 148
-        ("multiple-resources-with-the-same-format.html", 18, 97, 478, 97),
-    ]
-)
+# @pytest.mark.parametrize(
+#     "filename,num_sections,num_lectures,num_resources,num_videos", [
+#         ("regular-syllabus.html", 23, 102, 502, 102),
+#         ("links-to-wikipedia.html", 5, 37, 158, 36),
+#         ("preview.html", 20, 106, 106, 106),
+#         ("sections-not-to-be-missed.html", 9, 61, 224, 61),
+#         ("sections-not-to-be-missed-2.html", 20, 121, 397, 121),
+#         ("parsing-datasci-001-with-bs4.html", 10, 97, 358, 97),  # issue 134
+#         ("parsing-startup-001-with-bs4.html", 4, 44, 136, 44),  # issue 137
+#         ("parsing-wealthofnations-001-with-bs4.html", 8, 74, 296, 74),  # issue 131
+#         ("parsing-malsoftware-001-with-bs4.html", 3, 18, 56, 16),  # issue 148
+#         ("multiple-resources-with-the-same-format.html", 18, 97, 478, 97),
+#     ]
+# )
 def test_parse(get_old_style_video, filename, num_sections, num_lectures,
                num_resources, num_videos):
+    pytest.skip()
+
     filename = os.path.join(os.path.dirname(__file__), "fixtures", "html",
                             filename)
 
