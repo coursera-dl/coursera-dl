@@ -44,14 +44,6 @@ def parse_args(args=None):
                              default=None,
                              help='coursera password')
 
-    group_basic.add_argument('--on-demand', # FIXME: remove this option
-                             dest='on_demand',
-                             action='store_true',
-                             default=False,
-                             help='[DEPRECATED] get on-demand videos. Do not use'
-                             ' this option, it is deprecated. The script will'
-                             ' try to detect course type automatically.')
-
     group_basic.add_argument('-b',  # FIXME: kill this one-letter option
                              '--preview',
                              dest='preview',

@@ -507,10 +507,6 @@ def main():
     mkdir_p(PATH_CACHE, 0o700)
     if args.clear_cache:
         shutil.rmtree(PATH_CACHE)
-    if args.on_demand:
-        logging.warning('--on-demand option is deprecated and is not required'
-                        ' anymore. Do not use this option. It will be removed'
-                        ' in the future.')
     if args.list_courses:
         logging.info('Listing enrolled courses')
         list_courses(args)
