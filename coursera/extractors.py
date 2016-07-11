@@ -32,6 +32,16 @@ class CourseraExtractor(PlatformExtractor):
 
         self._session = session
 
+    def list_courses(self):
+        """
+        List enrolled courses.
+
+        @return: List of enrolled courses.
+        @rtype: [str]
+        """
+        course = CourseraOnDemand(session=self._session, course_id=None)
+        return course.list_courses()
+
     def get_modules(self, class_name,
                     reverse=False, unrestricted_filenames=False,
                     subtitle_language='en', video_resolution=None):
@@ -69,7 +79,7 @@ class CourseraExtractor(PlatformExtractor):
         modules = []
         json_modules = dom['courseMaterial']['elements']
         course = CourseraOnDemand(session=self._session, course_id=dom['id'],
-                                unrestricted_filenames=unrestricted_filenames)
+                                  unrestricted_filenames=unrestricted_filenames)
         ondemand_material_items = OnDemandCourseMaterialItems.create(
             session=self._session, course_name=course_name)
 

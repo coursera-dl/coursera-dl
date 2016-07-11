@@ -178,6 +178,13 @@ def parse_args(args=None):
                                    help='additional arguments passed to the'
                                    ' downloader')
 
+    parser.add_argument('--list-courses',
+                        dest='list_courses',
+                        action='store_true',
+                        default=False,
+                        help='list course names (slugs) and quit. Listed '
+                        'course names can be put into program arguments')
+
     parser.add_argument('--resume',
                         dest='resume',
                         action='store_true',

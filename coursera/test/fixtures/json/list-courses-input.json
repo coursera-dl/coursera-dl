@@ -1,0 +1,26 @@
+{
+    "elements": [],
+    "paging": null,
+    "linked": {
+        "courses.v1": [
+            {
+                "id": "0w0JAG9JEeSp0iIAC12Jpw",
+                "slug": "computational-neurosciencecompneuro",
+                "courseType": "v2.ondemand",
+                "name": "Computational Neuroscience"
+            },
+            {
+                "id": "7dkr2RYxEeaoTBLuQ4vt6Q",
+                "courseType": "v2.ondemand",
+                "slug": "nlp",
+                "name": "Natural Language Processing"
+            },
+            {
+                "id": "guqOkAKDEeaG2A4kH1tj-w",
+                "name": "Probabilistic Graphical Models",
+                "courseType": "v2.ondemand",
+                "slug": "probabilistic-graphical-models"
+            }
+        ]
+    }
+}

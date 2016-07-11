@@ -117,3 +117,16 @@ def test_extract_links_from_lecture_assets_typname_url_and_asset(get_page_json, 
     output = course._extract_links_from_lecture_assets(assets)
     output = json.loads(json.dumps(output))
     assert expected_output == output
+
+@patch('coursera.api.get_page_json')
+def test_list_courses(get_page_json, course):
+    """
+    Test course listing method.
+    """
+    get_page_json.side_effect = [
+        json.loads(slurp_fixture('json/list-courses-input.json'))
+    ]
+    expected_output = json.loads(slurp_fixture('json/list-courses-output.json'))
+    expected_output = expected_output['courses']
+    output = course.list_courses()
+    assert expected_output == output

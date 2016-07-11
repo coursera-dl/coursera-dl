@@ -399,6 +399,21 @@ def download_old_style_class(args, class_name):
     return completed
 
 
+def list_courses(args):
+    """
+    List enrolled courses.
+
+    @param args: Command-line arguments.
+    @type args: namedtuple
+    """
+    session = get_session()
+    extractor = CourseraExtractor(session, args.username, args.password)
+    courses = extractor.list_courses()
+    logging.info('Found %d courses', len(courses))
+    for course in courses:
+        logging.info(course)
+
+
 def download_on_demand_class(args, class_name):
     """
     Download all requested resources from the on-demand class given in class_name.
@@ -496,6 +511,10 @@ def main():
         logging.warning('--on-demand option is deprecated and is not required'
                         ' anymore. Do not use this option. It will be removed'
                         ' in the future.')
+    if args.list_courses:
+        logging.info('Listing enrolled courses')
+        list_courses(args)
+        return
 
     for class_name in args.class_names:
         try:
