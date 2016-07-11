@@ -2,6 +2,7 @@
 Helper functions that are only used in tests.
 """
 import os
+from io import open
 
 
 def slurp_fixture(path):
