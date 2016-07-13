@@ -288,6 +288,12 @@ def parse_args(args=None):
                              default=False,
                              help='print lots of debug information')
 
+    group_debug.add_argument('--cache-syllabus',
+                             dest='cache_syllabus',
+                             action='store_true',
+                             default=False,
+                             help='cache course syllabus into a file')
+
     group_debug.add_argument('--version',
                              dest='version',
                              action='store_true',

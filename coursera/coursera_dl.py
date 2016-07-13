@@ -118,14 +118,19 @@ def download_on_demand_class(args, class_name):
     session = get_session()
     extractor = CourseraExtractor(session, args.username, args.password)
 
-    modules = extractor.get_modules(class_name,
-                                    args.reverse,
-                                    args.unrestricted_filenames,
-                                    args.subtitle_language,
-                                    args.video_resolution)
+    cached_syllabus_filename = '%s-syllabus-parsed.json' % class_name
+    if args.cache_syllabus and os.path.isfile(cached_syllabus_filename):
+        with open(cached_syllabus_filename) as syllabus_file:
+            modules = json.load(syllabus_file)
+    else:
+        modules = extractor.get_modules(class_name,
+                                        args.reverse,
+                                        args.unrestricted_filenames,
+                                        args.subtitle_language,
+                                        args.video_resolution)
 
-    if is_debug_run():
-        with open('%s-syllabus-parsed.json' % class_name, 'w') as file_object:
+    if is_debug_run or args.cache_syllabus():
+        with open(cached_syllabus_filename, 'w') as file_object:
             json.dump(modules, file_object, indent=4)
 
     downloader = get_downloader(session, class_name, args)
