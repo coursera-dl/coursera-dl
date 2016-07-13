@@ -15,72 +15,6 @@ from .filter import find_resources_to_get, skip_format_url
 from .define import IN_MEMORY_MARKER
 
 
-def handle_resource(downloader,
-                    lecture_filename,
-                    fmt,
-                    url,
-                    overwrite,
-                    resume,
-                    skip_download,
-                    skipped_urls,
-                    last_update):
-    """
-    Handle resource. This function builds up resource file name and
-    downloads it if necessary.
-
-    @param downloader: Resource downloader instance.
-    @type downloader: downloaders.Downloader
-
-    @param fmt: Format of the resource (pdf, csv, etc)
-    @type fmt: str
-
-    @param url: URL of the resource.
-    @type url: str
-
-    @param overwrite: Flag that indicates whether files should be overwritten.
-    @type overwrite: bool
-
-    @param resume: Flag that indicates whether download should be resumed.
-    @type resume: bool
-
-    @param skip_download: Flag that indicates whether download should be skipped.
-    @type skip_download: bool
-
-    @param skipped_urls: List of skipped urls to update.
-    @type skipped_urls: None or list
-
-    @param last_update: Latest mtime across files.
-    @type last_update: timestamp
-
-    @return: Updated latest mtime.
-    @rtype: timestamp
-    """
-    # Decide whether we need to download it
-    if overwrite or not os.path.exists(lecture_filename) or resume:
-        if not skip_download:
-            if url.startswith(IN_MEMORY_MARKER):
-                page_content = url[len(IN_MEMORY_MARKER):]
-                logging.info('Saving page contents to: %s', lecture_filename)
-                with codecs.open(lecture_filename, 'w', 'utf-8') as file_object:
-                    file_object.write(page_content)
-            else:
-                if skipped_urls is not None and skip_format_url(fmt, url):
-                    skipped_urls.append(url)
-                else:
-                    logging.info('Downloading: %s', lecture_filename)
-                    downloader.download(url, lecture_filename, resume=resume)
-        else:
-            open(lecture_filename, 'w').close()  # touch
-        last_update = time.time()
-    else:
-        logging.info('%s already downloaded', lecture_filename)
-        # if this file hasn't been modified in a long time,
-        # record that time
-        last_update = max(last_update, os.path.getmtime(lecture_filename))
-
-    return last_update
-
-
 class CourseDownloader(object):
     __metaclass__ = abc.ABCMeta
 
@@ -121,7 +55,50 @@ class CourseraDownloader(CourseDownloader):
             sections = module[1]
             result = self._download_sections(module_name, sections)
             completed = completed and result
+
+        # Wait for all downloads to complete
+        self._downloader.join()
+
+        # Iterate over modules again to apply playlist creation/other hooks
+        # after download has finished
+        self._apply_postprocessing(modules)
+
         return completed
+
+    def _apply_postprocessing(self, modules):
+        """
+        Apply postprocessing hooks to downloaded modules.
+        """
+        section_filter = self._args.section_filter
+        hooks = self._args.hooks
+        playlist = self._args.playlist
+        verbose_dirs = self._args.verbose_dirs
+
+        for idx, module in enumerate(modules):
+            module_name = '%02d_%s' % (idx + 1, module[0])
+            sections = module[1]
+
+            for (secnum, (section, lectures)) in enumerate(sections):
+                if section_filter and not re.search(section_filter, section):
+                    continue
+
+                section_dir = os.path.join(
+                    self._path, self._class_name, module_name,
+                    format_section(secnum + 1, section,
+                                   self._class_name, verbose_dirs))
+
+                # After fetching resources, create a playlist in M3U format with the
+                # videos downloaded.
+                if playlist:
+                    create_m3u_playlist(section_dir)
+
+                if hooks:
+                    original_dir = os.getcwd()
+                    for hook in hooks:
+                        logging.info('Running hook %s for section %s.', hook, section_dir)
+                        os.chdir(section_dir)
+                        subprocess.call(hook)
+                    os.chdir(original_dir)
 
     def _download_sections(self, module_name, sections):
         """
@@ -133,8 +110,6 @@ class CourseraDownloader(CourseDownloader):
 
         section_filter = self._args.section_filter
         verbose_dirs = self._args.verbose_dirs
-        hooks = self._args.hooks
-        playlist = self._args.playlist
 
         for (secnum, (section, lectures)) in enumerate(sections):
             if section_filter and not re.search(section_filter, section):
@@ -149,19 +124,6 @@ class CourseraDownloader(CourseDownloader):
 
             self._download_lectures(lectures, secnum, section_dir)
 
-            # After fetching resources, create a playlist in M3U format with the
-            # videos downloaded.
-            if playlist:
-                create_m3u_playlist(section_dir)
-
-            if hooks:
-                original_dir = os.getcwd()
-                for hook in hooks:
-                    logging.info('Running hook %s for section %s.', hook, section_dir)
-                    os.chdir(section_dir)
-                    subprocess.call(hook)
-                os.chdir(original_dir)
-
         # if we haven't updated any files in 1 month, we're probably
         # done with this course
         is_complete = is_course_complete(self._last_update)
@@ -175,9 +137,6 @@ class CourseraDownloader(CourseDownloader):
         file_formats = self._args.file_formats
         resource_filter = self._args.resource_filter
         combined_section_lectures_nums = self._args.combined_section_lectures_nums
-        overwrite = self._args.overwrite
-        resume = self._args.resume
-        skip_download = self._args.skip_download
 
         for (lecnum, (lecname, lecture)) in enumerate(lectures):
             if lecture_filter and not re.search(lecture_filter,
@@ -201,13 +160,56 @@ class CourseraDownloader(CourseDownloader):
                     section_dir, secnum, lecnum, lecname, title, fmt)
 
                 lecture_filename = normalize_path(lecture_filename)
+                self._handle_resource(url, fmt, lecture_filename,
+                                      self._download_completion_handler)
 
-                try:
-                    self._last_update = handle_resource(
-                        self._downloader, lecture_filename, fmt, url,
-                        overwrite, resume, skip_download,
-                        self.skipped_urls, self._last_update)
-                except requests.exceptions.RequestException as e:
-                    logging.error('The following error has occurred while '
-                                  'downloading URL %s: %s', url, str(e))
-                    self.failed_urls.append(url)
+    def _download_completion_handler(self, url, result):
+        if isinstance(result, requests.exceptions.RequestException):
+            logging.error('The following error has occurred while '
+                          'downloading URL %s: %s', url, str(result))
+            self.failed_urls.append(url)
+        elif isinstance(result, Exception):
+            logging.error('Unknown exception occurred: %s' % result)
+            self.failed_urls.append(url)
+
+    def _handle_resource(self, url, fmt, lecture_filename, callback):
+        """
+        Handle resource. This function builds up resource file name and
+        downloads it if necessary.
+
+        @param fmt: Format of the resource (pdf, csv, etc)
+        @type fmt: str
+
+        @param url: URL of the resource.
+        @type url: str
+
+        @return: Updated latest mtime.
+        @rtype: timestamp
+        """
+        overwrite = self._args.overwrite
+        resume = self._args.resume
+        skip_download = self._args.skip_download
+
+        # Decide whether we need to download it
+        if overwrite or not os.path.exists(lecture_filename) or resume:
+            if not skip_download:
+                if url.startswith(IN_MEMORY_MARKER):
+                    page_content = url[len(IN_MEMORY_MARKER):]
+                    logging.info('Saving page contents to: %s', lecture_filename)
+                    with codecs.open(lecture_filename, 'w', 'utf-8') as file_object:
+                        file_object.write(page_content)
+                else:
+                    if self.skipped_urls is not None and skip_format_url(fmt, url):
+                        self.skipped_urls.append(url)
+                    else:
+                        logging.info('Downloading: %s', lecture_filename)
+                        self._downloader.download(callback, url, lecture_filename, resume=resume)
+            else:
+                open(lecture_filename, 'w').close()  # touch
+            self._last_update = time.time()
+        else:
+            logging.info('%s already downloaded', lecture_filename)
+            # if this file hasn't been modified in a long time,
+            # record that time
+            self._last_update = max(self._last_update,
+                                    os.path.getmtime(lecture_filename))
