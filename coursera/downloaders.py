@@ -322,9 +322,10 @@ class NativeDownloader(Downloader):
         else:
             logging.info('Downloading %s -> %s', url, filename)
 
+        max_attempts = 3
         attempts_count = 0
         error_msg = ''
-        while attempts_count < 5:
+        while attempts_count < max_attempts:
             r = self.session.get(url, stream=True, headers=headers)
 
             if r.status_code != 200:
@@ -341,9 +342,7 @@ class NativeDownloader(Downloader):
                     r.close()
                     return True
                 else:
-                    print(r.status_code)
-                    print(url)
-                    print(filesize)
+                    print('%s %s %s' % (r.status_code, url, filesize))
                     logging.warn('Probably the file is missing from the AWS '
                                  'repository...  waiting.')
 
@@ -381,7 +380,7 @@ class NativeDownloader(Downloader):
             r.close()
             return True
 
-        if attempts_count == 5:
+        if attempts_count == max_attempts:
             logging.warn('Skipping, can\'t download file ...')
             logging.error(error_msg)
             return False
