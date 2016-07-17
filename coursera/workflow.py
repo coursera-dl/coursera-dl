@@ -47,6 +47,7 @@ def _iter_modules(modules, class_name, path, ignored_formats, args):
     class IterSection(object):
         def __init__(self, module_iter, secnum, section, lectures):
             self.index = secnum
+            self.name = '%02d_%s' % (secnum, section)
             self.dir = os.path.join(
                 path, class_name, module_iter.name,
                 format_section(secnum + 1, section,

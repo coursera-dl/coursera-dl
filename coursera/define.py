@@ -51,7 +51,7 @@ OPENCOURSE_LIST_COURSES = 'https://www.coursera.org/api/courses.v1?q=watchlist&s
 #     }
 # }
 OPENCOURSE_MEMBERSIPS = 'https://www.coursera.org/api/memberships.v1?includes=courseId,courses.v1&q=me&showHidden=true&filter=current,preEnrolled'
-OPENCOURSE_CONTENT_URL = 'https://www.coursera.org/api/opencourse.v1/course/{class_name}'
+OPENCOURSE_CONTENT_URL = 'https://www.coursera.org/api/opencourse.v1/course/{class_name}?showLockedItems=true'
 OPENCOURSE_VIDEO_URL = 'https://www.coursera.org/api/opencourse.v1/video/{video_id}'
 OPENCOURSE_SUPPLEMENT_URL = 'https://www.coursera.org/api/onDemandSupplements.v1/'\
     '{course_id}~{element_id}?includes=asset&fields=openCourseAssets.v1%28typeName%29,openCourseAssets.v1%28definition%29'
@@ -200,6 +200,10 @@ TITLE_MAX_LENGTH = 200
 #: CSS that is usen to prettify instructions
 INSTRUCTIONS_HTML_INJECTION = '''
 <style>
+img {
+    height: auto;
+    max-width: 100%;
+}
 pre {
     display: block;
     margin: 20px;

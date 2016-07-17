@@ -112,7 +112,8 @@ class CourseraExtractor(PlatformExtractor):
                     lecture_slug = lecture['slug']
                     typename = lecture['content']['typeName']
 
-                    logging.info('Processing lecture         %s', lecture_slug)
+                    logging.info('Processing lecture         %s (%s)',
+                                 lecture_slug, typename)
 
                     if typename == 'lecture':
                         lecture_video_id = lecture['content']['definition']['videoId']

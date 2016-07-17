@@ -194,7 +194,7 @@ class CourseraOnDemand(object):
         """
         # 1. Inject basic CSS style
         css_soup = BeautifulSoup(INSTRUCTIONS_HTML_INJECTION)
-        soup.head.append(css_soup)
+        soup.append(css_soup)
 
         # 2. Replace <text> with <p>
         while soup.find('text'):

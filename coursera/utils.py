@@ -39,8 +39,8 @@ else:
 
 from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
 
-# Force us of bs4 with html5lib
-BeautifulSoup = lambda page: BeautifulSoup_(page, 'html5lib')
+# Force us of bs4 with html.parser
+BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
 
 
 if six.PY2:
