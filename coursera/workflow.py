@@ -96,6 +96,22 @@ def _iter_modules(modules, class_name, path, ignored_formats, args):
         yield IterModule(index, module)
 
 
+def _walk_modules(modules, class_name, path, ignored_formats, args):
+    """
+    Helper generator that traverses modules in returns a flattened
+    iterator.
+    """
+    for module in _iter_modules(modules=modules,
+                                class_name=class_name,
+                                path=path,
+                                ignored_formats=ignored_formats,
+                                args=args):
+        for section in module.sections:
+            for lecture in section.lectures:
+                for resource in lecture.resources:
+                    yield module, section, lecture, resource
+
+
 class CourseDownloader(object):
     __metaclass__ = abc.ABCMeta
 
