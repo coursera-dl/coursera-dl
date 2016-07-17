@@ -137,7 +137,7 @@ def test_walk_modules():
     expected_output = [
         (0, '01_section1',
          0, normpath('test_class/01_section1/01_module1'),
-         0, 'lecture1', 'test_class/01_section1/01_module1/01_lecture1_title.en.txt',
+         0, 'lecture1', normpath('test_class/01_section1/01_module1/01_lecture1_title.en.txt'),
          'https://www.coursera.org/api/test-url')]
     collected_output = []
 
