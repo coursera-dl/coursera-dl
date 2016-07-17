@@ -41,6 +41,26 @@ If you need to change the test suite, explain in the commit message why it
 needs to be changed (e.g., the page layout or the authentication methods
 from coursera changed, or they implemented a new kind of course).
 
+## Using tox and pyenv
+
+Running only py.test is okay for one-time check, but as it runs on your
+currently active Python installation, you're only checking the script on one
+Python version. A combination of tox + pyenv will allow you to run tests on many
+Python versions easily.
+
+First, install tox (listed in requirements-dev.txt) and pyenv (see their manual:
+[pyenv installation](https://github.com/yyuu/pyenv#installation). Make sure to
+activate pyenv or start a new shell. Then, install Python versions and run tox:
+
+    pyenv install 3.5.1
+    pyenv install 3.4.4
+    pyenv install 3.3.6
+    pyenv install 3.2
+    pyenv install 2.7.5
+    pyenv install 2.6.9
+    pyenv local 3.5.1 3.4.4 3.3.6 3.2 2.7.5 2.6.9
+    tox
+
 # Check for potential bugs
 
 Please, help keep the code tidy by checking for any potential bugs with the
@@ -203,13 +223,13 @@ There are many other tricks/steps in the git workflow, but these are the
 basics that I (@rbrito) think that will suffice for a start.  If you want a
 few details more, feel free to ask me to include them here.
 
-# Release process
+# Release procedure
 
 This section is for project maintainers.
 
 DRAFT
 
-1. Run tests locally
+1. Run tests locally. Use tox to run tests on all supported Python versions.
 2. Run the script on several courses to check sanity
 3. Update CHANGELOG.md, increment version, put what you've added to the
    changelog into commit message. This way it gets it way into releases page
