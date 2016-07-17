@@ -6,7 +6,7 @@ Test the downloaders.
 
 from coursera import downloaders
 from coursera import coursera_dl
-from coursera.filter import find_resources_to_get
+from coursera.filtering import find_resources_to_get
 
 import pytest
 
