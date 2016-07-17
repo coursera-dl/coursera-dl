@@ -3,17 +3,21 @@
 ## 0.7.0 (2016-??-??)
 
 Features:
-  - Added option `--list-courses` to list currently enrolled courses
-  - Added option `--jobs N` to download resources in N threads simultaneously
+  - Added option `--list-courses` to list currently enrolled courses (#514)
+  - Added option `--jobs N` to download resources in N threads simultaneously (#553)
   - Added option `--cache-syllabus` to avoid downloading course syllabus on
     every run (this option is rather for developers)
+
+Bugfixes:
+  - Locked lectures are also requested from server now, which allows to
+    download some programming assignments that were not downloaded before (#555)
 
 Deletions:
   - Support for old-style courses has been removed (Coursera discontinued old courses:
     http://coursera.tumblr.com/post/145882467032/courseras-transition-to-a-new-technology-platform)
   - `--ignore-http-errors` option has been removed and the default behavior
     has been adjusted to include this option
-  - Remove deprecated `--on-demand` option. Now OnDemand classes are downloaded
+  - Removed deprecated `--on-demand` option. Now OnDemand classes are downloaded
     by default.
 
 ## 0.6.1 (2016-06-20)
