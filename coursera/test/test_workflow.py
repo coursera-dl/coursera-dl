@@ -1,3 +1,4 @@
+from os.path import normpath
 import pytest
 import requests
 from requests.exceptions import RequestException
@@ -107,7 +108,7 @@ def test_iter_modules():
 
     expected_output = [
         (0, '01_section1'),
-        (0, 'test_class/01_section1/01_module1'),
+        (0, normpath('test_class/01_section1/01_module1')),
         (0, 'lecture1', 'en.txt', 'title'),
         ('en.txt', 'https://www.coursera.org/api/test-url', 'title')
     ]
@@ -135,7 +136,7 @@ def test_walk_modules():
 
     expected_output = [
         (0, '01_section1',
-         0, 'test_class/01_section1/01_module1',
+         0, normpath('test_class/01_section1/01_module1'),
          0, 'lecture1', 'test_class/01_section1/01_module1/01_lecture1_title.en.txt',
          'https://www.coursera.org/api/test-url')]
     collected_output = []
