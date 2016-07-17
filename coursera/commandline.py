@@ -44,6 +44,14 @@ def parse_args(args=None):
                              default=None,
                              help='coursera password')
 
+    group_basic.add_argument('--jobs',
+                             dest='jobs',
+                             action='store',
+                             default=1,
+                             type=int,
+                             help='number of parallel jobs to use for '
+                             'downloading resources. (Default: 1)')
+
     group_basic.add_argument('-b',  # FIXME: kill this one-letter option
                              '--preview',
                              dest='preview',

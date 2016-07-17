@@ -2,6 +2,8 @@
 *~
 .DS_Store
 _cache/
+.cache/
+.vagrant/
 .coverage
 /cover/
 /htmlcov/
@@ -9,6 +11,8 @@ _cache/
 /dist/
 *.egg-info
 .tox
+tags
+tmp
 
 # virtualenv folders
 venv2

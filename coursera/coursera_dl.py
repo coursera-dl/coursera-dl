@@ -63,6 +63,7 @@ from .cookies import (
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE)
 from .downloaders import get_downloader
 from .workflow import CourseraDownloader
+from .parallel import ConsecutiveDownloader, ParallelDownloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     print_ssl_error_message,
                     decode_input, BeautifulSoup, is_debug_run)
@@ -134,6 +135,8 @@ def download_on_demand_class(args, class_name):
             json.dump(modules, file_object, indent=4)
 
     downloader = get_downloader(session, class_name, args)
+    downloader_wrapper = ParallelDownloader(downloader, args.jobs) \
+        if args.jobs > 1 else ConsecutiveDownloader(downloader)
 
     # obtain the resources
 
@@ -142,7 +145,7 @@ def download_on_demand_class(args, class_name):
         ignored_formats = args.ignore_formats.split(",")
 
     course_downloader = CourseraDownloader(
-        downloader,
+        downloader_wrapper,
         commandline_args=args,
         class_name=class_name,
         path=args.path,
