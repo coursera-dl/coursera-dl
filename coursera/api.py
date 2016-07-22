@@ -13,7 +13,7 @@ from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename)
-from .network import get_page_json
+from .network import get_page, get_page_json, post_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
@@ -21,12 +21,158 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_API_ASSETS_V1_URL,
                      OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                      OPENCOURSE_VIDEO_URL,
-                     OPENCOURSE_MEMBERSIPS,
+                     OPENCOURSE_MEMBERSHIPS,
+                     POST_OPENCOURSE_API_QUIZ_SESSION,
+                     POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
+                     POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
 
                      INSTRUCTIONS_HTML_INJECTION,
 
                      IN_MEMORY_EXTENSION,
                      IN_MEMORY_MARKER)
+
+
+def make_csrf(length=24,
+              alphabet="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"):
+    import random
+    return ''.join([random.choice(alphabet) for _ in range(length)])
+
+def make_csrf2():
+    cookie = 'csrf2_token_' + make_csrf(8)
+    token = make_csrf()
+    csrf = make_csrf()
+    return cookie, token, csrf
+
+def make_csrf2_headers():
+    cookie, token, csrf = make_csrf2()
+    # X-CSRF2-Cookie:csrf2_token_dS3xQODi
+    # X-CSRF2-Token:cBPmO8CzzC3kJoHOKVNBqFyD
+    return {'X-CSRF2-Cookie': cookie,
+            'X-CSRF2-Token': token,
+            'X-CSRFToken': csrf,
+            'Cookie': '%s=%s; csrftoken=%s' % (cookie, token, csrf)}
+
+
+class CourseraOnDemandQuizConverter(object):
+    """
+    Converts quiz JSON into HTML for local viewing.
+    """
+    def __init__(self, session):
+        self._session = session
+
+    def convert_quiz(self, quiz_data):
+        result = []
+
+        for index, question in enumerate(quiz_data['questions']):
+            type_ = question['question']['type']
+            # variant = question['variant']
+            prompt = question['variant']['definition']['prompt']
+            options = question['variant']['definition']['options']
+
+            question_text = prompt['definition']['value']
+            result.append(question_text)
+
+            option_values = []
+            for option in options:
+                option_text = option['display']['definition']['value']
+                option_text = BeautifulSoup(option_text).text
+                option_values.append('<label><input type="radio" name="%s">'
+                                     '%s<br></label>' % (index, option_text))
+
+            if option_values:
+                result.append('<form>')
+                result.extend(option_values)
+                result.append('</form>')
+
+            result.append('<hr>')
+
+        prettifier = InstructionsPrettifier(self._session)
+        return prettifier.prettify('\n'.join(result))
+
+
+
+class InstructionsPrettifier(object):
+    def __init__(self, session):
+        self._session = session
+
+    def prettify(self, text):
+        """
+        Prettify instructions text to make it more suitable for offline reading.
+
+        @param text: HTML (kinda) text to prettify.
+        @type text: str
+
+        @return: Prettified HTML with several markup tags replaced with HTML
+            equivalents.
+        @rtype: str
+        """
+        soup = BeautifulSoup(text)
+        self._convert_instructions_basic(soup)
+        self._convert_instructions_images(soup)
+        return soup.prettify()
+
+    def _convert_instructions_basic(self, soup):
+        """
+        Perform basic conversion of instructions markup. This includes
+        replacement of several textual markup tags with their HTML equivalents.
+
+        @param soup: BeautifulSoup instance.
+        @type soup: BeautifulSoup
+        """
+        # 1. Inject basic CSS style
+        css_soup = BeautifulSoup(INSTRUCTIONS_HTML_INJECTION)
+        soup.append(css_soup)
+
+        # 2. Replace <text> with <p>
+        while soup.find('text'):
+            soup.find('text').name = 'p'
+
+        # 3. Replace <heading level="1"> with <h1>
+        while soup.find('heading'):
+            heading = soup.find('heading')
+            heading.name = 'h%s' % heading.attrs.get('level', '1')
+
+        # 4. Replace <code> with <pre>
+        while soup.find('code'):
+            soup.find('code').name = 'pre'
+
+        # 5. Replace <list> with <ol> or <ul>
+        while soup.find('list'):
+            list_ = soup.find('list')
+            type_ = list_.attrs.get('bullettype', 'numbers')
+            list_.name = 'ol' if type_ == 'numbers' else 'ul'
+
+    def _convert_instructions_images(self, soup):
+        """
+        Convert images of instructions markup. Images are downloaded,
+        base64-encoded and inserted into <img> tags.
+
+        @param soup: BeautifulSoup instance.
+        @type soup: BeautifulSoup
+        """
+        # 6. Replace <img> assets with actual image contents
+        images = [image for image in soup.find_all('img')
+                  if image.attrs.get('assetid') is not None]
+        if not images:
+            return
+
+        # Get assetid attribute from all images
+        asset_ids = [image.attrs.get('assetid') for image in images]
+
+        # Downloaded information about image assets (image IDs)
+        asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
+                                   id=','.join(asset_ids))
+        # Create a map "asset_id => asset" for easier access
+        asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
+
+        for image in images:
+            # Download each image and encode it using base64
+            url = asset_map[image['assetid']]['url']['url'].strip()
+            request = self._session.get(url)
+            if request.status_code == 200:
+                content_type = request.headers.get('Content-Type', 'image/png')
+                encoded64 = base64.b64encode(request.content).decode()
+                image['src'] = 'data:%s;base64,%s' % (content_type, encoded64)
 
 
 class OnDemandCourseMaterialItems(object):
@@ -123,6 +269,13 @@ class CourseraOnDemand(object):
         self._course_id = course_id
 
         self._unrestricted_filenames = unrestricted_filenames
+        self._user_id = None
+
+    def obtain_user_id(self):
+        reply = get_page_json(self._session, OPENCOURSE_MEMBERSHIPS)
+        elements = reply['elements']
+        user_id = elements[0]['userId'] if elements else None
+        self._user_id = user_id
 
     def list_courses(self):
         """
@@ -131,10 +284,89 @@ class CourseraOnDemand(object):
         @return: List of enrolled courses.
         @rtype: [str]
         """
-        reply = get_page_json(self._session, OPENCOURSE_MEMBERSIPS)
+        reply = get_page_json(self._session, OPENCOURSE_MEMBERSHIPS)
         course_list = reply['linked']['courses.v1']
         slugs = [element['slug'] for element in course_list]
         return slugs
+
+    def extract_links_from_exam(self, quiz_id):
+        from requests import Request
+
+        #from ipdb import set_trace; set_trace()
+        url = 'https://www.coursera.org/learn/ml-clustering-and-retrieval/exam/YV0W4/representations-and-metrics'
+        quiz_reply = self._session.get(url)
+        quiz_page = quiz_reply.text
+
+        headers = make_csrf2_headers()
+        headers.update({
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Host': 'www.coursera.org',
+            'Origin': 'https://www.coursera.org',
+            'Referer': 'https://www.coursera.org/learn/ml-clustering-and-retrieval/exam/YV0W4/representations-and-metrics',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/37.0.2062.120 Chrome/37.0.2062.120 Safari/537.36',
+            'X-Requested-With': 'XMLHttpRequest'
+        })
+
+        data = {'courseId': self._course_id,
+                'itemId': quiz_id}
+
+        try:
+            request = Request('POST', POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
+                            data=json.dumps(data),
+                            headers=headers)
+            prepped = self._session.prepare_request(request)
+            reply = self._session.send(prepped)
+            print(reply)
+        except Exception as e:
+            from ipdb import set_trace; set_trace()
+        print(request)
+
+
+        # try:
+        #     reply = post_page_json(self._session,
+        #                         POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
+        #                         data={'courseId': self._course_id,
+        #                               'itemId': quiz_id})
+        # except Exception as e:
+        #     from ipdb import set_trace; set_trace()
+
+        from ipdb import set_trace; set_trace()
+
+    def extract_links_from_quiz(self, quiz_id):
+        try:
+            session_id = self._get_quiz_session_id(quiz_id)
+            reply = post_page_json(self._session,
+                                   POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
+                                   user_id=self._user_id,
+                                   class_name=self._course_id,
+                                   quiz_id=quiz_id,
+                                   session_id=session_id)
+        except Exception as e:
+            logging.exception(str(e))
+            raise
+        quiz_data = reply['contentResponseBody']['return']
+
+        # from ipdb import set_trace; set_trace(context=20)
+        with open('quizes/quiz-%s.json' % quiz_id, 'w') as f:
+            json.dump(quiz_data, f)
+
+        converter = CourseraOnDemandQuizConverter(self._session)
+        html = converter.convert_quiz(quiz_data)
+
+        supplement_links = {}
+        instructions = (IN_MEMORY_MARKER + html, 'quiz')
+        extend_supplement_links(
+            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+        return supplement_links
+
+    def _get_quiz_session_id(self, quiz_id):
+        reply = post_page_json(self._session,
+                               POST_OPENCOURSE_API_QUIZ_SESSION,
+                               user_id=self._user_id,
+                               class_name=self._course_id,
+                               quiz_id=quiz_id)
+        print(reply)
+        return reply['contentResponseBody']['session']['id']
 
     def extract_links_from_lecture(self,
                                    video_id, subtitle_language='en',
@@ -167,85 +399,6 @@ class CourseraOnDemand(object):
             links, self._extract_links_from_lecture_assets(assets))
 
         return links
-
-    def _prettify_instructions(self, text):
-        """
-        Prettify instructions text to make it more suitable for offline reading.
-
-        @param text: HTML (kinda) text to prettify.
-        @type text: str
-
-        @return: Prettified HTML with several markup tags replaced with HTML
-            equivalents.
-        @rtype: str
-        """
-        soup = BeautifulSoup(text)
-        self._convert_instructions_basic(soup)
-        self._convert_instructions_images(soup)
-        return soup.prettify()
-
-    def _convert_instructions_basic(self, soup):
-        """
-        Perform basic conversion of instructions markup. This includes
-        replacement of several textual markup tags with their HTML equivalents.
-
-        @param soup: BeautifulSoup instance.
-        @type soup: BeautifulSoup
-        """
-        # 1. Inject basic CSS style
-        css_soup = BeautifulSoup(INSTRUCTIONS_HTML_INJECTION)
-        soup.append(css_soup)
-
-        # 2. Replace <text> with <p>
-        while soup.find('text'):
-            soup.find('text').name = 'p'
-
-        # 3. Replace <heading level="1"> with <h1>
-        while soup.find('heading'):
-            heading = soup.find('heading')
-            heading.name = 'h%s' % heading.attrs.get('level', '1')
-
-        # 4. Replace <code> with <pre>
-        while soup.find('code'):
-            soup.find('code').name = 'pre'
-
-        # 5. Replace <list> with <ol> or <ul>
-        while soup.find('list'):
-            list_ = soup.find('list')
-            type_ = list_.attrs.get('bullettype', 'numbers')
-            list_.name = 'ol' if type_ == 'numbers' else 'ul'
-
-    def _convert_instructions_images(self, soup):
-        """
-        Convert images of instructions markup. Images are downloaded,
-        base64-encoded and inserted into <img> tags.
-
-        @param soup: BeautifulSoup instance.
-        @type soup: BeautifulSoup
-        """
-        # 6. Replace <img> assets with actual image contents
-        images = [image for image in soup.find_all('img')
-                  if image.attrs.get('assetid') is not None]
-        if not images:
-            return
-
-        # Get assetid attribute from all images
-        asset_ids = [image.attrs.get('assetid') for image in images]
-
-        # Downloaded information about image assets (image IDs)
-        asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
-                                   id=','.join(asset_ids))
-        # Create a map "asset_id => asset" for easier access
-        asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
-
-        for image in images:
-            # Download each image and encode it using base64
-            url = asset_map[image['assetid']]['url']['url'].strip()
-            request = self._session.get(url)
-            if request.status_code == 200:
-                content_type = request.headers.get('Content-Type', 'image/png')
-                encoded64 = base64.b64encode(request.content).decode()
-                image['src'] = 'data:%s;base64,%s' % (content_type, encoded64)
 
     def _normalize_assets(self, assets):
         """
@@ -478,7 +631,8 @@ class CourseraOnDemand(object):
 
         supplement_links = self._extract_links_from_text(text)
 
-        instructions = (IN_MEMORY_MARKER + self._prettify_instructions(text),
+        prettifier = InstructionsPrettifier(self._session)
+        instructions = (IN_MEMORY_MARKER + prettifier.prettify(text),
                         'instructions')
         extend_supplement_links(
             supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
@@ -505,6 +659,7 @@ class CourseraOnDemand(object):
         #       'definition' {
         #           'value'
 
+        prettifier = InstructionsPrettifier(self._session)
         for asset in dom['linked']['openCourseAssets.v1']:
             value = asset['definition']['value']
             # Supplement lecture types are known to contain both <asset> tags
@@ -513,7 +668,7 @@ class CourseraOnDemand(object):
             extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
 
-            instructions = (IN_MEMORY_MARKER + self._prettify_instructions(value),
+            instructions = (IN_MEMORY_MARKER + prettifier.prettify(value),
                             'instructions')
             extend_supplement_links(
                 supplement_content, {IN_MEMORY_EXTENSION: [instructions]})

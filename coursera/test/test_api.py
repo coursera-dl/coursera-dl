@@ -130,3 +130,12 @@ def test_list_courses(get_page_json, course):
     expected_output = expected_output['courses']
     output = course.list_courses()
     assert expected_output == output
+
+def test_quiz_converter():
+    converter = api.CourseraOnDemandQuizConverter(session=None)
+    quiz_data = json.load(open('quiz.json'))['contentResponseBody']['return']
+    result = converter.convert_quiz(quiz_data)
+    # from ipdb import set_trace; set_trace(context=20)
+    print('RESULT', result)
+    with open('quiz.html', 'w') as file:
+        file.write(result)

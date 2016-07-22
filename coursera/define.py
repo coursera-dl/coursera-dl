@@ -37,7 +37,14 @@ OPENCOURSE_LIST_COURSES = 'https://www.coursera.org/api/courses.v1?q=watchlist&s
 # https://www.coursera.org/api/memberships.v1?fields=courseId,enrolledTimestamp,grade,id,lastAccessedTimestamp,onDemandSessionMembershipIds,onDemandSessionMemberships,role,v1SessionId,vc,vcMembershipId,courses.v1(courseStatus,display,partnerIds,photoUrl,specializations,startDate,v1Details,v2Details),partners.v1(homeLink,name),v1Details.v1(sessionIds),v1Sessions.v1(active,certificatesReleased,dbEndDate,durationString,hasSigTrack,startDay,startMonth,startYear),v2Details.v1(onDemandSessions,plannedLaunchDate,sessionsEnabledAt),specializations.v1(logo,name,partnerIds,shortName)&includes=courseId,onDemandSessionMemberships,vcMembershipId,courses.v1(partnerIds,specializations,v1Details,v2Details),v1Details.v1(sessionIds),v2Details.v1(onDemandSessions),specializations.v1(partnerIds)&q=me&showHidden=true&filter=current,preEnrolled
 # Sample reply:
 # {
-#     "elements": [],
+#     "elements": [
+#         {
+#             id: "4958~bVgqTevEEeWvGQrWsIkLlw",
+#             userId: 4958,
+#             courseId: "bVgqTevEEeWvGQrWsIkLlw",
+#             role: "LEARNER"
+#         },
+#     ],
 #     "paging": null,
 #     "linked": {
 #         "courses.v1": [
@@ -50,7 +57,7 @@ OPENCOURSE_LIST_COURSES = 'https://www.coursera.org/api/courses.v1?q=watchlist&s
 #         ]
 #     }
 # }
-OPENCOURSE_MEMBERSIPS = 'https://www.coursera.org/api/memberships.v1?includes=courseId,courses.v1&q=me&showHidden=true&filter=current,preEnrolled'
+OPENCOURSE_MEMBERSHIPS = 'https://www.coursera.org/api/memberships.v1?includes=courseId,courses.v1&q=me&showHidden=true&filter=current,preEnrolled'
 OPENCOURSE_CONTENT_URL = 'https://www.coursera.org/api/opencourse.v1/course/{class_name}?showLockedItems=true'
 OPENCOURSE_VIDEO_URL = 'https://www.coursera.org/api/opencourse.v1/video/{video_id}'
 OPENCOURSE_SUPPLEMENT_URL = 'https://www.coursera.org/api/onDemandSupplements.v1/'\
@@ -169,6 +176,253 @@ ABOUT_URL = ('https://api.coursera.org/api/catalog.v1/courses?'
 AUTH_REDIRECT_URL = ('https://class.coursera.org/{class_name}'
                      '/auth/auth_redirector?type=login&subtype=normal')
 
+#POST_OPENCOURSE_API_QUIZ_SESSION = 'https://www.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session'
+# Sample response:
+#
+# {
+#   "contentResponseBody": {
+#     "session": {
+#       "id": "opencourse~bVgqTevEEeWvGQrWsIkLlw:4958:BiNDdOvPEeWAkwqbKEEh3w@13:1468773901987@1",
+#       "open": true
+#     }
+#   },
+#   "itemProgress": {
+#     "contentVersionedId": "BiNDdOvPEeWAkwqbKEEh3w@13",
+#     "timestamp": 1468774458435,
+#     "progressState": "Started"
+#   }
+# }
+POST_OPENCOURSE_API_QUIZ_SESSION = 'https://www.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/quiz/session'
+
+#POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://www.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session/opencourse~bVgqTevEEeWvGQrWsIkLlw:4958:BiNDdOvPEeWAkwqbKEEh3w@13:1468773901987@1/action/getState?autoEnroll=false'
+# Sample response:
+#
+# {
+#   "contentResponseBody": {
+#     "return": {
+#       "questions": [
+#         {
+#           "id": "89424f6873744b5c0b92da2936327bb4",
+#           "question": {
+#             "type": "mcq"
+#           },
+#           "variant": {
+#             "definition": {
+#               "prompt": {
+#                 "typeName": "cml",
+#                 "definition": {
+#                   "dtdId": "assess/1",
+#                   "value": "<co-content><text hasMath=\"true\">You are given a unigram language model $$\\theta$$ distributed over a vocabulary set $$V$$ composed of <strong>only</strong> 4 words: “the”, “machine”, “learning”, and “data”. The distribution of $$\\theta$$ is given in the table below:</text><table rows=\"5\" columns=\"2\"><tr><th><text>$$w$$</text></th><th><text>$$P(w|\\theta)$$</text></th></tr><tr><td><text>machine</text></td><td><text>0.1</text></td></tr><tr><td><text>learning</text></td><td><text>0.2</text></td></tr><tr><td><text>data</text></td><td><text>0.3</text></td></tr><tr><td><text>the</text></td><td><text>0.4</text></td></tr></table><text hasMath=\"true\"> $$P(\\text{“machine learning”}|\\theta) = $$</text></co-content>"
+#                 }
+#               },
+#               "options": [
+#                 {
+#                   "id": "717bd78dec2b817bed4b2d6096cbc9fc",
+#                   "display": {
+#                     "typeName": "cml",
+#                     "definition": {
+#                       "dtdId": "assess/1",
+#                       "value": "<co-content><text>0.004</text></co-content>"
+#                     }
+#                   }
+#                 },
+#                 {
+#                   "id": "a06c614cbb15b4e54212296b16fc4e62",
+#                   "display": {
+#                     "typeName": "cml",
+#                     "definition": {
+#                       "dtdId": "assess/1",
+#                       "value": "<co-content><text>0.2</text></co-content>"
+#                     }
+#                   }
+#                 },
+#                 {
+#                   "id": "029fe0fee932d6ad260f292dd05dc5c9",
+#                   "display": {
+#                     "typeName": "cml",
+#                     "definition": {
+#                       "dtdId": "assess/1",
+#                       "value": "<co-content><text>0.3</text></co-content>"
+#                     }
+#                   }
+#                 },
+#                 {
+#                   "id": "b6af6403d4ddde3b1e58599c12b6397a",
+#                   "display": {
+#                     "typeName": "cml",
+#                     "definition": {
+#                       "dtdId": "assess/1",
+#                       "value": "<co-content><text>0.02</text></co-content>"
+#                     }
+#                   }
+#                 }
+#               ]
+#             },
+#             "detailLevel": "Full"
+#           },
+#           "weightedScoring": {
+#             "maxScore": 1
+#           },
+#           "isSubmitAllowed": true
+#         }
+#       ],
+#       "evaluation": null
+#     }
+#   },
+#   "itemProgress": {
+#     "contentVersionedId": "BiNDdOvPEeWAkwqbKEEh3w@13",
+#     "timestamp": 1468774458894,
+#     "progressState": "Started"
+#   }
+# }
+#
+POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://www.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/quiz/session/{session_id}/action/getState?autoEnroll=false'
+
+#POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
+# Sample response:
+#
+# {
+#   "elements": [
+#     {
+#       "id": 0,
+#       "result": {
+#         "questions": [
+#           {
+#             "id": "8uUpMzm_EeaetxLgjw7H8Q@0",
+#             "question": {
+#               "type": "mcq"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>\n\nSuppose you’d like to perform nearest neighbor search from the following set of houses:</text><table rows=\"5\" columns=\"4\"><tr><td><text>\n\n\n\n\n\n</text></td><td><text>\n\n\nPrice (USD)</text></td><td><text>\n\n\nNumber of rooms</text></td><td><text>\n\n\nLot size (sq. ft.)</text></td></tr><tr><td><text>\n\n\nHouse 1</text></td><td><text>\n\n\n500000</text></td><td><text>\n\n\n3</text></td><td><text>\n\n\n1840</text></td></tr><tr><td><text>\n\n\nHouse 2</text></td><td><text>\n\n\n350000</text></td><td><text>\n\n\n2</text></td><td><text>\n\n\n1600</text></td></tr><tr><td><text>House 3</text></td><td><text>\n\n600000</text></td><td><text>\n\n4</text></td><td><text>\n\n2000</text></td></tr><tr><td><text>House 4</text></td><td><text>\n400000</text></td><td><text>\n2</text></td><td><text>\n1900</text></td></tr></table><text>\n\nSince the features come in wildly different scales, you decide to use scaled Euclidean distances. Choose the set of weights a_i (as presented in the video lecture) that properly incorporates the relative amount of variation of the feature.</text><text>Note: </text><code language=\"plain_text\">a_price = weight assigned to price (USD)\na_room  = weight assigned to number of rooms\na_lot   = weight assigned to lot size (sq.ft.)</code></co-content>"
+#                   }
+#                 },
+#                 "options": [
+#                   {
+#                     "id": "0.9109180361318947",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1, a_room = 1, a_lot = 1</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.11974743029080992",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1, a_room = 1, a_lot = 1e-6</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.8214165539451299",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1e-10, a_room = 1, a_lot = 1e-6</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.6784789645868041",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1e-5, a_room = 1, a_lot = 1e-3</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.9664001374497642",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1e5, a_room = 1, a_lot = 1e3</text></co-content>"
+#                       }
+#                     }
+#                   }
+#                 ]
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           },
+#           {
+#             "id": "jeVDBjnNEeaetxLgjw7H8Q@0",
+#             "question": {
+#               "type": "singleNumeric"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>\n\nConsider the following two sentences.\n</text><list bulletType=\"bullets\"><li><text>Sentence 1: The quick brown fox jumps over the lazy dog.\n</text></li><li><text>Sentence 2: A quick brown dog outpaces a quick fox.\n</text></li></list><text>\n\nCompute the Euclidean distance using word counts. Round your answer to 3 decimal places.</text><text>Note. To compute word counts, turn all words into lower case and strip all punctuation, so that \"The\" and \"the\" are counted as the same token.</text></co-content>"
+#                   }
+#                 }
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           },
+#           {
+#             "id": "-tI-EjnNEeaPCw5NUSdt1w@0",
+#             "question": {
+#               "type": "singleNumeric"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>Refer back to the two sentences given in Question 2 to answer the following:</text><text>Recall that we can use cosine similarity to define a distance.  We call that distance cosine distance. </text><text>Compute the <strong>cosine distance</strong> using word counts. Round your answer to 3 decimal places.\n</text><text>Note: To compute word counts, turn all words into lower case and strip all punctuation, so that \"The\" and \"the\" are counted as the same token.</text><text>Hint. Recall that we can use cosine similarity to define a distance.  We call that distance cosine distance.</text></co-content>"
+#                   }
+#                 }
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           }
+#         ],
+#         "evaluation": null
+#       }
+#     }
+#   ],
+#   "paging": null,
+#   "linked": {
+#     "gradingAttempts.v1": []
+#   }
+# }
+#
+# Request payload:
+# {"courseId":"-N44X0IJEeWpogr5ZO8qxQ","itemId":"YV0W4"}
+#
+#POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
+
+POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1'
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # define a per-user cache folder
 if os.name == "posix":  # pragma: no cover
@@ -200,6 +454,18 @@ TITLE_MAX_LENGTH = 200
 #: CSS that is usen to prettify instructions
 INSTRUCTIONS_HTML_INJECTION = '''
 <style>
+table th, table td {
+    border: 1px solid #e0e0e0;
+    padding: 5px 20px;
+    text-align: left;
+}
+th {
+    font-weight: bold;
+}
+td, th {
+    display: table-cell;
+    vertical-align: inherit;
+}
 img {
     height: auto;
     max-width: 100%;

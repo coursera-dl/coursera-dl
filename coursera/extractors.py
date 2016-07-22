@@ -80,6 +80,7 @@ class CourseraExtractor(PlatformExtractor):
         json_modules = dom['courseMaterial']['elements']
         course = CourseraOnDemand(session=self._session, course_id=dom['id'],
                                   unrestricted_filenames=unrestricted_filenames)
+        course.obtain_user_id()
         ondemand_material_items = OnDemandCourseMaterialItems.create(
             session=self._session, course_name=course_name)
 
@@ -114,6 +115,7 @@ class CourseraExtractor(PlatformExtractor):
 
                     logging.info('Processing lecture         %s (%s)',
                                  lecture_slug, typename)
+                    links = None
 
                     if typename == 'lecture':
                         lecture_video_id = lecture['content']['definition']['videoId']
@@ -123,20 +125,25 @@ class CourseraExtractor(PlatformExtractor):
                             lecture_video_id, subtitle_language,
                             video_resolution, assets)
 
-                        if links:
-                            lectures.append((lecture_slug, links))
-
                     elif typename == 'supplement':
-                        supplement_content = course.extract_links_from_supplement(
+                        links = course.extract_links_from_supplement(
                             lecture['id'])
-                        if supplement_content:
-                            lectures.append((lecture_slug, supplement_content))
 
                     elif typename in ('gradedProgramming', 'ungradedProgramming'):
                         supplement_content = course.extract_links_from_programming(
                             lecture['id'])
-                        if supplement_content:
-                            lectures.append((lecture_slug, supplement_content))
+
+                    elif typename in ('quiz'):
+                        print('EXTR, quiz')
+                        course.extract_links_from_quiz(lecture['id'])
+
+                    elif typename in ('exam'):
+                        print('EXTR, exam')
+                        # Unsupported yet
+                        # course.extract_links_from_exam(lecture['id'])
+
+                    if links:
+                        lectures.append((lecture_slug, links))
 
                 if lectures:
                     sections.append((section_slug, lectures))
