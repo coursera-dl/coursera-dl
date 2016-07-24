@@ -91,8 +91,6 @@ class QuizExamToMarkupConverter(object):
             result.append('<hr>')
 
         return '\n'.join(result)
-        # prettifier = InstructionsPrettifier(self._session)
-        # return prettifier.prettify('\n'.join(result))
 
     def _convert_options(self, question_index, options, input_type):
         if not options:
@@ -674,8 +672,7 @@ class CourseraOnDemand(object):
 
         supplement_links = self._extract_links_from_text(text)
 
-        prettifier = MarkupToHTMLConverter(self._session)
-        instructions = (IN_MEMORY_MARKER + prettifier.prettify(text),
+        instructions = (IN_MEMORY_MARKER + self._markup_to_html(text),
                         'instructions')
         extend_supplement_links(
             supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
@@ -702,7 +699,6 @@ class CourseraOnDemand(object):
         #       'definition' {
         #           'value'
 
-        prettifier = MarkupToHTMLConverter(self._session)
         for asset in dom['linked']['openCourseAssets.v1']:
             value = asset['definition']['value']
             # Supplement lecture types are known to contain both <asset> tags
@@ -711,7 +707,7 @@ class CourseraOnDemand(object):
             extend_supplement_links(
                 supplement_content, self._extract_links_from_text(value))
 
-            instructions = (IN_MEMORY_MARKER + prettifier.prettify(value),
+            instructions = (IN_MEMORY_MARKER + self._markup_to_html(value),
                             'instructions')
             extend_supplement_links(
                 supplement_content, {IN_MEMORY_EXTENSION: [instructions]})

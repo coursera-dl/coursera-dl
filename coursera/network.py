@@ -29,10 +29,10 @@ def get_reply(session, url, post=False, data=None, headers=None):
         reply.raise_for_status()
     except requests.exceptions.HTTPError as e:
         logging.error("Error %s getting page %s", e, url)
-        from ipdb import set_trace; set_trace()
         raise
 
     return reply
+
 
 def get_page(session, url, post=False, data=None, headers=None):
     reply = get_reply(session, url, post=post, data=data, headers=headers)
