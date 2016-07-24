@@ -33,78 +33,101 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      IN_MEMORY_MARKER)
 
 
-# from .utils import random_string
 from .cookies import prepape_auth_headers
 
 
-def make_csrf(length=24,
-              alphabet="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"):
-    import random
-    return ''.join([random.choice(alphabet) for _ in range(length)])
-
-def make_csrf2():
-    cookie = 'csrf2_token_' + make_csrf(8)
-    token = make_csrf()
-    csrf = make_csrf()
-    return cookie, token, csrf
-
-def make_csrf2_headers():
-    cookie, token, csrf = make_csrf2()
-    # X-CSRF2-Cookie:csrf2_token_dS3xQODi
-    # X-CSRF2-Token:cBPmO8CzzC3kJoHOKVNBqFyD
-    return {'X-CSRF2-Cookie': cookie,
-            'X-CSRF2-Token': token,
-            'X-CSRFToken': csrf,
-            'Cookie': '%s=%s; csrftoken=%s' % (cookie, token, csrf)}
-
-
-class CourseraOnDemandQuizConverter(object):
+class QuizExamToMarkupConverter(object):
     """
-    Converts quiz JSON into HTML for local viewing.
+    Converts quiz/exam JSON into semi HTML (Coursera Markup) for local viewing.
+    The output needs to be further processed by MarkupToHTMLConverter.
     """
+    KNOWN_QUESTION_TYPES = ('mcq',
+                            'checkbox',
+                            'singleNumeric',
+                            'textExactMatch')
+
+    KNOWN_INPUT_TYPES = ('textExactMatch',
+                         'singleNumeric')
+
     def __init__(self, session):
         self._session = session
 
-    def convert_quiz(self, quiz_data):
+    def __call__(self, quiz_or_exam_json):
         result = []
 
-        for index, question in enumerate(quiz_data['questions']):
-            type_ = question['question']['type']
-            # types of questions:
-            # - singleNumeric
-            # -
-            # variant = question['variant']
-            prompt = question['variant']['definition']['prompt']
-            options = question['variant']['definition'].get('options', [])
-            #singleNumeric = ...
+        for question_index, question_json in enumerate(quiz_or_exam_json['questions']):
+            question_type = question_json['question']['type']
+            if question_type not in self.KNOWN_QUESTION_TYPES:
+                logging.info('Unknown question type: %s', question_type)
+                logging.info('Question json: %s', question_json)
+                logging.info('Please report class name, quiz name and the data'
+                             ' above to coursera-dl authors')
+            print('QUESTION TYPE', question_type)
 
+            prompt = question_json['variant']['definition']['prompt']
+            options = question_json['variant']['definition'].get('options', [])
+
+            # Question number
+            result.append('<h3>Question %d</h3>' % (question_index + 1))
+
+            # Question text
             question_text = prompt['definition']['value']
             result.append(question_text)
 
-            option_values = []
-            for option in options:
-                option_text = option['display']['definition']['value']
-                option_text = BeautifulSoup(option_text).text
-                option_values.append('<label><input type="radio" name="%s">'
-                                     '%s<br></label>' % (index, option_text))
+            # Input for answer
+            if question_type in self.KNOWN_INPUT_TYPES:
+                result.extend(self._generate_input_field())
 
-            if option_values:
-                result.append('<form>')
-                result.extend(option_values)
-                result.append('</form>')
+            # Convert input_type form JSON reply to HTML input type
+            input_type = {
+                'mcq': 'radio',
+                'checkbox': 'checkbox'
+            }.get(question_type, '')
+
+            # Convert options, they are either checkboxes or radio buttons
+            result.extend(self._convert_options(
+                question_index, options, input_type))
 
             result.append('<hr>')
 
-        prettifier = InstructionsPrettifier(self._session)
-        return prettifier.prettify('\n'.join(result))
+        return '\n'.join(result)
+        # prettifier = InstructionsPrettifier(self._session)
+        # return prettifier.prettify('\n'.join(result))
+
+    def _convert_options(self, question_index, options, input_type):
+        if not options:
+            return []
+
+        result = ['<form>']
+
+        for option in options:
+            option_text = option['display']['definition']['value']
+            # We need to replace <text> with <span> so that answer text
+            # stays on the same line with checkbox/radio button
+            option_text = self._replace_tag(option_text, 'text', 'span')
+            result.append('<label><input type="%s" name="%s">'
+                          '%s<br></label>' % (
+                              input_type, question_index, option_text))
+
+        result.append('</form>')
+        return result
+
+    def _replace_tag(self, text, initial_tag, target_tag):
+        soup = BeautifulSoup(text)
+        while soup.find(initial_tag):
+            soup.find(initial_tag).name = target_tag
+        return soup.prettify()
+
+    def _generate_input_field(self):
+        return ['<form><label>Enter answer here:<input type="text" '
+                'name=""><br></label></form>']
 
 
-
-class InstructionsPrettifier(object):
+class MarkupToHTMLConverter(object):
     def __init__(self, session):
         self._session = session
 
-    def prettify(self, text):
+    def __call__(self, text):
         """
         Prettify instructions text to make it more suitable for offline reading.
 
@@ -168,7 +191,7 @@ class InstructionsPrettifier(object):
         # Get assetid attribute from all images
         asset_ids = [image.attrs.get('assetid') for image in images]
 
-        # Downloaded information about image assets (image IDs)
+        # Download information about image assets (image IDs)
         asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
                                    id=','.join(asset_ids))
         # Create a map "asset_id => asset" for easier access
@@ -283,6 +306,9 @@ class CourseraOnDemand(object):
         self._unrestricted_filenames = unrestricted_filenames
         self._user_id = None
 
+        self._quiz_to_markup = QuizExamToMarkupConverter(session)
+        self._markup_to_html = MarkupToHTMLConverter(session)
+
     def obtain_user_id(self):
         reply = get_page_json(self._session, OPENCOURSE_MEMBERSHIPS)
         elements = reply['elements']
@@ -315,13 +341,13 @@ class CourseraOnDemand(object):
                                data=json.dumps(data),
                                headers=headers,
                                session_id=session_id)
-        # from ipdb import set_trace; set_trace()
+
         exam_data = reply['elements'][0]['result']
         with open('quizes/exam-%s-%s.json' % (self._course_name, exam_id), 'w') as f:
             json.dump(exam_data, f)
 
-        converter = CourseraOnDemandQuizConverter(self._session)
-        html = converter.convert_quiz(exam_data)
+        markup = self._quiz_to_markup(exam_data)
+        html = self._markup_to_html(markup)
 
         supplement_links = {}
         instructions = (IN_MEMORY_MARKER + html, 'exam')
@@ -343,17 +369,6 @@ class CourseraOnDemand(object):
                                            headers=headers)
         print(reply)
         return reply.headers.get('X-Coursera-Id')
-        # from ipdb import set_trace; set_trace()
-
-        # try:
-        #     reply = post_page_json(self._session,
-        #                         POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
-        #                         data={'courseId': self._course_id,
-        #                               'itemId': quiz_id})
-        # except Exception as e:
-        #     from ipdb import set_trace; set_trace()
-
-        # from ipdb import set_trace; set_trace()
 
     def extract_links_from_quiz(self, quiz_id):
         headers = prepape_auth_headers(self._session, include_cauth=True)
@@ -376,8 +391,8 @@ class CourseraOnDemand(object):
         with open('quizes/quiz-%s-%s.json' % (self._class_name, quiz_id), 'w') as f:
             json.dump(quiz_data, f)
 
-        converter = CourseraOnDemandQuizConverter(self._session)
-        html = converter.convert_quiz(quiz_data)
+        markup = self._quiz_to_markup(quiz_data)
+        html = self._markup_to_html(markup)
 
         supplement_links = {}
         instructions = (IN_MEMORY_MARKER + html, 'quiz')
@@ -665,7 +680,7 @@ class CourseraOnDemand(object):
 
         supplement_links = self._extract_links_from_text(text)
 
-        prettifier = InstructionsPrettifier(self._session)
+        prettifier = MarkupToHTMLConverter(self._session)
         instructions = (IN_MEMORY_MARKER + prettifier.prettify(text),
                         'instructions')
         extend_supplement_links(
@@ -693,7 +708,7 @@ class CourseraOnDemand(object):
         #       'definition' {
         #           'value'
 
-        prettifier = InstructionsPrettifier(self._session)
+        prettifier = MarkupToHTMLConverter(self._session)
         for asset in dom['linked']['openCourseAssets.v1']:
             value = asset['definition']['value']
             # Supplement lecture types are known to contain both <asset> tags

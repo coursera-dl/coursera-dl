@@ -771,10 +771,18 @@ TITLE_MAX_LENGTH = 200
 #: CSS that is usen to prettify instructions
 INSTRUCTIONS_HTML_INJECTION = '''
 <style>
+body {
+    padding: 50px 85px 50px 85px;
+}
+
 table th, table td {
     border: 1px solid #e0e0e0;
     padding: 5px 20px;
     text-align: left;
+}
+input {
+    margin: 10px;
+}
 }
 th {
     font-weight: bold;

@@ -132,10 +132,41 @@ def test_list_courses(get_page_json, course):
     assert expected_output == output
 
 def test_quiz_converter():
-    converter = api.CourseraOnDemandQuizConverter(session=None)
+    quiz_to_markup = api.QuizExamToMarkupConverter(session=None)
+    markup_to_html = api.MarkupToHTMLConverter(session=session)
+
     quiz_data = json.load(open('quiz.json'))['contentResponseBody']['return']
-    result = converter.convert_quiz(quiz_data)
+    result = markup_to_html(quiz_to_markup(quiz_data))
     # from ipdb import set_trace; set_trace(context=20)
     print('RESULT', result)
     with open('quiz.html', 'w') as file:
         file.write(result)
+
+def test_quiz_converter_all():
+    import os
+
+    from coursera.coursera_dl import get_session
+    from coursera.cookies import login
+    session = None
+    session = get_session()
+
+    quiz_to_markup = api.QuizExamToMarkupConverter(session=session)
+    markup_to_html = api.MarkupToHTMLConverter(session=session)
+
+    path = 'quiz_json'
+    for filename in os.listdir(path):
+    # for filename in ['all_question_types.json']:
+        # if 'YV0W4' not in filename:
+        #     continue
+        # if 'QVHj1' not in filename:
+        #     continue
+
+        #quiz_data = json.load(open('quiz.json'))['contentResponseBody']['return']
+        current = os.path.join(path, filename)
+        print(current)
+        quiz_data = json.load(open(current))
+        result = markup_to_html(quiz_to_markup(quiz_data))
+        # from ipdb import set_trace; set_trace(context=20)
+        # print('RESULT', result)
+        with open('quiz_html/' + filename + '.html', 'w') as f:
+            f.write(result)
