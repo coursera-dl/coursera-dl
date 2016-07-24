@@ -329,11 +329,34 @@ class CourseraOnDemand(object):
 
     def extract_links_from_exam(self, exam_id):
         session_id = self._get_exam_session_id(exam_id)
+        exam_json = self._get_exam_json(exam_id, session_id)
 
-        headers = prepape_auth_headers(self._session, include_cauth=True)
-        headers.update({
-            'Content-Type': 'application/json; charset=UTF-8'
-        })
+        with open('quizes/exam-%s-%s.json' % (self._course_name, exam_id), 'w') as f:
+            json.dump(exam_json, f)
+
+        return self._convert_quiz_json_to_links(exam_json, 'exam')
+
+    def extract_links_from_quiz(self, quiz_id):
+        session_id = self._get_quiz_session_id(quiz_id)
+        quiz_json = self._get_quiz_json(quiz_id, session_id)
+
+        with open('quizes/quiz-%s-%s.json' % (self._class_name, quiz_id), 'w') as f:
+            json.dump(quiz_json, f)
+
+        return self._convert_quiz_json_to_links(quiz_json, 'quiz')
+
+    def _convert_quiz_json_to_links(self, quiz_json, filename_suffix):
+        markup = self._quiz_to_markup(quiz_json)
+        html = self._markup_to_html(markup)
+
+        supplement_links = {}
+        instructions = (IN_MEMORY_MARKER + html, filename_suffix)
+        extend_supplement_links(
+            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+        return supplement_links
+
+    def _get_exam_json(self, exam_id, session_id):
+        headers = self._auth_headers_with_json()
         data = {"name": "getState", "argument": []}
 
         reply = post_page_json(self._session,
@@ -342,42 +365,22 @@ class CourseraOnDemand(object):
                                headers=headers,
                                session_id=session_id)
 
-        exam_data = reply['elements'][0]['result']
-        with open('quizes/exam-%s-%s.json' % (self._course_name, exam_id), 'w') as f:
-            json.dump(exam_data, f)
-
-        markup = self._quiz_to_markup(exam_data)
-        html = self._markup_to_html(markup)
-
-        supplement_links = {}
-        instructions = (IN_MEMORY_MARKER + html, 'exam')
-        extend_supplement_links(
-            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
-        return supplement_links
+        return reply['elements'][0]['result']
 
     def _get_exam_session_id(self, exam_id):
-        headers = prepape_auth_headers(self._session, include_cauth=True)
-        headers.update({
-            'Content-Type': 'application/json; charset=UTF-8'
-        })
-        data = {'courseId': self._course_id,
-                'itemId': exam_id}
+        headers = self._auth_headers_with_json()
+        data = {'courseId': self._course_id, 'itemId': exam_id}
 
         _body, reply = post_page_and_reply(self._session,
                                            POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
                                            data=json.dumps(data),
                                            headers=headers)
-        print(reply)
         return reply.headers.get('X-Coursera-Id')
 
-    def extract_links_from_quiz(self, quiz_id):
-        headers = prepape_auth_headers(self._session, include_cauth=True)
-        headers.update({
-            'Content-Type': 'application/json; charset=UTF-8'
-        })
+    def _get_quiz_json(self, quiz_id, session_id):
+        headers = self._auth_headers_with_json()
         data = {"contentRequestBody": {"argument": []}}
 
-        session_id = self._get_quiz_session_id(quiz_id)
         reply = post_page_json(self._session,
                                POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
                                data=json.dumps(data),
@@ -386,26 +389,10 @@ class CourseraOnDemand(object):
                                class_name=self._course_name,
                                quiz_id=quiz_id,
                                session_id=session_id)
-        quiz_data = reply['contentResponseBody']['return']
-
-        with open('quizes/quiz-%s-%s.json' % (self._class_name, quiz_id), 'w') as f:
-            json.dump(quiz_data, f)
-
-        markup = self._quiz_to_markup(quiz_data)
-        html = self._markup_to_html(markup)
-
-        supplement_links = {}
-        instructions = (IN_MEMORY_MARKER + html, 'quiz')
-        extend_supplement_links(
-            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
-        return supplement_links
+        return reply['contentResponseBody']['return']
 
     def _get_quiz_session_id(self, quiz_id):
-        headers = prepape_auth_headers(self._session, include_cauth=True)
-        headers.update({
-            'Content-Type': 'application/json; charset=UTF-8'
-        })
-
+        headers = self._auth_headers_with_json()
         data = {"contentRequestBody":[]}
         reply = post_page_json(self._session,
                                POST_OPENCOURSE_API_QUIZ_SESSION,
@@ -416,6 +403,13 @@ class CourseraOnDemand(object):
                                quiz_id=quiz_id)
 
         return reply['contentResponseBody']['session']['id']
+
+    def _auth_headers_with_json(self):
+        headers = prepape_auth_headers(self._session, include_cauth=True)
+        headers.update({
+            'Content-Type': 'application/json; charset=UTF-8'
+        })
+        return headers
 
     def extract_links_from_lecture(self,
                                    video_id, subtitle_language='en',
