@@ -62,7 +62,6 @@ class QuizExamToMarkupConverter(object):
                 logging.info('Question json: %s', question_json)
                 logging.info('Please report class name, quiz name and the data'
                              ' above to coursera-dl authors')
-            print('QUESTION TYPE', question_type)
 
             prompt = question_json['variant']['definition']['prompt']
             options = question_json['variant']['definition'].get('options', [])
@@ -299,7 +298,6 @@ class CourseraOnDemand(object):
         self._session = session
         self._course_id = course_id
         self._course_name = course_name
-        print('course name', course_name)
 
         self._unrestricted_filenames = unrestricted_filenames
         self._user_id = None
@@ -338,7 +336,7 @@ class CourseraOnDemand(object):
         session_id = self._get_quiz_session_id(quiz_id)
         quiz_json = self._get_quiz_json(quiz_id, session_id)
 
-        with open('quizes/quiz-%s-%s.json' % (self._class_name, quiz_id), 'w') as f:
+        with open('quizes/quiz-%s-%s.json' % (self._course_name, quiz_id), 'w') as f:
             json.dump(quiz_json, f)
 
         return self._convert_quiz_json_to_links(quiz_json, 'quiz')

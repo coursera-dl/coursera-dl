@@ -132,6 +132,30 @@ def test_list_courses(get_page_json, course):
     output = course.list_courses()
     assert expected_output == output
 
+
+@pytest.mark.parametrize(
+    "input_filename,output_filename", [
+        ('empty-input.json', 'empty-output.txt'),
+        ('answer-text-replaced-with-span-input.json', 'answer-text-replaced-with-span-output.txt'),
+        ('question-type-textExactMatch-input.json', 'question-type-textExactMatch-output.txt'),
+        ('question-type-checkbox-input.json', 'question-type-checkbox-output.txt'),
+        ('question-type-mcq-input.json', 'question-type-mcq-output.txt'),
+        ('question-type-singleNumeric-input.json', 'question-type-singleNumeric-output.txt'),
+        ('question-type-unknown-input.json', 'question-type-unknown-output.txt'),
+        ('multiple-questions-input.json', 'multiple-questions-output.txt'),
+    ]
+)
+def test_quiz_exam_to_markup_converter(input_filename, output_filename):
+    quiz_json = json.loads(slurp_fixture('json/quiz-to-markup/%s' % input_filename))
+    expected_output = slurp_fixture('json/quiz-to-markup/%s' % output_filename).strip()
+
+    converter = api.QuizExamToMarkupConverter(session=None)
+    actual_output = converter(quiz_json).strip()
+    # print('>%s<' % expected_output)
+    # print('>%s<' % actual_output)
+    assert actual_output == expected_output
+
+
 def test_quiz_converter():
     pytest.skip()
     quiz_to_markup = api.QuizExamToMarkupConverter(session=None)

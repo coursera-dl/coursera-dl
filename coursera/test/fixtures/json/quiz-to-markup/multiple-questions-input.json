@@ -1,0 +1,100 @@
+{
+    "questions": [
+        {
+            "id": "TajkZzNrEea7yAqn1iZwEQ@0",
+            "variant": {
+                "detailLevel": "Full",
+                "definition": {
+                    "prompt": {
+                        "typeName": "cml",
+                        "definition": {
+                            "dtdId": "assess/1",
+                            "value": "<co-content><text>Question 1</text></co-content>"
+                        }
+                    }
+                }
+            },
+            "question": {
+                "type": "textExactMatch"
+            }
+        },
+        {
+            "id": "-5nCBDnPEeaPCw5NUSdt1w@0",
+            "variant": {
+                "detailLevel": "Full",
+                "definition": {
+                    "prompt": {
+                        "typeName": "cml",
+                        "definition": {
+                            "dtdId": "assess/1",
+                            "value": "<co-content><text>Question 2</text></co-content>"
+                        }
+                    },
+                    "options": [
+                        {
+                            "id": "0.1634510137510934",
+                            "display": {
+                                "typeName": "cml",
+                                "definition": {
+                                    "dtdId": "assess/1",
+                                    "value": "<co-content><text>Data point 1</text></co-content>"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "question": {
+                "type": "checkbox"
+            }
+        },
+        {
+            "id": "8uUpMzm_EeaetxLgjw7H8Q@0",
+            "variant": {
+                "detailLevel": "Full",
+                "definition": {
+                    "prompt": {
+                        "typeName": "cml",
+                        "definition": {
+                            "dtdId": "assess/1",
+                            "value": "<co-content><text>Question 3</text></co-content>"
+                        }
+                    },
+                    "options": [
+                        {
+                            "id": "0.9109180361318947",
+                            "display": {
+                                "typeName": "cml",
+                                "definition": {
+                                    "dtdId": "assess/1",
+                                    "value": "<co-content><text>Data point 2</text></co-content>"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "question": {
+                "type": "mcq"
+            }
+        },
+        {
+            "id": "jeVDBjnNEeaetxLgjw7H8Q@0",
+            "variant": {
+                "detailLevel": "Full",
+                "definition": {
+                    "prompt": {
+                        "typeName": "cml",
+                        "definition": {
+                            "dtdId": "assess/1",
+                            "value": "<co-content><text>Question 4</text></co-content>"
+                        }
+                    }
+                }
+            },
+            "question": {
+                "type": "singleNumeric"
+            }
+        }
+    ]
+}

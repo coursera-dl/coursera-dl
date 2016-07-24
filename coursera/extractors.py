@@ -133,13 +133,10 @@ class CourseraExtractor(PlatformExtractor):
                     elif typename in ('gradedProgramming', 'ungradedProgramming'):
                         links = course.extract_links_from_programming(lecture['id'])
 
-                    elif typename in ('quiz'):
-                        print('EXTR, quiz')
+                    elif typename == 'quiz':
                         links = course.extract_links_from_quiz(lecture['id'])
 
-                    elif typename in ('exam'):
-                        print('EXTR, exam')
-                        # Unsupported yet
+                    elif typename == 'exam':
                         links = course.extract_links_from_exam(lecture['id'])
 
                     if links:
