@@ -79,6 +79,7 @@ class CourseraExtractor(PlatformExtractor):
         modules = []
         json_modules = dom['courseMaterial']['elements']
         course = CourseraOnDemand(session=self._session, course_id=dom['id'],
+                                  course_name=course_name,
                                   unrestricted_filenames=unrestricted_filenames)
         course.obtain_user_id()
         ondemand_material_items = OnDemandCourseMaterialItems.create(
@@ -130,17 +131,16 @@ class CourseraExtractor(PlatformExtractor):
                             lecture['id'])
 
                     elif typename in ('gradedProgramming', 'ungradedProgramming'):
-                        supplement_content = course.extract_links_from_programming(
-                            lecture['id'])
+                        links = course.extract_links_from_programming(lecture['id'])
 
                     elif typename in ('quiz'):
                         print('EXTR, quiz')
-                        course.extract_links_from_quiz(lecture['id'])
+                        links = course.extract_links_from_quiz(lecture['id'])
 
                     elif typename in ('exam'):
                         print('EXTR, exam')
                         # Unsupported yet
-                        # course.extract_links_from_exam(lecture['id'])
+                        links = course.extract_links_from_exam(lecture['id'])
 
                     if links:
                         lectures.append((lecture_slug, links))

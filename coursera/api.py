@@ -13,7 +13,7 @@ from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename)
-from .network import get_page, get_page_json, post_page_json
+from .network import get_page, get_page_json, post_page_and_reply, post_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
@@ -25,11 +25,16 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      POST_OPENCOURSE_API_QUIZ_SESSION,
                      POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
                      POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
+                     POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE,
 
                      INSTRUCTIONS_HTML_INJECTION,
 
                      IN_MEMORY_EXTENSION,
                      IN_MEMORY_MARKER)
+
+
+# from .utils import random_string
+from .cookies import prepape_auth_headers
 
 
 def make_csrf(length=24,
@@ -65,9 +70,13 @@ class CourseraOnDemandQuizConverter(object):
 
         for index, question in enumerate(quiz_data['questions']):
             type_ = question['question']['type']
+            # types of questions:
+            # - singleNumeric
+            # -
             # variant = question['variant']
             prompt = question['variant']['definition']['prompt']
-            options = question['variant']['definition']['options']
+            options = question['variant']['definition'].get('options', [])
+            #singleNumeric = ...
 
             question_text = prompt['definition']['value']
             result.append(question_text)
@@ -250,7 +259,8 @@ class CourseraOnDemand(object):
     old-style Coursera classes. This API is by no means complete.
     """
 
-    def __init__(self, session, course_id, unrestricted_filenames=False):
+    def __init__(self, session, course_id, course_name,
+                 unrestricted_filenames=False):
         """
         Initialize Coursera OnDemand API.
 
@@ -267,6 +277,8 @@ class CourseraOnDemand(object):
         """
         self._session = session
         self._course_id = course_id
+        self._course_name = course_name
+        print('course name', course_name)
 
         self._unrestricted_filenames = unrestricted_filenames
         self._user_id = None
@@ -289,38 +301,49 @@ class CourseraOnDemand(object):
         slugs = [element['slug'] for element in course_list]
         return slugs
 
-    def extract_links_from_exam(self, quiz_id):
-        from requests import Request
+    def extract_links_from_exam(self, exam_id):
+        session_id = self._get_exam_session_id(exam_id)
 
-        #from ipdb import set_trace; set_trace()
-        url = 'https://www.coursera.org/learn/ml-clustering-and-retrieval/exam/YV0W4/representations-and-metrics'
-        quiz_reply = self._session.get(url)
-        quiz_page = quiz_reply.text
-
-        headers = make_csrf2_headers()
+        headers = prepape_auth_headers(self._session, include_cauth=True)
         headers.update({
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Host': 'www.coursera.org',
-            'Origin': 'https://www.coursera.org',
-            'Referer': 'https://www.coursera.org/learn/ml-clustering-and-retrieval/exam/YV0W4/representations-and-metrics',
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/37.0.2062.120 Chrome/37.0.2062.120 Safari/537.36',
-            'X-Requested-With': 'XMLHttpRequest'
+            'Content-Type': 'application/json; charset=UTF-8'
         })
+        data = {"name": "getState", "argument": []}
 
+        reply = post_page_json(self._session,
+                               POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE,
+                               data=json.dumps(data),
+                               headers=headers,
+                               session_id=session_id)
+        # from ipdb import set_trace; set_trace()
+        exam_data = reply['elements'][0]['result']
+        with open('quizes/exam-%s-%s.json' % (self._course_name, exam_id), 'w') as f:
+            json.dump(exam_data, f)
+
+        converter = CourseraOnDemandQuizConverter(self._session)
+        html = converter.convert_quiz(exam_data)
+
+        supplement_links = {}
+        instructions = (IN_MEMORY_MARKER + html, 'exam')
+        extend_supplement_links(
+            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+        return supplement_links
+
+    def _get_exam_session_id(self, exam_id):
+        headers = prepape_auth_headers(self._session, include_cauth=True)
+        headers.update({
+            'Content-Type': 'application/json; charset=UTF-8'
+        })
         data = {'courseId': self._course_id,
-                'itemId': quiz_id}
+                'itemId': exam_id}
 
-        try:
-            request = Request('POST', POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
-                            data=json.dumps(data),
-                            headers=headers)
-            prepped = self._session.prepare_request(request)
-            reply = self._session.send(prepped)
-            print(reply)
-        except Exception as e:
-            from ipdb import set_trace; set_trace()
-        print(request)
-
+        _body, reply = post_page_and_reply(self._session,
+                                           POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
+                                           data=json.dumps(data),
+                                           headers=headers)
+        print(reply)
+        return reply.headers.get('X-Coursera-Id')
+        # from ipdb import set_trace; set_trace()
 
         # try:
         #     reply = post_page_json(self._session,
@@ -330,24 +353,27 @@ class CourseraOnDemand(object):
         # except Exception as e:
         #     from ipdb import set_trace; set_trace()
 
-        from ipdb import set_trace; set_trace()
+        # from ipdb import set_trace; set_trace()
 
     def extract_links_from_quiz(self, quiz_id):
-        try:
-            session_id = self._get_quiz_session_id(quiz_id)
-            reply = post_page_json(self._session,
-                                   POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
-                                   user_id=self._user_id,
-                                   class_name=self._course_id,
-                                   quiz_id=quiz_id,
-                                   session_id=session_id)
-        except Exception as e:
-            logging.exception(str(e))
-            raise
+        headers = prepape_auth_headers(self._session, include_cauth=True)
+        headers.update({
+            'Content-Type': 'application/json; charset=UTF-8'
+        })
+        data = {"contentRequestBody": {"argument": []}}
+
+        session_id = self._get_quiz_session_id(quiz_id)
+        reply = post_page_json(self._session,
+                               POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
+                               data=json.dumps(data),
+                               headers=headers,
+                               user_id=self._user_id,
+                               class_name=self._course_name,
+                               quiz_id=quiz_id,
+                               session_id=session_id)
         quiz_data = reply['contentResponseBody']['return']
 
-        # from ipdb import set_trace; set_trace(context=20)
-        with open('quizes/quiz-%s.json' % quiz_id, 'w') as f:
+        with open('quizes/quiz-%s-%s.json' % (self._class_name, quiz_id), 'w') as f:
             json.dump(quiz_data, f)
 
         converter = CourseraOnDemandQuizConverter(self._session)
@@ -360,12 +386,20 @@ class CourseraOnDemand(object):
         return supplement_links
 
     def _get_quiz_session_id(self, quiz_id):
+        headers = prepape_auth_headers(self._session, include_cauth=True)
+        headers.update({
+            'Content-Type': 'application/json; charset=UTF-8'
+        })
+
+        data = {"contentRequestBody":[]}
         reply = post_page_json(self._session,
                                POST_OPENCOURSE_API_QUIZ_SESSION,
+                               data=json.dumps(data),
+                               headers=headers,
                                user_id=self._user_id,
-                               class_name=self._course_id,
+                               class_name=self._course_name,
                                quiz_id=quiz_id)
-        print(reply)
+
         return reply['contentResponseBody']['session']['id']
 
     def extract_links_from_lecture(self,

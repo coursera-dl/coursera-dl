@@ -421,7 +421,324 @@ POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://www.coursera.org/api/openc
 #
 #POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
 
+# Response for this request is empty. Result (session_id) should be taken
+# either from Location header or from X-Coursera-Id header.
+#
+# Request payload:
+# {"courseId":"-N44X0IJEeWpogr5ZO8qxQ","itemId":"YV0W4"}
 POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1'
+
+# Sample response:
+# {
+#   "elements": [
+#     {
+#       "id": 0,
+#       "result": {
+#         "questions": [
+#           {
+#             "id": "8uUpMzm_EeaetxLgjw7H8Q@0",
+#             "question": {
+#               "type": "mcq"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>\n\nSuppose you’d like to perform nearest neighbor search from the following set of houses:</text><table rows=\"5\" columns=\"4\"><tr><td><text>\n\n\n\n\n\n</text></td><td><text>\n\n\nPrice (USD)</text></td><td><text>\n\n\nNumber of rooms</text></td><td><text>\n\n\nLot size (sq. ft.)</text></td></tr><tr><td><text>\n\n\nHouse 1</text></td><td><text>\n\n\n500000</text></td><td><text>\n\n\n3</text></td><td><text>\n\n\n1840</text></td></tr><tr><td><text>\n\n\nHouse 2</text></td><td><text>\n\n\n350000</text></td><td><text>\n\n\n2</text></td><td><text>\n\n\n1600</text></td></tr><tr><td><text>House 3</text></td><td><text>\n\n600000</text></td><td><text>\n\n4</text></td><td><text>\n\n2000</text></td></tr><tr><td><text>House 4</text></td><td><text>\n400000</text></td><td><text>\n2</text></td><td><text>\n1900</text></td></tr></table><text>\n\nSince the features come in wildly different scales, you decide to use scaled Euclidean distances. Choose the set of weights a_i (as presented in the video lecture) that properly incorporates the relative amount of variation of the feature.</text><text>Note: </text><code language=\"plain_text\">a_price = weight assigned to price (USD)\na_room  = weight assigned to number of rooms\na_lot   = weight assigned to lot size (sq.ft.)</code></co-content>"
+#                   }
+#                 },
+#                 "options": [
+#                   {
+#                     "id": "0.9109180361318947",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1, a_room = 1, a_lot = 1</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.11974743029080992",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1, a_room = 1, a_lot = 1e-6</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.8214165539451299",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1e-10, a_room = 1, a_lot = 1e-6</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.6784789645868041",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1e-5, a_room = 1, a_lot = 1e-3</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.9664001374497642",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>a_price = 1e5, a_room = 1, a_lot = 1e3</text></co-content>"
+#                       }
+#                     }
+#                   }
+#                 ]
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           },
+#           {
+#             "id": "jeVDBjnNEeaetxLgjw7H8Q@0",
+#             "question": {
+#               "type": "singleNumeric"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>\n\nConsider the following two sentences.\n</text><list bulletType=\"bullets\"><li><text>Sentence 1: The quick brown fox jumps over the lazy dog.\n</text></li><li><text>Sentence 2: A quick brown dog outpaces a quick fox.\n</text></li></list><text>\n\nCompute the Euclidean distance using word counts. Round your answer to 3 decimal places.</text><text>Note. To compute word counts, turn all words into lower case and strip all punctuation, so that \"The\" and \"the\" are counted as the same token.</text></co-content>"
+#                   }
+#                 }
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           },
+#           {
+#             "id": "-tI-EjnNEeaPCw5NUSdt1w@0",
+#             "question": {
+#               "type": "singleNumeric"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>Refer back to the two sentences given in Question 2 to answer the following:</text><text>Recall that we can use cosine similarity to define a distance.  We call that distance cosine distance. </text><text>Compute the <strong>cosine distance</strong> using word counts. Round your answer to 3 decimal places.\n</text><text>Note: To compute word counts, turn all words into lower case and strip all punctuation, so that \"The\" and \"the\" are counted as the same token.</text><text>Hint. Recall that we can use cosine similarity to define a distance.  We call that distance cosine distance.</text></co-content>"
+#                   }
+#                 }
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           },
+#           {
+#             "id": "LGECRDnOEeaetxLgjw7H8Q@0",
+#             "question": {
+#               "type": "mcq"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>(True/False) For positive features, cosine similarity is always between 0 and 1.</text></co-content>"
+#                   }
+#                 },
+#                 "options": [
+#                   {
+#                     "id": "0.838238929639803",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>True</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.9654190569725087",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>False</text></co-content>"
+#                       }
+#                     }
+#                   }
+#                 ]
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           },
+#           {
+#             "id": "N62eSDnOEea5PAq35BZMoQ@0",
+#             "question": {
+#               "type": "mcq"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>\n\nUsing the formula for TF-IDF presented in the lecture, complete the following sentence:</text><text>A word is assigned a zero TF-IDF weight when it appears in ____ documents. (N: number of documents in the corpus)</text></co-content>"
+#                   }
+#                 },
+#                 "options": [
+#                   {
+#                     "id": "0.10877084920366831",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>N - 1</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.29922629273211787",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>N/2</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.69796593807345",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>N</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.6731572688278926",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>0.1*N</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.8467992755507772",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>100</text></co-content>"
+#                       }
+#                     }
+#                   }
+#                 ]
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           },
+#           {
+#             "id": "TuHdkjnOEeaPCw5NUSdt1w@0",
+#             "question": {
+#               "type": "mcq"
+#             },
+#             "variant": {
+#               "definition": {
+#                 "prompt": {
+#                   "typeName": "cml",
+#                   "definition": {
+#                     "dtdId": "assess/1",
+#                     "value": "<co-content><text>\n\nWhich of the following does <strong>not </strong>describe the word count document representation?</text></co-content>"
+#                   }
+#                 },
+#                 "options": [
+#                   {
+#                     "id": "0.3821039264467949",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>Ignores the order of the words</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.3470767421220087",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>Assigns a high score to a frequently occurring word</text></co-content>"
+#                       }
+#                     }
+#                   },
+#                   {
+#                     "id": "0.3341840649172314",
+#                     "display": {
+#                       "typeName": "cml",
+#                       "definition": {
+#                         "dtdId": "assess/1",
+#                         "value": "<co-content><text>Penalizes words that appear in every document</text></co-content>"
+#                       }
+#                     }
+#                   }
+#                 ]
+#               },
+#               "detailLevel": "Full"
+#             },
+#             "weightedScoring": {
+#               "maxScore": 1
+#             },
+#             "isSubmitAllowed": true
+#           }
+#         ],
+#         "evaluation": null
+#       }
+#     }
+#   ],
+#   "paging": null,
+#   "linked": {
+#     "gradingAttempts.v1": []
+#   }
+# }
+#
+# Request payload:
+# {"name":"getState","argument":[]}
+POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE = 'https://www.coursera.org/api/onDemandExamSessions.v1/{session_id}/actions?includes=gradingAttempts'
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # define a per-user cache folder
