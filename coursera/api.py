@@ -124,18 +124,19 @@ class MarkupToHTMLConverter(object):
     def __init__(self, session):
         self._session = session
 
-    def __call__(self, text):
+    def __call__(self, markup):
         """
-        Prettify instructions text to make it more suitable for offline reading.
+        Convert instructions markup to make it more suitable for
+        offline reading.
 
-        @param text: HTML (kinda) text to prettify.
-        @type text: str
+        @param markup: HTML (kinda) markup to prettify.
+        @type markup: str
 
         @return: Prettified HTML with several markup tags replaced with HTML
             equivalents.
         @rtype: str
         """
-        soup = BeautifulSoup(text)
+        soup = BeautifulSoup(markup)
         self._convert_instructions_basic(soup)
         self._convert_instructions_images(soup)
         return soup.prettify()

@@ -7,8 +7,10 @@ import pytest
 from mock import patch
 
 from coursera import api
+from coursera import define
 
 from coursera.test.utils import slurp_fixture
+from coursera.utils import BeautifulSoup
 
 
 @pytest.fixture
@@ -156,10 +158,97 @@ def test_quiz_exam_to_markup_converter(input_filename, output_filename):
     assert actual_output == expected_output
 
 
+class TestMarkupToHTMLConverter:
+    def _p(self, html):
+        return BeautifulSoup(html).prettify()
+
+    STYLE = None
+
+    def setup_method(self, test_method):
+        self.STYLE = self._p(define.INSTRUCTIONS_HTML_INJECTION)
+        self.markup_to_html = api.MarkupToHTMLConverter(session=None)
+
+    def test_empty(self):
+        output = self.markup_to_html("")
+        assert self.STYLE == output
+
+    def test_replace_text_tag(self):
+        output = self.markup_to_html("""
+        <co-content>
+        <text>
+            Test<text>Nested</text>
+        </text>
+        <text>
+            Test2
+        </text>
+        </co-content>
+        """)
+        assert self._p("""
+        <co-content>
+        <p>
+            Test<p>Nested</p>
+        </p>
+        <p>
+            Test2
+        </p>
+        </co-content>\n
+        """) + self.STYLE == output
+
+    def test_replace_heading(self):
+        output = self.markup_to_html("""
+        <co-content>
+            <heading level="1">Text</heading>
+            <heading level="2">Text</heading>
+            <heading level="3">Text</heading>
+            <heading level="4">Text</heading>
+            <heading level="5">Text</heading>
+            <heading >Text</heading>
+        </co-content>
+        """)
+        assert self._p("""
+        <co-content>
+            <h1 level="1">Text</h1>
+            <h2 level="2">Text</h2>
+            <h3 level="3">Text</h3>
+            <h4 level="4">Text</h4>
+            <h5 level="5">Text</h5>
+            <h1>Text</h1>
+        </co-content>\n
+        """) + self.STYLE == output
+
+    def test_replace_code(self):
+        output = self.markup_to_html("""
+        <co-content>
+            <code>Text</code>
+            <code>Text</code>
+        </co-content>
+        """)
+        assert self._p("""
+        <co-content>
+            <pre>Text</pre>
+            <pre>Text</pre>
+        </co-content>\n
+        """) + self.STYLE == output
+
+    def test_replace_list(self):
+        output = self.markup_to_html("""
+        <co-content>
+            <list bullettype="numbers">Text</list>
+            <list bullettype="bullets">Text</list>
+        </co-content>
+        """)
+        assert self._p("""
+        <co-content>
+            <ol bullettype="numbers">Text</ol>
+            <ul bullettype="bullets">Text</ul>
+        </co-content>\n
+        """) + self.STYLE == output
+
+
 def test_quiz_converter():
     pytest.skip()
     quiz_to_markup = api.QuizExamToMarkupConverter(session=None)
-    markup_to_html = api.MarkupToHTMLConverter(session=session)
+    markup_to_html = api.MarkupToHTMLConverter(session=None)
 
     quiz_data = json.load(open('quiz.json'))['contentResponseBody']['return']
     result = markup_to_html(quiz_to_markup(quiz_data))
