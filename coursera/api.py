@@ -124,6 +124,7 @@ class QuizExamToMarkupConverter(object):
 class MarkupToHTMLConverter(object):
     def __init__(self, session):
         self._session = session
+        self._asset_retriever = AssetRetriever(session)
 
     def __call__(self, markup):
         """
@@ -138,11 +139,11 @@ class MarkupToHTMLConverter(object):
         @rtype: str
         """
         soup = BeautifulSoup(markup)
-        self._convert_instructions_basic(soup)
-        self._convert_instructions_images(soup)
+        self._convert_markup_basic(soup)
+        self._convert_markup_images(soup)
         return soup.prettify()
 
-    def _convert_instructions_basic(self, soup):
+    def _convert_markup_basic(self, soup):
         """
         Perform basic conversion of instructions markup. This includes
         replacement of several textual markup tags with their HTML equivalents.
@@ -173,7 +174,7 @@ class MarkupToHTMLConverter(object):
             type_ = list_.attrs.get('bullettype', 'numbers')
             list_.name = 'ol' if type_ == 'numbers' else 'ul'
 
-    def _convert_instructions_images(self, soup):
+    def _convert_markup_images(self, soup):
         """
         Convert images of instructions markup. Images are downloaded,
         base64-encoded and inserted into <img> tags.
@@ -283,7 +284,7 @@ class Asset(namedtuple('Asset', 'id name type_name url data')):
             self.id, self.name, self.type_name, self.url)
 
 
-class AssetRetrievier(object):
+class AssetRetriever(object):
     """
     This class helps download assets by their ID.
     """

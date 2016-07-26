@@ -245,6 +245,23 @@ class TestMarkupToHTMLConverter:
         </co-content>\n
         """) + self.STYLE == output
 
+    def test_replace_images(self):
+        output = self.markup_to_html("""
+        "<co-content>
+            <text>\n\n</text>
+            <img assetId=\"nVhIAj61EeaGyBLfiQeo_w\" alt=\"\"/>
+            <text>\n\n</text>
+            <img assetId=\"vdqUTz61Eea_CQ5dfWSAjQ\" alt=\"\"/>
+            <text>\n\n</text>
+        </co-content>"
+        """)
+        assert self._p("""
+        <co-content>
+            <ol bullettype="numbers">Text</ol>
+            <ul bullettype="bullets">Text</ul>
+        </co-content>\n
+        """) + self.STYLE == output
+
 
 def test_quiz_converter():
     pytest.skip()
@@ -304,7 +321,7 @@ def create_session():
 def test_asset_retriever(get_reply, get_page_json):
     reply = json.loads(slurp_fixture('json/asset-retriever/assets-reply.json'))
     get_page_json.side_effect = [reply]
-    get_reply.side_effect = [Mock(status_code=200, content='<...>')] * 7
+    get_reply.side_effect = [Mock(status_code=200, content='<...>')] * 9
 
     asset_ids = ['bWTK9sYwEeW7AxLLCrgDQQ',
                  'bXCx18YwEeWicwr5JH8fgw',
@@ -312,7 +329,9 @@ def test_asset_retriever(get_reply, get_page_json):
                  'bYHvf8YwEeWFNA5XwZEiOw',
                  'tZmigMYxEeWFNA5XwZEiOw',
                  'VceKeChKEeaOMw70NkE3iw',
-                 'VcmGXShKEea4ehL5RXz3EQ']
+                 'VcmGXShKEea4ehL5RXz3EQ',
+                 'nVhIAj61EeaGyBLfiQeo_w',
+                 'vdqUTz61Eea_CQ5dfWSAjQ']
 
     expected_output = [
         api.Asset(id="bWTK9sYwEeW7AxLLCrgDQQ", name="M111.mp3", type_name="audio", url="url4", data="<...>"),
@@ -321,10 +340,12 @@ def test_asset_retriever(get_reply, get_page_json):
         api.Asset(id="bYHvf8YwEeWFNA5XwZEiOw", name="M114.mp3", type_name="audio", url="url1", data="<...>"),
         api.Asset(id="tZmigMYxEeWFNA5XwZEiOw", name="M115.mp3", type_name="audio", url="url5", data="<...>"),
         api.Asset(id="VceKeChKEeaOMw70NkE3iw", name="09_graph_decomposition_problems_1.pdf", type_name="pdf", url="url7", data="<...>"),
-        api.Asset(id="VcmGXShKEea4ehL5RXz3EQ", name="09_graph_decomposition_starter_files_1.zip", type_name="generic", url="url2", data="<...>")
+        api.Asset(id="VcmGXShKEea4ehL5RXz3EQ", name="09_graph_decomposition_starter_files_1.zip", type_name="generic", url="url2", data="<...>"),
+        api.Asset(id="nVhIAj61EeaGyBLfiQeo_w", name="Capture.PNG", type_name="image", url="url8", data="<...>"),
+        api.Asset(id="vdqUTz61Eea_CQ5dfWSAjQ", name="Capture.PNG", type_name="image", url="url9", data="<...>"),
     ]
 
-    retriever = api.AssetRetrievier(session=None)
+    retriever = api.AssetRetriever(session=None)
     actual_output = retriever(asset_ids)
 
     assert expected_output == actual_output
@@ -343,7 +364,7 @@ def old_test_asset_retriever():
 
     print('session')
     session = create_session()
-    retriever = api.AssetRetrievier(session)
+    retriever = api.AssetRetriever(session)
     #assets = retriever.get(asset_ids)
     assets = retriever(more)
 
