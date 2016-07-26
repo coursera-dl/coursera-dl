@@ -1,29 +1,11 @@
 {
   "elements": [
     {
-      "id": "bYHvf8YwEeWFNA5XwZEiOw",
-      "name": "M114.mp3",
-      "typeName": "audio",
-      "url": {
-        "url": "url1",
-        "expires": 1469664000000
-      }
-    },
-    {
       "id": "VcmGXShKEea4ehL5RXz3EQ",
       "name": "09_graph_decomposition_starter_files_1.zip",
       "typeName": "generic",
       "url": {
         "url": "url2",
-        "expires": 1469664000000
-      }
-    },
-    {
-      "id": "bX9X18YwEeW7AxLLCrgDQQ",
-      "name": "M113.mp3",
-      "typeName": "audio",
-      "url": {
-        "url": "url3",
         "expires": 1469664000000
       }
     },
@@ -37,38 +19,11 @@
       }
     },
     {
-      "id": "tZmigMYxEeWFNA5XwZEiOw",
-      "name": "M115.mp3",
-      "typeName": "audio",
-      "url": {
-        "url": "url5",
-        "expires": 1469664000000
-      }
-    },
-    {
-      "id": "bXCx18YwEeWicwr5JH8fgw",
-      "name": "M112.mp3",
-      "typeName": "audio",
-      "url": {
-        "url": "url6",
-        "expires": 1469664000000
-      }
-    },
-    {
       "id": "VceKeChKEeaOMw70NkE3iw",
       "name": "09_graph_decomposition_problems_1.pdf",
       "typeName": "pdf",
       "url": {
         "url": "url7",
-        "expires": 1469664000000
-      }
-    },
-    {
-      "id": "nVhIAj61EeaGyBLfiQeo_w",
-      "name": "Capture.PNG",
-      "typeName": "image",
-      "url": {
-        "url": "url8",
         "expires": 1469664000000
       }
     },

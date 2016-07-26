@@ -190,21 +190,14 @@ class MarkupToHTMLConverter(object):
 
         # Get assetid attribute from all images
         asset_ids = [image.attrs.get('assetid') for image in images]
-
-        # Download information about image assets (image IDs)
-        asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
-                                   id=','.join(asset_ids))
-        # Create a map "asset_id => asset" for easier access
-        asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
+        self._asset_retriever(asset_ids)
 
         for image in images:
-            # Download each image and encode it using base64
-            url = asset_map[image['assetid']]['url']['url'].strip()
-            request = self._session.get(url)
-            if request.status_code == 200:
-                content_type = request.headers.get('Content-Type', 'image/png')
-                encoded64 = base64.b64encode(request.content).decode()
-                image['src'] = 'data:%s;base64,%s' % (content_type, encoded64)
+            # Encode each image using base64
+            asset = self._asset_retriever[image['assetid']]
+            if asset.data is not None:
+                encoded64 = base64.b64encode(asset.data).decode()
+                image['src'] = 'data:%s;base64,%s' % (asset.content_type, encoded64)
 
 
 class OnDemandCourseMaterialItems(object):
@@ -274,14 +267,14 @@ class OnDemandCourseMaterialItems(object):
         return self._items.get(lesson_id)
 
 
-class Asset(namedtuple('Asset', 'id name type_name url data')):
+class Asset(namedtuple('Asset', 'id name type_name url content_type data')):
     """
     This class contains information about an asset.
     """
     __slots__ = ()
     def __repr__(self):
-        return 'Asset(id="%s", name="%s", type_name="%s", url="%s", data="<...>")' % (
-            self.id, self.name, self.type_name, self.url)
+        return 'Asset(id="%s", name="%s", type_name="%s", url="%s", content_type="%s", data="<...>")' % (
+            self.id, self.name, self.type_name, self.url, self.content_type)
 
 
 class AssetRetriever(object):
@@ -290,6 +283,10 @@ class AssetRetriever(object):
     """
     def __init__(self, session):
         self._session = session
+        self._asset_mapping = {}
+
+    def __getitem__(self, key):
+        return self._asset_mapping[key]
 
     def __call__(self, asset_ids, download=True):
         result = []
@@ -313,11 +310,15 @@ class AssetRetriever(object):
                 if reply.status_code == 200:
                     data = reply.content
 
-            result.append(Asset(id=asset_dict['id'].strip(),
-                                name=asset_dict['name'].strip(),
-                                type_name=asset_dict['typeName'].strip(),
-                                url=url,
-                                data=data))
+            asset = Asset(id=asset_dict['id'].strip(),
+                          name=asset_dict['name'].strip(),
+                          type_name=asset_dict['typeName'].strip(),
+                          url=url,
+                          content_type=reply.headers.get('Content-Type'),
+                          data=data)
+
+            self._asset_mapping[asset.id] = asset
+            result.append(asset)
 
         return result
 

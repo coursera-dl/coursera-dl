@@ -245,20 +245,34 @@ class TestMarkupToHTMLConverter:
         </co-content>\n
         """) + self.STYLE == output
 
-    def test_replace_images(self):
+    @patch('coursera.api.AssetRetriever')
+    def test_replace_images(self, mock_asset_retriever):
+        replies = {
+            'nVhIAj61EeaGyBLfiQeo_w': Mock(data=b'a', content_type='image/png'),
+            'vdqUTz61Eea_CQ5dfWSAjQ': Mock(data=b'b', content_type='image/png'),
+            'nodata': Mock(data=None, content_type='image/png')
+        }
+        mock_asset_retriever.__call__ = Mock(return_value=None)
+        mock_asset_retriever.__getitem__  = Mock(side_effect=replies.__getitem__)
+        self.markup_to_html._asset_retriever = mock_asset_retriever
+
         output = self.markup_to_html("""
-        "<co-content>
+        <co-content>
             <text>\n\n</text>
             <img assetId=\"nVhIAj61EeaGyBLfiQeo_w\" alt=\"\"/>
             <text>\n\n</text>
             <img assetId=\"vdqUTz61Eea_CQ5dfWSAjQ\" alt=\"\"/>
             <text>\n\n</text>
-        </co-content>"
+        </co-content>
         """)
+
         assert self._p("""
         <co-content>
-            <ol bullettype="numbers">Text</ol>
-            <ul bullettype="bullets">Text</ul>
+            <p></p>
+            <img alt="" assetid="nVhIAj61EeaGyBLfiQeo_w" src="data:image/png;base64,YQ=="/>
+            <p></p>
+            <img alt="" assetid="vdqUTz61Eea_CQ5dfWSAjQ" src="data:image/png;base64,Yg=="/>
+            <p></p>
         </co-content>\n
         """) + self.STYLE == output
 
@@ -321,28 +335,19 @@ def create_session():
 def test_asset_retriever(get_reply, get_page_json):
     reply = json.loads(slurp_fixture('json/asset-retriever/assets-reply.json'))
     get_page_json.side_effect = [reply]
-    get_reply.side_effect = [Mock(status_code=200, content='<...>')] * 9
+    get_reply.side_effect = [Mock(status_code=200, content='<...>',
+                                  headers=Mock(get=Mock(return_value='image/png')))] * 4
 
     asset_ids = ['bWTK9sYwEeW7AxLLCrgDQQ',
-                 'bXCx18YwEeWicwr5JH8fgw',
-                 'bX9X18YwEeW7AxLLCrgDQQ',
-                 'bYHvf8YwEeWFNA5XwZEiOw',
-                 'tZmigMYxEeWFNA5XwZEiOw',
                  'VceKeChKEeaOMw70NkE3iw',
                  'VcmGXShKEea4ehL5RXz3EQ',
-                 'nVhIAj61EeaGyBLfiQeo_w',
                  'vdqUTz61Eea_CQ5dfWSAjQ']
 
     expected_output = [
-        api.Asset(id="bWTK9sYwEeW7AxLLCrgDQQ", name="M111.mp3", type_name="audio", url="url4", data="<...>"),
-        api.Asset(id="bXCx18YwEeWicwr5JH8fgw", name="M112.mp3", type_name="audio", url="url6", data="<...>"),
-        api.Asset(id="bX9X18YwEeW7AxLLCrgDQQ", name="M113.mp3", type_name="audio", url="url3", data="<...>"),
-        api.Asset(id="bYHvf8YwEeWFNA5XwZEiOw", name="M114.mp3", type_name="audio", url="url1", data="<...>"),
-        api.Asset(id="tZmigMYxEeWFNA5XwZEiOw", name="M115.mp3", type_name="audio", url="url5", data="<...>"),
-        api.Asset(id="VceKeChKEeaOMw70NkE3iw", name="09_graph_decomposition_problems_1.pdf", type_name="pdf", url="url7", data="<...>"),
-        api.Asset(id="VcmGXShKEea4ehL5RXz3EQ", name="09_graph_decomposition_starter_files_1.zip", type_name="generic", url="url2", data="<...>"),
-        api.Asset(id="nVhIAj61EeaGyBLfiQeo_w", name="Capture.PNG", type_name="image", url="url8", data="<...>"),
-        api.Asset(id="vdqUTz61Eea_CQ5dfWSAjQ", name="Capture.PNG", type_name="image", url="url9", data="<...>"),
+        api.Asset(id="bWTK9sYwEeW7AxLLCrgDQQ", name="M111.mp3", type_name="audio", url="url4", content_type="image/png", data="<...>"),
+        api.Asset(id="VceKeChKEeaOMw70NkE3iw", name="09_graph_decomposition_problems_1.pdf", type_name="pdf", url="url7", content_type="image/png", data="<...>"),
+        api.Asset(id="VcmGXShKEea4ehL5RXz3EQ", name="09_graph_decomposition_starter_files_1.zip", type_name="generic", url="url2", content_type="image/png", data="<...>"),
+        api.Asset(id="vdqUTz61Eea_CQ5dfWSAjQ", name="Capture.PNG", type_name="image", url="url9", content_type="image/png", data="<...>"),
     ]
 
     retriever = api.AssetRetriever(session=None)
