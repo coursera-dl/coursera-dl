@@ -290,7 +290,7 @@ class AssetRetrievier(object):
     def __init__(self, session):
         self._session = session
 
-    def __call__(self, asset_ids):
+    def __call__(self, asset_ids, download=True):
         result = []
 
         # Download information about assets (by IDs)
@@ -303,15 +303,20 @@ class AssetRetrievier(object):
         for asset_id in asset_ids:
             # Download each asset
             asset_dict = asset_map[asset_id]
-            url = asset_dict['url']['url'].strip()
 
-            reply = get_reply(self._session, url)
-            if reply.status_code == 200:
-                result.append(Asset(id=asset_dict['id'].strip(),
-                                    name=asset_dict['name'].strip(),
-                                    type_name=asset_dict['typeName'].strip(),
-                                    url=url,
-                                    data=reply.content))
+            url = asset_dict['url']['url'].strip()
+            data = None
+
+            if download:
+                reply = get_reply(self._session, url)
+                if reply.status_code == 200:
+                    data = reply.content
+
+            result.append(Asset(id=asset_dict['id'].strip(),
+                                name=asset_dict['name'].strip(),
+                                type_name=asset_dict['typeName'].strip(),
+                                url=url,
+                                data=data))
 
         return result
 
