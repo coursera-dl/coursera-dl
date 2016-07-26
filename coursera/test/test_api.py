@@ -1,6 +1,7 @@
 """
 Test APIs.
 """
+from os.path import expanduser
 import json
 
 import pytest
@@ -286,3 +287,34 @@ def test_quiz_converter_all():
         # print('RESULT', result)
         with open('quiz_html/' + filename + '.html', 'w') as f:
             f.write(result)
+
+def create_session():
+    from coursera.coursera_dl import get_session
+    from coursera.credentials import get_credentials
+    from coursera.cookies import login
+
+    session = get_session()
+    username, password = get_credentials(netrc=expanduser('~/.netrc'))
+    login(session, username, password)
+    return session
+
+def test_asset_retriever():
+    asset_ids = ['bWTK9sYwEeW7AxLLCrgDQQ',
+                 'bXCx18YwEeWicwr5JH8fgw',
+                 'bX9X18YwEeW7AxLLCrgDQQ',
+                 'bYHvf8YwEeWFNA5XwZEiOw',
+                 'tZmigMYxEeWFNA5XwZEiOw']
+    asset_ids = asset_ids[0:5]
+
+    more = ['VceKeChKEeaOMw70NkE3iw',
+            'VcmGXShKEea4ehL5RXz3EQ']
+
+    print('session')
+    session = create_session()
+    retriever = api.AssetRetrievier(session)
+    #assets = retriever.get(asset_ids)
+    assets = retriever(more)
+
+    print(assets)
+    from ipdb import set_trace; set_trace()
+    print(assets)

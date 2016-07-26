@@ -8,6 +8,7 @@ import os
 import json
 import base64
 import logging
+from collections import namedtuple
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
@@ -270,6 +271,49 @@ class OnDemandCourseMaterialItems(object):
         },
         """
         return self._items.get(lesson_id)
+
+
+class Asset(namedtuple('Asset', 'id name type_name url data')):
+    """
+    This class contains information about an asset.
+    """
+    __slots__ = ()
+    def __repr__(self):
+        return 'Asset(id=%s, name=%s, type_name=%s, url=%s, data="<...>")' % (
+            self.id, self.name, self.type_name, self.url)
+
+
+class AssetRetrievier(object):
+    """
+    This class helps download assets by their ID.
+    """
+    def __init__(self, session):
+        self._session = session
+
+    def __call__(self, asset_ids):
+        result = []
+
+        # Download information about assets (by IDs)
+        asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
+                                   id=','.join(asset_ids))
+
+        # Create a map "asset_id => asset" for easier access
+        asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
+
+        for asset_id in asset_ids:
+            # Download each asset
+            asset_dict = asset_map[asset_id]
+            url = asset_dict['url']['url'].strip()
+
+            request = self._session.get(url)
+            if request.status_code == 200:
+                result.append(Asset(id=asset_dict['id'].strip(),
+                                    name=asset_dict['name'].strip(),
+                                    type_name=asset_dict['typeName'].strip(),
+                                    url=url,
+                                    data=request.content))
+
+        return result
 
 
 class CourseraOnDemand(object):
