@@ -285,8 +285,8 @@ class AssetRetriever(object):
         self._session = session
         self._asset_mapping = {}
 
-    def __getitem__(self, key):
-        return self._asset_mapping[key]
+    def __getitem__(self, asset_id):
+        return self._asset_mapping[asset_id]
 
     def __call__(self, asset_ids, download=True):
         result = []
@@ -303,18 +303,19 @@ class AssetRetriever(object):
             asset_dict = asset_map[asset_id]
 
             url = asset_dict['url']['url'].strip()
-            data = None
+            data, content_type = None, None
 
             if download:
                 reply = get_reply(self._session, url)
                 if reply.status_code == 200:
                     data = reply.content
+                    content_type = reply.headers.get('Content-Type')
 
             asset = Asset(id=asset_dict['id'].strip(),
                           name=asset_dict['name'].strip(),
                           type_name=asset_dict['typeName'].strip(),
                           url=url,
-                          content_type=reply.headers.get('Content-Type'),
+                          content_type=content_type,
                           data=data)
 
             self._asset_mapping[asset.id] = asset
@@ -356,6 +357,7 @@ class CourseraOnDemand(object):
 
         self._quiz_to_markup = QuizExamToMarkupConverter(session)
         self._markup_to_html = MarkupToHTMLConverter(session)
+        self._asset_retriever = AssetRetriever(session)
 
     def obtain_user_id(self):
         reply = get_page_json(self._session, OPENCOURSE_MEMBERSHIPS)
@@ -554,7 +556,7 @@ class CourseraOnDemand(object):
     def _get_asset_urls(self, asset_id):
         """
         Get list of asset urls and file names. This method may internally
-        use _get_open_course_asset_urls to extract `asset` element types.
+        use AssetRetriever to extract `asset` element types.
 
         @param asset_id: Asset ID.
         @type asset_id: str
@@ -585,9 +587,9 @@ class CourseraOnDemand(object):
             #
             if typeName == 'asset':
                 open_course_asset_id = definition['assetId']
-                for asset in self._get_open_course_asset_urls(open_course_asset_id):
-                    urls.append({'name': asset['name'].strip(),
-                                 'url': asset['url'].strip()})
+                for asset in self._asset_retriever([open_course_asset_id],
+                                                   download=False):
+                    urls.append({'name': asset.name, 'url': asset.url})
 
             # Elements of `url` types look as follows:
             #
@@ -611,31 +613,6 @@ class CourseraOnDemand(object):
                     typeName, json.dumps(dom, indent=4))
 
         return urls
-
-    def _get_open_course_asset_urls(self, asset_id):
-        """
-        Get list of asset urls and file names. This method only works
-        with asset_ids extracted internally by _get_asset_urls method.
-
-        @param asset_id: Asset ID.
-        @type asset_id: str
-
-        @return List of dictionaries with asset file names and urls.
-        @rtype [{
-            'name': '<filename.ext>'
-            'url': '<url>'
-        }]
-        """
-        dom = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL, id=asset_id)
-
-        # Structure is as follows:
-        # elements [ {
-        #   name
-        #   url {
-        #       url
-        return [{'name': element['name'].strip(),
-                 'url': element['url']['url'].strip()}
-                for element in dom['elements']]
 
     def _extract_videos_and_subtitles_from_lecture(self,
                                                    video_id,

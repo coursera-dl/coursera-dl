@@ -356,7 +356,8 @@ def test_asset_retriever(get_reply, get_page_json):
     assert expected_output == actual_output
 
 
-def old_test_asset_retriever():
+def test_debug_asset_retriever():
+    pytest.skip()
     asset_ids = ['bWTK9sYwEeW7AxLLCrgDQQ',
                  'bXCx18YwEeWicwr5JH8fgw',
                  'bX9X18YwEeW7AxLLCrgDQQ',
