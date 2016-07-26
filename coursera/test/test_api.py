@@ -5,7 +5,7 @@ from os.path import expanduser
 import json
 
 import pytest
-from mock import patch
+from mock import patch, Mock
 
 from coursera import api
 from coursera import define
@@ -298,7 +298,39 @@ def create_session():
     login(session, username, password)
     return session
 
-def test_asset_retriever():
+
+@patch('coursera.api.get_page_json')
+@patch('coursera.api.get_reply')
+def test_asset_retriever(get_reply, get_page_json):
+    reply = json.loads(slurp_fixture('json/asset-retriever/assets-reply.json'))
+    get_page_json.side_effect = [reply]
+    get_reply.side_effect = [Mock(status_code=200, content='<...>')] * 7
+
+    asset_ids = ['bWTK9sYwEeW7AxLLCrgDQQ',
+                 'bXCx18YwEeWicwr5JH8fgw',
+                 'bX9X18YwEeW7AxLLCrgDQQ',
+                 'bYHvf8YwEeWFNA5XwZEiOw',
+                 'tZmigMYxEeWFNA5XwZEiOw',
+                 'VceKeChKEeaOMw70NkE3iw',
+                 'VcmGXShKEea4ehL5RXz3EQ']
+
+    expected_output = [
+        api.Asset(id="bWTK9sYwEeW7AxLLCrgDQQ", name="M111.mp3", type_name="audio", url="url4", data="<...>"),
+        api.Asset(id="bXCx18YwEeWicwr5JH8fgw", name="M112.mp3", type_name="audio", url="url6", data="<...>"),
+        api.Asset(id="bX9X18YwEeW7AxLLCrgDQQ", name="M113.mp3", type_name="audio", url="url3", data="<...>"),
+        api.Asset(id="bYHvf8YwEeWFNA5XwZEiOw", name="M114.mp3", type_name="audio", url="url1", data="<...>"),
+        api.Asset(id="tZmigMYxEeWFNA5XwZEiOw", name="M115.mp3", type_name="audio", url="url5", data="<...>"),
+        api.Asset(id="VceKeChKEeaOMw70NkE3iw", name="09_graph_decomposition_problems_1.pdf", type_name="pdf", url="url7", data="<...>"),
+        api.Asset(id="VcmGXShKEea4ehL5RXz3EQ", name="09_graph_decomposition_starter_files_1.zip", type_name="generic", url="url2", data="<...>")
+    ]
+
+    retriever = api.AssetRetrievier(session=None)
+    actual_output = retriever(asset_ids)
+
+    assert expected_output == actual_output
+
+
+def old_test_asset_retriever():
     asset_ids = ['bWTK9sYwEeW7AxLLCrgDQQ',
                  'bXCx18YwEeWicwr5JH8fgw',
                  'bX9X18YwEeW7AxLLCrgDQQ',
@@ -315,6 +347,4 @@ def test_asset_retriever():
     #assets = retriever.get(asset_ids)
     assets = retriever(more)
 
-    print(assets)
-    from ipdb import set_trace; set_trace()
     print(assets)

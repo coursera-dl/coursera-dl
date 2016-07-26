@@ -14,7 +14,7 @@ from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename)
-from .network import get_page, get_page_json, post_page_and_reply, post_page_json
+from .network import get_reply, get_page, get_page_json, post_page_and_reply, post_page_json
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
@@ -279,7 +279,7 @@ class Asset(namedtuple('Asset', 'id name type_name url data')):
     """
     __slots__ = ()
     def __repr__(self):
-        return 'Asset(id=%s, name=%s, type_name=%s, url=%s, data="<...>")' % (
+        return 'Asset(id="%s", name="%s", type_name="%s", url="%s", data="<...>")' % (
             self.id, self.name, self.type_name, self.url)
 
 
@@ -305,13 +305,13 @@ class AssetRetrievier(object):
             asset_dict = asset_map[asset_id]
             url = asset_dict['url']['url'].strip()
 
-            request = self._session.get(url)
-            if request.status_code == 200:
+            reply = get_reply(self._session, url)
+            if reply.status_code == 200:
                 result.append(Asset(id=asset_dict['id'].strip(),
                                     name=asset_dict['name'].strip(),
                                     type_name=asset_dict['typeName'].strip(),
                                     url=url,
-                                    data=request.content))
+                                    data=reply.content))
 
         return result
 
