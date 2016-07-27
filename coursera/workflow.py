@@ -141,7 +141,7 @@ class CourseraDownloader(CourseDownloader):
         self._ignored_formats = ignored_formats
         self._disable_url_skipping = disable_url_skipping
 
-        self.skipped_urls = [] if disable_url_skipping else None
+        self.skipped_urls = None if disable_url_skipping else []
         self.failed_urls = []
 
     def download_modules(self, modules):
