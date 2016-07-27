@@ -171,7 +171,9 @@ class TestMarkupToHTMLConverter:
 
     def test_empty(self):
         output = self.markup_to_html("")
-        assert self.STYLE == output
+        assert self._p("""
+        <meta charset="UTF-8"/>
+        """) + self.STYLE == output
 
     def test_replace_text_tag(self):
         output = self.markup_to_html("""
@@ -185,6 +187,7 @@ class TestMarkupToHTMLConverter:
         </co-content>
         """)
         assert self._p("""
+        <meta charset="UTF-8"/>
         <co-content>
         <p>
             Test<p>Nested</p>
@@ -207,6 +210,7 @@ class TestMarkupToHTMLConverter:
         </co-content>
         """)
         assert self._p("""
+        <meta charset="UTF-8"/>
         <co-content>
             <h1 level="1">Text</h1>
             <h2 level="2">Text</h2>
@@ -225,6 +229,7 @@ class TestMarkupToHTMLConverter:
         </co-content>
         """)
         assert self._p("""
+        <meta charset="UTF-8"/>
         <co-content>
             <pre>Text</pre>
             <pre>Text</pre>
@@ -239,6 +244,7 @@ class TestMarkupToHTMLConverter:
         </co-content>
         """)
         assert self._p("""
+        <meta charset="UTF-8"/>
         <co-content>
             <ol bullettype="numbers">Text</ol>
             <ul bullettype="bullets">Text</ul>
@@ -267,6 +273,7 @@ class TestMarkupToHTMLConverter:
         """)
 
         assert self._p("""
+        <meta charset="UTF-8"/>
         <co-content>
             <p></p>
             <img alt="" assetid="nVhIAj61EeaGyBLfiQeo_w" src="data:image/png;base64,YQ=="/>
@@ -322,7 +329,7 @@ def test_quiz_converter():
         file.write(result)
 
 def test_quiz_converter_all():
-    # pytest.skip()
+    pytest.skip()
     import os
 
     from coursera.coursera_dl import get_session
