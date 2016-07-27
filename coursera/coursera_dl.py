@@ -221,6 +221,8 @@ def main():
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
+            if is_debug_run():
+                logging.exception('HTTPError %s', e)
         except requests.exceptions.SSLError as e:
             logging.error('SSLError %s', e)
             print_ssl_error_message(e)

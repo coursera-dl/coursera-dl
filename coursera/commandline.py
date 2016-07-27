@@ -137,7 +137,7 @@ def parse_args(args=None):
                                 help='disable URL skipping, all URLs will be '
                                 'downloaded (default: False)')
 
-    # Selection of material to download
+    # Parameters realated to external downloaders
     group_external_dl = parser.add_argument_group('External downloaders')
 
     group_external_dl.add_argument('--wget',

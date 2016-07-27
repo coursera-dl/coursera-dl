@@ -47,6 +47,7 @@ def get_reply(session, url, post=False, data=None, headers=None):
         reply.raise_for_status()
     except requests.exceptions.HTTPError as e:
         logging.error("Error %s getting page %s", e, url)
+        logging.error("The server replied: %s", reply.text)
         raise
 
     return reply

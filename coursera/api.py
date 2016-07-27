@@ -8,12 +8,14 @@ import os
 import json
 import base64
 import logging
+import requests
 from collections import namedtuple
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
-                    extend_supplement_links, clean_url, clean_filename)
+                    extend_supplement_links, clean_url, clean_filename,
+                    is_debug_run)
 from .network import get_reply, get_page, post_page_and_reply
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -418,22 +420,26 @@ class CourseraOnDemand(object):
         return slugs
 
     def extract_links_from_exam(self, exam_id):
-        session_id = self._get_exam_session_id(exam_id)
-        exam_json = self._get_exam_json(exam_id, session_id)
-
-        with open('quizes/exam-%s-%s.json' % (self._course_name, exam_id), 'w') as f:
-            json.dump(exam_json, f)
-
-        return self._convert_quiz_json_to_links(exam_json, 'exam')
+        try:
+            session_id = self._get_exam_session_id(exam_id)
+            exam_json = self._get_exam_json(exam_id, session_id)
+            return self._convert_quiz_json_to_links(exam_json, 'exam')
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download exam %s: %s', exam_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download exam %s: %s', exam_id, exception)
+            return None
 
     def extract_links_from_quiz(self, quiz_id):
-        session_id = self._get_quiz_session_id(quiz_id)
-        quiz_json = self._get_quiz_json(quiz_id, session_id)
-
-        with open('quizes/quiz-%s-%s.json' % (self._course_name, quiz_id), 'w') as f:
-            json.dump(quiz_json, f)
-
-        return self._convert_quiz_json_to_links(quiz_json, 'quiz')
+        try:
+            session_id = self._get_quiz_session_id(quiz_id)
+            quiz_json = self._get_quiz_json(quiz_id, session_id)
+            return self._convert_quiz_json_to_links(quiz_json, 'quiz')
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download quiz %s: %s', quiz_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download quiz %s: %s', quiz_id, exception)
+            return None
 
     def _convert_quiz_json_to_links(self, quiz_json, filename_suffix):
         markup = self._quiz_to_markup(quiz_json)
