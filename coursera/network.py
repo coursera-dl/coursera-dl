@@ -13,6 +13,24 @@ def get_reply(session, url, post=False, data=None, headers=None):
     """
     Download an HTML page using the requests session. Low-level function
     that allows for flexible request configuration.
+
+    @param session: Requests session.
+    @type session: requests.Session
+
+    @param url: URL pattern with optional keywords to format.
+    @type url: str
+
+    @param post: Flag that indicates whether POST request should be sent.
+    @type post: bool
+
+    @param data: Payload data that is sent with request (in request body).
+    @type data: object
+
+    @param headers: Additional headers to send with request.
+    @type headers: dict
+
+    @return: Requests response.
+    @rtype: requests.Response
     """
 
     request_headers = {} if headers is None else headers
@@ -34,9 +52,37 @@ def get_reply(session, url, post=False, data=None, headers=None):
     return reply
 
 
-def get_page(session, url, post=False, data=None, headers=None):
+def get_page(session,
+             url,
+             json=False,
+             post=False,
+             data=None,
+             headers=None,
+             **kwargs):
+    """
+    Download an HTML page using the requests session.
+
+    @param session: Requests session.
+    @type session: requests.Session
+
+    @param url: URL pattern with optional keywords to format.
+    @type url: str
+
+    @param post: Flag that indicates whether POST request should be sent.
+    @type post: bool
+
+    @param data: Payload data that is sent with request (in request body).
+    @type data: object
+
+    @param headers: Additional headers to send with request.
+    @type headers: dict
+
+    @return: Response body.
+    @rtype: str
+    """
+    url = url.format(**kwargs)
     reply = get_reply(session, url, post=post, data=data, headers=headers)
-    return reply.text
+    return reply.json() if json else reply.text
 
 
 def get_page_and_url(session, url):
@@ -44,59 +90,11 @@ def get_page_and_url(session, url):
     Download an HTML page using the requests session and return
     the final URL after following redirects.
     """
-
-    reply = session.get(url)
-
-    try:
-        reply.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logging.error("Error %s getting page %s", e, url)
-        raise
-
+    reply = get_reply(session, url)
     return reply.text, reply.url
 
-
-def get_page_json(session, url, **kwargs):
-    """
-    Download page and parse it as JSON. This is a shorthand for common
-    operation.
-
-    @param session: Requests session.
-    @type session: requests.Session
-
-    @param url: URL pattern with optional keywords to format.
-    @type url: str
-
-    @param kwargs: Arguments to `url` pattern.
-
-    @return: Parsed JSON of the request page.
-    @rtype: dict
-    """
-    url = url.format(**kwargs)
-    page = get_page(session, url)
-    return json.loads(page)
 
 def post_page_and_reply(session, url, data=None, headers=None, **kwargs):
     url = url.format(**kwargs)
     reply = get_reply(session, url, post=True, data=data, headers=headers)
     return reply.text, reply
-
-def post_page_json(session, url, data=None, headers=None, **kwargs):
-    """
-    Download page and parse it as JSON. This is a shorthand for common
-    operation. Same as `get_page_json` but uses POST.
-
-    @param session: Requests session.
-    @type session: requests.Session
-
-    @param url: URL pattern with optional keywords to format.
-    @type url: str
-
-    @param kwargs: Arguments to `url` pattern.
-
-    @return: Parsed JSON of the request page.
-    @rtype: dict
-    """
-    page, _reply = post_page_and_reply(
-        session, url, data=data, headers=headers, **kwargs)
-    return json.loads(page)

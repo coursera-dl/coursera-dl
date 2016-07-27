@@ -125,7 +125,7 @@ def test_parse(get_old_style_video, filename, num_sections, num_lectures,
         assert sum(r for f, r in resources if f == "mp4") == num_videos
 
 
-@patch('coursera.api.get_page_json')
+@patch('coursera.api.get_page')
 def test_get_on_demand_supplement_url_accumulates_assets(mocked):
     input = open(
         os.path.join(os.path.dirname(__file__),

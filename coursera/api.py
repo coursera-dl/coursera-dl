@@ -14,7 +14,7 @@ from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename)
-from .network import get_reply, get_page, get_page_json, post_page_and_reply, post_page_json
+from .network import get_reply, get_page, post_page_and_reply
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
                      OPENCOURSE_ASSET_URL,
@@ -268,8 +268,9 @@ class OnDemandCourseMaterialItems(object):
         @rtype: OnDemandCourseMaterialItems
         """
 
-        dom = get_page_json(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
-                            class_name=course_name)
+        dom = get_page(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
+                       json=True,
+                       class_name=course_name)
         return OnDemandCourseMaterialItems(
             dom['linked']['onDemandCourseMaterialItems.v1'])
 
@@ -330,8 +331,9 @@ class AssetRetriever(object):
         result = []
 
         # Download information about assets (by IDs)
-        asset_list = get_page_json(self._session, OPENCOURSE_API_ASSETS_V1_URL,
-                                   id=','.join(asset_ids))
+        asset_list = get_page(self._session, OPENCOURSE_API_ASSETS_V1_URL,
+                              json=True,
+                              id=','.join(asset_ids))
 
         # Create a map "asset_id => asset" for easier access
         asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
@@ -398,7 +400,7 @@ class CourseraOnDemand(object):
         self._asset_retriever = AssetRetriever(session)
 
     def obtain_user_id(self):
-        reply = get_page_json(self._session, OPENCOURSE_MEMBERSHIPS)
+        reply = get_page(self._session, OPENCOURSE_MEMBERSHIPS, json=True)
         elements = reply['elements']
         user_id = elements[0]['userId'] if elements else None
         self._user_id = user_id
@@ -410,7 +412,7 @@ class CourseraOnDemand(object):
         @return: List of enrolled courses.
         @rtype: [str]
         """
-        reply = get_page_json(self._session, OPENCOURSE_MEMBERSHIPS)
+        reply = get_page(self._session, OPENCOURSE_MEMBERSHIPS, json=True)
         course_list = reply['linked']['courses.v1']
         slugs = [element['slug'] for element in course_list]
         return slugs
@@ -447,11 +449,13 @@ class CourseraOnDemand(object):
         headers = self._auth_headers_with_json()
         data = {"name": "getState", "argument": []}
 
-        reply = post_page_json(self._session,
-                               POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE,
-                               data=json.dumps(data),
-                               headers=headers,
-                               session_id=session_id)
+        reply = get_page(self._session,
+                         POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE,
+                         json=True,
+                         post=True,
+                         data=json.dumps(data),
+                         headers=headers,
+                         session_id=session_id)
 
         return reply['elements'][0]['result']
 
@@ -469,26 +473,30 @@ class CourseraOnDemand(object):
         headers = self._auth_headers_with_json()
         data = {"contentRequestBody": {"argument": []}}
 
-        reply = post_page_json(self._session,
-                               POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
-                               data=json.dumps(data),
-                               headers=headers,
-                               user_id=self._user_id,
-                               class_name=self._course_name,
-                               quiz_id=quiz_id,
-                               session_id=session_id)
+        reply = get_page(self._session,
+                         POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
+                         json=True,
+                         post=True,
+                         data=json.dumps(data),
+                         headers=headers,
+                         user_id=self._user_id,
+                         class_name=self._course_name,
+                         quiz_id=quiz_id,
+                         session_id=session_id)
         return reply['contentResponseBody']['return']
 
     def _get_quiz_session_id(self, quiz_id):
         headers = self._auth_headers_with_json()
         data = {"contentRequestBody":[]}
-        reply = post_page_json(self._session,
-                               POST_OPENCOURSE_API_QUIZ_SESSION,
-                               data=json.dumps(data),
-                               headers=headers,
-                               user_id=self._user_id,
-                               class_name=self._course_name,
-                               quiz_id=quiz_id)
+        reply = get_page(self._session,
+                         POST_OPENCOURSE_API_QUIZ_SESSION,
+                         json=True,
+                         post=True,
+                         data=json.dumps(data),
+                         headers=headers,
+                         user_id=self._user_id,
+                         class_name=self._course_name,
+                         quiz_id=quiz_id)
 
         return reply['contentResponseBody']['session']['id']
 
@@ -605,7 +613,8 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        dom = get_page_json(self._session, OPENCOURSE_ASSETS_URL, id=asset_id)
+        dom = get_page(self._session, OPENCOURSE_ASSETS_URL,
+                       json=True, id=asset_id)
         logging.debug('Parsing JSON for asset_id <%s>.', asset_id)
 
         urls = []
@@ -657,7 +666,9 @@ class CourseraOnDemand(object):
                                                    subtitle_language='en',
                                                    resolution='540p'):
 
-        dom = get_page_json(self._session, OPENCOURSE_VIDEO_URL, video_id=video_id)
+        dom = get_page(self._session, OPENCOURSE_VIDEO_URL,
+                       json=True,
+                       video_id=video_id)
 
         logging.debug('Parsing JSON for video_id <%s>.', video_id)
         video_content = {}
@@ -753,8 +764,10 @@ class CourseraOnDemand(object):
         """
         logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        dom = get_page_json(self._session, OPENCOURSE_SUPPLEMENT_URL,
-                            course_id=self._course_id, element_id=element_id)
+        dom = get_page(self._session, OPENCOURSE_SUPPLEMENT_URL,
+                       json=True,
+                       course_id=self._course_id,
+                       element_id=element_id)
 
         supplement_content = {}
 
@@ -818,8 +831,9 @@ class CourseraOnDemand(object):
             'url': '<url>'
         }]
         """
-        dom = get_page_json(self._session, OPENCOURSE_ASSET_URL,
-                            ids=quote_plus(','.join(asset_ids)))
+        dom = get_page(self._session, OPENCOURSE_ASSET_URL,
+                       json=True,
+                       ids=quote_plus(','.join(asset_ids)))
 
         return [{'id': element['id'],
                  'url': element['url'].strip()}
@@ -835,9 +849,10 @@ class CourseraOnDemand(object):
         @return: List of assignment text (instructions).
         @rtype: [str]
         """
-        dom = get_page_json(self._session, OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
-                            course_id=self._course_id, element_id=element_id)
-
+        dom = get_page(self._session, OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
+                       json=True,
+                       course_id=self._course_id,
+                       element_id=element_id)
 
         return [element['submissionLearnerSchema']['definition']
                 ['assignmentInstructions']['definition']['value']
