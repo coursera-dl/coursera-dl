@@ -276,6 +276,38 @@ class TestMarkupToHTMLConverter:
         </co-content>\n
         """) + self.STYLE == output
 
+    @patch('coursera.api.AssetRetriever')
+    def test_replace_audios(self, mock_asset_retriever):
+        replies = {
+            'aWTK9sYwEeW7AxLLCrgDQQ': Mock(data=b'a', content_type='audio/mpeg'),
+            'bWTK9sYwEeW7AxLLCrgDQQ': Mock(data=b'b', content_type='unknown')
+        }
+        mock_asset_retriever.__call__ = Mock(return_value=None)
+        mock_asset_retriever.__getitem__  = Mock(side_effect=replies.__getitem__)
+        self.markup_to_html._asset_retriever = mock_asset_retriever
+
+        output = self.markup_to_html("""
+        <co-content>
+            <asset id=\"aWTK9sYwEeW7AxLLCrgDQQ\" name=\"M111\" extension=\"mp3\" assetType=\"audio\"/>
+            <asset id=\"bWTK9sYwEeW7AxLLCrgDQQ\" name=\"M112\" extension=\"mp3\" assetType=\"unknown\"/>
+        </co-content>
+        """)
+
+        assert self._p("""
+        <meta charset="UTF-8"/>
+        <co-content>
+            <asset assettype="audio" extension="mp3" id="aWTK9sYwEeW7AxLLCrgDQQ" name="M111">
+            </asset>
+            <audio controls="">
+             Your browser does not support the audio element.
+             <source src="data:audio/mpeg;base64,YQ==" type="audio/mpeg">
+             </source>
+            </audio>
+            <asset assettype="unknown" extension="mp3" id="bWTK9sYwEeW7AxLLCrgDQQ" name="M112">
+            </asset>
+        </co-content>\n
+        """) + self.STYLE == output
+
 
 def test_quiz_converter():
     pytest.skip()
@@ -290,7 +322,7 @@ def test_quiz_converter():
         file.write(result)
 
 def test_quiz_converter_all():
-    pytest.skip()
+    # pytest.skip()
     import os
 
     from coursera.coursera_dl import get_session
@@ -302,7 +334,7 @@ def test_quiz_converter_all():
     markup_to_html = api.MarkupToHTMLConverter(session=session)
 
     path = 'quiz_json'
-    for filename in os.listdir(path):
+    for filename in ['quiz-audio.json']: #os.listdir(path):
     # for filename in ['all_question_types.json']:
         # if 'YV0W4' not in filename:
         #     continue

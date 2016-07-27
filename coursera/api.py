@@ -141,6 +141,7 @@ class MarkupToHTMLConverter(object):
         soup = BeautifulSoup(markup)
         self._convert_markup_basic(soup)
         self._convert_markup_images(soup)
+        self._convert_markup_audios(soup)
         return soup.prettify()
 
     def _convert_markup_basic(self, soup):
@@ -151,6 +152,10 @@ class MarkupToHTMLConverter(object):
         @param soup: BeautifulSoup instance.
         @type soup: BeautifulSoup
         """
+        # Inject meta charset tag
+        meta = soup.new_tag('meta', charset='UTF-8')
+        soup.insert(0, meta)
+
         # 1. Inject basic CSS style
         css_soup = BeautifulSoup(INSTRUCTIONS_HTML_INJECTION)
         soup.append(css_soup)
@@ -198,6 +203,39 @@ class MarkupToHTMLConverter(object):
             if asset.data is not None:
                 encoded64 = base64.b64encode(asset.data).decode()
                 image['src'] = 'data:%s;base64,%s' % (asset.content_type, encoded64)
+
+    def _convert_markup_audios(self, soup):
+        """
+        Convert audios of instructions markup. Audios are downloaded,
+        base64-encoded and inserted as <audio controls> <source> tag.
+
+        @param soup: BeautifulSoup instance.
+        @type soup: BeautifulSoup
+        """
+        # 7. Replace <asset> audio assets with actual audio contents
+        audios = [audio for audio in soup.find_all('asset')
+                  if audio.attrs.get('id') is not None
+                  and audio.attrs.get('assettype') == 'audio']
+        if not audios:
+            return
+
+        # Get assetid attribute from all audios
+        asset_ids = [audio.attrs.get('id') for audio in audios]
+        self._asset_retriever(asset_ids)
+
+        for audio in audios:
+            # Encode each audio using base64
+            asset = self._asset_retriever[audio['id']]
+            if asset.data is not None:
+                encoded64 = base64.b64encode(asset.data).decode()
+                data_string = 'data:%s;base64,%s' % (asset.content_type, encoded64)
+
+                source_tag = soup.new_tag('source', src=data_string, type=asset.content_type)
+                controls_tag = soup.new_tag('audio', controls="")
+                controls_tag.string = 'Your browser does not support the audio element.'
+
+                controls_tag.append(source_tag)
+                audio.insert_after(controls_tag)
 
 
 class OnDemandCourseMaterialItems(object):
