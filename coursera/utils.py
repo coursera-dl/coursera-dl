@@ -81,7 +81,7 @@ HTML_ESCAPE_TABLE = {
     "'": "&apos;"
 }
 
-HTML_UNESCAPE_TABLE = {v:k for k, v in HTML_ESCAPE_TABLE.items()}
+HTML_UNESCAPE_TABLE = dict((v, k) for k, v in HTML_ESCAPE_TABLE.items())
 
 
 def unescape_html(s):
