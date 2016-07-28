@@ -1,10 +1,12 @@
 # Change Log
 
-## 0.7.0 (2016-??-??)
+## 0.7.0 (2016-07-28)
 
 Features:
   - Added option `--list-courses` to list currently enrolled courses (#514)
   - Added option `--jobs N` to download resources in N threads simultaneously (#553)
+  - Added option `--download-quizzes` to download contents of graded and
+    ungraded quizzes (#490)
   - Added option `--cache-syllabus` to avoid downloading course syllabus on
     every run (this option is rather for developers)
 
@@ -18,7 +20,7 @@ Deletions:
   - `--ignore-http-errors` option has been removed and the default behavior
     has been adjusted to include this option
   - Removed deprecated `--on-demand` option. Now OnDemand classes are downloaded
-    by default.
+    by default
 
 ## 0.6.1 (2016-06-20)
 
