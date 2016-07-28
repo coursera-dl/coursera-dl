@@ -184,6 +184,9 @@ disabling SSLv3, we have to take a few extra steps.  In any case, it is
 *highly* recommended that you always install the latest version of the
 Python interpreter that you can.
 
+### ArchLinux
+
+AUR package: [coursera-dl](https://aur.archlinux.org/packages/coursera-dl/)
 
 ### Installing dependencies on your own
 
