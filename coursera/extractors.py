@@ -44,12 +44,14 @@ class CourseraExtractor(PlatformExtractor):
 
     def get_modules(self, class_name,
                     reverse=False, unrestricted_filenames=False,
-                    subtitle_language='en', video_resolution=None):
+                    subtitle_language='en', video_resolution=None,
+                    download_quizzes=False):
 
         page = self._get_on_demand_syllabus(class_name)
         modules = self._parse_on_demand_syllabus(
             page, reverse, unrestricted_filenames,
-            subtitle_language, video_resolution)
+            subtitle_language, video_resolution,
+            download_quizzes)
         return modules
 
     def _get_on_demand_syllabus(self, class_name):
@@ -66,7 +68,8 @@ class CourseraExtractor(PlatformExtractor):
     def _parse_on_demand_syllabus(self, page, reverse=False,
                                   unrestricted_filenames=False,
                                   subtitle_language='en',
-                                  video_resolution=None):
+                                  video_resolution=None,
+                                  download_quizzes=False):
         """
         Parse a Coursera on-demand course listing/syllabus page.
         """
@@ -134,10 +137,12 @@ class CourseraExtractor(PlatformExtractor):
                         links = course.extract_links_from_programming(lecture['id'])
 
                     elif typename == 'quiz':
-                        links = course.extract_links_from_quiz(lecture['id'])
+                        if download_quizzes:
+                            links = course.extract_links_from_quiz(lecture['id'])
 
                     elif typename == 'exam':
-                        links = course.extract_links_from_exam(lecture['id'])
+                        if download_quizzes:
+                            links = course.extract_links_from_exam(lecture['id'])
 
                     if links:
                         lectures.append((lecture_slug, links))

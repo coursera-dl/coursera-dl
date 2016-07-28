@@ -76,6 +76,12 @@ def parse_args(args=None):
     # Selection of material to download
     group_material = parser.add_argument_group('Selection of material to download')
 
+    group_material.add_argument('--download-quizzes',
+                                dest='download_quizzes',
+                                action='store_true',
+                                default=False,
+                                help='download quiz and exam questions. (Default: False)')
+
     group_material.add_argument('--about',  # FIXME: should be --about-course
                                 dest='about',
                                 action='store_true',
@@ -137,7 +143,7 @@ def parse_args(args=None):
                                 help='disable URL skipping, all URLs will be '
                                 'downloaded (default: False)')
 
-    # Parameters realated to external downloaders
+    # Parameters related to external downloaders
     group_external_dl = parser.add_argument_group('External downloaders')
 
     group_external_dl.add_argument('--wget',
