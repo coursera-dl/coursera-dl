@@ -141,6 +141,8 @@ def test_list_courses(get_page, course):
         ('empty-input.json', 'empty-output.txt'),
         ('answer-text-replaced-with-span-input.json', 'answer-text-replaced-with-span-output.txt'),
         ('question-type-textExactMatch-input.json', 'question-type-textExactMatch-output.txt'),
+        ('question-type-regex-input.json', 'question-type-regex-output.txt'),
+        ('question-type-mathExpression-input.json', 'question-type-mathExpression-output.txt'),
         ('question-type-checkbox-input.json', 'question-type-checkbox-output.txt'),
         ('question-type-mcq-input.json', 'question-type-mcq-output.txt'),
         ('question-type-singleNumeric-input.json', 'question-type-singleNumeric-output.txt'),

@@ -1,0 +1,27 @@
+{
+  "evaluation": null,
+  "questions": [
+      {
+          "id": "TajkZzNrEea7yAqn1iZwEQ@0",
+          "variant": {
+              "detailLevel": "Full",
+              "definition": {
+                  "prompt": {
+                      "typeName": "cml",
+                      "definition": {
+                          "dtdId": "assess/1",
+                          "value": "<co-content><text>Lorem ipsum</text></co-content>"
+                      }
+                  }
+              }
+          },
+          "weightedScoring": {
+              "maxScore": 1
+          },
+          "isSubmitAllowed": true,
+          "question": {
+              "type": "regex"
+          }
+      }
+  ]
+}
