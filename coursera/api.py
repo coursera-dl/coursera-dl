@@ -15,7 +15,7 @@ from six.moves.urllib_parse import quote_plus
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename,
-                    is_debug_run)
+                    is_debug_run, unescape_html)
 from .network import get_reply, get_page, post_page_and_reply
 from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL,
@@ -47,10 +47,16 @@ class QuizExamToMarkupConverter(object):
     KNOWN_QUESTION_TYPES = ('mcq',
                             'checkbox',
                             'singleNumeric',
-                            'textExactMatch')
+                            'textExactMatch',
+                            'mathExpression',
+                            'regex')
 
+    # TODO: support live MathJAX preview rendering for mathExpression
+    # and regex question types
     KNOWN_INPUT_TYPES = ('textExactMatch',
-                         'singleNumeric')
+                         'singleNumeric',
+                         'mathExpression',
+                         'regex')
 
     def __init__(self, session):
         self._session = session
@@ -73,7 +79,7 @@ class QuizExamToMarkupConverter(object):
             result.append('<h3>Question %d</h3>' % (question_index + 1))
 
             # Question text
-            question_text = prompt['definition']['value']
+            question_text = unescape_html(prompt['definition']['value'])
             result.append(question_text)
 
             # Input for answer
@@ -101,7 +107,8 @@ class QuizExamToMarkupConverter(object):
         result = ['<form>']
 
         for option in options:
-            option_text = option['display']['definition']['value']
+            option_text = unescape_html(option['display']['definition']['value'])
+
             # We need to replace <text> with <span> so that answer text
             # stays on the same line with checkbox/radio button
             option_text = self._replace_tag(option_text, 'text', 'span')
