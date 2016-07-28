@@ -16,6 +16,7 @@ import datetime
 
 
 from bs4 import BeautifulSoup as BeautifulSoup_
+from xml.sax.saxutils import escape, unescape
 
 import six
 from six import iteritems
@@ -71,6 +72,23 @@ def random_string(length):
     valid_chars = string_ascii_letters + string_digits
 
     return ''.join(random.choice(valid_chars) for i in range(length))
+
+
+# Taken from: https://wiki.python.org/moin/EscapingHtml
+# escape() and unescape() takes care of &, < and >.
+HTML_ESCAPE_TABLE = {
+    '"': "&quot;",
+    "'": "&apos;"
+}
+
+HTML_UNESCAPE_TABLE = dict((v, k) for k, v in HTML_ESCAPE_TABLE.items())
+
+
+def unescape_html(s):
+    h = html_parser.HTMLParser()
+    s = h.unescape(s)
+    s = unquote_plus(s)
+    return unescape(s, HTML_UNESCAPE_TABLE)
 
 
 def clean_filename(s, minimal_change=False):

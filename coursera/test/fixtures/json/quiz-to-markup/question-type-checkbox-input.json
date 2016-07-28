@@ -1,0 +1,45 @@
+{
+  "evaluation": null,
+  "questions": [
+      {
+          "id": "-5nCBDnPEeaPCw5NUSdt1w@0",
+          "variant": {
+              "detailLevel": "Full",
+              "definition": {
+                  "prompt": {
+                      "typeName": "cml",
+                      "definition": {
+                          "dtdId": "assess/1",
+                          "value": "<co-content><text>Lorem ipsum</text></co-content>"
+                      }
+                  },
+                  "options": [
+                      {
+                          "id": "0.1634510137510934",
+                          "display": {
+                              "typeName": "cml",
+                              "definition": {
+                                  "dtdId": "assess/1",
+                                  "value": "<co-content><text>Data point 1</text></co-content>"
+                              }
+                          }
+                      },
+                      {
+                          "id": "0.5981811018467218",
+                          "display": {
+                              "typeName": "cml",
+                              "definition": {
+                                  "dtdId": "assess/1",
+                                  "value": "<co-content><text>Data point 2  </text></co-content>"
+                              }
+                          }
+                      }
+                  ]
+              }
+          },
+          "question": {
+              "type": "checkbox"
+          }
+     }
+  ]
+}

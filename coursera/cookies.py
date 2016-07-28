@@ -68,6 +68,45 @@ class AuthenticationFailed(BaseException):
     """
 
 
+def prepape_auth_headers(session, include_cauth=False):
+    """
+    This function prepapes headers with CSRF/CAUTH tokens that can
+    be used in POST requests such as login/get_quiz.
+
+    @param session: Requests session.
+    @type session: requests.Session
+
+    @param include_cauth: Flag that indicates whethe CAUTH cookies should be
+        included as well.
+    @type include_cauth: bool
+
+    @return: Dictionary of headers.
+    @rtype: dict
+    """
+
+    # csrftoken is simply a 20 char random string.
+    csrftoken = random_string(20)
+
+    # Now make a call to the authenticator url.
+    csrf2cookie = 'csrf2_token_%s' % random_string(8)
+    csrf2token = random_string(24)
+    cookie = "csrftoken=%s; %s=%s" % (csrftoken, csrf2cookie, csrf2token)
+
+    if include_cauth:
+        CAUTH = session.cookies.get('CAUTH')
+        cookie = "CAUTH=%s; %s" % (CAUTH, cookie)
+
+    logging.debug('Forging cookie header: %s.', cookie)
+    headers = {
+        'Cookie': cookie,
+        'X-CSRFToken': csrftoken,
+        'X-CSRF2-Cookie': csrf2cookie,
+        'X-CSRF2-Token': csrf2token
+    }
+
+    return headers
+
+
 def login(session, username, password, class_name=None):
     """
     Login on coursera.org with the given credentials.
@@ -93,22 +132,7 @@ def login(session, username, password, class_name=None):
             logging.error(e)
             raise ClassNotFound(class_name)
 
-    # csrftoken is simply a 20 char random string.
-    csrftoken = random_string(20)
-
-    # Now make a call to the authenticator url.
-    csrf2cookie = 'csrf2_token_%s' % random_string(8)
-    csrf2token = random_string(24)
-    cookie = "csrftoken=%s; %s=%s" % (csrftoken, csrf2cookie, csrf2token)
-
-    logging.debug('Forging cookie header: %s.', cookie)
-
-    headers = {
-        'Cookie': cookie,
-        'X-CSRFToken': csrftoken,
-        'X-CSRF2-Cookie': csrf2cookie,
-        'X-CSRF2-Token': csrf2token,
-    }
+    headers = prepape_auth_headers(session, include_cauth=False)
 
     data = {
         'email': username,

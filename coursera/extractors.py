@@ -44,12 +44,14 @@ class CourseraExtractor(PlatformExtractor):
 
     def get_modules(self, class_name,
                     reverse=False, unrestricted_filenames=False,
-                    subtitle_language='en', video_resolution=None):
+                    subtitle_language='en', video_resolution=None,
+                    download_quizzes=False):
 
         page = self._get_on_demand_syllabus(class_name)
         modules = self._parse_on_demand_syllabus(
             page, reverse, unrestricted_filenames,
-            subtitle_language, video_resolution)
+            subtitle_language, video_resolution,
+            download_quizzes)
         return modules
 
     def _get_on_demand_syllabus(self, class_name):
@@ -66,7 +68,8 @@ class CourseraExtractor(PlatformExtractor):
     def _parse_on_demand_syllabus(self, page, reverse=False,
                                   unrestricted_filenames=False,
                                   subtitle_language='en',
-                                  video_resolution=None):
+                                  video_resolution=None,
+                                  download_quizzes=False):
         """
         Parse a Coursera on-demand course listing/syllabus page.
         """
@@ -79,7 +82,9 @@ class CourseraExtractor(PlatformExtractor):
         modules = []
         json_modules = dom['courseMaterial']['elements']
         course = CourseraOnDemand(session=self._session, course_id=dom['id'],
+                                  course_name=course_name,
                                   unrestricted_filenames=unrestricted_filenames)
+        course.obtain_user_id()
         ondemand_material_items = OnDemandCourseMaterialItems.create(
             session=self._session, course_name=course_name)
 
@@ -114,6 +119,7 @@ class CourseraExtractor(PlatformExtractor):
 
                     logging.info('Processing lecture         %s (%s)',
                                  lecture_slug, typename)
+                    links = None
 
                     if typename == 'lecture':
                         lecture_video_id = lecture['content']['definition']['videoId']
@@ -123,20 +129,23 @@ class CourseraExtractor(PlatformExtractor):
                             lecture_video_id, subtitle_language,
                             video_resolution, assets)
 
-                        if links:
-                            lectures.append((lecture_slug, links))
-
                     elif typename == 'supplement':
-                        supplement_content = course.extract_links_from_supplement(
+                        links = course.extract_links_from_supplement(
                             lecture['id'])
-                        if supplement_content:
-                            lectures.append((lecture_slug, supplement_content))
 
                     elif typename in ('gradedProgramming', 'ungradedProgramming'):
-                        supplement_content = course.extract_links_from_programming(
-                            lecture['id'])
-                        if supplement_content:
-                            lectures.append((lecture_slug, supplement_content))
+                        links = course.extract_links_from_programming(lecture['id'])
+
+                    elif typename == 'quiz':
+                        if download_quizzes:
+                            links = course.extract_links_from_quiz(lecture['id'])
+
+                    elif typename == 'exam':
+                        if download_quizzes:
+                            links = course.extract_links_from_exam(lecture['id'])
+
+                    if links:
+                        lectures.append((lecture_slug, links))
 
                 if lectures:
                     sections.append((section_slug, lectures))

@@ -199,7 +199,8 @@ def get_mock_session(page_text):
     page_obj.text = page_text
     page_obj.raise_for_status = Mock()
     session = requests.Session()
-    session.get = Mock(return_value=page_obj)
+    session.send = Mock(return_value=page_obj)
+    session.prepare_request = Mock(return_value=None)
     return page_obj, session
 
 
@@ -208,7 +209,7 @@ def test_get_page():
 
     p = coursera_dl.get_page(session, 'http://www.not.here')
 
-    session.get.assert_called_once_with('http://www.not.here')
+    session.send.assert_called_once_with(None)
     page_obj.raise_for_status.assert_called_once_with()
     assert p == '<page/>'
 
@@ -238,7 +239,8 @@ def test_extract_supplement_links(input, output):
     page_text = slurp_fixture(input)
     expected_output = json.loads(slurp_fixture(output))
 
-    course = api.CourseraOnDemand(session=None, course_id='0')
+    course = api.CourseraOnDemand(
+        session=None, course_id='0', course_name='test_course')
     output = course._extract_links_from_text(page_text)
     # This is the easiest way to convert nested tuples to lists
     output = json.loads(json.dumps(output))

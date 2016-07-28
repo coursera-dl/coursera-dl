@@ -128,7 +128,8 @@ def download_on_demand_class(args, class_name):
                                         args.reverse,
                                         args.unrestricted_filenames,
                                         args.subtitle_language,
-                                        args.video_resolution)
+                                        args.video_resolution,
+                                        args.download_quizzes)
 
     if is_debug_run or args.cache_syllabus():
         with open(cached_syllabus_filename, 'w') as file_object:
@@ -221,6 +222,8 @@ def main():
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
+            if is_debug_run():
+                logging.exception('HTTPError %s', e)
         except requests.exceptions.SSLError as e:
             logging.error('SSLError %s', e)
             print_ssl_error_message(e)
