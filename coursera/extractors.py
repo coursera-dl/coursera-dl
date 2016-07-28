@@ -39,7 +39,9 @@ class CourseraExtractor(PlatformExtractor):
         @return: List of enrolled courses.
         @rtype: [str]
         """
-        course = CourseraOnDemand(session=self._session, course_id=None)
+        course = CourseraOnDemand(session=self._session,
+                                  course_id=None,
+                                  course_name=None)
         return course.list_courses()
 
     def get_modules(self, class_name,
