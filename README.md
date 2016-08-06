@@ -167,7 +167,7 @@ following steps (create/adapt first the directory
     cd my-coursera
     source bin/activate
     git clone https://github.com/coursera-dl/coursera-dl
-    cd coursera
+    cd coursera-dl
     pip install -r requirements.txt
     ./coursera-dl ...
 
@@ -175,7 +175,7 @@ To further download new videos from your classes, simply perform:
 
     cd /directory/where/I/want/my/courses/my-coursera
     source bin/activate
-    cd coursera
+    cd coursera-dl
     ./coursera-dl ...
 
 We are working on streamlining this whole process so that it is as simple as
