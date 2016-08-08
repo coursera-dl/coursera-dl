@@ -14,6 +14,20 @@ from .credentials import get_credentials, CredentialsError, keyring
 from .utils import decode_input
 
 
+def class_name_arg_required(args):
+    """
+    Evaluates whether class_name arg is required.
+
+    @param args: Command-line arguments.
+    @type args: namedtuple
+    """
+    no_class_name_flags = ['list_courses', 'version']
+    return not any(
+        getattr(args, flag)
+        for flag in no_class_name_flags
+    )
+
+
 def parse_args(args=None):
     """
     Parse the arguments/options passed to the program on the command line.
@@ -27,7 +41,7 @@ def parse_args(args=None):
 
     group_basic.add_argument('class_names',
                              action='store',
-                             nargs='+',
+                             nargs='*',
                              help='name(s) of the class(es) (e.g. "ml-005")')
 
     group_basic.add_argument('-u',
@@ -334,6 +348,11 @@ def parse_args(args=None):
     else:
         logging.basicConfig(level=logging.INFO,
                             format='%(message)s')
+
+    if class_name_arg_required(args) and not args.class_names:
+        parser.print_usage()
+        logging.error('You must supply at least one class name')
+        sys.exit(1)
 
     # show version?
     if args.version:
