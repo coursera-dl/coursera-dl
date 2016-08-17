@@ -15,6 +15,7 @@
     - [Alternative ways of installing missing dependencies](#alternative-ways-of-installing-missing-dependencies)
         - [Alternative installation method for Unix systems](#alternative-installation-method-for-unix-systems)
         - [Installing dependencies on your own](#installing-dependencies-on-your-own)
+    - [Windows](#windows)
     - [Create an account with Coursera](#create-an-account-with-coursera)
     - [Running the script](#running-the-script)
     - [Resuming downloads](#resuming-downloads)
@@ -210,6 +211,26 @@ Once again, before filing bug reports, if you installed the dependencies on
 your own, please check that the versions of your modules are at least those
 listed in the `requirements.txt` file (and, `requirements-dev.txt` file, if
 applicable).
+
+## Windows
+
+`python -m pip install coursera-dl`
+
+Be sure that the Python install path is added to the PATH system environment variables. This can be found in Control Panel > System > Advanced System Settings > Environment Variables. 
+
+```
+Example:
+C:\Python35\Scripts\;C:\Python35\;
+```
+
+Or if you have restricted installation permissions and you've installed Python under AppData, add this to your PATH.
+
+```
+Example:
+C:\Users\<user>\AppData\Local\Programs\Python\Python35-32\Scripts;C:\Users\<user>\AppData\Local\Programs\Python\Python35-32;
+```
+
+Coursera-dl can now be run from commandline or powershell.
 
 ## Create an account with Coursera
 
