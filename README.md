@@ -218,13 +218,14 @@ applicable).
 
 Be sure that the Python install path is added to the PATH system environment variables.
 
-```
-Example:
-C:\Python35\Scripts\;C:\Python35\;
-```
-Or if you happen to install the 32-bit version.
+`C:\Python35\Scripts\;C:\Python35\;`
 
-`C:\Users\%username%\AppData\Local\Programs\Python\Python35-32\Scripts;C:\Users\%username%\AppData\Local\Programs\Python\Python35-32;`
+Or if you have restricted installation permissions and you've installed Python under AppData, add this to your PATH.
+
+```
+C:\Users\%username%\AppData\Local\Programs\Python\Python35-32\Scripts;
+C:\Users\%username%\AppData\Local\Programs\Python\Python35-32;
+```
 
 Coursera-dl can now be run from commandline or powershell.
 
