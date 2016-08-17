@@ -216,13 +216,18 @@ applicable).
 
 `python -m pip install coursera-dl`
 
-Be sure that the Python install path is added to the PATH system environment variables.
 
-`C:\Python35\Scripts\;C:\Python35\;`
+Be sure that the Python install path is added to the PATH system environment variables. This can be found in Start Menu > Control Panel > System > Advanced System Settings > Environment Variables. 
+
+```
+Example:
+C:\Python35\Scripts\;C:\Python35\;
+```
 
 Or if you have restricted installation permissions and you've installed Python under AppData, add this to your PATH.
 
 ```
+Example:
 C:\Users\%username%\AppData\Local\Programs\Python\Python35-32\Scripts;
 C:\Users\%username%\AppData\Local\Programs\Python\Python35-32;
 ```
