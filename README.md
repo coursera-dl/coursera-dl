@@ -216,7 +216,6 @@ applicable).
 
 `python -m pip install coursera-dl`
 
-
 Be sure that the Python install path is added to the PATH system environment variables. This can be found in Control Panel > System > Advanced System Settings > Environment Variables. 
 
 ```
