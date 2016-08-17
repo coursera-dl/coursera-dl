@@ -228,8 +228,7 @@ Or if you have restricted installation permissions and you've installed Python u
 
 ```
 Example:
-C:\Users\%username%\AppData\Local\Programs\Python\Python35-32\Scripts;
-C:\Users\%username%\AppData\Local\Programs\Python\Python35-32;
+C:\Users\<user>\AppData\Local\Programs\Python\Python35-32\Scripts;C:\Users\<user>\AppData\Local\Programs\Python\Python35-32;
 ```
 
 Coursera-dl can now be run from commandline or powershell.
