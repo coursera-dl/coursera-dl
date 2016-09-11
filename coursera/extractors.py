@@ -9,6 +9,8 @@ import abc
 import json
 import logging
 
+from requests.exceptions import HTTPError
+
 from .api import CourseraOnDemand, OnDemandCourseMaterialItems
 from .define import OPENCOURSE_CONTENT_URL
 from .cookies import login

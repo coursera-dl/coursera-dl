@@ -46,9 +46,12 @@ def get_reply(session, url, post=False, data=None, headers=None):
     try:
         reply.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        logging.error("Error %s getting page %s", e, url)
-        logging.error("The server replied: %s", reply.text)
-        raise
+        if reply.json()['message'] == 'Item is locked':
+            reply = None
+        else:
+            logging.error("Error %s getting page %s", e, url)
+            logging.error("The server replied: %s", reply.text)
+            raise
 
     return reply
 
@@ -83,6 +86,8 @@ def get_page(session,
     """
     url = url.format(**kwargs)
     reply = get_reply(session, url, post=post, data=data, headers=headers)
+    if not reply:
+        return reply
     return reply.json() if json else reply.text
 
 

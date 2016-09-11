@@ -755,7 +755,8 @@ class CourseraOnDemand(object):
 
         # Assignment text (instructions) contains asset tags which describe
         # supplementary files.
-        text = ''.join(self._extract_assignment_text(element_id))
+        raw_text = self._extract_assignment_text(element_id)
+        text = ''.join(raw_text) if raw_text else None
         if not text:
             return {}
 
@@ -866,10 +867,10 @@ class CourseraOnDemand(object):
                        json=True,
                        course_id=self._course_id,
                        element_id=element_id)
-
-        return [element['submissionLearnerSchema']['definition']
-                ['assignmentInstructions']['definition']['value']
-                for element in dom['elements']]
+        if dom:
+            return [element['submissionLearnerSchema']['definition']
+                    ['assignmentInstructions']['definition']['value']
+                    for element in dom['elements']]
 
     def _extract_links_from_text(self, text):
         """
