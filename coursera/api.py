@@ -12,6 +12,7 @@ import requests
 from collections import namedtuple
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
+from requests.exceptions import HTTPError
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename,
@@ -755,9 +756,16 @@ class CourseraOnDemand(object):
 
         # Assignment text (instructions) contains asset tags which describe
         # supplementary files.
-        text = ''.join(self._extract_assignment_text(element_id))
-        if not text:
-            return {}
+        try:
+            text = ''.join(self._extract_assignment_text(element_id))
+            if not text:
+                return {}
+        except HTTPError as ex:
+            FORBIDDEN = 403
+            if ex.response.status_code == FORBIDDEN:
+                return {}
+            else:
+                raise ex
 
         supplement_links = self._extract_links_from_text(text)
 
