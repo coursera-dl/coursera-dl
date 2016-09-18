@@ -4,6 +4,9 @@ Test APIs.
 from os.path import expanduser
 import json
 
+from requests.exceptions import HTTPError
+from requests import Response
+
 import pytest
 from mock import patch, Mock
 
@@ -121,6 +124,20 @@ def test_extract_links_from_lecture_assets_typname_url_and_asset(get_page, cours
     output = course._extract_links_from_lecture_assets(assets)
     output = json.loads(json.dumps(output))
     assert expected_output == output
+
+
+@patch('coursera.api.get_page')
+def test_extract_links_from_programming_http_error(get_page, course):
+    """
+    This test checks that downloader skips locked programming assignments
+    instead of throwing an error. (Locked == returning 403 error code)
+    """
+    locked_response = Response()
+    FORBIDDEN = 403
+    locked_response.status_code = FORBIDDEN
+    get_page.side_effect = HTTPError('Mocked HTTP error', response=locked_response)
+    assert {} == course.extract_links_from_programming('0')
+
 
 @patch('coursera.api.get_page')
 def test_list_courses(get_page, course):
