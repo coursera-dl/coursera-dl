@@ -2,6 +2,7 @@
 Test APIs.
 """
 from os.path import expanduser
+from sys import version_info
 import json
 
 from requests.exceptions import HTTPError
@@ -142,20 +143,23 @@ def test_extract_links_from_programming_http_error(get_page, course):
 @patch('coursera.api.get_page')
 def test_extract_links_from_exam_http_error(get_page, course):
     """
-    This test checks that downloader skips locked programming assignments
+    This test checks that downloader skips locked exams
     instead of throwing an error. (Locked == returning 403 error code)
+    WARNING: this test is run only for Python3 (Python2 throws
+    SSLError and offers to upgrade to Python3).
     """
-    locked_response = Response()
-    FORBIDDEN = 403
-    locked_response.status_code = FORBIDDEN
-    get_page.side_effect = HTTPError('Mocked HTTP error', response=locked_response)
-    assert course.extract_links_from_exam('0') is None
+    if version_info[0] >= 3:
+        locked_response = Response()
+        FORBIDDEN = 403
+        locked_response.status_code = FORBIDDEN
+        get_page.side_effect = HTTPError('Mocked HTTP error', response=locked_response)
+        assert course.extract_links_from_exam('0') is None
 
 
 @patch('coursera.api.get_page')
 def test_extract_links_from_supplement_http_error(get_page, course):
     """
-    This test checks that downloader skips locked programming assignments
+    This test checks that downloader skips locked supplements
     instead of throwing an error. (Locked == returning 403 error code)
     """
     locked_response = Response()
@@ -168,7 +172,7 @@ def test_extract_links_from_supplement_http_error(get_page, course):
 @patch('coursera.api.get_page')
 def test_extract_links_from_lecture_http_error(get_page, course):
     """
-    This test checks that downloader skips locked programming assignments
+    This test checks that downloader skips locked lectures
     instead of throwing an error. (Locked == returning 403 error code)
     """
     locked_response = Response()
@@ -181,7 +185,7 @@ def test_extract_links_from_lecture_http_error(get_page, course):
 @patch('coursera.api.get_page')
 def test_extract_links_from_quiz_http_error(get_page, course):
     """
-    This test checks that downloader skips locked programming assignments
+    This test checks that downloader skips locked quizzes
     instead of throwing an error. (Locked == returning 403 error code)
     """
     locked_response = Response()
