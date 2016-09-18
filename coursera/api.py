@@ -544,8 +544,15 @@ class CourseraOnDemand(object):
         if assets is None:
             assets = []
 
-        links = self._extract_videos_and_subtitles_from_lecture(
-            video_id, subtitle_language, resolution)
+        try:
+            links = self._extract_videos_and_subtitles_from_lecture(
+                video_id, subtitle_language, resolution)
+        except HTTPError as ex:
+            FORBIDDEN = 403
+            if ex.response.status_code == FORBIDDEN:
+                return {}
+            else:
+                raise ex
 
         assets = self._normalize_assets(assets)
         extend_supplement_links(
@@ -785,10 +792,17 @@ class CourseraOnDemand(object):
         """
         logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        dom = get_page(self._session, OPENCOURSE_SUPPLEMENT_URL,
-                       json=True,
-                       course_id=self._course_id,
-                       element_id=element_id)
+        try:
+            dom = get_page(self._session, OPENCOURSE_SUPPLEMENT_URL,
+                           json=True,
+                           course_id=self._course_id,
+                           element_id=element_id)
+        except HTTPError as ex:
+            FORBIDDEN = 403
+            if ex.response.status_code == FORBIDDEN:
+                return {}
+            else:
+                raise ex
 
         supplement_content = {}
 
