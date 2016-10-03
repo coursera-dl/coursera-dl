@@ -66,6 +66,14 @@ def parse_args(args=None):
                              help='number of parallel jobs to use for '
                              'downloading resources. (Default: 1)')
 
+    group_basic.add_argument('--download-delay',
+                             dest='download_delay',
+                             action='store',
+                             default=60,
+                             type=int,
+                             help='number of seconds to wait before downloading '
+                             'next course. (Default: 60)')
+
     group_basic.add_argument('-b',  # FIXME: kill this one-letter option
                              '--preview',
                              dest='preview',

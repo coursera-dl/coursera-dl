@@ -46,6 +46,7 @@ import json
 import logging
 import os
 import re
+import time
 import shutil
 
 from distutils.version import LooseVersion as V
@@ -215,9 +216,10 @@ def main():
         list_courses(args)
         return
 
-    for class_name in args.class_names:
+    for class_index, class_name in enumerate(args.class_names):
         try:
-            logging.info('Downloading class: %s', class_name)
+            logging.info('Downloading class: %s (%d / %d)',
+                         class_name, class_index + 1, len(args.class_names))
             if download_class(args, class_name):
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
@@ -233,6 +235,12 @@ def main():
             logging.error('Could not find class: %s', cnf)
         except AuthenticationFailed as af:
             logging.error('Could not authenticate: %s', af)
+
+        if class_index + 1 != len(args.class_names):
+            logging.info('Sleeping for %d seconds before downloading next course. '
+                         'You can change this with --download-delay option.',
+                         args.download_delay)
+            time.sleep(args.download_delay)
 
     if completed_classes:
         logging.info(
