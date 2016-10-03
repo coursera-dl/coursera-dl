@@ -150,8 +150,8 @@ def login(session, username, password, class_name=None):
         # for coursera!!!
         v = session.cookies.pop('CAUTH')
         session.cookies.set('CAUTH', v)
-    except requests.exceptions.HTTPError:
-        raise AuthenticationFailed('Cannot login on coursera.org.')
+    except requests.exceptions.HTTPError as e:
+        raise AuthenticationFailed('Cannot login on coursera.org: %s' % e)
 
     logging.info('Logged in on coursera.org.')
 
@@ -169,8 +169,8 @@ def down_the_wabbit_hole(session, class_name):
 
     try:
         r.raise_for_status()
-    except requests.exceptions.HTTPError:
-        raise AuthenticationFailed('Cannot login on class.coursera.org.')
+    except requests.exceptions.HTTPError as e:
+        raise AuthenticationFailed('Cannot login on class.coursera.org: %s' % e)
 
     logging.debug('Exiting "deep" authentication.')
 
