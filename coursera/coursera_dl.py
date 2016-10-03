@@ -136,6 +136,9 @@ def download_on_demand_class(args, class_name):
         with open(cached_syllabus_filename, 'w') as file_object:
             json.dump(modules, file_object, indent=4)
 
+    if args.only_syllabus:
+        return False
+
     downloader = get_downloader(session, class_name, args)
     downloader_wrapper = ParallelDownloader(downloader, args.jobs) \
         if args.jobs > 1 else ConsecutiveDownloader(downloader)

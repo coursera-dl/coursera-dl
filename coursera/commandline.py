@@ -98,6 +98,13 @@ def parse_args(args=None):
     # Selection of material to download
     group_material = parser.add_argument_group('Selection of material to download')
 
+    group_material.add_argument('--only-syllabus',
+                                dest='only_syllabus',
+                                action='store_true',
+                                default=False,
+                                help='download only syllabus, skip course content. '
+                                '(Default: False)')
+
     group_material.add_argument('--download-quizzes',
                                 dest='download_quizzes',
                                 action='store_true',
