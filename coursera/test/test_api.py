@@ -214,6 +214,8 @@ def test_list_courses(get_page, course):
         ('question-type-checkbox-input.json', 'question-type-checkbox-output.txt'),
         ('question-type-mcq-input.json', 'question-type-mcq-output.txt'),
         ('question-type-singleNumeric-input.json', 'question-type-singleNumeric-output.txt'),
+        ('question-type-reflect-input.json', 'question-type-reflect-output.txt'),
+        ('question-type-mcqReflect-input.json', 'question-type-mcqReflect-output.txt'),
         ('question-type-unknown-input.json', 'question-type-unknown-output.txt'),
         ('multiple-questions-input.json', 'multiple-questions-output.txt'),
     ]

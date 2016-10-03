@@ -45,18 +45,21 @@ class QuizExamToMarkupConverter(object):
     The output needs to be further processed by MarkupToHTMLConverter.
     """
     KNOWN_QUESTION_TYPES = ('mcq',
+                            'mcqReflect',
                             'checkbox',
                             'singleNumeric',
                             'textExactMatch',
                             'mathExpression',
-                            'regex')
+                            'regex',
+                            'reflect')
 
     # TODO: support live MathJAX preview rendering for mathExpression
     # and regex question types
     KNOWN_INPUT_TYPES = ('textExactMatch',
                          'singleNumeric',
                          'mathExpression',
-                         'regex')
+                         'regex',
+                         'reflect')
 
     def __init__(self, session):
         self._session = session
@@ -86,9 +89,10 @@ class QuizExamToMarkupConverter(object):
             if question_type in self.KNOWN_INPUT_TYPES:
                 result.extend(self._generate_input_field())
 
-            # Convert input_type form JSON reply to HTML input type
+            # Convert input_type from JSON reply to HTML input type
             input_type = {
                 'mcq': 'radio',
+                'mcqReflect': 'radio',
                 'checkbox': 'checkbox'
             }.get(question_type, '')
 
