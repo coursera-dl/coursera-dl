@@ -8,6 +8,9 @@ import os
 import getpass
 import tempfile
 
+
+HTTP_FORBIDDEN = 403
+
 COURSERA_URL = 'https://www.coursera.org'
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 AUTH_URL_V3 = 'https://www.coursera.org/api/login/v3'

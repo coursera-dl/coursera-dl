@@ -543,14 +543,20 @@ class CourseraOnDemand(object):
         if assets is None:
             assets = []
 
-        links = self._extract_videos_and_subtitles_from_lecture(
-            video_id, subtitle_language, resolution)
+        try:
+            links = self._extract_videos_and_subtitles_from_lecture(
+                video_id, subtitle_language, resolution)
 
-        assets = self._normalize_assets(assets)
-        extend_supplement_links(
-            links, self._extract_links_from_lecture_assets(assets))
+            assets = self._normalize_assets(assets)
+            extend_supplement_links(
+                links, self._extract_links_from_lecture_assets(assets))
 
-        return links
+            return links
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download lecture %s: %s', video_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download lecture %s: %s', video_id, exception)
+            return None
 
     def _normalize_assets(self, assets):
         """
@@ -753,20 +759,26 @@ class CourseraOnDemand(object):
         """
         logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        # Assignment text (instructions) contains asset tags which describe
-        # supplementary files.
-        text = ''.join(self._extract_assignment_text(element_id))
-        if not text:
-            return {}
+        try:
+            # Assignment text (instructions) contains asset tags which describe
+            # supplementary files.
+            text = ''.join(self._extract_assignment_text(element_id))
+            if not text:
+                return {}
 
-        supplement_links = self._extract_links_from_text(text)
-
-        instructions = (IN_MEMORY_MARKER + self._markup_to_html(text),
-                        'instructions')
-        extend_supplement_links(
-            supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
-
-        return supplement_links
+            supplement_links = self._extract_links_from_text(text)
+            instructions = (IN_MEMORY_MARKER + self._markup_to_html(text),
+                            'instructions')
+            extend_supplement_links(
+                supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+            return supplement_links
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download programming assignment %s: %s',
+                          element_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download programming assignment %s: %s',
+                                  element_id, exception)
+            return None
 
     def extract_links_from_supplement(self, element_id):
         """
@@ -777,33 +789,41 @@ class CourseraOnDemand(object):
         """
         logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
 
-        dom = get_page(self._session, OPENCOURSE_SUPPLEMENT_URL,
-                       json=True,
-                       course_id=self._course_id,
-                       element_id=element_id)
+        try:
+            dom = get_page(self._session, OPENCOURSE_SUPPLEMENT_URL,
+                        json=True,
+                        course_id=self._course_id,
+                        element_id=element_id)
 
-        supplement_content = {}
+            supplement_content = {}
 
-        # Supplement content has structure as follows:
-        # 'linked' {
-        #   'openCourseAssets.v1' [ {
-        #       'definition' {
-        #           'value'
+            # Supplement content has structure as follows:
+            # 'linked' {
+            #   'openCourseAssets.v1' [ {
+            #       'definition' {
+            #           'value'
 
-        for asset in dom['linked']['openCourseAssets.v1']:
-            value = asset['definition']['value']
-            # Supplement lecture types are known to contain both <asset> tags
-            # and <a href> tags (depending on the course), so we extract
-            # both of them.
-            extend_supplement_links(
-                supplement_content, self._extract_links_from_text(value))
+            for asset in dom['linked']['openCourseAssets.v1']:
+                value = asset['definition']['value']
+                # Supplement lecture types are known to contain both <asset> tags
+                # and <a href> tags (depending on the course), so we extract
+                # both of them.
+                extend_supplement_links(
+                    supplement_content, self._extract_links_from_text(value))
 
-            instructions = (IN_MEMORY_MARKER + self._markup_to_html(value),
-                            'instructions')
-            extend_supplement_links(
-                supplement_content, {IN_MEMORY_EXTENSION: [instructions]})
+                instructions = (IN_MEMORY_MARKER + self._markup_to_html(value),
+                                'instructions')
+                extend_supplement_links(
+                    supplement_content, {IN_MEMORY_EXTENSION: [instructions]})
 
-        return supplement_content
+            return supplement_content
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download supplement %s: %s',
+                          element_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download supplement %s: %s',
+                                  element_id, exception)
+            return None
 
     def _extract_asset_tags(self, text):
         """
