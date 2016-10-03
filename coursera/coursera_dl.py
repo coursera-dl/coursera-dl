@@ -114,9 +114,13 @@ def download_on_demand_class(args, class_name):
     """
     Download all requested resources from the on-demand class given in class_name.
 
-    Returns True if the class appears completed.
+    @return: Tuple of (bool, bool), where the first bool indicates whether
+        errors occured while parsing syllabus, the second bool indicaters
+        whether the course appears to be completed.
+    @rtype: (bool, bool)
     """
 
+    error_occured = False
     session = get_session()
     extractor = CourseraExtractor(session, args.username, args.password)
 
@@ -125,19 +129,20 @@ def download_on_demand_class(args, class_name):
         with open(cached_syllabus_filename) as syllabus_file:
             modules = json.load(syllabus_file)
     else:
-        modules = extractor.get_modules(class_name,
-                                        args.reverse,
-                                        args.unrestricted_filenames,
-                                        args.subtitle_language,
-                                        args.video_resolution,
-                                        args.download_quizzes)
+        error_occured, modules = extractor.get_modules(
+            class_name,
+            args.reverse,
+            args.unrestricted_filenames,
+            args.subtitle_language,
+            args.video_resolution,
+            args.download_quizzes)
 
     if is_debug_run or args.cache_syllabus():
         with open(cached_syllabus_filename, 'w') as file_object:
             json.dump(modules, file_object, indent=4)
 
     if args.only_syllabus:
-        return False
+        return error_occured, False
 
     downloader = get_downloader(session, class_name, args)
     downloader_wrapper = ParallelDownloader(downloader, args.jobs) \
@@ -169,7 +174,7 @@ def download_on_demand_class(args, class_name):
     if course_downloader.failed_urls:
         print_failed_urls(course_downloader.failed_urls)
 
-    return completed
+    return error_occured, completed
 
 
 def print_skipped_urls(skipped_urls):
@@ -196,7 +201,10 @@ def download_class(args, class_name):
     """
     Try to download on-demand class.
 
-    Returns True if the class appears completed.
+    @return: Tuple of (bool, bool), where the first bool indicates whether
+        errors occured while parsing syllabus, the second bool indicaters
+        whether the course appears to be completed.
+    @rtype: (bool, bool)
     """
     logging.debug('Downloading new style (on demand) class %s', class_name)
     return download_on_demand_class(args, class_name)
@@ -210,6 +218,7 @@ def main():
     args = parse_args()
     logging.info('coursera_dl version %s', __version__)
     completed_classes = []
+    classes_with_errors = []
 
     mkdir_p(PATH_CACHE, 0o700)
     if args.clear_cache:
@@ -223,8 +232,11 @@ def main():
         try:
             logging.info('Downloading class: %s (%d / %d)',
                          class_name, class_index + 1, len(args.class_names))
-            if download_class(args, class_name):
+            error_occured, completed = download_class(args, class_name)
+            if completed:
                 completed_classes.append(class_name)
+            if error_occured:
+                classes_with_errors.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
             if is_debug_run():
@@ -246,8 +258,19 @@ def main():
             time.sleep(args.download_delay)
 
     if completed_classes:
+        logging.info('-' * 80)
         logging.info(
             "Classes which appear completed: " + " ".join(completed_classes))
+
+    if classes_with_errors:
+        logging.info('-' * 80)
+        logging.info('The following classes had errors during the syllabus'
+                     ' parsing stage. You may want to review error messages and'
+                     ' courses (sometimes enrolling to the course or switching'
+                     ' session helps):')
+        for class_name in classes_with_errors:
+            logging.info('%s (https://www.coursera.org/learn/%s)',
+                         class_name, class_name)
 
 
 if __name__ == '__main__':

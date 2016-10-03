@@ -50,11 +50,11 @@ class CourseraExtractor(PlatformExtractor):
                     download_quizzes=False):
 
         page = self._get_on_demand_syllabus(class_name)
-        modules = self._parse_on_demand_syllabus(
+        error_occured, modules = self._parse_on_demand_syllabus(
             page, reverse, unrestricted_filenames,
             subtitle_language, video_resolution,
             download_quizzes)
-        return modules
+        return error_occured, modules
 
     def _get_on_demand_syllabus(self, class_name):
         """
@@ -74,6 +74,11 @@ class CourseraExtractor(PlatformExtractor):
                                   download_quizzes=False):
         """
         Parse a Coursera on-demand course listing/syllabus page.
+
+        @return: Tuple of (bool, list), where bool indicates whether
+            there was at least on error while parsing syllabus, the list
+            is a list of parsed modules.
+        @rtype: (bool, list)
         """
 
         dom = json.loads(page)
@@ -95,6 +100,8 @@ class CourseraExtractor(PlatformExtractor):
                 json.dump(dom, file_object, indent=4)
             with open('%s-course-material-items.json' % course_name, 'w') as file_object:
                 json.dump(ondemand_material_items._items, file_object, indent=4)
+
+        error_occured = False
 
         for module in json_modules:
             module_slug = module['slug']
@@ -121,7 +128,9 @@ class CourseraExtractor(PlatformExtractor):
 
                     logging.info('Processing lecture         %s (%s)',
                                  lecture_slug, typename)
-                    links = None
+                    # Empty dictionary means there were no data
+                    # None means an error occured
+                    links = {}
 
                     if typename == 'lecture':
                         lecture_video_id = lecture['content']['definition']['videoId']
@@ -146,7 +155,14 @@ class CourseraExtractor(PlatformExtractor):
                         if download_quizzes:
                             links = course.extract_links_from_exam(lecture['id'])
 
-                    if links:
+                    else:
+                        logging.info('Unsupported typename "%s" in lecture "%s"',
+                                     typename, lecture_slug)
+                        continue
+
+                    if links is None:
+                        error_occured = True
+                    elif links:
                         lectures.append((lecture_slug, links))
 
                 if lectures:
@@ -158,4 +174,4 @@ class CourseraExtractor(PlatformExtractor):
         if modules and reverse:
             modules.reverse()
 
-        return modules
+        return error_occured, modules
