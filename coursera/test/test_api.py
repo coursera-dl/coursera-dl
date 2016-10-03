@@ -14,13 +14,13 @@ from coursera.test.utils import slurp_fixture
 from coursera.utils import BeautifulSoup
 
 from requests.exceptions import HTTPError
-from requests import Response, Session
+from requests import Response
 
 
 @pytest.fixture
 def course():
     course = api.CourseraOnDemand(
-        session=Session(), course_id='0', course_name='test_course')
+        session=Mock(cookies={}), course_id='0', course_name='test_course')
     return course
 
 
