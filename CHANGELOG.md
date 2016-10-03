@@ -1,5 +1,25 @@
 # Change Log
 
+## 0.8.0 (2016-10-04)
+
+Features:
+  - Add `--download-delay` option that adds a specified delay in seconds
+    before downloading next course. This is useful when downloading many
+    courses at once. Default value is 60 seconds.
+  - Add `--only-syllabus` option which is when activated, allows to skip
+    download of the course content. Only syllabus is parsed.
+  - Add support for `reflect` and `mcqReflect` question types in quizzes.
+  - Courses that encountered an error while parsing syllabus will be listed
+    in the end of the program execution, after all courses have been
+    processed (hopefully, downloaded). This helps skip vast output and easily
+    see which courses need user's attention, e.g. enrollment, session
+    switching or just patience until the course start date.
+
+Bugfixes:
+  - Locked programming assignments in syllabus used to crash coursera-dl.
+    Now the script goes on parsing syllabus and skips locked assignments.
+  - Add missing import statement to playlist generation module
+
 ## 0.7.0 (2016-07-28)
 
 Features:
