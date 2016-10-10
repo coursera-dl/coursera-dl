@@ -46,12 +46,13 @@ class CourseraExtractor(PlatformExtractor):
 
     def get_modules(self, class_name,
                     reverse=False, unrestricted_filenames=False,
+                    using_name=False,
                     subtitle_language='en', video_resolution=None,
                     download_quizzes=False):
 
         page = self._get_on_demand_syllabus(class_name)
         error_occured, modules = self._parse_on_demand_syllabus(
-            page, reverse, unrestricted_filenames,
+            page, reverse, unrestricted_filenames, using_name,
             subtitle_language, video_resolution,
             download_quizzes)
         return error_occured, modules
@@ -69,6 +70,7 @@ class CourseraExtractor(PlatformExtractor):
 
     def _parse_on_demand_syllabus(self, page, reverse=False,
                                   unrestricted_filenames=False,
+                                  using_name=False,
                                   subtitle_language='en',
                                   video_resolution=None,
                                   download_quizzes=False):
@@ -80,6 +82,7 @@ class CourseraExtractor(PlatformExtractor):
             is a list of parsed modules.
         @rtype: (bool, list)
         """
+        name_slug = 'name' if using_name else 'slug'
 
         dom = json.loads(page)
         course_name = dom['slug']
@@ -104,12 +107,12 @@ class CourseraExtractor(PlatformExtractor):
         error_occured = False
 
         for module in json_modules:
-            module_slug = module['slug']
+            module_slug = module[name_slug]
             logging.info('Processing module  %s', module_slug)
             sections = []
             json_sections = module['elements']
             for section in json_sections:
-                section_slug = section['slug']
+                section_slug = section[name_slug]
                 logging.info('Processing section     %s', section_slug)
                 lectures = []
                 json_lectures = section['elements']
@@ -123,7 +126,7 @@ class CourseraExtractor(PlatformExtractor):
                         json_lectures = [lecture]
 
                 for lecture in json_lectures:
-                    lecture_slug = lecture['slug']
+                    lecture_slug = lecture[name_slug]
                     typename = lecture['content']['typeName']
 
                     logging.info('Processing lecture         %s (%s)',

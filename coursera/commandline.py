@@ -265,6 +265,11 @@ def parse_args(args=None):
                         action='store_true',
                         default=False,
                         help='Do not limit filenames to be ASCII-only')
+    parser.add_argument('--using-name',
+                        dest='using_name',
+                        action='store_true',
+                        default=False,
+                        help='Using name instead of slug for filenames')
 
     # Advanced authentication
     group_adv_auth = parser.add_argument_group('Advanced authentication options')
