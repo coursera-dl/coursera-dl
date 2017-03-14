@@ -94,15 +94,16 @@ def find_resources_to_get(lecture, file_formats, resource_filter, ignored_format
         logging.info("The following file formats will be ignored: " + ",".join(ignored_formats))
 
     for fmt, resources in iteritems(lecture):
-
         fmt0 = fmt
-        if '.' in fmt:
-            fmt = fmt.split('.')[1]
 
-        if fmt in ignored_formats:
+        short_fmt = None
+        if '.' in fmt:
+            short_fmt = fmt.split('.')[1]
+
+        if fmt in ignored_formats or (short_fmt != None and short_fmt in ignored_formats) :
             continue
 
-        if fmt in file_formats or 'all' in file_formats:
+        if fmt in file_formats or (short_fmt != None and short_fmt in file_formats) or 'all' in file_formats:
             for r in resources:
                 if resource_filter and r[1] and not re.search(resource_filter, r[1]):
                     logging.debug('Skipping b/c of rf: %s %s',
