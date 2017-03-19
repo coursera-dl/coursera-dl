@@ -21,6 +21,7 @@
     - [Resuming downloads](#resuming-downloads)
 - [Troubleshooting](#troubleshooting)
     - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
+    - [Windows: Proxy support](#windows-proxy-support)
     - [Windows: Failed to create process](#windows-failed-to-create-process)
     - [SSLError: Errno 1 _ssl.c:504: error:14094410:SSL routines:SSL3_READ_BYTES:sslv3 alert handshake failure](#sslerror-errno-1-_sslc504-error14094410ssl-routinesssl3_read_bytessslv3-alert-handshake-failure)
 - [Reporting issues](#reporting-issues)
@@ -397,6 +398,18 @@ option.
 Alternatively you may want to try this Chrome extension: https://chrome.google.com/webstore/detail/coursera-materials-downlo/ijkboagofaehocnjacacdhdcbbcpilih
 
 If none of the above works for you, there is nothing we can do.
+
+## Windows: proxy support
+
+If you're on Windows behind a proxy, set up the environment variables
+before running the script as follows:
+
+```
+set HTTP_PROXY=http://host:port
+set HTTPS_PROXY=http://host:port
+```
+
+Related discussion: [#205](https://github.com/coursera-dl/coursera-dl/issues/205)
 
 ## Windows: Failed to create process
 
