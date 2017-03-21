@@ -317,7 +317,7 @@ one of the following actions solve your problem:
 
 * Make sure the class name you are using corresponds to the resource name
   used in the URL for that class:
-    `https://class.coursera.org/<CLASS_NAME>/class/index`
+    `https://www.coursera.org/learn/<CLASS_NAME>/home/welcome`
 
 * Have you tried to clean the cached cookies/credentials with the
   `--clear-cache` option?
