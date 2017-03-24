@@ -44,7 +44,7 @@ from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
 BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
 
 
-if six.PY2:
+if six.PY3:
     def decode_input(x):
         stdin_encoding = sys.stdin.encoding
         if stdin_encoding is None:
