@@ -70,6 +70,7 @@ I've downloaded many other good videos such as those from Khan Academy.
     certain resources.
   * File format extension filter to grab resource types you want.
   * Login credentials accepted on command-line or from `.netrc` file.
+  * Default arguments loaded from `coursera-dl.conf` file.
   * Core functionality tested on Linux, Mac and Windows.
 
 # Disclaimer
@@ -278,6 +279,23 @@ instead.  This is especially convenient, as typing usernames (email
 addresses) and passwords directly on the command line can get tiresome (even
 more if you happened to choose a "strong" password).
 
+Alternatively, if you want to store your preferred parameters (which might
+also include your username and password), create a file named `coursera-dl.conf`
+where the script is supposed to be executed, with the following format:
+
+    --username <user>
+    --password <pass>
+    --subtitle-language en,zh-CN|zh-TW
+    --download-quizzes True
+    #--mathjax-cdn https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js
+    # more other parameters
+
+Parameter which is stored in the file will be overriden if it is again specifed
+in your commandline script
+
+**Note:** In `coursera-dl.conf`, all the parameters should not be wrapped
+with quotes.
+
 ## Resuming downloads
 
 In default mode when you interrupt the download process by pressing
@@ -341,7 +359,7 @@ one of the following actions solve your problem:
 
 * If results show 0 sections, you most likely have provided invalid
   credentials (username and/or password in the command line or in your
-  `.netrc` file).
+  `.netrc` file or in your `coursera-dl.conf` file).
 
 * For courses that have not started yet, but have had a previous iteration
   sometimes a preview is available, containing all the classes from the last
@@ -455,6 +473,15 @@ If you still have the problem, please read the following issues for more ideas o
 
 This is also worth reading:
 https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning
+
+## Use an alternative cdn url for `MathJax.js`
+
+When saving a course page, we enabled `MathJax` rendering for math equations, by
+injecting `MathJax.js` in the header. The script is using a cdn service provided
+by [mathjax.org](https://cdn.mathjax.org/mathjax/latest/MathJax.js). However, that
+url is not accessible in some countries/regions, you can provide a 
+`--mathjax-cdn <MATHJAX_CDN>` parameter to specify the `MathJax.js` file that is
+accessible in your region.
 
 # Reporting issues
 

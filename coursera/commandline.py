@@ -6,12 +6,14 @@ handling. The primary candidate is argument parser.
 import os
 import sys
 import logging
-import argparse
+import configargparse as argparse
 
 from coursera import __version__
 
 from .credentials import get_credentials, CredentialsError, keyring
 from .utils import decode_input
+
+LOCAL_CONF_FILE_NAME = 'coursera-dl.conf'
 
 
 def class_name_arg_required(args):
@@ -33,8 +35,14 @@ def parse_args(args=None):
     Parse the arguments/options passed to the program on the command line.
     """
 
-    parser = argparse.ArgumentParser(
-        description='Download Coursera.org lecture material and resources.')
+    parse_kwargs = {
+        "description":  'Download Coursera.org lecture material and resources.'
+    }
+
+    conf_file_path = os.path.join(os.getcwd(), LOCAL_CONF_FILE_NAME)
+    if os.path.isfile(conf_file_path):
+        parse_kwargs["default_config_files"] = [conf_file_path]
+    parser = argparse.ArgParser(**parse_kwargs)
 
     # Basic options
     group_basic = parser.add_argument_group('Basic options')
@@ -93,7 +101,15 @@ def parse_args(args=None):
                              action='store',
                              default='all',
                              help='Choose language to download subtitles and transcripts. (Default: all)'
-                             'Use special value "all" to download all available.')
+                             'Use special value "all" to download all available.'
+                             'To download subtitles and transcripts of multiple languages,'
+                             'use comma(s) (without spaces) to seperate the names of the languages, i.e., "en,zh-CN".'
+                             'To download subtitles and transcripts of alternative language(s) '
+                             'if only the current language is not available,'
+                             'put an "|<lang>" for each of the alternative languages after '
+                             'the current language, i.e., "en|fr,zh-CN|zh-TW|de", and make sure the parameter are wrapped with '
+                             'quotes when "|" presents.'
+                             )
 
     # Selection of material to download
     group_material = parser.add_argument_group('Selection of material to download')
@@ -315,6 +331,12 @@ def parse_args(args=None):
                                 action='store_true',
                                 default=False,
                                 help='generate M3U playlists for course weeks')
+
+    group_adv_misc.add_argument('--mathjax-cdn',
+                                dest='mathjax_cdn_url',
+                                default='https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+                                help='the cdn address of MathJax.js'
+                                )
 
     # Debug options
     group_debug = parser.add_argument_group('Debugging options')

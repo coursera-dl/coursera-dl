@@ -135,7 +135,9 @@ def download_on_demand_class(args, class_name):
             args.unrestricted_filenames,
             args.subtitle_language,
             args.video_resolution,
-            args.download_quizzes)
+            args.download_quizzes,
+            args.mathjax_cdn_url
+        )
 
     if is_debug_run or args.cache_syllabus():
         with open(cached_syllabus_filename, 'w') as file_object:

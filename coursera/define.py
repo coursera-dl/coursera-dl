@@ -67,6 +67,12 @@ OPENCOURSE_SUPPLEMENT_URL = 'https://www.coursera.org/api/onDemandSupplements.v1
     '{course_id}~{element_id}?includes=asset&fields=openCourseAssets.v1%28typeName%29,openCourseAssets.v1%28definition%29'
 OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL = \
     'https://www.coursera.org/api/onDemandProgrammingLearnerAssignments.v1/{course_id}~{element_id}?fields=submissionLearnerSchema'
+OPENCOURSE_PROGRAMMING_IMMEDIATE_INSTRUCTIOINS_URL = \
+    'https://www.coursera.org/api/onDemandProgrammingImmediateInstructions.v1/{course_id}~{element_id}'
+OPENCOURSE_REFERENCES_POLL_URL = \
+    "https://www.coursera.org/api/onDemandReferences.v1/?courseId={course_id}&q=courseListed&fields=name%2CshortId%2Cslug%2Ccontent&includes=assets"
+OPENCOURSE_REFERENCE_ITEM_URL = \
+    "https://www.coursera.org/api/onDemandReferences.v1/?courseId={course_id}&q=shortId&shortId={short_id}&fields=name%2CshortId%2Cslug%2Ccontent&includes=assets"
 
 # These are ids that are present in <asset> tag in assignment text:
 #
@@ -772,7 +778,7 @@ FORMAT_MAX_LENGTH = 20
 TITLE_MAX_LENGTH = 200
 
 #: CSS that is usen to prettify instructions
-INSTRUCTIONS_HTML_INJECTION = '''
+INSTRUCTIONS_HTML_INJECTION_PRE = '''
 <style>
 body {
     padding: 50px 85px 50px 85px;
@@ -812,7 +818,9 @@ pre {
 </style>
 
 <script type="text/javascript" async
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  src="'''
+INSTRUCTIONS_HTML_MATHJAX_URL = 'https://cdn.mathjax.org/mathjax/latest/MathJax.js'
+INSTRUCTIONS_HTML_INJECTION_AFTER ='''?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 <script type="text/x-mathjax-config">

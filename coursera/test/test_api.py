@@ -90,6 +90,47 @@ def test_extract_links_from_quiz_http_error(get_page, course):
 
 
 @patch('coursera.api.get_page')
+def test_extract_references_poll_http_error(get_page, course):
+    """
+    This test checks that downloader skips locked programming assignments
+    instead of throwing an error. (Locked == returning 403 error code)
+    """
+    locked_response = Response()
+    locked_response.status_code = define.HTTP_FORBIDDEN
+    get_page.side_effect = HTTPError('Mocked HTTP error',
+                                     response=locked_response)
+    assert None == course.extract_references_poll()
+
+
+@patch('coursera.api.get_page')
+def test_extract_links_from_reference_http_error(get_page, course):
+    """
+    This test checks that downloader skips locked resources
+    instead of throwing an error. (Locked == returning 403 error code)
+    """
+    locked_response = Response()
+    locked_response.status_code = define.HTTP_FORBIDDEN
+    get_page.side_effect = HTTPError('Mocked HTTP error',
+                                     response=locked_response)
+    assert None == course.extract_links_from_reference('0')
+
+
+@patch('coursera.api.get_page')
+def test_extract_links_from_programming_immediate_instructions_http_error(
+            get_page, course):
+    """
+    This test checks that downloader skips locked programming immediate instructions
+    instead of throwing an error. (Locked == returning 403 error code)
+    """
+    locked_response = Response()
+    locked_response.status_code = define.HTTP_FORBIDDEN
+    get_page.side_effect = HTTPError('Mocked HTTP error',
+                                     response=locked_response)
+    assert (
+        None == course.extract_links_from_programming_immediate_instructions('0'))
+
+
+@patch('coursera.api.get_page')
 def test_ondemand_programming_supplement_no_instructions(get_page, course):
     no_instructions = slurp_fixture('json/supplement-programming-no-instructions.json')
     get_page.return_value = json.loads(no_instructions)
@@ -99,10 +140,37 @@ def test_ondemand_programming_supplement_no_instructions(get_page, course):
 
 
 @patch('coursera.api.get_page')
+def test_ondemand_from_programming_immediate_instructions_no_instructions(
+            get_page, course):
+    no_instructions = slurp_fixture(
+        'json/supplement-programming-immediate-instructions-no-instructions.json')
+    get_page.return_value = json.loads(no_instructions)
+
+    output = course.extract_links_from_programming_immediate_instructions('0')
+    assert {} == output
+
+@patch('coursera.api.get_page')
 def test_ondemand_programming_supplement_empty_instructions(get_page, course):
     empty_instructions = slurp_fixture('json/supplement-programming-empty-instructions.json')
     get_page.return_value = json.loads(empty_instructions)
     output = course.extract_links_from_programming('0')
+
+    # Make sure that SOME html content has been extracted, but remove
+    # it immeditely because it's a hassle to properly prepare test input
+    # for it. FIXME later.
+    assert 'html' in output
+    del output['html']
+
+    assert {} == output
+
+
+@patch('coursera.api.get_page')
+def test_ondemand_programming_immediate_instructions_empty_instructions(
+            get_page, course):
+    empty_instructions = slurp_fixture(
+        'json/supplement-programming-immediate-instructions-empty-instructions.json')
+    get_page.return_value = json.loads(empty_instructions)
+    output = course.extract_links_from_programming_immediate_instructions('0')
 
     # Make sure that SOME html content has been extracted, but remove
     # it immeditely because it's a hassle to properly prepare test input
@@ -124,6 +192,41 @@ def test_ondemand_programming_supplement_one_asset(get_page, course):
     expected_output = {'pdf': [(asset_json['elements'][0]['url'],
                                'statement-pca')]}
     output = course.extract_links_from_programming('0')
+
+    # Make sure that SOME html content has been extracted, but remove
+    # it immeditely because it's a hassle to properly prepare test input
+    # for it. FIXME later.
+    assert 'html' in output
+    del output['html']
+
+    assert expected_output == output
+
+
+@patch('coursera.api.get_page')
+def test_extract_references_poll(get_page, course):
+    """
+    Test extracting course references.
+    """
+    get_page.side_effect = [
+        json.loads(slurp_fixture('json/references-poll-reply.json'))
+    ]
+    expected_output = json.loads(
+        slurp_fixture('json/references-poll-output.json'))
+    output = course.extract_references_poll()
+    assert expected_output == output
+
+
+@patch('coursera.api.get_page')
+def test_ondemand_programming_immediate_instructions_one_asset(get_page, course):
+    one_asset_tag = slurp_fixture('json/supplement-programming-immediate-instructions-one-asset.json')
+    one_asset_url = slurp_fixture('json/asset-urls-one.json')
+    asset_json = json.loads(one_asset_url)
+    get_page.side_effect = [json.loads(one_asset_tag),
+                                 json.loads(one_asset_url)]
+
+    expected_output = {'pdf': [(asset_json['elements'][0]['url'],
+                               'statement-pca')]}
+    output = course.extract_links_from_programming_immediate_instructions('0')
 
     # Make sure that SOME html content has been extracted, but remove
     # it immeditely because it's a hassle to properly prepare test input
@@ -190,6 +293,7 @@ def test_extract_links_from_lecture_assets_typname_url_and_asset(get_page, cours
     output = json.loads(json.dumps(output))
     assert expected_output == output
 
+
 @patch('coursera.api.get_page')
 def test_list_courses(get_page, course):
     """
@@ -202,6 +306,32 @@ def test_list_courses(get_page, course):
     expected_output = expected_output['courses']
     output = course.list_courses()
     assert expected_output == output
+
+
+@pytest.mark.parametrize(
+    "input_filename,output_filename,subtitle_language,video_id", [
+        ('video-reply-1.json', 'video-output-1.json',
+            'en,zh-CN|zh-TW', "None"),
+        ('video-reply-1.json', 'video-output-1-en.json',
+            'zh-TW', "None"),
+        ('video-reply-1.json', 'video-output-1-en.json',
+            'en', "None"),
+        ('video-reply-1.json', 'video-output-1-all.json',
+            'all', "None"),
+        ('video-reply-1.json', 'video-output-1-all.json',
+            'zh-TW,all|zh-CN', "None"),
+        ('video-reply-2.json', 'video-output-2.json',
+            'en,zh-CN|zh-TW', "None"),
+    ]
+)
+def test_extract_subtitles_from_video_dom(input_filename,output_filename,subtitle_language, video_id):
+    video_dom = json.loads(slurp_fixture('json/%s' % input_filename))
+    expected_output = json.loads(slurp_fixture('json/%s' % output_filename))
+    course = api.CourseraOnDemand(
+        session=Mock(cookies={}), course_id='0', course_name='test_course')
+    actual_output = course._extract_subtitles_from_video_dom(video_dom, subtitle_language, video_id)
+    actual_output = json.loads(json.dumps(actual_output))
+    assert actual_output == expected_output
 
 
 @pytest.mark.parametrize(
@@ -238,17 +368,33 @@ class TestMarkupToHTMLConverter:
     STYLE = None
 
     def setup_method(self, test_method):
-        self.STYLE = self._p(define.INSTRUCTIONS_HTML_INJECTION)
+        self.STYLE = self._p(
+            "".join([define.INSTRUCTIONS_HTML_INJECTION_PRE,
+                     define.INSTRUCTIONS_HTML_MATHJAX_URL,
+                     define.INSTRUCTIONS_HTML_INJECTION_AFTER])
+        )
         self.markup_to_html = api.MarkupToHTMLConverter(session=None)
+
+        ALTERNATIVE_MATHJAX_CDN = "https://alternative/mathjax/cdn.js"
+        self.STYLE_WITH_ALTER = self._p(
+            "".join([define.INSTRUCTIONS_HTML_INJECTION_PRE,
+                     ALTERNATIVE_MATHJAX_CDN,
+                     define.INSTRUCTIONS_HTML_INJECTION_AFTER])
+        )
+        self.markup_to_html_with_alter_mjcdn = api.MarkupToHTMLConverter(
+            session=None, mathjax_cdn_url=ALTERNATIVE_MATHJAX_CDN)
 
     def test_empty(self):
         output = self.markup_to_html("")
-        assert self._p("""
+        output_with_alter_mjcdn = self.markup_to_html_with_alter_mjcdn("")
+        markup = """
         <meta charset="UTF-8"/>
-        """) + self.STYLE == output
+        """
+        assert self._p(markup) + self.STYLE == output
+        assert self._p(markup) + self.STYLE_WITH_ALTER == output_with_alter_mjcdn
 
     def test_replace_text_tag(self):
-        output = self.markup_to_html("""
+        markup = """
         <co-content>
         <text>
             Test<text>Nested</text>
@@ -257,8 +403,8 @@ class TestMarkupToHTMLConverter:
             Test2
         </text>
         </co-content>
-        """)
-        assert self._p("""
+        """
+        result = """
         <meta charset="UTF-8"/>
         <co-content>
         <p>
@@ -268,7 +414,11 @@ class TestMarkupToHTMLConverter:
             Test2
         </p>
         </co-content>\n
-        """) + self.STYLE == output
+        """
+        output = self.markup_to_html(markup)
+        output_with_alter_mjcdn = self.markup_to_html_with_alter_mjcdn(markup)
+        assert self._p(result) + self.STYLE == output
+        assert self._p(result) + self.STYLE_WITH_ALTER == output_with_alter_mjcdn
 
     def test_replace_heading(self):
         output = self.markup_to_html("""

@@ -1,0 +1,47 @@
+{
+    "paging": {},
+    "linked": {
+        "openCourseAssets.v1": [
+            {
+                "typeName": "cml",
+                "definition": {
+                    "dtdId": "supplement/1",
+                    "value": "<co-content><text>supplement1</text></co-content>"
+                },
+                "id": "4e66aa537abf1bdec8ecc508324891ac"
+            },
+            {
+                "typeName": "cml",
+                "definition": {
+                    "dtdId": "supplement/1",
+                    "value": "<co-content><text>supplement2</text></co-content>"
+                },
+                "id": "7c84e5c5249eb551d95444c172592274"
+            }
+        ]
+    },
+    "elements": [
+        {
+            "name": "Tutorials",
+            "id": "Tk_5NiCREeeSVwJCrBEADA",
+            "slug": "tutorials",
+            "content": {
+                "org.coursera.ondemand.reference.AssetReferenceContent": {
+                    "assetId": "4e66aa537abf1bdec8ecc508324891ac"
+                }
+            },
+            "shortId": "zVvo7"
+        },
+        {
+            "name": "Test Cases",
+            "id": "Tk_5MSCREeeSVwJCrBEADA",
+            "slug": "test-cases",
+            "content": {
+                "org.coursera.ondemand.reference.AssetReferenceContent": {
+                    "assetId": "7c84e5c5249eb551d95444c172592274"
+                }
+            },
+            "shortId": "a4I28"
+        }
+    ]
+}
