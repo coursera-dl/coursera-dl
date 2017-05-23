@@ -1,0 +1,18 @@
+{
+    "elements": [
+        {
+            "id": "Gtv4Xb1-EeS-ViIACwYKVQ~e4hZk",
+            "itemId": "e4hZk",
+            "courseId": "Gtv4Xb1-EeS-ViIACwYKVQ",
+            "assignmentInstructions": {
+                "definition": {
+                    "dtdId": "",
+                    "value": "<co-content><text><asset id=\"yeJ7Q8VAEeWPRQ4YsSEORQ\" name=\"statement-pca\" extension=\"pdf\" assetType=\"generic\"/>. </text></co-content>"
+                },
+                "typeName": "cml"
+            }
+        }
+    ],
+    "linked": {},
+    "paging": {}
+}

@@ -47,13 +47,13 @@ class CourseraExtractor(PlatformExtractor):
     def get_modules(self, class_name,
                     reverse=False, unrestricted_filenames=False,
                     subtitle_language='en', video_resolution=None,
-                    download_quizzes=False):
+                    download_quizzes=False, mathjax_cdn_url=None):
 
         page = self._get_on_demand_syllabus(class_name)
         error_occured, modules = self._parse_on_demand_syllabus(
             page, reverse, unrestricted_filenames,
             subtitle_language, video_resolution,
-            download_quizzes)
+            download_quizzes, mathjax_cdn_url)
         return error_occured, modules
 
     def _get_on_demand_syllabus(self, class_name):
@@ -71,7 +71,9 @@ class CourseraExtractor(PlatformExtractor):
                                   unrestricted_filenames=False,
                                   subtitle_language='en',
                                   video_resolution=None,
-                                  download_quizzes=False):
+                                  download_quizzes=False,
+                                  mathjax_cdn_url=None
+                                  ):
         """
         Parse a Coursera on-demand course listing/syllabus page.
 
@@ -90,7 +92,9 @@ class CourseraExtractor(PlatformExtractor):
         json_modules = dom['courseMaterial']['elements']
         course = CourseraOnDemand(session=self._session, course_id=dom['id'],
                                   course_name=course_name,
-                                  unrestricted_filenames=unrestricted_filenames)
+                                  unrestricted_filenames=unrestricted_filenames,
+                                  mathjax_cdn_url=mathjax_cdn_url
+                                  )
         course.obtain_user_id()
         ondemand_material_items = OnDemandCourseMaterialItems.create(
             session=self._session, course_name=course_name)
@@ -155,6 +159,10 @@ class CourseraExtractor(PlatformExtractor):
                         if download_quizzes:
                             links = course.extract_links_from_exam(lecture['id'])
 
+                    elif typename == 'programming':
+                        if download_quizzes:
+                            links = course.extract_links_from_programming_immediate_instructions(lecture['id'])
+
                     else:
                         logging.info('Unsupported typename "%s" in lecture "%s"',
                                      typename, lecture_slug)
@@ -173,5 +181,28 @@ class CourseraExtractor(PlatformExtractor):
 
         if modules and reverse:
             modules.reverse()
+
+        # Processing resources section
+        json_references= course.extract_references_poll()
+        references = []
+        if json_references:
+            logging.info('Processing resources')
+            for json_reference in json_references:
+                reference = []
+                reference_slug = json_reference['slug']
+                logging.info('Processing resource  %s',
+                             reference_slug)
+
+                links = course.extract_links_from_reference(json_reference['shortId'])
+                if links is None:
+                    error_occured = True
+                elif links:
+                    reference.append(('', links))
+
+                if reference:
+                    references.append((reference_slug, reference))
+
+        if references:
+            modules.append(("Resources", references))
 
         return error_occured, modules

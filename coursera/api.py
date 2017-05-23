@@ -25,12 +25,18 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                      OPENCOURSE_VIDEO_URL,
                      OPENCOURSE_MEMBERSHIPS,
+                     OPENCOURSE_REFERENCES_POLL_URL,
+                     OPENCOURSE_REFERENCE_ITEM_URL,
+                     OPENCOURSE_PROGRAMMING_IMMEDIATE_INSTRUCTIOINS_URL,
+
                      POST_OPENCOURSE_API_QUIZ_SESSION,
                      POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
                      POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
                      POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE,
 
-                     INSTRUCTIONS_HTML_INJECTION,
+                     INSTRUCTIONS_HTML_INJECTION_PRE,
+                     INSTRUCTIONS_HTML_MATHJAX_URL,
+                     INSTRUCTIONS_HTML_INJECTION_AFTER,
 
                      IN_MEMORY_EXTENSION,
                      IN_MEMORY_MARKER)
@@ -135,9 +141,12 @@ class QuizExamToMarkupConverter(object):
 
 
 class MarkupToHTMLConverter(object):
-    def __init__(self, session):
+    def __init__(self, session, mathjax_cdn_url=None):
         self._session = session
         self._asset_retriever = AssetRetriever(session)
+        if not mathjax_cdn_url:
+            mathjax_cdn_url = INSTRUCTIONS_HTML_MATHJAX_URL
+        self._mathjax_cdn_url = mathjax_cdn_url
 
     def __call__(self, markup):
         """
@@ -170,7 +179,11 @@ class MarkupToHTMLConverter(object):
         soup.insert(0, meta)
 
         # 1. Inject basic CSS style
-        css_soup = BeautifulSoup(INSTRUCTIONS_HTML_INJECTION)
+        css = "".join([
+            INSTRUCTIONS_HTML_INJECTION_PRE,
+            self._mathjax_cdn_url,
+            INSTRUCTIONS_HTML_INJECTION_AFTER])
+        css_soup = BeautifulSoup(css)
         soup.append(css_soup)
 
         # 2. Replace <text> with <p>
@@ -386,7 +399,8 @@ class CourseraOnDemand(object):
     """
 
     def __init__(self, session, course_id, course_name,
-                 unrestricted_filenames=False):
+                 unrestricted_filenames=False,
+                 mathjax_cdn_url=None):
         """
         Initialize Coursera OnDemand API.
 
@@ -409,7 +423,7 @@ class CourseraOnDemand(object):
         self._user_id = None
 
         self._quiz_to_markup = QuizExamToMarkupConverter(session)
-        self._markup_to_html = MarkupToHTMLConverter(session)
+        self._markup_to_html = MarkupToHTMLConverter(session, mathjax_cdn_url=mathjax_cdn_url)
         self._asset_retriever = AssetRetriever(session)
 
     def obtain_user_id(self):
@@ -721,35 +735,113 @@ class CourseraOnDemand(object):
         video_url = sources[0]['formatSources']['video/mp4']
         video_content['mp4'] = video_url
 
-        # subtitles and transcripts
-        subtitle_nodes = [
-            ('subtitles',    'srt', 'subtitle'),
-            ('subtitlesTxt', 'txt', 'transcript'),
-        ]
-        for (subtitle_node, subtitle_extension, subtitle_description) in subtitle_nodes:
-            logging.debug('Gathering %s URLs for video_id <%s>.', subtitle_description, video_id)
-            subtitles = dom.get(subtitle_node)
-            if subtitles is not None:
-                if subtitle_language == 'all':
-                    for current_subtitle_language in subtitles:
-                        video_content[current_subtitle_language + '.' + subtitle_extension] = make_coursera_absolute_url(subtitles.get(current_subtitle_language))
-                else:
-                    if subtitle_language != 'en' and subtitle_language not in subtitles:
-                        logging.warning("%s unavailable in '%s' language for video "
-                                        "with video id: [%s], falling back to 'en' "
-                                        "%s", subtitle_description.capitalize(), subtitle_language, video_id, subtitle_description)
-                        subtitle_language = 'en'
+        subtitle_link = self._extract_subtitles_from_video_dom(
+                dom, subtitle_language, video_id)
 
-                    subtitle_url = subtitles.get(subtitle_language)
-                    if subtitle_url is not None:
-                        # some subtitle urls are relative!
-                        video_content[subtitle_language + '.' + subtitle_extension] = make_coursera_absolute_url(subtitle_url)
+        for key, value in iteritems(subtitle_link):
+            video_content[key] = value
 
         lecture_video_content = {}
         for key, value in iteritems(video_content):
             lecture_video_content[key] = [(value, '')]
 
         return lecture_video_content
+
+    def _extract_subtitles_from_video_dom(self, video_dom,
+                                          subtitle_language, video_id):
+        # subtitles and transcripts
+        subtitle_nodes = [
+            ('subtitles', 'srt', 'subtitle'),
+            ('subtitlesTxt', 'txt', 'transcript'),
+        ]
+        subtitle_set_download = set()
+        subtitle_set_nonexist = set()
+        subtitle_links = {}
+        for (subtitle_node, subtitle_extension, subtitle_description) \
+                in subtitle_nodes:
+            logging.debug('Gathering %s URLs for video_id <%s>.',
+                          subtitle_description, video_id)
+            subtitles = video_dom.get(subtitle_node)
+            download_all_subtitle = False
+            if subtitles is not None:
+                subtitles_set = set(subtitles)
+                requested_subtitle_list = [s.strip() for s in
+                                           subtitle_language.split(",")]
+                for language_with_alts in requested_subtitle_list:
+                    if download_all_subtitle:
+                        break
+                    grouped_language_list = [l.strip() for l in
+                                             language_with_alts.split("|")]
+                    for language in grouped_language_list:
+                        if language == "all":
+                            download_all_subtitle = True
+                            break
+                        elif language in subtitles_set:
+                            subtitle_set_download.update([language])
+                            break
+                        else:
+                            subtitle_set_nonexist.update([language])
+
+            if download_all_subtitle and subtitles is not None:
+                subtitle_set_download = set(subtitles)
+
+            if not download_all_subtitle and subtitle_set_nonexist:
+                logging.warning("%s unavailable in '%s' language for video "
+                                "with video id: [%s],"
+                                "%s", subtitle_description.capitalize(),
+                                ", ".join(subtitle_set_nonexist), video_id,
+                                subtitle_description)
+            if not subtitle_set_download:
+                logging.warning("%s all requested subtitles are unavaliable,"
+                                "with video id: [%s], falling back to 'en' "
+                                "%s", subtitle_description.capitalize(),
+                                video_id,
+                                subtitle_description)
+                subtitle_set_download = set(['en'])
+
+            for current_subtitle_language in subtitle_set_download:
+                subtitle_url = subtitles.get(current_subtitle_language)
+                if subtitle_url is not None:
+                    # some subtitle urls are relative!
+                    subtitle_links[
+                        "%s.%s" % (current_subtitle_language, subtitle_extension)
+                    ] = make_coursera_absolute_url(subtitle_url)
+        return subtitle_links
+
+    def extract_links_from_programming_immediate_instructions(self, element_id):
+        """
+        Return a dictionary with links to supplement files (pdf, csv, zip,
+        ipynb, html and so on) extracted from graded programming assignment.
+
+        @param element_id: Element ID to extract files from.
+        @type element_id: str
+
+        @return: @see CourseraOnDemand._extract_links_from_text
+        """
+        logging.debug('Extracting links from programming immediate '
+                      'instructions for element_id <%s>.', element_id)
+
+        try:
+            # Assignment text (instructions) contains asset tags which describe
+            # supplementary files.
+            text = ''.join(
+                self._extract_programming_immediate_instructions_text(element_id))
+            if not text:
+                return {}
+
+            supplement_links = self._extract_links_from_text(text)
+            instructions = (IN_MEMORY_MARKER + self._markup_to_html(text),
+                            'instructions')
+            extend_supplement_links(
+                supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+            return supplement_links
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download programming assignment %s: %s',
+                          element_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download programming assignment %s: %s',
+                                  element_id, exception)
+            return None
 
     def extract_links_from_programming(self, element_id):
         """
@@ -874,6 +966,87 @@ class CourseraOnDemand(object):
 
         return [{'id': element['id'],
                  'url': element['url'].strip()}
+                for element in dom['elements']]
+
+    def extract_references_poll(self):
+        try:
+            dom = get_page(self._session,
+                           OPENCOURSE_REFERENCES_POLL_URL.format(
+                               course_id=self._course_id),
+                           json=True
+                           )
+            logging.info('Downloaded resource poll (%d bytes)', len(dom))
+            return dom['elements']
+
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download resource section: %s',
+                          exception)
+            if is_debug_run():
+                logging.exception('Could not download resource section: %s',
+                                  exception)
+            return None
+
+    def extract_links_from_reference(self, short_id):
+        """
+        Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
+        and so on) extracted from supplement page.
+
+        @return: @see CourseraOnDemand._extract_links_from_text
+        """
+        logging.debug('Gathering resource URLs for short_id <%s>.', short_id)
+
+        try:
+            dom = get_page(self._session, OPENCOURSE_REFERENCE_ITEM_URL,
+                           json=True,
+                           course_id=self._course_id,
+                           short_id=short_id)
+
+            resource_content = {}
+
+            # Supplement content has structure as follows:
+            # 'linked' {
+            #   'openCourseAssets.v1' [ {
+            #       'definition' {
+            #           'value'
+
+            for asset in dom['linked']['openCourseAssets.v1']:
+                value = asset['definition']['value']
+                # Supplement lecture types are known to contain both <asset> tags
+                # and <a href> tags (depending on the course), so we extract
+                # both of them.
+                extend_supplement_links(
+                    resource_content, self._extract_links_from_text(value))
+
+                instructions = (IN_MEMORY_MARKER + self._markup_to_html(value),
+                                'resources')
+                extend_supplement_links(
+                    resource_content, {IN_MEMORY_EXTENSION: [instructions]})
+
+            return resource_content
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download supplement %s: %s',
+                          short_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download supplement %s: %s',
+                                  short_id, exception)
+            return None
+
+    def _extract_programming_immediate_instructions_text(self, element_id):
+        """
+        Extract assignment text (instructions).
+
+        @param element_id: Element id to extract assignment instructions from.
+        @type element_id: str
+
+        @return: List of assignment text (instructions).
+        @rtype: [str]
+        """
+        dom = get_page(self._session, OPENCOURSE_PROGRAMMING_IMMEDIATE_INSTRUCTIOINS_URL,
+                       json=True,
+                       course_id=self._course_id,
+                       element_id=element_id)
+
+        return [element['assignmentInstructions']['definition']['value']
                 for element in dom['elements']]
 
     def _extract_assignment_text(self, element_id):
