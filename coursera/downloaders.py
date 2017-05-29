@@ -62,6 +62,21 @@ class Downloader(object):
                 except OSError:
                     pass
             raise e
+        except subprocess.CalledProcessError as e:
+            logging.info(
+                'External Downloader Error -- Removing partial file: %s', filename)
+            logging.debug(
+                'External Downloader Return Code -- %s', e.returncode)
+            logging.debug(
+                'External Downloader cmd -- %s', e.cmd)
+            try:
+                os.remove(filename)
+            except OSError:
+                pass
+            # raise e
+            # -- don't raise the issue because some downloaders issue
+            #    a non zero exit code even for a simple connection break
+            #    so let the poor downloader try the next lecture.
 
 
 class ExternalDownloader(Downloader):
@@ -130,7 +145,7 @@ class ExternalDownloader(Downloader):
 
         logging.debug('Executing %s: %s', self.bin, command)
         try:
-            subprocess.call(command)
+            subprocess.check_call(command)
         except OSError as e:
             msg = "{0}. Are you sure that '{1}' is the right bin?".format(
                 e, self.bin)
