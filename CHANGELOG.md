@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.9.0 (2017-05-25)
+
+Features:
+  - Default arguments are loaded from `coursera-dl.conf` file
+  - Added option `--mathjax-cdn <MATHJAX_CDN>` to specify alternative MathJax CDN
+  - Added support for Resources section
+
 ## 0.8.0 (2016-10-04)
 
 Features:
