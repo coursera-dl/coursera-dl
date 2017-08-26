@@ -20,6 +20,7 @@
     - [Running the script](#running-the-script)
     - [Resuming downloads](#resuming-downloads)
 - [Troubleshooting](#troubleshooting)
+    - [China issues](#china-issues)
     - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
     - [Windows: Proxy support](#windows-proxy-support)
     - [Windows: Failed to create process](#windows-failed-to-create-process)
@@ -398,6 +399,13 @@ one of the following actions solve your problem:
   ```
       pip install coursera-dl
   ```
+
+## China issues
+
+If you are from China and you're having problems downloading videos,
+adding "52.84.246.72 d3c33hcgiwev3.cloudfront.net" in the hosts file
+(/etc/hosts) and freshing DNS with "ipconfig/flushdns" may work
+(see this [comment](https://github.com/coursera-dl/coursera-dl/issues/606#issuecomment-305698809)).
 
 ## Found 0 sections and 0 lectures on this page
 
