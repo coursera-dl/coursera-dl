@@ -214,6 +214,19 @@ your own, please check that the versions of your modules are at least those
 listed in the `requirements.txt` file (and, `requirements-dev.txt` file, if
 applicable).
 
+## Docker
+
+If you prefer you can run this software inside Docker:
+
+```
+docker run --rm -it \
+       -v "$(pwd):/courses" \
+       strm/coursera-dl \
+       -u <USER> -p <PASSWORD>
+```
+
+The actual working dir for coursera-dl is /courses, all courses will be downloaded there if you don't specify otherwise.
+
 ## Windows
 
 `python -m pip install coursera-dl`
