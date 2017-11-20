@@ -498,6 +498,9 @@ class CourseraOnDemand(object):
                     logging.info('Downloading {} into {}'.format(tail, head))
                     with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
                         f.write(r.content)
+                else:
+                    logging.info('Skipping {}... (file exists)'.format(tail))
+
 
                 if not str(extension[1:]) in supplement_links:
                     supplement_links[str(extension[1:])] = []
@@ -520,6 +523,8 @@ class CourseraOnDemand(object):
                     logging.info('Downloading Jupyter {} into {}'.format(tail, head))
                     with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
                         f.write(r.content)
+                else:
+                    logging.info('Skipping {}... (file exists)'.format(tail))
 
                 if not "ipynb" in supplement_links:
                     supplement_links["ipynb"] = []
