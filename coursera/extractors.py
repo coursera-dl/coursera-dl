@@ -29,7 +29,7 @@ class PlatformExtractor(object):
 class CourseraExtractor(PlatformExtractor):
     def __init__(self, session, username, password):
         login(session, username, password)
-
+        self._notebook_downloaded = False
         self._session = session
 
     def list_courses(self):
@@ -47,13 +47,14 @@ class CourseraExtractor(PlatformExtractor):
     def get_modules(self, class_name,
                     reverse=False, unrestricted_filenames=False,
                     subtitle_language='en', video_resolution=None,
-                    download_quizzes=False, mathjax_cdn_url=None):
+                    download_quizzes=False, mathjax_cdn_url=None,
+                    download_notebooks=False):
 
         page = self._get_on_demand_syllabus(class_name)
         error_occured, modules = self._parse_on_demand_syllabus(
             page, reverse, unrestricted_filenames,
             subtitle_language, video_resolution,
-            download_quizzes, mathjax_cdn_url)
+            download_quizzes, mathjax_cdn_url, download_notebooks)
         return error_occured, modules
 
     def _get_on_demand_syllabus(self, class_name):
@@ -72,7 +73,8 @@ class CourseraExtractor(PlatformExtractor):
                                   subtitle_language='en',
                                   video_resolution=None,
                                   download_quizzes=False,
-                                  mathjax_cdn_url=None
+                                  mathjax_cdn_url=None,
+                                  download_notebooks=False
                                   ):
         """
         Parse a Coursera on-demand course listing/syllabus page.
@@ -145,8 +147,7 @@ class CourseraExtractor(PlatformExtractor):
                             video_resolution, assets)
 
                     elif typename == 'supplement':
-                        links = course.extract_links_from_supplement(
-                            lecture['id'])
+                        links = course.extract_links_from_supplement(lecture['id'])
 
                     elif typename in ('gradedProgramming', 'ungradedProgramming'):
                         links = course.extract_links_from_programming(lecture['id'])
@@ -162,7 +163,12 @@ class CourseraExtractor(PlatformExtractor):
                     elif typename == 'programming':
                         if download_quizzes:
                             links = course.extract_links_from_programming_immediate_instructions(lecture['id'])
-
+                    
+                    elif typename == 'notebook':
+                        if download_notebooks and self._notebook_downloaded == False:
+                            logging.warning('According to notebooks platform, content will be downloaded first')
+                            links = course.extract_links_from_notebook(lecture['id'])
+                            self._notebook_downloaded = True
                     else:
                         logging.info('Unsupported typename "%s" in lecture "%s"',
                                      typename, lecture_slug)

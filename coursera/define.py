@@ -833,3 +833,9 @@ INSTRUCTIONS_HTML_INJECTION_AFTER ='''?config=TeX-AMS-MML_HTMLorMML">
   });
 </script>
 '''
+
+# The following url is the root url (tree) for a Coursera Course
+OPENCOURSE_NOTEBOOK_DESCRIPTIONS = "https://hub.coursera-notebooks.org/hub/coursera_login?token={authId}&next=/"
+OPENCOURSE_NOTEBOOK_LAUNCHES = "https://www.coursera.org/api/onDemandNotebookWorkspaceLaunches.v1/?fields=authorizationId%2CcontentPath%2CuseLegacySystem"
+OPENCOURSE_NOTEBOOK_TREE = "https://hub.coursera-notebooks.org/user/{jupId}/api/contents/{path}?type=directory&_={timestamp}"
+OPENCOURSE_NOTEBOOK_DOWNLOAD = "https://hub.coursera-notebooks.org/user/{jupId}/files/{path}?download=1"

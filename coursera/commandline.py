@@ -127,6 +127,12 @@ def parse_args(args=None):
                                 default=False,
                                 help='download quiz and exam questions. (Default: False)')
 
+    group_material.add_argument('--download-notebooks',
+                                dest='download_notebooks',
+                                action='store_true',
+                                default=False,
+                                help='download Python Jupyther Notebooks. (Default: False)')
+
     group_material.add_argument('--about',  # FIXME: should be --about-course
                                 dest='about',
                                 action='store_true',

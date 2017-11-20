@@ -8,7 +8,9 @@ import os
 import json
 import base64
 import logging
+import time
 import requests
+import urllib
 from collections import namedtuple
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
@@ -28,6 +30,12 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_REFERENCES_POLL_URL,
                      OPENCOURSE_REFERENCE_ITEM_URL,
                      OPENCOURSE_PROGRAMMING_IMMEDIATE_INSTRUCTIOINS_URL,
+
+                     # New feature, Notebook (Python Jupyter)
+                     OPENCOURSE_NOTEBOOK_DESCRIPTIONS,
+                     OPENCOURSE_NOTEBOOK_LAUNCHES,
+                     OPENCOURSE_NOTEBOOK_TREE,
+                     OPENCOURSE_NOTEBOOK_DOWNLOAD,
 
                      POST_OPENCOURSE_API_QUIZ_SESSION,
                      POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
@@ -416,6 +424,7 @@ class CourseraOnDemand(object):
         @type unrestricted_filenames: bool
         """
         self._session = session
+        self._notebook_cookies = None
         self._course_id = course_id
         self._course_name = course_name
 
@@ -453,6 +462,111 @@ class CourseraOnDemand(object):
             logging.error('Could not download exam %s: %s', exam_id, exception)
             if is_debug_run():
                 logging.exception('Could not download exam %s: %s', exam_id, exception)
+            return None
+
+    def _get_notebook_folder(self, url, jupyterId, **kwargs):
+
+        supplement_links = {}
+
+        url = url.format(**kwargs)        
+        reply = get_page(
+            self._session,
+            url,
+            json=True
+        )
+
+        headers = self._auth_headers_with_json()
+
+        for content in reply['content']:
+            
+            if content['type'] == 'directory':
+                a = self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path=content['path'], timestamp=int(time.time()))
+                supplement_links.update(a)
+            
+            elif content['type'] == 'file':
+                tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
+                filename, extension = os.path.splitext(clean_url(tmpUrl))
+                
+                head, tail = os.path.split(content['path'])
+                
+                if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
+                    logging.info('Creating [{}] directories...'.format(head))
+                    os.makedirs(self._course_name + "/notebook/" + head + "/")
+                
+                r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
+                if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
+                    logging.info('Downloading {} into {}'.format(tail, head))
+                    with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
+                        f.write(r.content)
+
+                if not str(extension[1:]) in supplement_links:
+                    supplement_links[str(extension[1:])] = []
+                
+                supplement_links[str(extension[1:])].append((tmpUrl.replace(" ", "%20"), filename))
+
+
+            elif content['type'] == 'notebook':
+                tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
+                filename, extension = os.path.splitext(clean_url(tmpUrl))
+                
+                head, tail = os.path.split(content['path'])
+                
+                if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
+                    logging.info('Creating [{}] directories...'.format(head))
+                    os.makedirs(self._course_name + "/notebook/" + head + "/")
+                
+                r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
+                if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
+                    logging.info('Downloading Jupyter {} into {}'.format(tail, head))
+                    with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
+                        f.write(r.content)
+
+                if not "ipynb" in supplement_links:
+                    supplement_links["ipynb"] = []
+                
+                supplement_links["ipynb"].append((tmpUrl.replace(" ", "%20"), filename))
+
+            else:
+                logging.info('Unsupported typename {} in notebook'.format(content['type']))
+                
+        return supplement_links
+
+
+    def _get_notebook_json(self, notebook_id, authorizationId):
+        
+        import re, time
+        headers = self._auth_headers_with_json()
+        reply = get_page(
+            self._session,
+            OPENCOURSE_NOTEBOOK_DESCRIPTIONS,
+            json=False,
+            authId=authorizationId,
+            headers=headers
+        )
+
+        jupyterId = re.findall(r"\"\/user\/(.*)\/tree\"", reply)
+        if len(jupyterId) == 0:
+            logging.error('Could not download notebook %s', notebook_id)
+            return None
+        
+        jupyterId = jupyterId[0]
+
+        newReq = requests.Session()
+        req = newReq.get(OPENCOURSE_NOTEBOOK_TREE.format(jupId=jupyterId, path="/", timestamp=int(time.time())), headers=headers)
+        
+        return self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path="/", timestamp=int(time.time()))
+        
+
+    def extract_links_from_notebook(self, notebook_id):
+
+        try:    
+            authorizationId = self._extract_notebook_text(notebook_id)
+            ret = self._get_notebook_json(notebook_id, authorizationId)
+            return ret
+        except  requests.exceptions.HTTPError as exception:
+            logging.error('Could not download notebook %s: %s', notebook_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download notebook %s: %s', notebook_id, exception)
             return None
 
     def extract_links_from_quiz(self, quiz_id):
@@ -1048,6 +1162,31 @@ class CourseraOnDemand(object):
 
         return [element['assignmentInstructions']['definition']['value']
                 for element in dom['elements']]
+
+    def _extract_notebook_text(self, element_id):
+        """
+        Extract notebook text (instructions).
+
+        @param element_id: Element id to extract notebook links.
+        @type element_id: str
+
+        @return: Notebook URL.
+        @rtype: [str]
+        """
+        headers = self._auth_headers_with_json()
+        data = {'courseId': self._course_id, 'learnerId': self._user_id, 'itemId': element_id}
+        dom = get_page(self._session, OPENCOURSE_NOTEBOOK_LAUNCHES,
+                       post=True,
+                       json=True,
+                       user_id=self._user_id,
+                       course_id=self._course_id,
+                       headers=headers,
+                       element_id=element_id,
+                       data=json.dumps(data)
+        )
+
+        # Return authorization id. This id changes on each request
+        return dom['elements'][0]['authorizationId']
 
     def _extract_assignment_text(self, element_id):
         """
