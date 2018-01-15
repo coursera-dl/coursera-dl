@@ -403,9 +403,9 @@ one of the following actions solve your problem:
 ## China issues
 
 If you are from China and you're having problems downloading videos,
-adding "52.84.246.72 d3c33hcgiwev3.cloudfront.net" in the hosts file
+adding "52.84.167.78 d3c33hcgiwev3.cloudfront.net" in the hosts file
 (/etc/hosts) and freshing DNS with "ipconfig/flushdns" may work
-(see this [comment](https://github.com/coursera-dl/coursera-dl/issues/606#issuecomment-305698809)).
+(see https://github.com/googlehosts/hosts for more info).
 
 ## Found 0 sections and 0 lectures on this page
 
