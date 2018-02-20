@@ -4,7 +4,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/3hru0ycv5fbny5k8/branch/master?svg=true)](https://ci.appveyor.com/project/balta2ar/coursera-dl/branch/master)
 [![Coverage Status](https://coveralls.io/repos/coursera-dl/coursera-dl/badge.svg)](https://coveralls.io/r/coursera-dl/coursera-dl)
 [![Latest version on PyPI](https://img.shields.io/pypi/v/coursera-dl.svg)](https://pypi.python.org/pypi/coursera-dl)
-[![Downloads from PyPI](https://img.shields.io/pypi/dm/coursera-dl.svg)](https://pypi.python.org/pypi/coursera-dl)
 [![Code Climate](https://codeclimate.com/github/coursera-dl/coursera-dl/badges/gpa.svg)](https://codeclimate.com/github/coursera-dl/coursera-dl)
 
 - [Introduction](#introduction)
