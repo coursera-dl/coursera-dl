@@ -587,5 +587,3 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [issue213]: https://github.com/coursera-dl/coursera-dl/issues/213
 [issue500]: https://github.com/coursera-dl/coursera-dl/issues/500
 [pipinstallerbug]: http://stackoverflow.com/questions/31808180/installing-pyinstaller-via-pip-leads-to-failed-to-create-process
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/coursera-dl/coursera-dl/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
