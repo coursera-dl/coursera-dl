@@ -136,7 +136,8 @@ def download_on_demand_class(args, class_name):
             args.subtitle_language,
             args.video_resolution,
             args.download_quizzes,
-            args.mathjax_cdn_url
+            args.mathjax_cdn_url,
+            args.download_notebooks
         )
 
     if is_debug_run or args.cache_syllabus():
