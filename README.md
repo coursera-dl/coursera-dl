@@ -287,7 +287,7 @@ where the script is supposed to be executed, with the following format:
     --username <user>
     --password <pass>
     --subtitle-language en,zh-CN|zh-TW
-    --download-quizzes True
+    --download-quizzes
     #--mathjax-cdn https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js
     # more other parameters
 
