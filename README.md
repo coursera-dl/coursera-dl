@@ -94,7 +94,7 @@ relevant excerpt:
 `coursera-dl` requires Python 2 or Python 3 and a free Coursera account
 enrolled in the class of interest. (As of February of 2016, we test
 automatically the execution of the program with Python versions 2.6, 2.7,
-Pypy, 3.2, 3.3, 3.4, and 3.5).
+Pypy, 3.4, 3.5, and 3.6).
 
 **Note:** We *strongly* recommend that you use a Python 3 interpreter (3.4
 or later).
