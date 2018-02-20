@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.10.0 (2018-02-19)
+
+Features:
+  - Support Coursera Notebooks (option: `--download-notebooks`)
+  - Add hints in the documentation for users in China
+
 ## 0.9.0 (2017-05-25)
 
 Features:
