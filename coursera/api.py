@@ -5,6 +5,7 @@ downloader.
 """
 
 import os
+import re
 import json
 import base64
 import logging
@@ -468,7 +469,7 @@ class CourseraOnDemand(object):
 
         supplement_links = {}
 
-        url = url.format(**kwargs)        
+        url = url.format(**kwargs)
         reply = get_page(
             self._session,
             url,
@@ -478,21 +479,21 @@ class CourseraOnDemand(object):
         headers = self._auth_headers_with_json()
 
         for content in reply['content']:
-            
+
             if content['type'] == 'directory':
                 a = self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path=content['path'], timestamp=int(time.time()))
                 supplement_links.update(a)
-            
+
             elif content['type'] == 'file':
                 tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
                 filename, extension = os.path.splitext(clean_url(tmpUrl))
-                
+
                 head, tail = os.path.split(content['path'])
-                
+
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
                     os.makedirs(self._course_name + "/notebook/" + head + "/")
-                
+
                 r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
                 if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
                     logging.info('Downloading {} into {}'.format(tail, head))
@@ -504,20 +505,19 @@ class CourseraOnDemand(object):
 
                 if not str(extension[1:]) in supplement_links:
                     supplement_links[str(extension[1:])] = []
-                
-                supplement_links[str(extension[1:])].append((tmpUrl.replace(" ", "%20"), filename))
 
+                supplement_links[str(extension[1:])].append((tmpUrl.replace(" ", "%20"), filename))
 
             elif content['type'] == 'notebook':
                 tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
                 filename, extension = os.path.splitext(clean_url(tmpUrl))
-                
+
                 head, tail = os.path.split(content['path'])
-                
+
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
                     os.makedirs(self._course_name + "/notebook/" + head + "/")
-                
+
                 r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
                 if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
                     logging.info('Downloading Jupyter {} into {}'.format(tail, head))
@@ -528,18 +528,16 @@ class CourseraOnDemand(object):
 
                 if not "ipynb" in supplement_links:
                     supplement_links["ipynb"] = []
-                
+
                 supplement_links["ipynb"].append((tmpUrl.replace(" ", "%20"), filename))
 
             else:
                 logging.info('Unsupported typename {} in notebook'.format(content['type']))
-                
+
         return supplement_links
 
-
     def _get_notebook_json(self, notebook_id, authorizationId):
-        
-        import re, time
+
         headers = self._auth_headers_with_json()
         reply = get_page(
             self._session,
@@ -553,22 +551,21 @@ class CourseraOnDemand(object):
         if len(jupyterId) == 0:
             logging.error('Could not download notebook %s', notebook_id)
             return None
-        
+
         jupyterId = jupyterId[0]
 
         newReq = requests.Session()
         req = newReq.get(OPENCOURSE_NOTEBOOK_TREE.format(jupId=jupyterId, path="/", timestamp=int(time.time())), headers=headers)
-        
+
         return self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path="/", timestamp=int(time.time()))
-        
 
     def extract_links_from_notebook(self, notebook_id):
 
-        try:    
+        try:
             authorizationId = self._extract_notebook_text(notebook_id)
             ret = self._get_notebook_json(notebook_id, authorizationId)
             return ret
-        except  requests.exceptions.HTTPError as exception:
+        except requests.exceptions.HTTPError as exception:
             logging.error('Could not download notebook %s: %s', notebook_id, exception)
             if is_debug_run():
                 logging.exception('Could not download notebook %s: %s', notebook_id, exception)

@@ -117,7 +117,7 @@ def test_extract_links_from_reference_http_error(get_page, course):
 
 @patch('coursera.api.get_page')
 def test_extract_links_from_programming_immediate_instructions_http_error(
-            get_page, course):
+        get_page, course):
     """
     This test checks that downloader skips locked programming immediate instructions
     instead of throwing an error. (Locked == returning 403 error code)
