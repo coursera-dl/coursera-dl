@@ -185,6 +185,110 @@ ABOUT_URL = ('https://api.coursera.org/api/catalog.v1/courses?'
 AUTH_REDIRECT_URL = ('https://class.coursera.org/{class_name}'
                      '/auth/auth_redirector?type=login&subtype=normal')
 
+# Sample URL:
+#
+# https://www.coursera.org/api/onDemandPeerAssignmentInstructions.v1/?q=latest&userId=4958&courseId=RcnRZHHtEeWxvQr3acyajw&itemId=2yTvX&includes=gradingMetadata%2CreviewSchemas%2CsubmissionSchemas&fields=instructions%2ConDemandPeerAssignmentGradingMetadata.v1(requiredAuthoredReviewCount%2CisMentorGraded%2CassignmentDetails)%2ConDemandPeerReviewSchemas.v1(reviewSchema)%2ConDemandPeerSubmissionSchemas.v1(submissionSchema)
+#
+# Sample response:
+#
+# {
+#   "elements": [
+#     {
+#       "instructions": {
+#         "introduction": {
+#           "typeName": "cml",
+#           "definition": {
+#             "dtdId": "assess/1",
+#             "value": "<co-content><text>Ваше первое задание заключается в установке Python и библиотек..</text></li></list></co-content>"
+#           }
+#         },
+#         "sections": [
+#           {
+#             "typeId": "unknown",
+#             "title": "Review criteria",
+#             "content": {
+#               "typeName": "cml",
+#               "definition": {
+#                 "dtdId": "assess/1",
+#                 "value": "<co-content><text>В результате работы вы установите на компьютер Python и библиотеки, необходимые для дальнейшего прохождения курса..</text></co-content>"
+#               }
+#             }
+#           }
+#         ]
+#       },
+#       "id": "4958~RcnRZHHtEeWxvQr3acyajw~2yTvX~8x7Qhs66EeW2Tw715xhIPQ@13"
+#     }
+#   ],
+#   "paging": {},
+#   "linked": {
+#     "onDemandPeerSubmissionSchemas.v1": [
+#       {
+#         "submissionSchema": {
+#           "parts": [
+#             {
+#               "details": {
+#                 "typeName": "fileUpload",
+#                 "definition": {
+#                   "required": false
+#                 }
+#               },
+#               "id": "_fcfP3bPT5W4pkfkshmUAQ",
+#               "prompt": {
+#                 "typeName": "cml",
+#                 "definition": {
+#                   "dtdId": "assess/1",
+#                   "value": "<co-content><text>Загрузите скриншот №1.</text></co-content>"
+#                 }
+#               }
+#             },
+#             {
+#               "details": {
+#                 "typeName": "fileUpload",
+#                 "definition": {
+#                   "required": false
+#                 }
+#               },
+#               "id": "92ea4b4e-3492-41eb-ee32-2624ee807bd3",
+#               "prompt": {
+#                 "typeName": "cml",
+#                 "definition": {
+#                   "dtdId": "assess/1",
+#                   "value": "<co-content><text>Загрузите скриншот №2.</text></co-content>"
+#                 }
+#               }
+#             }
+#           ]
+#         },
+#         "id": "4958~RcnRZHHtEeWxvQr3acyajw~2yTvX~8x7Qhs66EeW2Tw715xhIPQ@13"
+#       }
+#     ],
+#     "onDemandPeerAssignmentGradingMetadata.v1": [
+#       {
+#         "assignmentDetails": {
+#           "typeName": "phased",
+#           "definition": {
+#             "receivedReviewCutoffs": {
+#               "count": 3
+#             },
+#             "passingFraction": 0.8
+#           }
+#         },
+#         "requiredAuthoredReviewCount": 3,
+#         "isMentorGraded": false,
+#         "id": "4958~RcnRZHHtEeWxvQr3acyajw~2yTvX~8x7Qhs66EeW2Tw715xhIPQ@13"
+#       }
+#     ],
+#     "onDemandPeerReviewSchemas.v1": []
+#   }
+# }
+#
+# This URL is used to retrieve "phasedPeer" typename instructions' contents
+OPENCOURSE_PEER_ASSIGNMENT_INSTRUCTIONS = (
+    'https://www.coursera.org/api/onDemandPeerAssignmentInstructions.v1/?'
+    'q=latest&userId={user_id}&courseId={course_id}&itemId={element_id}&'
+    'includes=gradingMetadata%2CreviewSchemas%2CsubmissionSchemas&'
+    'fields=instructions%2ConDemandPeerAssignmentGradingMetadata.v1(requiredAuthoredReviewCount%2CisMentorGraded%2CassignmentDetails)%2ConDemandPeerReviewSchemas.v1(reviewSchema)%2ConDemandPeerSubmissionSchemas.v1(submissionSchema)')
+
 #POST_OPENCOURSE_API_QUIZ_SESSION = 'https://www.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session'
 # Sample response:
 #
