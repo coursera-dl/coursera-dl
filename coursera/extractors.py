@@ -149,6 +149,9 @@ class CourseraExtractor(PlatformExtractor):
                     elif typename == 'supplement':
                         links = course.extract_links_from_supplement(lecture['id'])
 
+                    elif typename == 'phasedPeer':
+                        links = course.extract_links_from_peer_assignment(lecture['id'])
+
                     elif typename in ('gradedProgramming', 'ungradedProgramming'):
                         links = course.extract_links_from_programming(lecture['id'])
 
@@ -163,15 +166,17 @@ class CourseraExtractor(PlatformExtractor):
                     elif typename == 'programming':
                         if download_quizzes:
                             links = course.extract_links_from_programming_immediate_instructions(lecture['id'])
-                    
+
                     elif typename == 'notebook':
                         if download_notebooks and self._notebook_downloaded == False:
                             logging.warning('According to notebooks platform, content will be downloaded first')
                             links = course.extract_links_from_notebook(lecture['id'])
                             self._notebook_downloaded = True
+
                     else:
-                        logging.info('Unsupported typename "%s" in lecture "%s"',
-                                     typename, lecture_slug)
+                        logging.info(
+                            'Unsupported typename "%s" in lecture "%s" (lecture id "%s")',
+                            typename, lecture_slug, lecture['id'])
                         continue
 
                     if links is None:

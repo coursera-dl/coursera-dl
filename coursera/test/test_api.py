@@ -10,7 +10,7 @@ from mock import patch, Mock
 from coursera import api
 from coursera import define
 
-from coursera.test.utils import slurp_fixture
+from coursera.test.utils import slurp_fixture, links_to_plain_text
 from coursera.utils import BeautifulSoup
 
 from requests.exceptions import HTTPError
@@ -117,7 +117,7 @@ def test_extract_links_from_reference_http_error(get_page, course):
 
 @patch('coursera.api.get_page')
 def test_extract_links_from_programming_immediate_instructions_http_error(
-            get_page, course):
+        get_page, course):
     """
     This test checks that downloader skips locked programming immediate instructions
     instead of throwing an error. (Locked == returning 403 error code)
@@ -140,14 +140,34 @@ def test_ondemand_programming_supplement_no_instructions(get_page, course):
 
 
 @patch('coursera.api.get_page')
+@pytest.mark.parametrize(
+    "input_filename,expected_output", [
+        ('peer-assignment-instructions-all.json', 'intro Review criteria section'),
+        ('peer-assignment-instructions-no-title.json', 'intro section'),
+        ('peer-assignment-instructions-only-introduction.json', 'intro'),
+        ('peer-assignment-instructions-only-sections.json', 'Review criteria section'),
+        ('peer-assignment-no-instructions.json', ''),
+    ]
+)
+def test_ondemand_from_peer_assgnment_instructions(
+        get_page, course, input_filename, expected_output):
+    instructions = slurp_fixture('json/%s' % input_filename)
+    get_page.return_value = json.loads(instructions)
+
+    output = course.extract_links_from_peer_assignment('0')
+    assert expected_output == links_to_plain_text(output)
+
+
+@patch('coursera.api.get_page')
 def test_ondemand_from_programming_immediate_instructions_no_instructions(
-            get_page, course):
+        get_page, course):
     no_instructions = slurp_fixture(
         'json/supplement-programming-immediate-instructions-no-instructions.json')
     get_page.return_value = json.loads(no_instructions)
 
     output = course.extract_links_from_programming_immediate_instructions('0')
     assert {} == output
+
 
 @patch('coursera.api.get_page')
 def test_ondemand_programming_supplement_empty_instructions(get_page, course):
