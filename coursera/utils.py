@@ -106,12 +106,23 @@ def clean_filename(s, minimal_change=False):
     s = unquote_plus(s)
 
     # Strip forbidden characters
+    # https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
     s = (
         s.replace(':', '-')
         .replace('/', '-')
+        .replace('<', '-')
+        .replace('>', '-')
+        .replace('"', '-')
+        .replace('\\', '-')
+        .replace('|', '-')
+        .replace('?', '-')
+        .replace('*', '-')
         .replace('\x00', '-')
-        .replace('\n', '')
+        .replace('\n', ' ')
     )
+
+    # Remove trailing dots and spaces; forbidden on Windows
+    s = s.rstrip(' .')
 
     if minimal_change:
         return s

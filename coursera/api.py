@@ -490,6 +490,8 @@ class CourseraOnDemand(object):
                 filename, extension = os.path.splitext(clean_url(tmpUrl))
 
                 head, tail = os.path.split(content['path'])
+                head = '/'.join([clean_filename(dir, minimal_change=True) for dir in head.split('/')])
+                tail = clean_filename(tail, minimal_change=True)
 
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
