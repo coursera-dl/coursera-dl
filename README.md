@@ -247,6 +247,10 @@ credentials (e.g. email address and password or a `~/.netrc` file), the
 class names, as well as any additional parameters:
 
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
+
+If you don't want to type your password in command line as plain text, you can use the script without `-p` option. In this case you will be prompted for password  once the script is run.
+
+    Without -p field:            coursera-dl -u <user> modelthinking-004
     Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
     Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" crypto-004
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" ml-2012-002
