@@ -13,11 +13,11 @@ HTTP_FORBIDDEN = 403
 
 COURSERA_URL = 'https://www.coursera.org'
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
-AUTH_URL_V3 = 'https://www.coursera.org/api/login/v3'
+AUTH_URL_V3 = 'https://api.coursera.org/api/login/v3'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
 
 # The following link is left just for illustative purposes:
-# https://www.coursera.org/api/courses.v1?fields=display%2CpartnerIds%2CphotoUrl%2CstartDate%2Cpartners.v1(homeLink%2Cname)&includes=partnerIds&q=watchlist&start=0
+# https://api.coursera.org/api/courses.v1?fields=display%2CpartnerIds%2CphotoUrl%2CstartDate%2Cpartners.v1(homeLink%2Cname)&includes=partnerIds&q=watchlist&start=0
 # Reply is as follows:
 # {
 #     "elements": [
@@ -34,10 +34,10 @@ CLASS_URL = 'https://class.coursera.org/{class_name}'
 #     },
 #     "linked": {}
 # }
-OPENCOURSE_LIST_COURSES = 'https://www.coursera.org/api/courses.v1?q=watchlist&start={start}'
+OPENCOURSE_LIST_COURSES = 'https://api.coursera.org/api/courses.v1?q=watchlist&start={start}'
 
 # The following link is left just for illustative purposes:
-# https://www.coursera.org/api/memberships.v1?fields=courseId,enrolledTimestamp,grade,id,lastAccessedTimestamp,onDemandSessionMembershipIds,onDemandSessionMemberships,role,v1SessionId,vc,vcMembershipId,courses.v1(courseStatus,display,partnerIds,photoUrl,specializations,startDate,v1Details,v2Details),partners.v1(homeLink,name),v1Details.v1(sessionIds),v1Sessions.v1(active,certificatesReleased,dbEndDate,durationString,hasSigTrack,startDay,startMonth,startYear),v2Details.v1(onDemandSessions,plannedLaunchDate,sessionsEnabledAt),specializations.v1(logo,name,partnerIds,shortName)&includes=courseId,onDemandSessionMemberships,vcMembershipId,courses.v1(partnerIds,specializations,v1Details,v2Details),v1Details.v1(sessionIds),v2Details.v1(onDemandSessions),specializations.v1(partnerIds)&q=me&showHidden=true&filter=current,preEnrolled
+# https://api.coursera.org/api/memberships.v1?fields=courseId,enrolledTimestamp,grade,id,lastAccessedTimestamp,onDemandSessionMembershipIds,onDemandSessionMemberships,role,v1SessionId,vc,vcMembershipId,courses.v1(courseStatus,display,partnerIds,photoUrl,specializations,startDate,v1Details,v2Details),partners.v1(homeLink,name),v1Details.v1(sessionIds),v1Sessions.v1(active,certificatesReleased,dbEndDate,durationString,hasSigTrack,startDay,startMonth,startYear),v2Details.v1(onDemandSessions,plannedLaunchDate,sessionsEnabledAt),specializations.v1(logo,name,partnerIds,shortName)&includes=courseId,onDemandSessionMemberships,vcMembershipId,courses.v1(partnerIds,specializations,v1Details,v2Details),v1Details.v1(sessionIds),v2Details.v1(onDemandSessions),specializations.v1(partnerIds)&q=me&showHidden=true&filter=current,preEnrolled
 # Sample reply:
 # {
 #     "elements": [
@@ -60,19 +60,19 @@ OPENCOURSE_LIST_COURSES = 'https://www.coursera.org/api/courses.v1?q=watchlist&s
 #         ]
 #     }
 # }
-OPENCOURSE_MEMBERSHIPS = 'https://www.coursera.org/api/memberships.v1?includes=courseId,courses.v1&q=me&showHidden=true&filter=current,preEnrolled'
-OPENCOURSE_CONTENT_URL = 'https://www.coursera.org/api/opencourse.v1/course/{class_name}?showLockedItems=true'
-OPENCOURSE_VIDEO_URL = 'https://www.coursera.org/api/opencourse.v1/video/{video_id}'
-OPENCOURSE_SUPPLEMENT_URL = 'https://www.coursera.org/api/onDemandSupplements.v1/'\
+OPENCOURSE_MEMBERSHIPS = 'https://api.coursera.org/api/memberships.v1?includes=courseId,courses.v1&q=me&showHidden=true&filter=current,preEnrolled'
+OPENCOURSE_CONTENT_URL = 'https://api.coursera.org/api/opencourse.v1/course/{class_name}?showLockedItems=true'
+OPENCOURSE_VIDEO_URL = 'https://api.coursera.org/api/opencourse.v1/video/{video_id}'
+OPENCOURSE_SUPPLEMENT_URL = 'https://api.coursera.org/api/onDemandSupplements.v1/'\
     '{course_id}~{element_id}?includes=asset&fields=openCourseAssets.v1%28typeName%29,openCourseAssets.v1%28definition%29'
 OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL = \
-    'https://www.coursera.org/api/onDemandProgrammingLearnerAssignments.v1/{course_id}~{element_id}?fields=submissionLearnerSchema'
+    'https://api.coursera.org/api/onDemandProgrammingLearnerAssignments.v1/{course_id}~{element_id}?fields=submissionLearnerSchema'
 OPENCOURSE_PROGRAMMING_IMMEDIATE_INSTRUCTIOINS_URL = \
-    'https://www.coursera.org/api/onDemandProgrammingImmediateInstructions.v1/{course_id}~{element_id}'
+    'https://api.coursera.org/api/onDemandProgrammingImmediateInstructions.v1/{course_id}~{element_id}'
 OPENCOURSE_REFERENCES_POLL_URL = \
-    "https://www.coursera.org/api/onDemandReferences.v1/?courseId={course_id}&q=courseListed&fields=name%2CshortId%2Cslug%2Ccontent&includes=assets"
+    "https://api.coursera.org/api/onDemandReferences.v1/?courseId={course_id}&q=courseListed&fields=name%2CshortId%2Cslug%2Ccontent&includes=assets"
 OPENCOURSE_REFERENCE_ITEM_URL = \
-    "https://www.coursera.org/api/onDemandReferences.v1/?courseId={course_id}&q=shortId&shortId={short_id}&fields=name%2CshortId%2Cslug%2Ccontent&includes=assets"
+    "https://api.coursera.org/api/onDemandReferences.v1/?courseId={course_id}&q=shortId&shortId={short_id}&fields=name%2CshortId%2Cslug%2Ccontent&includes=assets"
 
 # These are ids that are present in <asset> tag in assignment text:
 #
@@ -95,7 +95,7 @@ OPENCOURSE_REFERENCE_ITEM_URL = \
 #   "linked": null
 # }
 OPENCOURSE_ASSET_URL = \
-    'https://www.coursera.org/api/assetUrls.v1?ids={ids}'
+    'https://api.coursera.org/api/assetUrls.v1?ids={ids}'
 
 # These ids are provided in lecture json:
 #
@@ -143,7 +143,7 @@ OPENCOURSE_ASSET_URL = \
 #   "linked": null
 # }
 OPENCOURSE_ASSETS_URL = \
-    'https://www.coursera.org/api/openCourseAssets.v1/{id}'
+    'https://api.coursera.org/api/openCourseAssets.v1/{id}'
 
 # These asset ids are ids returned from OPENCOURSE_ASSETS_URL request:
 # See example above.
@@ -166,10 +166,10 @@ OPENCOURSE_ASSETS_URL = \
 #   "linked": null
 # }
 OPENCOURSE_API_ASSETS_V1_URL = \
-    'https://www.coursera.org/api/assets.v1?ids={id}'
+    'https://api.coursera.org/api/assets.v1?ids={id}'
 
 OPENCOURSE_ONDEMAND_COURSE_MATERIALS = \
-    'https://www.coursera.org/api/onDemandCourseMaterials.v1/?'\
+    'https://api.coursera.org/api/onDemandCourseMaterials.v1/?'\
         'q=slug&slug={class_name}&includes=moduleIds%2ClessonIds%2CpassableItemGroups%2CpassableItemGroupChoices%2CpassableLessonElements%2CitemIds%2Ctracks'\
         '&fields=moduleIds%2ConDemandCourseMaterialModules.v1(name%2Cslug%2Cdescription%2CtimeCommitment%2ClessonIds%2Coptional)%2ConDemandCourseMaterialLessons.v1(name%2Cslug%2CtimeCommitment%2CelementIds%2Coptional%2CtrackId)%2ConDemandCourseMaterialPassableItemGroups.v1(requiredPassedCount%2CpassableItemGroupChoiceIds%2CtrackId)%2ConDemandCourseMaterialPassableItemGroupChoices.v1(name%2Cdescription%2CitemIds)%2ConDemandCourseMaterialPassableLessonElements.v1(gradingWeight)%2ConDemandCourseMaterialItems.v1(name%2Cslug%2CtimeCommitment%2Ccontent%2CisLocked%2ClockableByItem%2CitemLockedReasonCode%2CtrackId)%2ConDemandCourseMaterialTracks.v1(passablesCount)'\
         '&showLockedItems=true'
@@ -187,7 +187,7 @@ AUTH_REDIRECT_URL = ('https://class.coursera.org/{class_name}'
 
 # Sample URL:
 #
-# https://www.coursera.org/api/onDemandPeerAssignmentInstructions.v1/?q=latest&userId=4958&courseId=RcnRZHHtEeWxvQr3acyajw&itemId=2yTvX&includes=gradingMetadata%2CreviewSchemas%2CsubmissionSchemas&fields=instructions%2ConDemandPeerAssignmentGradingMetadata.v1(requiredAuthoredReviewCount%2CisMentorGraded%2CassignmentDetails)%2ConDemandPeerReviewSchemas.v1(reviewSchema)%2ConDemandPeerSubmissionSchemas.v1(submissionSchema)
+# https://api.coursera.org/api/onDemandPeerAssignmentInstructions.v1/?q=latest&userId=4958&courseId=RcnRZHHtEeWxvQr3acyajw&itemId=2yTvX&includes=gradingMetadata%2CreviewSchemas%2CsubmissionSchemas&fields=instructions%2ConDemandPeerAssignmentGradingMetadata.v1(requiredAuthoredReviewCount%2CisMentorGraded%2CassignmentDetails)%2ConDemandPeerReviewSchemas.v1(reviewSchema)%2ConDemandPeerSubmissionSchemas.v1(submissionSchema)
 #
 # Sample response:
 #
@@ -284,12 +284,12 @@ AUTH_REDIRECT_URL = ('https://class.coursera.org/{class_name}'
 #
 # This URL is used to retrieve "phasedPeer" typename instructions' contents
 OPENCOURSE_PEER_ASSIGNMENT_INSTRUCTIONS = (
-    'https://www.coursera.org/api/onDemandPeerAssignmentInstructions.v1/?'
+    'https://api.coursera.org/api/onDemandPeerAssignmentInstructions.v1/?'
     'q=latest&userId={user_id}&courseId={course_id}&itemId={element_id}&'
     'includes=gradingMetadata%2CreviewSchemas%2CsubmissionSchemas&'
     'fields=instructions%2ConDemandPeerAssignmentGradingMetadata.v1(requiredAuthoredReviewCount%2CisMentorGraded%2CassignmentDetails)%2ConDemandPeerReviewSchemas.v1(reviewSchema)%2ConDemandPeerSubmissionSchemas.v1(submissionSchema)')
 
-#POST_OPENCOURSE_API_QUIZ_SESSION = 'https://www.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session'
+#POST_OPENCOURSE_API_QUIZ_SESSION = 'https://api.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session'
 # Sample response:
 #
 # {
@@ -305,9 +305,9 @@ OPENCOURSE_PEER_ASSIGNMENT_INSTRUCTIONS = (
 #     "progressState": "Started"
 #   }
 # }
-POST_OPENCOURSE_API_QUIZ_SESSION = 'https://www.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/quiz/session'
+POST_OPENCOURSE_API_QUIZ_SESSION = 'https://api.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/quiz/session'
 
-#POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://www.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session/opencourse~bVgqTevEEeWvGQrWsIkLlw:4958:BiNDdOvPEeWAkwqbKEEh3w@13:1468773901987@1/action/getState?autoEnroll=false'
+#POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://api.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session/opencourse~bVgqTevEEeWvGQrWsIkLlw:4958:BiNDdOvPEeWAkwqbKEEh3w@13:1468773901987@1/action/getState?autoEnroll=false'
 # Sample response:
 #
 # {
@@ -389,9 +389,9 @@ POST_OPENCOURSE_API_QUIZ_SESSION = 'https://www.coursera.org/api/opencourse.v1/u
 #   }
 # }
 #
-POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://www.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/quiz/session/{session_id}/action/getState?autoEnroll=false'
+POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://api.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/quiz/session/{session_id}/action/getState?autoEnroll=false'
 
-#POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
+#POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://api.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
 # Sample response:
 #
 # {
@@ -532,14 +532,14 @@ POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://www.coursera.org/api/openc
 # Request payload:
 # {"courseId":"-N44X0IJEeWpogr5ZO8qxQ","itemId":"YV0W4"}
 #
-#POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
+#POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://api.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
 
 # Response for this request is empty. Result (session_id) should be taken
 # either from Location header or from X-Coursera-Id header.
 #
 # Request payload:
 # {"courseId":"-N44X0IJEeWpogr5ZO8qxQ","itemId":"YV0W4"}
-POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandExamSessions.v1'
+POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://api.coursera.org/api/onDemandExamSessions.v1'
 
 # Sample response:
 # {
@@ -851,7 +851,7 @@ POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://www.coursera.org/api/onDemandE
 #
 # Request payload:
 # {"name":"getState","argument":[]}
-POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE = 'https://www.coursera.org/api/onDemandExamSessions.v1/{session_id}/actions?includes=gradingAttempts'
+POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE = 'https://api.coursera.org/api/onDemandExamSessions.v1/{session_id}/actions?includes=gradingAttempts'
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # define a per-user cache folder
@@ -940,6 +940,6 @@ INSTRUCTIONS_HTML_INJECTION_AFTER ='''?config=TeX-AMS-MML_HTMLorMML">
 
 # The following url is the root url (tree) for a Coursera Course
 OPENCOURSE_NOTEBOOK_DESCRIPTIONS = "https://hub.coursera-notebooks.org/hub/coursera_login?token={authId}&next=/"
-OPENCOURSE_NOTEBOOK_LAUNCHES = "https://www.coursera.org/api/onDemandNotebookWorkspaceLaunches.v1/?fields=authorizationId%2CcontentPath%2CuseLegacySystem"
+OPENCOURSE_NOTEBOOK_LAUNCHES = "https://api.coursera.org/api/onDemandNotebookWorkspaceLaunches.v1/?fields=authorizationId%2CcontentPath%2CuseLegacySystem"
 OPENCOURSE_NOTEBOOK_TREE = "https://hub.coursera-notebooks.org/user/{jupId}/api/contents/{path}?type=directory&_={timestamp}"
 OPENCOURSE_NOTEBOOK_DOWNLOAD = "https://hub.coursera-notebooks.org/user/{jupId}/files/{path}?download=1"
