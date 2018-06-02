@@ -1,3 +1,33 @@
 include requirements*.txt
 include CONTRIBUTING.md
 include LICENSE
+
+exclude .coveragerc
+exclude .ctags
+exclude .gitattributes
+exclude .github/ISSUE_TEMPLATE.md
+exclude .github/PULL_REQUEST_TEMPLATE.md
+exclude .gitignore
+exclude .travis.yml
+exclude AUTHORS.md
+exclude CHANGELOG.md
+exclude README.md
+exclude appveyor.yml
+exclude appveyor/install.ps1
+exclude appveyor/run_with_env.cmd
+exclude assets/hat-logo.svg
+exclude coursera-dl
+exclude coursera-dl.bat
+exclude deploy/.netrc
+exclude deploy/Dockerfile
+exclude deploy/README.md
+exclude deploy/build.sh
+exclude deploy/download.sh
+exclude fabfile.py
+exclude tox.ini
+
+prune appveyor/
+prune assets/
+prune deploy/
+prune coursera/test/
+prune .github/
