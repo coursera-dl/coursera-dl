@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.11.0 (2018-06-02)
+
+Features:
+  - Add support for "peer assignment" section (#650)
+
+Bugfixes:
+  - Switched to api.coursera.org subdomain for API requests (#660)
+
+
 ## 0.10.0 (2018-02-19)
 
 Features:
