@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.11.1 (2018-06-02)
+
+Bugfixes:
+  - Specify utf-8 encoding in setup.py to fix installation on Windows (#662)
+
 ## 0.11.0 (2018-06-02)
 
 Features:
@@ -7,7 +12,6 @@ Features:
 
 Bugfixes:
   - Switched to api.coursera.org subdomain for API requests (#660)
-
 
 ## 0.10.0 (2018-02-19)
 
