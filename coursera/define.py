@@ -11,7 +11,7 @@ import tempfile
 
 HTTP_FORBIDDEN = 403
 
-COURSERA_URL = 'https://www.coursera.org'
+COURSERA_URL = 'https://api.coursera.org'
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 AUTH_URL_V3 = 'https://api.coursera.org/api/login/v3'
 CLASS_URL = 'https://class.coursera.org/{class_name}'
