@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.2 (2018-06-03)
+
+Bugfixes:
+  - Use TLS v1.2 instead of v1.0
+  - Switched to api.coursera.org subdomain for subtitles requests (#664)
+
 ## 0.11.1 (2018-06-02)
 
 Bugfixes:
