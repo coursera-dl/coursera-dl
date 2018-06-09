@@ -241,3 +241,21 @@ DRAFT
    I think this is required for PyPI description to look nice.
 7. `python setup.py sdist` to build the package
 8. `twine upload dist/coursera-dl-0.6.1.tar.gz` to deploy the package.
+
+## Docker
+
+Build new Docker image from PyPI package:
+
+```
+docker build --tag courseradl/courseradl --build-arg VERSION=0.11.2 .
+```
+
+Run the image:
+```
+docker run --rm -it -v "$(pwd):/courses" -v "$HOME/.netrc:/netrc" courseradl -n /netrc -- google-machine-learning
+```
+
+Publish the image:
+```
+docker push courseradl/courseradl
+```

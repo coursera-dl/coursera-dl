@@ -220,26 +220,37 @@ applicable).
 If you prefer you can run this software inside Docker:
 
 ```
-docker run --rm -it \
-       -v "$(pwd):/courses" \
-       strm/coursera-dl \
-       -u <USER> -p <PASSWORD>
+docker run --rm -it -v \
+    "$(pwd):/courses" \
+    courseradl/courseradl -u <USER> -p <PASSWORD>
 ```
 
-The actual working dir for coursera-dl is /courses, all courses will be downloaded there if you don't specify otherwise.
+Or using netrc file:
+
+```
+docker run --rm -it \
+    -v "$(pwd):/courses" -v "$HOME/.netrc:/netrc" \
+    courseradl/courseradl -n /netrc
+```
+
+The actual working dir for coursera-dl is /courses, all courses will be
+downloaded there if you don't specify otherwise.
 
 ## Windows
 
 `python -m pip install coursera-dl`
 
-Be sure that the Python install path is added to the PATH system environment variables. This can be found in Control Panel > System > Advanced System Settings > Environment Variables. 
+Be sure that the Python install path is added to the PATH system environment
+variables. This can be found in Control Panel > System > Advanced System
+Settings > Environment Variables. 
 
 ```
 Example:
 C:\Python35\Scripts\;C:\Python35\;
 ```
 
-Or if you have restricted installation permissions and you've installed Python under AppData, add this to your PATH.
+Or if you have restricted installation permissions and you've installed Python
+under AppData, add this to your PATH.
 
 ```
 Example:
