@@ -10,6 +10,8 @@ from __future__ import print_function
 import os.path
 import subprocess
 import sys
+# For compatibility with Python2.7
+from io import open
 
 from setuptools import setup
 
@@ -100,7 +102,8 @@ setup(
 
     description='Script for downloading Coursera.org videos and naming them.',
     long_description=long_description,
-    keywords=['coursera-dl', 'coursera', 'download', 'education', 'MOOCs', 'video'],
+    keywords=['coursera-dl', 'coursera',
+              'download', 'education', 'MOOCs', 'video'],
     classifiers=trove_classifiers,
 
     packages=["coursera"],
