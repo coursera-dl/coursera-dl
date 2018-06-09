@@ -34,7 +34,7 @@ from coursera.utils import total_seconds, is_course_complete
         ('Week 3: Data and Abstraction', 'Week_3-_Data_and_Abstraction'),
         ('  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning',
          'Week_1_BRANDING-__Marketing_Strategy_and_Brand_Positioning'),
-        ('test &amp; &quot; adfas', 'test___adfas'),
+        ('test &amp; &quot; adfas', 'test__-_adfas'),  # `"` were changed first to `-`
         ('&nbsp;', ''),
         ('☂℮﹩т ω☤☂ℌ Ṳᾔ☤ḉ◎ⅾε', '__')
     ]
@@ -54,7 +54,7 @@ def test_clean_filename(unclean, clean):
          'Week 3- Data and Abstraction'),
         ('  (Week 1) BRANDING:  Marketing Strategy and Brand Positioning',
          '  (Week 1) BRANDING-  Marketing Strategy and Brand Positioning'),
-        ('test &amp; &quot; adfas', 'test & " adfas'),
+        ('test &amp; &quot; adfas', 'test & - adfas'),  # `"` are forbidden on Windows
         ('&nbsp;', u'\xa0'),
         ('☂℮﹩т ω☤☂ℌ Ṳᾔ☤ḉ◎ⅾε', '☂℮﹩т ω☤☂ℌ Ṳᾔ☤ḉ◎ⅾε')
     ]
