@@ -493,8 +493,14 @@ class CourseraOnDemand(object):
 
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
-                    os.makedirs(self._course_name + "/notebook/" + head + "/")
 
+                # head = head.replace(':', '-')
+                # To prevent problems in folder/file creation when names contain restricted symbols
+                head = clean_filename(head)
+                logging.ingo("Head: {}", head)
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
+                    os.makedirs(self._course_name + "/notebook/" + head + "/")
+                
                 r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
                 if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
                     logging.info('Downloading {} into {}'.format(tail, head))
@@ -517,8 +523,14 @@ class CourseraOnDemand(object):
 
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
-                    os.makedirs(self._course_name + "/notebook/" + head + "/")
 
+                # head = head.replace(':', '-')
+                # To prevent problems in folder/file creation when names contain restricted symbols
+                head = clean_filename(head)
+                logging.info("Head: {}", head)
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
+                    os.makedirs(self._course_name + "/notebook/" + head + "/")
+                
                 r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
                 if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
                     logging.info('Downloading Jupyter {} into {}'.format(tail, head))
