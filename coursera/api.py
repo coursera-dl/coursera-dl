@@ -5,6 +5,7 @@ downloader.
 """
 
 import os
+import re
 import json
 import base64
 import logging
@@ -30,6 +31,7 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_REFERENCES_POLL_URL,
                      OPENCOURSE_REFERENCE_ITEM_URL,
                      OPENCOURSE_PROGRAMMING_IMMEDIATE_INSTRUCTIOINS_URL,
+                     OPENCOURSE_PEER_ASSIGNMENT_INSTRUCTIONS,
 
                      # New feature, Notebook (Python Jupyter)
                      OPENCOURSE_NOTEBOOK_DESCRIPTIONS,
@@ -468,7 +470,7 @@ class CourseraOnDemand(object):
 
         supplement_links = {}
 
-        url = url.format(**kwargs)        
+        url = url.format(**kwargs)
         reply = get_page(
             self._session,
             url,
@@ -478,25 +480,26 @@ class CourseraOnDemand(object):
         headers = self._auth_headers_with_json()
 
         for content in reply['content']:
-            
+
             if content['type'] == 'directory':
                 a = self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path=content['path'], timestamp=int(time.time()))
                 supplement_links.update(a)
-            
+
             elif content['type'] == 'file':
                 tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
                 filename, extension = os.path.splitext(clean_url(tmpUrl))
-                
+
                 head, tail = os.path.split(content['path'])
-                
+
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
-                    # head = head.replace(':', '-')
-                    # To prevent problems in folder/file creation when names contain restricted symbols
-                    head = clean_filename(head)
-                    logging.ingo("Head: {}", head)
-                    if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
-                        os.makedirs(self._course_name + "/notebook/" + head + "/")
+
+                # head = head.replace(':', '-')
+                # To prevent problems in folder/file creation when names contain restricted symbols
+                head = clean_filename(head)
+                logging.ingo("Head: {}", head)
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
+                    os.makedirs(self._course_name + "/notebook/" + head + "/")
                 
                 r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
                 if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
@@ -509,24 +512,24 @@ class CourseraOnDemand(object):
 
                 if not str(extension[1:]) in supplement_links:
                     supplement_links[str(extension[1:])] = []
-                
-                supplement_links[str(extension[1:])].append((tmpUrl.replace(" ", "%20"), filename))
 
+                supplement_links[str(extension[1:])].append((tmpUrl.replace(" ", "%20"), filename))
 
             elif content['type'] == 'notebook':
                 tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
                 filename, extension = os.path.splitext(clean_url(tmpUrl))
-                
+
                 head, tail = os.path.split(content['path'])
-                
+
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
-                    # head = head.replace(':', '-')
-                    # To prevent problems in folder/file creation when names contain restricted symbols
-                    head = clean_filename(head)
-                    logging.info("Head: {}", head)
-                    if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
-                        os.makedirs(self._course_name + "/notebook/" + head + "/")
+
+                # head = head.replace(':', '-')
+                # To prevent problems in folder/file creation when names contain restricted symbols
+                head = clean_filename(head)
+                logging.info("Head: {}", head)
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
+                    os.makedirs(self._course_name + "/notebook/" + head + "/")
                 
                 r = requests.get(tmpUrl.replace(" ", "%20"), cookies=self._session.cookies)
                 if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
@@ -538,18 +541,16 @@ class CourseraOnDemand(object):
 
                 if not "ipynb" in supplement_links:
                     supplement_links["ipynb"] = []
-                
+
                 supplement_links["ipynb"].append((tmpUrl.replace(" ", "%20"), filename))
 
             else:
                 logging.info('Unsupported typename {} in notebook'.format(content['type']))
-                
+
         return supplement_links
 
-
     def _get_notebook_json(self, notebook_id, authorizationId):
-        
-        import re, time
+
         headers = self._auth_headers_with_json()
         reply = get_page(
             self._session,
@@ -563,22 +564,21 @@ class CourseraOnDemand(object):
         if len(jupyterId) == 0:
             logging.error('Could not download notebook %s', notebook_id)
             return None
-        
+
         jupyterId = jupyterId[0]
 
         newReq = requests.Session()
         req = newReq.get(OPENCOURSE_NOTEBOOK_TREE.format(jupId=jupyterId, path="/", timestamp=int(time.time())), headers=headers)
-        
+
         return self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path="/", timestamp=int(time.time()))
-        
 
     def extract_links_from_notebook(self, notebook_id):
 
-        try:    
+        try:
             authorizationId = self._extract_notebook_text(notebook_id)
             ret = self._get_notebook_json(notebook_id, authorizationId)
             return ret
-        except  requests.exceptions.HTTPError as exception:
+        except requests.exceptions.HTTPError as exception:
             logging.error('Could not download notebook %s: %s', notebook_id, exception)
             if is_debug_run():
                 logging.exception('Could not download notebook %s: %s', notebook_id, exception)
@@ -1005,6 +1005,39 @@ class CourseraOnDemand(object):
                                   element_id, exception)
             return None
 
+    def extract_links_from_peer_assignment(self, element_id):
+        """
+        Return a dictionary with links to supplement files (pdf, csv, zip,
+        ipynb, html and so on) extracted from peer assignment.
+
+        @param element_id: Element ID to extract files from.
+        @type element_id: str
+
+        @return: @see CourseraOnDemand._extract_links_from_text
+        """
+        logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
+
+        try:
+            # Assignment text (instructions) contains asset tags which describe
+            # supplementary files.
+            text = ''.join(self._extract_peer_assignment_text(element_id))
+            if not text:
+                return {}
+
+            supplement_links = self._extract_links_from_text(text)
+            instructions = (IN_MEMORY_MARKER + self._markup_to_html(text),
+                            'peer_assignment_instructions')
+            extend_supplement_links(
+                supplement_links, {IN_MEMORY_EXTENSION: [instructions]})
+            return supplement_links
+        except requests.exceptions.HTTPError as exception:
+            logging.error('Could not download peer assignment %s: %s',
+                          element_id, exception)
+            if is_debug_run():
+                logging.exception('Could not download peer assignment %s: %s',
+                                  element_id, exception)
+            return None
+
     def extract_links_from_supplement(self, element_id):
         """
         Return a dictionary with supplement files (pdf, csv, zip, ipynb, html
@@ -1221,6 +1254,41 @@ class CourseraOnDemand(object):
         return [element['submissionLearnerSchema']['definition']
                 ['assignmentInstructions']['definition']['value']
                 for element in dom['elements']]
+
+    def _extract_peer_assignment_text(self, element_id):
+        """
+        Extract peer assignment text (instructions).
+
+        @param element_id: Element id to extract peer assignment instructions from.
+        @type element_id: str
+
+        @return: List of peer assignment text (instructions).
+        @rtype: [str]
+        """
+        dom = get_page(self._session, OPENCOURSE_PEER_ASSIGNMENT_INSTRUCTIONS,
+                       json=True,
+                       user_id=self._user_id,
+                       course_id=self._course_id,
+                       element_id=element_id)
+
+        result = []
+
+        for element in dom['elements']:
+            # There is only one section with Instructions
+            if 'introduction' in element['instructions']:
+                result.append(element['instructions']['introduction']['definition']['value'])
+
+            # But there may be multiple sections in Sections
+            for section in element['instructions'].get('sections', []):
+                section_value = section['content']['definition']['value']
+                section_title = section.get('title')
+                if section_title is not None:
+                    # If section title is present, put it in the beginning of
+                    # section value as if it was there.
+                    section_value = ('<heading level="3">%s</heading>' % section_title) + section_value
+                result.append(section_value)
+
+        return result
 
     def _extract_links_from_text(self, text):
         """

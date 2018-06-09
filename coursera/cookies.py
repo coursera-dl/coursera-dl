@@ -53,6 +53,7 @@ def __fixed_init__(self, version, name, value,
                      rest,
                      rfc2109=False)
 
+
 cookielib.Cookie.__init__ = __fixed_init__
 
 
@@ -170,7 +171,8 @@ def down_the_wabbit_hole(session, class_name):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        raise AuthenticationFailed('Cannot login on class.coursera.org: %s' % e)
+        raise AuthenticationFailed(
+            'Cannot login on class.coursera.org: %s' % e)
 
     logging.debug('Exiting "deep" authentication.')
 
@@ -375,8 +377,9 @@ class TLSAdapter(HTTPAdapter):
     A customized HTTP Adapter which uses TLS v1.2 for encrypted
     connections.
     """
+
     def init_poolmanager(self, connections, maxsize, block=False):
         self.poolmanager = PoolManager(num_pools=connections,
                                        maxsize=maxsize,
                                        block=block,
-                                       ssl_version=ssl.PROTOCOL_TLSv1)
+                                       ssl_version=ssl.PROTOCOL_TLSv1_2)

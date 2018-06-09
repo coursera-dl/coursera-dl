@@ -48,7 +48,7 @@ def read_file(filename, alt=None):
     lines = None
 
     try:
-        with open(filename) as f:
+        with open(filename, encoding='utf-8') as f:
             lines = f.read()
     except IOError:
         lines = [] if alt is None else alt

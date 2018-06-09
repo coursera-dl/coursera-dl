@@ -1,0 +1,16 @@
+{
+  "elements": [
+    {
+      "instructions": {
+        "introduction": {
+          "typeName": "cml",
+          "definition": {
+            "dtdId": "assess/1",
+            "value": "<co-content><text>intro</text></li></list></co-content>"
+          }
+        }
+      },
+      "id": "4958~RcnRZHHtEeWxvQr3acyajw~2yTvX~8x7Qhs66EeW2Tw715xhIPQ@13"
+    }
+  ]
+}

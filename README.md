@@ -20,6 +20,7 @@
     - [Resuming downloads](#resuming-downloads)
 - [Troubleshooting](#troubleshooting)
     - [China issues](#china-issues)
+    - [Download timeouts](#download-timeouts)
     - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
     - [Windows: Proxy support](#windows-proxy-support)
     - [Windows: Failed to create process](#windows-failed-to-create-process)
@@ -246,6 +247,10 @@ credentials (e.g. email address and password or a `~/.netrc` file), the
 class names, as well as any additional parameters:
 
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
+
+If you don't want to type your password in command line as plain text, you can use the script without `-p` option. In this case you will be prompted for password  once the script is run.
+
+    Without -p field:            coursera-dl -u <user> modelthinking-004
     Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
     Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" crypto-004
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" ml-2012-002
@@ -423,6 +428,30 @@ option.
 Alternatively you may want to try this Chrome extension: https://chrome.google.com/webstore/detail/coursera-materials-downlo/ijkboagofaehocnjacacdhdcbbcpilih
 
 If none of the above works for you, there is nothing we can do.
+
+## Download timeouts
+
+Coursera-dl supports external downloaders but note that they are only used to
+download materials after the syllabus has been parsed, e.g. videos, PDFs, some
+handouts and additional files (syllabus is always downloaded using the internal
+downloader). If you experience problems with downloading such materials, you may
+want to start using external downloader and configure its timeout values. For
+example, you can use aria2c downloader by passing `--aria` option:
+
+```
+coursera-dl -n --path . --aria2  <course-name>
+```
+
+And put this into aria2c's configuration file `~/.aria2/aria2.conf` to reduce
+timeouts:
+
+```
+connect-timeout=2
+timeout=2
+bt-stop-timeout=1
+```
+
+Timeout configuration for internal downloader is not supported.
 
 ## Windows: proxy support
 

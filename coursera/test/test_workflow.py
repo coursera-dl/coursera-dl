@@ -37,7 +37,7 @@ class MockedFailingDownloader(Downloader):
         raise self._exception_to_throw
 
 
-TEST_URL = "https://www.coursera.org/api/test-url"
+TEST_URL = "https://api.coursera.org/api/test-url"
 
 
 def make_test_modules():
@@ -110,7 +110,7 @@ def test_iter_modules():
         (0, '01_section1'),
         (0, normpath('test_class/01_section1/01_module1')),
         (0, 'lecture1', 'en.txt', 'title'),
-        ('en.txt', 'https://www.coursera.org/api/test-url', 'title')
+        ('en.txt', 'https://api.coursera.org/api/test-url', 'title')
     ]
     collected_output = []
 
@@ -138,7 +138,7 @@ def test_walk_modules():
         (0, '01_section1',
          0, normpath('test_class/01_section1/01_module1'),
          0, 'lecture1', normpath('test_class/01_section1/01_module1/01_lecture1_title.en.txt'),
-         'https://www.coursera.org/api/test-url')]
+         'https://api.coursera.org/api/test-url')]
     collected_output = []
 
     for module, section, lecture, resource in _walk_modules(
