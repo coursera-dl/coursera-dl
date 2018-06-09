@@ -494,7 +494,7 @@ class CourseraOnDemand(object):
                     # head = head.replace(':', '-')
                     # To prevent problems in folder/file creation when names contain restricted symbols
                     head = clean_filename(head)
-                    print("Head: {}", head)
+                    logging.ingo("Head: {}", head)
                     if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
                         os.makedirs(self._course_name + "/notebook/" + head + "/")
                 
@@ -524,7 +524,7 @@ class CourseraOnDemand(object):
                     # head = head.replace(':', '-')
                     # To prevent problems in folder/file creation when names contain restricted symbols
                     head = clean_filename(head)
-                    # logging.info("Head: {}", head)
+                    logging.info("Head: {}", head)
                     if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
                         os.makedirs(self._course_name + "/notebook/" + head + "/")
                 
