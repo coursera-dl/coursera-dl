@@ -21,3 +21,4 @@ venv3
 .python-version
 .ipynb_checkpoints
 .ropeproject
+.mypy_cache
