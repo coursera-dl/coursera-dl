@@ -491,7 +491,10 @@ class CourseraOnDemand(object):
                 
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
-                    head = head.replace(':', '-')
+                    # head = head.replace(':', '-')
+                    # To prevent problems in folder/file creation when names contain restricted symbols
+                    head = clean_filename(head)
+                    print("Head: {}", head)
                     if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
                         os.makedirs(self._course_name + "/notebook/" + head + "/")
                 
@@ -518,7 +521,10 @@ class CourseraOnDemand(object):
                 
                 if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
                     logging.info('Creating [{}] directories...'.format(head))
-                    head = head.replace(':', '-')
+                    # head = head.replace(':', '-')
+                    # To prevent problems in folder/file creation when names contain restricted symbols
+                    head = clean_filename(head)
+                    # logging.info("Head: {}", head)
                     if not os.path.exists(self._course_name + "/notebook/" + head + "/"):
                         os.makedirs(self._course_name + "/notebook/" + head + "/")
                 
