@@ -127,7 +127,8 @@ class QuizExamToMarkupConverter(object):
         result = ['<form>']
 
         for option in options:
-            option_text = unescape_html(option['display']['definition']['value'])
+            option_text = unescape_html(
+                option['display']['definition']['value'])
 
             # We need to replace <text> with <span> so that answer text
             # stays on the same line with checkbox/radio button
@@ -238,7 +239,8 @@ class MarkupToHTMLConverter(object):
             asset = self._asset_retriever[image['assetid']]
             if asset.data is not None:
                 encoded64 = base64.b64encode(asset.data).decode()
-                image['src'] = 'data:%s;base64,%s' % (asset.content_type, encoded64)
+                image['src'] = 'data:%s;base64,%s' % (
+                    asset.content_type, encoded64)
 
     def _convert_markup_audios(self, soup):
         """
@@ -264,9 +266,11 @@ class MarkupToHTMLConverter(object):
             asset = self._asset_retriever[audio['id']]
             if asset.data is not None:
                 encoded64 = base64.b64encode(asset.data).decode()
-                data_string = 'data:%s;base64,%s' % (asset.content_type, encoded64)
+                data_string = 'data:%s;base64,%s' % (
+                    asset.content_type, encoded64)
 
-                source_tag = soup.new_tag('source', src=data_string, type=asset.content_type)
+                source_tag = soup.new_tag(
+                    'source', src=data_string, type=asset.content_type)
                 controls_tag = soup.new_tag('audio', controls="")
                 controls_tag.string = 'Your browser does not support the audio element.'
 
@@ -278,6 +282,7 @@ class OnDemandCourseMaterialItems(object):
     """
     Helper class that allows accessing lecture JSONs by lesson IDs.
     """
+
     def __init__(self, items):
         """
         Initialization. Build a map from lessonId to Lecture (item)
@@ -347,6 +352,7 @@ class Asset(namedtuple('Asset', 'id name type_name url content_type data')):
     This class contains information about an asset.
     """
     __slots__ = ()
+
     def __repr__(self):
         return 'Asset(id="%s", name="%s", type_name="%s", url="%s", content_type="%s", data="<...>")' % (
             self.id, self.name, self.type_name, self.url, self.content_type)
@@ -356,6 +362,7 @@ class AssetRetriever(object):
     """
     This class helps download assets by their ID.
     """
+
     def __init__(self, session):
         self._session = session
         self._asset_mapping = {}
@@ -372,7 +379,8 @@ class AssetRetriever(object):
                               id=','.join(asset_ids))
 
         # Create a map "asset_id => asset" for easier access
-        asset_map = dict((asset['id'], asset) for asset in asset_list['elements'])
+        asset_map = dict((asset['id'], asset)
+                         for asset in asset_list['elements'])
 
         for asset_id in asset_ids:
             # Download each asset
@@ -434,7 +442,8 @@ class CourseraOnDemand(object):
         self._user_id = None
 
         self._quiz_to_markup = QuizExamToMarkupConverter(session)
-        self._markup_to_html = MarkupToHTMLConverter(session, mathjax_cdn_url=mathjax_cdn_url)
+        self._markup_to_html = MarkupToHTMLConverter(
+            session, mathjax_cdn_url=mathjax_cdn_url)
         self._asset_retriever = AssetRetriever(session)
 
     def obtain_user_id(self):
@@ -463,7 +472,8 @@ class CourseraOnDemand(object):
         except requests.exceptions.HTTPError as exception:
             logging.error('Could not download exam %s: %s', exam_id, exception)
             if is_debug_run():
-                logging.exception('Could not download exam %s: %s', exam_id, exception)
+                logging.exception(
+                    'Could not download exam %s: %s', exam_id, exception)
             return None
 
     def _get_notebook_folder(self, url, jupyterId, **kwargs):
@@ -574,7 +584,8 @@ class CourseraOnDemand(object):
         jupyterId = jupyterId[0]
 
         newReq = requests.Session()
-        req = newReq.get(OPENCOURSE_NOTEBOOK_TREE.format(jupId=jupyterId, path="/", timestamp=int(time.time())), headers=headers)
+        req = newReq.get(OPENCOURSE_NOTEBOOK_TREE.format(
+            jupId=jupyterId, path="/", timestamp=int(time.time())), headers=headers)
 
         return self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path="/", timestamp=int(time.time()))
 
@@ -585,9 +596,11 @@ class CourseraOnDemand(object):
             ret = self._get_notebook_json(notebook_id, authorizationId)
             return ret
         except requests.exceptions.HTTPError as exception:
-            logging.error('Could not download notebook %s: %s', notebook_id, exception)
+            logging.error('Could not download notebook %s: %s',
+                          notebook_id, exception)
             if is_debug_run():
-                logging.exception('Could not download notebook %s: %s', notebook_id, exception)
+                logging.exception(
+                    'Could not download notebook %s: %s', notebook_id, exception)
             return None
 
     def extract_links_from_quiz(self, quiz_id):
@@ -598,7 +611,8 @@ class CourseraOnDemand(object):
         except requests.exceptions.HTTPError as exception:
             logging.error('Could not download quiz %s: %s', quiz_id, exception)
             if is_debug_run():
-                logging.exception('Could not download quiz %s: %s', quiz_id, exception)
+                logging.exception(
+                    'Could not download quiz %s: %s', quiz_id, exception)
             return None
 
     def _convert_quiz_json_to_links(self, quiz_json, filename_suffix):
@@ -653,7 +667,7 @@ class CourseraOnDemand(object):
 
     def _get_quiz_session_id(self, quiz_id):
         headers = self._auth_headers_with_json()
-        data = {"contentRequestBody":[]}
+        data = {"contentRequestBody": []}
         reply = get_page(self._session,
                          POST_OPENCOURSE_API_QUIZ_SESSION,
                          json=True,
@@ -706,9 +720,11 @@ class CourseraOnDemand(object):
 
             return links
         except requests.exceptions.HTTPError as exception:
-            logging.error('Could not download lecture %s: %s', video_id, exception)
+            logging.error('Could not download lecture %s: %s',
+                          video_id, exception)
             if is_debug_run():
-                logging.exception('Could not download lecture %s: %s', video_id, exception)
+                logging.exception(
+                    'Could not download lecture %s: %s', video_id, exception)
             return None
 
     def _normalize_assets(self, assets):
@@ -871,7 +887,7 @@ class CourseraOnDemand(object):
         video_content['mp4'] = video_url
 
         subtitle_link = self._extract_subtitles_from_video_dom(
-                dom, subtitle_language, video_id)
+            dom, subtitle_language, video_id)
 
         for key, value in iteritems(subtitle_link):
             video_content[key] = value
@@ -939,7 +955,8 @@ class CourseraOnDemand(object):
                 if subtitle_url is not None:
                     # some subtitle urls are relative!
                     subtitle_links[
-                        "%s.%s" % (current_subtitle_language, subtitle_extension)
+                        "%s.%s" % (current_subtitle_language,
+                                   subtitle_extension)
                     ] = make_coursera_absolute_url(subtitle_url)
         return subtitle_links
 
@@ -988,7 +1005,8 @@ class CourseraOnDemand(object):
 
         @return: @see CourseraOnDemand._extract_links_from_text
         """
-        logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
+        logging.debug(
+            'Gathering supplement URLs for element_id <%s>.', element_id)
 
         try:
             # Assignment text (instructions) contains asset tags which describe
@@ -1021,7 +1039,8 @@ class CourseraOnDemand(object):
 
         @return: @see CourseraOnDemand._extract_links_from_text
         """
-        logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
+        logging.debug(
+            'Gathering supplement URLs for element_id <%s>.', element_id)
 
         try:
             # Assignment text (instructions) contains asset tags which describe
@@ -1051,13 +1070,14 @@ class CourseraOnDemand(object):
 
         @return: @see CourseraOnDemand._extract_links_from_text
         """
-        logging.debug('Gathering supplement URLs for element_id <%s>.', element_id)
+        logging.debug(
+            'Gathering supplement URLs for element_id <%s>.', element_id)
 
         try:
             dom = get_page(self._session, OPENCOURSE_SUPPLEMENT_URL,
-                        json=True,
-                        course_id=self._course_id,
-                        element_id=element_id)
+                           json=True,
+                           course_id=self._course_id,
+                           element_id=element_id)
 
             supplement_content = {}
 
@@ -1228,7 +1248,8 @@ class CourseraOnDemand(object):
         @rtype: [str]
         """
         headers = self._auth_headers_with_json()
-        data = {'courseId': self._course_id, 'learnerId': self._user_id, 'itemId': element_id}
+        data = {'courseId': self._course_id,
+                'learnerId': self._user_id, 'itemId': element_id}
         dom = get_page(self._session, OPENCOURSE_NOTEBOOK_LAUNCHES,
                        post=True,
                        json=True,
@@ -1237,7 +1258,7 @@ class CourseraOnDemand(object):
                        headers=headers,
                        element_id=element_id,
                        data=json.dumps(data)
-        )
+                       )
 
         # Return authorization id. This id changes on each request
         return dom['elements'][0]['authorizationId']
@@ -1282,7 +1303,8 @@ class CourseraOnDemand(object):
         for element in dom['elements']:
             # There is only one section with Instructions
             if 'introduction' in element['instructions']:
-                result.append(element['instructions']['introduction']['definition']['value'])
+                result.append(element['instructions']
+                              ['introduction']['definition']['value'])
 
             # But there may be multiple sections in Sections
             for section in element['instructions'].get('sections', []):
@@ -1291,7 +1313,8 @@ class CourseraOnDemand(object):
                 if section_title is not None:
                     # If section title is present, put it in the beginning of
                     # section value as if it was there.
-                    section_value = ('<heading level="3">%s</heading>' % section_title) + section_value
+                    section_value = ('<heading level="3">%s</heading>' %
+                                     section_title) + section_value
                 result.append(section_value)
 
         return result
