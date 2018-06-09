@@ -16,8 +16,6 @@ environment:
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
-    # This command works for most versions of Python in AppVeyor except of Python 2.6
-    PIP_UPGRADE_CMD: "python -m pip install --disable-pip-version-check --user --upgrade pip"
     #PANDOC_URL: "https://github.com/jgm/pandoc/releases/download/1.17.1/pandoc-1.17.1-1-windows.msi"
     #PANDOC_MSI: "C:\\pandoc.msi"
 
@@ -25,16 +23,6 @@ environment:
     # Pre-installed Python versions, which Appveyor may upgrade to
     # a later point release.
     # See: http://www.appveyor.com/docs/installed-software#python
-
-    - PYTHON: "C:\\Python26"
-      PYTHON_VERSION: "2.6.x" # currently 2.6.6
-      PYTHON_ARCH: "32"
-      # For Python 2.6 we are using old version of pip upgrade command
-      PIP_UPGRADE_CMD: "pip install --disable-pip-version-check --user --upgrade pip"
-
-    - PYTHON: "C:\\Python26-x64"
-      PYTHON_VERSION: "2.6.x" # currently 2.6.6
-      PYTHON_ARCH: "64"
 
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.x" # currently 2.7.11
@@ -87,7 +75,7 @@ install:
 
   # Upgrade to the latest version of pip to avoid it displaying warnings
   # about it being out of date.
-  - "%PIP_UPGRADE_CMD%"
+  - "python -m pip install --disable-pip-version-check --user --upgrade pip"
 
   # Install requirements
   - "%CMD_IN_ENV% pip install -r requirements.txt"
