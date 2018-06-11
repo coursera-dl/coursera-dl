@@ -57,7 +57,7 @@ def parse_args(args=None):
                              dest='username',
                              action='store',
                              default=None,
-                             help='coursera username')
+                             help='username (email) that you use to login to Coursera')
 
     group_basic.add_argument('-p',
                              '--password',
