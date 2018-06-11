@@ -112,7 +112,8 @@ def parse_args(args=None):
                              )
 
     # Selection of material to download
-    group_material = parser.add_argument_group('Selection of material to download')
+    group_material = parser.add_argument_group(
+        'Selection of material to download')
 
     group_material.add_argument('--only-syllabus',
                                 dest='only_syllabus',
@@ -289,7 +290,8 @@ def parse_args(args=None):
                         help='Do not limit filenames to be ASCII-only')
 
     # Advanced authentication
-    group_adv_auth = parser.add_argument_group('Advanced authentication options')
+    group_adv_auth = parser.add_argument_group(
+        'Advanced authentication options')
 
     group_adv_auth.add_argument('-c',
                                 '--cookies_file',
@@ -323,7 +325,8 @@ def parse_args(args=None):
                                 help='clear cached cookies')
 
     # Advanced miscellaneous options
-    group_adv_misc = parser.add_argument_group('Advanced miscellaneous options')
+    group_adv_misc = parser.add_argument_group(
+        'Advanced miscellaneous options')
 
     group_adv_misc.add_argument('--hook',
                                 dest='hooks',
@@ -416,7 +419,8 @@ def parse_args(args=None):
 
     # check arguments
     if args.use_keyring and args.password:
-        logging.warning('--keyring and --password cannot be specified together')
+        logging.warning(
+            '--keyring and --password cannot be specified together')
         args.use_keyring = False
 
     if args.use_keyring and not keyring:
@@ -437,5 +441,3 @@ def parse_args(args=None):
             sys.exit(1)
 
     return args
-
-

@@ -242,7 +242,7 @@ downloaded there if you don't specify otherwise.
 
 Be sure that the Python install path is added to the PATH system environment
 variables. This can be found in Control Panel > System > Advanced System
-Settings > Environment Variables. 
+Settings > Environment Variables.
 
 ```
 Example:
@@ -409,7 +409,7 @@ one of the following actions solve your problem:
     * You get an error when using `-n` to specify that you want to use a
       `.netrc` file and,
     * You want the script to use your default netrc file and,
-    * You get a message saying `coursera-dl: error: too few arguments`  
+    * You get a message saying `coursera-dl: error: too few arguments`
 
       Then you should specify `--` as an argument after `-n`, that is, `-n --`
       or change the order in which you pass the arguments to the script, so that
@@ -539,7 +539,7 @@ https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning
 When saving a course page, we enabled `MathJax` rendering for math equations, by
 injecting `MathJax.js` in the header. The script is using a cdn service provided
 by [mathjax.org](https://cdn.mathjax.org/mathjax/latest/MathJax.js). However, that
-url is not accessible in some countries/regions, you can provide a 
+url is not accessible in some countries/regions, you can provide a
 `--mathjax-cdn <MATHJAX_CDN>` parameter to specify the `MathJax.js` file that is
 accessible in your region.
 
