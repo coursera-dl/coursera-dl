@@ -133,6 +133,7 @@ def download_on_demand_class(args, class_name):
             class_name,
             args.reverse,
             args.unrestricted_filenames,
+            args.using_name,
             args.subtitle_language,
             args.video_resolution,
             args.download_quizzes,
