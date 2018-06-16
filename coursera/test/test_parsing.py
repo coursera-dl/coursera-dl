@@ -65,7 +65,7 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 def get_old_style_video(monkeypatch):
     pytest.skip()
     """
-    Mock some methods that would, otherwise, create repeateadly many web
+    Mock some methods that would, otherwise, create repeatedly many web
     requests.
 
     More specifically, we mock:
