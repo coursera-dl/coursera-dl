@@ -115,12 +115,12 @@ def download_on_demand_class(args, class_name):
     Download all requested resources from the on-demand class given in class_name.
 
     @return: Tuple of (bool, bool), where the first bool indicates whether
-        errors occured while parsing syllabus, the second bool indicates
+        errors occurred while parsing syllabus, the second bool indicates
         whether the course appears to be completed.
     @rtype: (bool, bool)
     """
 
-    error_occured = False
+    error_occurred = False
     session = get_session()
     extractor = CourseraExtractor(session, args.username, args.password)
 
@@ -129,7 +129,7 @@ def download_on_demand_class(args, class_name):
         with open(cached_syllabus_filename) as syllabus_file:
             modules = json.load(syllabus_file)
     else:
-        error_occured, modules = extractor.get_modules(
+        error_occurred, modules = extractor.get_modules(
             class_name,
             args.reverse,
             args.unrestricted_filenames,
@@ -145,7 +145,7 @@ def download_on_demand_class(args, class_name):
             json.dump(modules, file_object, indent=4)
 
     if args.only_syllabus:
-        return error_occured, False
+        return error_occurred, False
 
     downloader = get_downloader(session, class_name, args)
     downloader_wrapper = ParallelDownloader(downloader, args.jobs) \
@@ -177,7 +177,7 @@ def download_on_demand_class(args, class_name):
     if course_downloader.failed_urls:
         print_failed_urls(course_downloader.failed_urls)
 
-    return error_occured, completed
+    return error_occurred, completed
 
 
 def print_skipped_urls(skipped_urls):
@@ -205,7 +205,7 @@ def download_class(args, class_name):
     Try to download on-demand class.
 
     @return: Tuple of (bool, bool), where the first bool indicates whether
-        errors occured while parsing syllabus, the second bool indicaters
+        errors occurred while parsing syllabus, the second bool indicaters
         whether the course appears to be completed.
     @rtype: (bool, bool)
     """
@@ -235,10 +235,10 @@ def main():
         try:
             logging.info('Downloading class: %s (%d / %d)',
                          class_name, class_index + 1, len(args.class_names))
-            error_occured, completed = download_class(args, class_name)
+            error_occurred, completed = download_class(args, class_name)
             if completed:
                 completed_classes.append(class_name)
-            if error_occured:
+            if error_occurred:
                 classes_with_errors.append(class_name)
         except requests.exceptions.HTTPError as e:
             logging.error('HTTPError %s', e)
