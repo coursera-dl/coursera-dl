@@ -69,9 +69,9 @@ class AuthenticationFailed(BaseException):
     """
 
 
-def prepape_auth_headers(session, include_cauth=False):
+def prepare_auth_headers(session, include_cauth=False):
     """
-    This function prepapes headers with CSRF/CAUTH tokens that can
+    This function prepares headers with CSRF/CAUTH tokens that can
     be used in POST requests such as login/get_quiz.
 
     @param session: Requests session.
@@ -133,7 +133,7 @@ def login(session, username, password, class_name=None):
             logging.error(e)
             raise ClassNotFound(class_name)
 
-    headers = prepape_auth_headers(session, include_cauth=False)
+    headers = prepare_auth_headers(session, include_cauth=False)
 
     data = {
         'email': username,
