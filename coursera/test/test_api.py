@@ -149,7 +149,7 @@ def test_ondemand_programming_supplement_no_instructions(get_page, course):
         ('peer-assignment-no-instructions.json', ''),
     ]
 )
-def test_ondemand_from_peer_assgnment_instructions(
+def test_ondemand_from_peer_assignment_instructions(
         get_page, course, input_filename, expected_output):
     instructions = slurp_fixture('json/%s' % input_filename)
     get_page.return_value = json.loads(instructions)
