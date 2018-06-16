@@ -77,7 +77,7 @@ def prepare_auth_headers(session, include_cauth=False):
     @param session: Requests session.
     @type session: requests.Session
 
-    @param include_cauth: Flag that indicates whethe CAUTH cookies should be
+    @param include_cauth: Flag that indicates whether CAUTH cookies should be
         included as well.
     @type include_cauth: bool
 
