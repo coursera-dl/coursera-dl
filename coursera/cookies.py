@@ -355,7 +355,7 @@ def get_cookies_for_class(session, class_name,
     Get the cookies for the given class.
 
     We do not validate the cookies if they are loaded from a cookies file
-    because this is intented for debugging purposes or if the coursera
+    because this is intended for debugging purposes or if the coursera
     authentication process has changed.
     """
     if cookies_file:
