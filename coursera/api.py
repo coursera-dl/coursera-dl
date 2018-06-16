@@ -943,7 +943,7 @@ class CourseraOnDemand(object):
                                 ", ".join(subtitle_set_nonexist), video_id,
                                 subtitle_description)
             if not subtitle_set_download:
-                logging.warning("%s all requested subtitles are unavaliable,"
+                logging.warning("%s all requested subtitles are unavailable,"
                                 "with video id: [%s], falling back to 'en' "
                                 "%s", subtitle_description.capitalize(),
                                 video_id,
