@@ -132,7 +132,7 @@ def parse_args(args=None):
                                 dest='download_notebooks',
                                 action='store_true',
                                 default=False,
-                                help='download Python Jupyther Notebooks. (Default: False)')
+                                help='download Python Jupyter Notebooks. (Default: False)')
 
     group_material.add_argument('--about',  # FIXME: should be --about-course
                                 dest='about',
