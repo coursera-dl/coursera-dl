@@ -103,7 +103,7 @@ def parse_args(args=None):
                              help='Choose language to download subtitles and transcripts. (Default: all)'
                              'Use special value "all" to download all available.'
                              'To download subtitles and transcripts of multiple languages,'
-                             'use comma(s) (without spaces) to seperate the names of the languages, i.e., "en,zh-CN".'
+                             'use comma(s) (without spaces) to separate the names of the languages, i.e., "en,zh-CN".'
                              'To download subtitles and transcripts of alternative language(s) '
                              'if only the current language is not available,'
                              'put an "|<lang>" for each of the alternative languages after '
