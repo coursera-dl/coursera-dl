@@ -120,7 +120,7 @@ particular courses that you want to use with `coursera-dl`.
 
 ## Recommended installation method for all Operating Systems
 
-From a command line (preferrably, from a virtual environment), simply issue
+From a command line (preferably, from a virtual environment), simply issue
 the command:
 
     pip install coursera-dl
