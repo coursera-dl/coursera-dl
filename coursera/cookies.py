@@ -25,7 +25,7 @@ from .utils import mkdir_p, random_string
 # Monkey patch cookielib.Cookie.__init__.
 # Reason: The expires value may be a decimal string,
 # but the Cookie class uses int() ...
-__orginal_init__ = cookielib.Cookie.__init__
+__original_init__ = cookielib.Cookie.__init__
 
 
 def __fixed_init__(self, version, name, value,
@@ -41,7 +41,7 @@ def __fixed_init__(self, version, name, value,
                    rfc2109=False):
     if expires is not None:
         expires = float(expires)
-    __orginal_init__(self, version, name, value,
+    __original_init__(self, version, name, value,
                      port, port_specified,
                      domain, domain_specified, domain_initial_dot,
                      path, path_specified,
