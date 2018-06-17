@@ -205,7 +205,7 @@ def download_class(args, class_name):
     Try to download on-demand class.
 
     @return: Tuple of (bool, bool), where the first bool indicates whether
-        errors occurred while parsing syllabus, the second bool indicaters
+        errors occurred while parsing syllabus, the second bool indicates
         whether the course appears to be completed.
     @rtype: (bool, bool)
     """
