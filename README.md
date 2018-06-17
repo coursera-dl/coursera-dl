@@ -341,7 +341,7 @@ you have to start the download process from the beginning. If your
 download was interrupted by something other than KeyboardInterrupt
 (<kbd>CTRL</kbd>+<kbd>C</kbd>) like sudden system crash, partially downloaded files will
 remain on your disk and the next time you start the process again,
-these files will be discraded from download list!, therefore it's your
+these files will be discarded from download list!, therefore it's your
 job to delete them manually before next start. For this reason we
 added an option called `--resume` which continues your downloads from
 where they stopped:
