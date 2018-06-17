@@ -149,7 +149,7 @@ def test_ondemand_programming_supplement_no_instructions(get_page, course):
         ('peer-assignment-no-instructions.json', ''),
     ]
 )
-def test_ondemand_from_peer_assgnment_instructions(
+def test_ondemand_from_peer_assignment_instructions(
         get_page, course, input_filename, expected_output):
     instructions = slurp_fixture('json/%s' % input_filename)
     get_page.return_value = json.loads(instructions)
@@ -176,7 +176,7 @@ def test_ondemand_programming_supplement_empty_instructions(get_page, course):
     output = course.extract_links_from_programming('0')
 
     # Make sure that SOME html content has been extracted, but remove
-    # it immeditely because it's a hassle to properly prepare test input
+    # it immediately because it's a hassle to properly prepare test input
     # for it. FIXME later.
     assert 'html' in output
     del output['html']
@@ -193,7 +193,7 @@ def test_ondemand_programming_immediate_instructions_empty_instructions(
     output = course.extract_links_from_programming_immediate_instructions('0')
 
     # Make sure that SOME html content has been extracted, but remove
-    # it immeditely because it's a hassle to properly prepare test input
+    # it immediately because it's a hassle to properly prepare test input
     # for it. FIXME later.
     assert 'html' in output
     del output['html']
@@ -214,7 +214,7 @@ def test_ondemand_programming_supplement_one_asset(get_page, course):
     output = course.extract_links_from_programming('0')
 
     # Make sure that SOME html content has been extracted, but remove
-    # it immeditely because it's a hassle to properly prepare test input
+    # it immediately because it's a hassle to properly prepare test input
     # for it. FIXME later.
     assert 'html' in output
     del output['html']
@@ -249,7 +249,7 @@ def test_ondemand_programming_immediate_instructions_one_asset(get_page, course)
     output = course.extract_links_from_programming_immediate_instructions('0')
 
     # Make sure that SOME html content has been extracted, but remove
-    # it immeditely because it's a hassle to properly prepare test input
+    # it immediately because it's a hassle to properly prepare test input
     # for it. FIXME later.
     assert 'html' in output
     del output['html']
@@ -269,7 +269,7 @@ def test_ondemand_programming_supplement_three_assets(get_page, course):
     output = json.loads(json.dumps(output))
 
     # Make sure that SOME html content has been extracted, but remove
-    # it immeditely because it's a hassle to properly prepare test input
+    # it immediately because it's a hassle to properly prepare test input
     # for it. FIXME later.
     assert 'html' in output
     del output['html']

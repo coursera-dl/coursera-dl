@@ -69,15 +69,15 @@ class AuthenticationFailed(BaseException):
     """
 
 
-def prepape_auth_headers(session, include_cauth=False):
+def prepare_auth_headers(session, include_cauth=False):
     """
-    This function prepapes headers with CSRF/CAUTH tokens that can
+    This function prepares headers with CSRF/CAUTH tokens that can
     be used in POST requests such as login/get_quiz.
 
     @param session: Requests session.
     @type session: requests.Session
 
-    @param include_cauth: Flag that indicates whethe CAUTH cookies should be
+    @param include_cauth: Flag that indicates whether CAUTH cookies should be
         included as well.
     @type include_cauth: bool
 
@@ -133,7 +133,7 @@ def login(session, username, password, class_name=None):
             logging.error(e)
             raise ClassNotFound(class_name)
 
-    headers = prepape_auth_headers(session, include_cauth=False)
+    headers = prepare_auth_headers(session, include_cauth=False)
 
     data = {
         'email': username,
@@ -355,7 +355,7 @@ def get_cookies_for_class(session, class_name,
     Get the cookies for the given class.
 
     We do not validate the cookies if they are loaded from a cookies file
-    because this is intented for debugging purposes or if the coursera
+    because this is intended for debugging purposes or if the coursera
     authentication process has changed.
     """
     if cookies_file:
