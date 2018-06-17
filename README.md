@@ -337,7 +337,7 @@ with quotes.
 
 In default mode when you interrupt the download process by pressing
 <kbd>CTRL</kbd>+<kbd>C</kbd>, partially downloaded files will be deleted from your disk and
-you have to start the download process from the begining. If your
+you have to start the download process from the beginning. If your
 download was interrupted by something other than KeyboardInterrupt
 (<kbd>CTRL</kbd>+<kbd>C</kbd>) like sudden system crash, partially downloaded files will
 remain on your disk and the next time you start the process again,
