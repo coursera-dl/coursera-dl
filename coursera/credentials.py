@@ -134,7 +134,8 @@ def authenticate_through_netrc(path=None):
 
     error_messages = '\n'.join(str(e) for e in errors)
     raise CredentialsError(
-        'Did not find valid netrc file:\n' + error_messages)
+        'Did not find valid netrc file:\n' + error_messages +
+        '\nPlease run this command: chmod og-rw ~/.netrc')
 
 
 def get_credentials(username=None, password=None, netrc=None, use_keyring=False):
