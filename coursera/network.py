@@ -34,14 +34,11 @@ def get_reply(session, url, post=False, data=None, headers=None):
     """
 
     request_headers = {} if headers is None else headers
-
-    request = requests.Request('POST' if post else 'GET',
-                               url,
-                               data=data,
-                               headers=request_headers)
-    prepared_request = session.prepare_request(request)
-
-    reply = session.send(prepared_request)
+    
+    reply = session.request('POST' if post else 'GET',
+                            url,
+                            data=data,
+                            headers=request_headers)
 
     try:
         reply.raise_for_status()
