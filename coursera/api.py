@@ -57,7 +57,7 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      IN_MEMORY_MARKER)
 
 
-from .cookies import prepape_auth_headers
+from .cookies import prepare_auth_headers
 
 
 class QuizExamToMarkupConverter(object):
@@ -814,7 +814,7 @@ class CourseraOnDemand(object):
         return reply['contentResponseBody']['session']['id']
 
     def _auth_headers_with_json(self):
-        headers = prepape_auth_headers(self._session, include_cauth=True)
+        headers = prepare_auth_headers(self._session, include_cauth=True)
         headers.update({
             'Content-Type': 'application/json; charset=UTF-8'
         })
@@ -1075,7 +1075,7 @@ class CourseraOnDemand(object):
                                 ", ".join(subtitle_set_nonexist), video_id,
                                 subtitle_description)
             if not subtitle_set_download:
-                logging.warning("%s all requested subtitles are unavaliable,"
+                logging.warning("%s all requested subtitles are unavailable,"
                                 "with video id: [%s], falling back to 'en' "
                                 "%s", subtitle_description.capitalize(),
                                 video_id,

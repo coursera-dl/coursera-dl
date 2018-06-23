@@ -52,13 +52,13 @@ class CourseraExtractor(PlatformExtractor):
                     download_notebooks=False):
 
         page = self._get_on_demand_syllabus(class_name)
-        error_occured, modules = self._parse_on_demand_syllabus(
+        error_occurred, modules = self._parse_on_demand_syllabus(
             class_name,
             page, reverse, unrestricted_filenames,
             subtitle_language, video_resolution,
             download_quizzes, mathjax_cdn_url, download_notebooks)
 
-        return error_occured, modules
+        return error_occurred, modules
 
     def _get_on_demand_syllabus(self, class_name):
         """
@@ -113,7 +113,7 @@ class CourseraExtractor(PlatformExtractor):
             spit_json(ondemand_material_items._items,
                       '%s-course-material-items.json' % course_name)
 
-        error_occured = False
+        error_occurred = False
 
         all_modules = ModulesV1.from_json(
             dom['linked']['onDemandCourseMaterialModules.v1'])
@@ -144,7 +144,7 @@ class CourseraExtractor(PlatformExtractor):
                     logging.info('Processing lecture         %s (%s)',
                                  lecture.slug, typename)
                     # Empty dictionary means there were no data
-                    # None means an error occured
+                    # None means an error occurred
                     links = {}
 
                     if typename == 'lecture':
@@ -201,7 +201,7 @@ class CourseraExtractor(PlatformExtractor):
                         continue
 
                     if links is None:
-                        error_occured = True
+                        error_occurred = True
                     elif links:
                         lectures.append((lecture.slug, links))
 
@@ -228,7 +228,7 @@ class CourseraExtractor(PlatformExtractor):
                 links = course.extract_links_from_reference(
                     json_reference['shortId'])
                 if links is None:
-                    error_occured = True
+                    error_occurred = True
                 elif links:
                     reference.append(('', links))
 
@@ -238,4 +238,4 @@ class CourseraExtractor(PlatformExtractor):
         if references:
             modules.append(("Resources", references))
 
-        return error_occured, modules
+        return error_occurred, modules

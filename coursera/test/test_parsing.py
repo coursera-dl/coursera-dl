@@ -65,7 +65,7 @@ def test_that_we_parse_and_write_json_correctly(get_page, json_path):
 def get_old_style_video(monkeypatch):
     pytest.skip()
     """
-    Mock some methods that would, otherwise, create repeateadly many web
+    Mock some methods that would, otherwise, create repeatedly many web
     requests.
 
     More specifically, we mock:
@@ -139,7 +139,7 @@ def test_get_on_demand_supplement_url_accumulates_assets(mocked):
     output = course.extract_links_from_supplement('element_id')
 
     # Make sure that SOME html content has been extracted, but remove
-    # it immeditely because it's a hassle to properly prepare test input
+    # it immediately because it's a hassle to properly prepare test input
     # for it. FIXME later.
     assert 'html' in output
     del output['html']

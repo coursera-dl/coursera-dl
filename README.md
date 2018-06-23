@@ -120,7 +120,7 @@ particular courses that you want to use with `coursera-dl`.
 
 ## Recommended installation method for all Operating Systems
 
-From a command line (preferrably, from a virtual environment), simply issue
+From a command line (preferably, from a virtual environment), simply issue
 the command:
 
     pip install coursera-dl
@@ -327,7 +327,7 @@ where the script is supposed to be executed, with the following format:
     #--mathjax-cdn https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js
     # more other parameters
 
-Parameter which is stored in the file will be overriden if it is again specifed
+Parameter which is stored in the file will be overriden if it is again specified
 in your commandline script
 
 **Note:** In `coursera-dl.conf`, all the parameters should not be wrapped
@@ -337,11 +337,11 @@ with quotes.
 
 In default mode when you interrupt the download process by pressing
 <kbd>CTRL</kbd>+<kbd>C</kbd>, partially downloaded files will be deleted from your disk and
-you have to start the download process from the begining. If your
+you have to start the download process from the beginning. If your
 download was interrupted by something other than KeyboardInterrupt
 (<kbd>CTRL</kbd>+<kbd>C</kbd>) like sudden system crash, partially downloaded files will
 remain on your disk and the next time you start the process again,
-these files will be discraded from download list!, therefore it's your
+these files will be discarded from download list!, therefore it's your
 job to delete them manually before next start. For this reason we
 added an option called `--resume` which continues your downloads from
 where they stopped:
