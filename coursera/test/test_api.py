@@ -73,7 +73,7 @@ def test_extract_links_from_lecture_http_error(get_page, course):
     locked_response.status_code = define.HTTP_FORBIDDEN
     get_page.side_effect = HTTPError('Mocked HTTP error',
                                      response=locked_response)
-    assert None == course.extract_links_from_lecture('0')
+    assert None == course.extract_links_from_lecture('fake_course_id', '0')
 
 
 @patch('coursera.api.get_page')

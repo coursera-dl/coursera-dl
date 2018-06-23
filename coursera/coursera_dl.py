@@ -67,7 +67,8 @@ from .workflow import CourseraDownloader
 from .parallel import ConsecutiveDownloader, ParallelDownloader
 from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     print_ssl_error_message,
-                    decode_input, BeautifulSoup, is_debug_run)
+                    decode_input, BeautifulSoup, is_debug_run,
+                    spit_json, slurp_json)
 
 from .network import get_page, get_page_and_url
 from .commandline import parse_args
@@ -126,8 +127,7 @@ def download_on_demand_class(args, class_name):
 
     cached_syllabus_filename = '%s-syllabus-parsed.json' % class_name
     if args.cache_syllabus and os.path.isfile(cached_syllabus_filename):
-        with open(cached_syllabus_filename) as syllabus_file:
-            modules = json.load(syllabus_file)
+        modules = slurp_json(cached_syllabus_filename)
     else:
         error_occured, modules = extractor.get_modules(
             class_name,
@@ -141,8 +141,7 @@ def download_on_demand_class(args, class_name):
         )
 
     if is_debug_run or args.cache_syllabus():
-        with open(cached_syllabus_filename, 'w') as file_object:
-            json.dump(modules, file_object, indent=4)
+        spit_json(modules, cached_syllabus_filename)
 
     if args.only_syllabus:
         return error_occured, False

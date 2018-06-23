@@ -12,9 +12,11 @@ import logging
 import time
 import requests
 import urllib
-from collections import namedtuple
+
+from collections import namedtuple, OrderedDict
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
+import attr
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename,
@@ -26,7 +28,10 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_ASSETS_URL,
                      OPENCOURSE_API_ASSETS_V1_URL,
                      OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
-                     OPENCOURSE_VIDEO_URL,
+                     OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2,
+                     OPENCOURSE_ONDEMAND_COURSES_V1,
+                     OPENCOURSE_ONDEMAND_LECTURE_VIDEOS_URL,
+                     OPENCOURSE_ONDEMAND_LECTURE_ASSETS_URL,
                      OPENCOURSE_MEMBERSHIPS,
                      OPENCOURSE_REFERENCES_POLL_URL,
                      OPENCOURSE_REFERENCE_ITEM_URL,
@@ -278,7 +283,7 @@ class MarkupToHTMLConverter(object):
                 audio.insert_after(controls_tag)
 
 
-class OnDemandCourseMaterialItems(object):
+class OnDemandCourseMaterialItemsV1(object):
     """
     Helper class that allows accessing lecture JSONs by lesson IDs.
     """
@@ -312,7 +317,7 @@ class OnDemandCourseMaterialItems(object):
         dom = get_page(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                        json=True,
                        class_name=course_name)
-        return OnDemandCourseMaterialItems(
+        return OnDemandCourseMaterialItemsV1(
             dom['linked']['onDemandCourseMaterialItems.v1'])
 
     def get(self, lesson_id):
@@ -406,6 +411,134 @@ class AssetRetriever(object):
             result.append(asset)
 
         return result
+
+
+@attr.s
+class ModuleV1(object):
+    name = attr.ib()
+    id = attr.ib()
+    slug = attr.ib()
+    child_ids = attr.ib()
+
+    def children(self, all_children):
+        return [all_children[child] for child in self.child_ids]
+
+
+@attr.s
+class ModulesV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+        return ModulesV1(OrderedDict(
+            (item['id'],
+             ModuleV1(item['name'],
+                      item['id'],
+                      item['slug'],
+                      item['lessonIds']))
+            for item in data
+        ))
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+    def __iter__(self):
+        return iter(self.children.values())
+
+
+@attr.s
+class LessonV1(object):
+    name = attr.ib()
+    id = attr.ib()
+    slug = attr.ib()
+    child_ids = attr.ib()
+
+    def children(self, all_children):
+        return [all_children[child] for child in self.child_ids]
+
+
+@attr.s
+class LessonsV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+        return LessonsV1(OrderedDict(
+            (item['id'],
+             LessonV1(item['name'],
+                      item['id'],
+                      item['slug'],
+                      item['itemIds']))
+            for item in data
+        ))
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+
+@attr.s
+class ItemV2(object):
+    name = attr.ib()
+    id = attr.ib()
+    slug = attr.ib()
+    type_name = attr.ib()
+    lesson_id = attr.ib()
+    module_id = attr.ib()
+
+
+@attr.s
+class ItemsV2(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+        return ItemsV2({
+            item['id']:
+            ItemV2(item['name'],
+                   item['id'],
+                   item['slug'],
+                   item['contentSummary']['typeName'],
+                   item['lessonId'],
+                   item['moduleId'])
+            for item in data
+        })
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+
+@attr.s
+class VideoV1(object):
+    resolution = attr.ib()
+    mp4_video_url = attr.ib()
+
+
+@attr.s
+class VideosV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+
+        videos = [VideoV1(resolution, links['mp4VideoUrl'])
+                  for resolution, links
+                  in data['sources']['byResolution'].items()]
+        videos.sort(key=lambda video: video.resolution, reverse=True)
+
+        videos = OrderedDict(
+            (video.resolution, video)
+            for video in videos
+        )
+        return VideosV1(videos)
+
+    def __contains__(self, key):
+        return key in self.children
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+    def get_best(self):
+        return next(iter(self.children.values()))
 
 
 class CourseraOnDemand(object):
@@ -687,9 +820,9 @@ class CourseraOnDemand(object):
         })
         return headers
 
-    def extract_links_from_lecture(self,
+    def extract_links_from_lecture(self, course_id,
                                    video_id, subtitle_language='en',
-                                   resolution='540p', assets=None):
+                                   resolution='540p'):
         """
         Return the download URLs of on-demand course video.
 
@@ -702,18 +835,13 @@ class CourseraOnDemand(object):
         @param resolution: Preferred video resolution.
         @type resolution: str
 
-        @param assets: List of assets that may present in the video.
-        @type assets: [str]
-
         @return: @see CourseraOnDemand._extract_links_from_text
         """
-        if assets is None:
-            assets = []
-
         try:
             links = self._extract_videos_and_subtitles_from_lecture(
-                video_id, subtitle_language, resolution)
+                course_id, video_id, subtitle_language, resolution)
 
+            assets = self._get_lecture_asset_ids(course_id, video_id)
             assets = self._normalize_assets(assets)
             extend_supplement_links(
                 links, self._extract_links_from_lecture_assets(assets))
@@ -726,6 +854,17 @@ class CourseraOnDemand(object):
                 logging.exception(
                     'Could not download lecture %s: %s', video_id, exception)
             return None
+
+    def _get_lecture_asset_ids(self, course_id, video_id):
+        """
+        Obtain a list of asset ids from a lecture.
+        """
+        dom = get_page(self._session, OPENCOURSE_ONDEMAND_LECTURE_ASSETS_URL,
+                       json=True, course_id=course_id, video_id=video_id)
+        # Note that we extract here "id", not definition -> assetId, as it
+        # be extracted later.
+        return [asset['id']
+                for asset in dom['linked']['openCourseAssets.v1']]
 
     def _normalize_assets(self, assets):
         """
@@ -850,41 +989,34 @@ class CourseraOnDemand(object):
         return urls
 
     def _extract_videos_and_subtitles_from_lecture(self,
+                                                   course_id,
                                                    video_id,
                                                    subtitle_language='en',
                                                    resolution='540p'):
 
-        dom = get_page(self._session, OPENCOURSE_VIDEO_URL,
-                       json=True,
-                       video_id=video_id)
-
         logging.debug('Parsing JSON for video_id <%s>.', video_id)
+
+        dom = get_page(self._session, OPENCOURSE_ONDEMAND_LECTURE_VIDEOS_URL,
+                       json=True,
+                       course_id=course_id,
+                       video_id=video_id)
+        dom = dom['linked']['onDemandVideos.v1'][0]
+
+        videos = VideosV1.from_json(dom)
         video_content = {}
 
-        # videos
-        logging.debug('Gathering video URLs for video_id <%s>.', video_id)
-        sources = dom['sources']
-        sources.sort(key=lambda src: src['resolution'])
-        sources.reverse()
-
-        # Try to select resolution requested by the user.
-        filtered_sources = [source
-                            for source in sources
-                            if source['resolution'] == resolution]
-
-        if len(filtered_sources) == 0:
-            # We will just use the 'vanilla' version of sources here, instead of
-            # filtered_sources.
-            logging.warning('Requested resolution %s not available for <%s>. '
-                            'Downloading highest resolution available instead.',
-                            resolution, video_id)
-        else:
+        if resolution in videos:
+            source = videos[resolution]
             logging.debug('Proceeding with download of resolution %s of <%s>.',
                           resolution, video_id)
-            sources = filtered_sources
+        else:
+            source = videos.get_best()
+            logging.warning(
+                'Requested resolution %s not available for <%s>. '
+                'Downloading highest resolution (%s) available instead.',
+                resolution, video_id, source.resolution)
 
-        video_url = sources[0]['formatSources']['video/mp4']
-        video_content['mp4'] = video_url
+        video_content['mp4'] = source.mp4_video_url
 
         subtitle_link = self._extract_subtitles_from_video_dom(
             dom, subtitle_language, video_id)

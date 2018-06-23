@@ -9,11 +9,12 @@ import abc
 import json
 import logging
 
-from .api import CourseraOnDemand, OnDemandCourseMaterialItems
-from .define import OPENCOURSE_CONTENT_URL
+from .api import (CourseraOnDemand, OnDemandCourseMaterialItemsV1,
+                  ModulesV1, LessonsV1, ItemsV2)
+from .define import OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2
 from .cookies import login
 from .network import get_page
-from .utils import is_debug_run
+from .utils import is_debug_run, spit_json, slurp_json
 
 
 class PlatformExtractor(object):
@@ -52,9 +53,11 @@ class CourseraExtractor(PlatformExtractor):
 
         page = self._get_on_demand_syllabus(class_name)
         error_occured, modules = self._parse_on_demand_syllabus(
+            class_name,
             page, reverse, unrestricted_filenames,
             subtitle_language, video_resolution,
             download_quizzes, mathjax_cdn_url, download_notebooks)
+
         return error_occured, modules
 
     def _get_on_demand_syllabus(self, class_name):
@@ -62,13 +65,14 @@ class CourseraExtractor(PlatformExtractor):
         Get the on-demand course listing webpage.
         """
 
-        url = OPENCOURSE_CONTENT_URL.format(class_name=class_name)
+        url = OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2.format(
+            class_name=class_name)
         page = get_page(self._session, url)
-        logging.info('Downloaded %s (%d bytes)', url, len(page))
+        logging.debug('Downloaded %s (%d bytes)', url, len(page))
 
         return page
 
-    def _parse_on_demand_syllabus(self, page, reverse=False,
+    def _parse_on_demand_syllabus(self, course_name, page, reverse=False,
                                   unrestricted_filenames=False,
                                   subtitle_language='en',
                                   video_resolution=None,
@@ -86,115 +90,132 @@ class CourseraExtractor(PlatformExtractor):
         """
 
         dom = json.loads(page)
-        course_name = dom['slug']
+        class_id = dom['elements'][0]['id']
 
-        logging.info('Parsing syllabus of on-demand course. '
-                     'This may take some time, please be patient ...')
+        logging.info('Parsing syllabus of on-demand course (id=%s). '
+                     'This may take some time, please be patient ...',
+                     class_id)
         modules = []
-        json_modules = dom['courseMaterial']['elements']
-        course = CourseraOnDemand(session=self._session, course_id=dom['id'],
-                                  course_name=course_name,
-                                  unrestricted_filenames=unrestricted_filenames,
-                                  mathjax_cdn_url=mathjax_cdn_url
-                                  )
+
+        json_modules = dom['linked']['onDemandCourseMaterialItems.v2']
+        course = CourseraOnDemand(
+            session=self._session, course_id=class_id,
+            course_name=course_name,
+            unrestricted_filenames=unrestricted_filenames,
+            mathjax_cdn_url=mathjax_cdn_url)
         course.obtain_user_id()
-        ondemand_material_items = OnDemandCourseMaterialItems.create(
+        ondemand_material_items = OnDemandCourseMaterialItemsV1.create(
             session=self._session, course_name=course_name)
 
         if is_debug_run():
-            with open('%s-syllabus-raw.json' % course_name, 'w') as file_object:
-                json.dump(dom, file_object, indent=4)
-            with open('%s-course-material-items.json' % course_name, 'w') as file_object:
-                json.dump(ondemand_material_items._items, file_object, indent=4)
+            spit_json(dom, '%s-syllabus-raw.json' % course_name)
+            spit_json(json_modules, '%s-material-items-v2.json' % course_name)
+            spit_json(ondemand_material_items._items,
+                      '%s-course-material-items.json' % course_name)
 
         error_occured = False
 
-        for module in json_modules:
-            module_slug = module['slug']
-            logging.info('Processing module  %s', module_slug)
-            sections = []
-            json_sections = module['elements']
-            for section in json_sections:
-                section_slug = section['slug']
-                logging.info('Processing section     %s', section_slug)
+        all_modules = ModulesV1.from_json(
+            dom['linked']['onDemandCourseMaterialModules.v1'])
+        all_lessons = LessonsV1.from_json(
+            dom['linked']['onDemandCourseMaterialLessons.v1'])
+        all_items = ItemsV2.from_json(
+            dom['linked']['onDemandCourseMaterialItems.v2'])
+
+        for module in all_modules:
+            logging.info('Processing module  %s', module.slug)
+            lessons = []
+            for section in module.children(all_lessons):
+                logging.info('Processing section     %s', section.slug)
                 lectures = []
-                json_lectures = section['elements']
+                available_lectures = section.children(all_items)
 
                 # Certain modules may be empty-looking programming assignments
-                # e.g. in data-structures, algorithms-on-graphs ondemand courses
-                if not json_lectures:
-                    lesson_id = section['id']
-                    lecture = ondemand_material_items.get(lesson_id)
+                # e.g. in data-structures, algorithms-on-graphs ondemand
+                # courses
+                if not available_lectures:
+                    lecture = ondemand_material_items.get(section.id)
                     if lecture is not None:
-                        json_lectures = [lecture]
+                        available_lectures = [lecture]
 
-                for lecture in json_lectures:
-                    lecture_slug = lecture['slug']
-                    typename = lecture['content']['typeName']
+                for lecture in available_lectures:
+                    typename = lecture.type_name
 
                     logging.info('Processing lecture         %s (%s)',
-                                 lecture_slug, typename)
+                                 lecture.slug, typename)
                     # Empty dictionary means there were no data
                     # None means an error occured
                     links = {}
 
                     if typename == 'lecture':
-                        lecture_video_id = lecture['content']['definition']['videoId']
-                        assets = lecture['content']['definition'].get('assets', [])
+                        # lecture_video_id = lecture['content']['definition']['videoId']
+                        # assets = lecture['content']['definition'].get(
+                        #     'assets', [])
+                        lecture_video_id = lecture.id
+                        # assets = []
 
                         links = course.extract_links_from_lecture(
+                            class_id,
                             lecture_video_id, subtitle_language,
-                            video_resolution, assets)
+                            video_resolution)
 
                     elif typename == 'supplement':
-                        links = course.extract_links_from_supplement(lecture['id'])
+                        links = course.extract_links_from_supplement(
+                            lecture.id)
 
                     elif typename == 'phasedPeer':
-                        links = course.extract_links_from_peer_assignment(lecture['id'])
+                        links = course.extract_links_from_peer_assignment(
+                            lecture.id)
 
                     elif typename in ('gradedProgramming', 'ungradedProgramming'):
-                        links = course.extract_links_from_programming(lecture['id'])
+                        links = course.extract_links_from_programming(
+                            lecture.id)
 
                     elif typename == 'quiz':
                         if download_quizzes:
-                            links = course.extract_links_from_quiz(lecture['id'])
+                            links = course.extract_links_from_quiz(
+                                lecture.id)
 
                     elif typename == 'exam':
                         if download_quizzes:
-                            links = course.extract_links_from_exam(lecture['id'])
+                            links = course.extract_links_from_exam(
+                                lecture.id)
 
                     elif typename == 'programming':
                         if download_quizzes:
-                            links = course.extract_links_from_programming_immediate_instructions(lecture['id'])
+                            links = course.extract_links_from_programming_immediate_instructions(
+                                lecture.id)
 
                     elif typename == 'notebook':
-                        if download_notebooks and self._notebook_downloaded == False:
-                            logging.warning('According to notebooks platform, content will be downloaded first')
-                            links = course.extract_links_from_notebook(lecture['id'])
+                        if download_notebooks and not self._notebook_downloaded:
+                            logging.warning(
+                                'According to notebooks platform, content will be downloaded first')
+                            links = course.extract_links_from_notebook(
+                                lecture.id)
                             self._notebook_downloaded = True
 
                     else:
                         logging.info(
                             'Unsupported typename "%s" in lecture "%s" (lecture id "%s")',
-                            typename, lecture_slug, lecture['id'])
+                            typename, lecture.slug, lecture.id)
                         continue
 
                     if links is None:
                         error_occured = True
                     elif links:
-                        lectures.append((lecture_slug, links))
+                        lectures.append((lecture.slug, links))
 
                 if lectures:
-                    sections.append((section_slug, lectures))
+                    lessons.append((section.slug, lectures))
 
-            if sections:
-                modules.append((module_slug, sections))
+            if lessons:
+                modules.append((module.slug, lessons))
 
         if modules and reverse:
             modules.reverse()
 
         # Processing resources section
-        json_references= course.extract_references_poll()
+        json_references = course.extract_references_poll()
         references = []
         if json_references:
             logging.info('Processing resources')
@@ -204,7 +225,8 @@ class CourseraExtractor(PlatformExtractor):
                 logging.info('Processing resource  %s',
                              reference_slug)
 
-                links = course.extract_links_from_reference(json_reference['shortId'])
+                links = course.extract_links_from_reference(
+                    json_reference['shortId'])
                 if links is None:
                     error_occured = True
                 elif links:
