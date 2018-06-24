@@ -199,6 +199,21 @@ OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2 = \
     '&fields=moduleIds%2ConDemandCourseMaterialModules.v1(name%2Cslug%2Cdescription%2CtimeCommitment%2ClessonIds%2Coptional%2ClearningObjectives)%2ConDemandCourseMaterialLessons.v1(name%2Cslug%2CtimeCommitment%2CelementIds%2Coptional%2CtrackId)%2ConDemandCourseMaterialPassableItemGroups.v1(requiredPassedCount%2CpassableItemGroupChoiceIds%2CtrackId)%2ConDemandCourseMaterialPassableItemGroupChoices.v1(name%2Cdescription%2CitemIds)%2ConDemandCourseMaterialPassableLessonElements.v1(gradingWeight%2CisRequiredForPassing)%2ConDemandCourseMaterialItems.v2(name%2Cslug%2CtimeCommitment%2CcontentSummary%2CisLocked%2ClockableByItem%2CitemLockedReasonCode%2CtrackId%2ClockedStatus%2CitemLockSummary)%2ConDemandCourseMaterialTracks.v1(passablesCount)'\
     '&showLockedItems=true'
 
+OPENCOURSE_ONDEMAND_SPECIALIZATIONS_V1 = \
+    'https://www.coursera.org/api/onDemandSpecializations.v1?q=slug'\
+    '&slug={class_name}&fields=courseIds,interchangeableCourseIds,launchedAt,'\
+    'logo,memberships,metadata,partnerIds,premiumExperienceVariant,'\
+    'onDemandSpecializationMemberships.v1(suggestedSessionSchedule),'\
+    'onDemandSpecializationSuggestedSchedule.v1(suggestedSessions),'\
+    'partners.v1(homeLink,name),courses.v1(courseProgress,description,'\
+    'membershipIds,startDate,v2Details,vcMembershipIds),v2Details.v1('\
+    'onDemandSessions,plannedLaunchDate),memberships.v1(grade,'\
+    'vcMembershipId),vcMemberships.v1(certificateCodeWithGrade)'\
+    '&includes=courseIds,memberships,partnerIds,'\
+    'onDemandSpecializationMemberships.v1(suggestedSessionSchedule),'\
+    'courses.v1(courseProgress,membershipIds,v2Details,vcMembershipIds),'\
+    'v2Details.v1(onDemandSessions)'
+
 OPENCOURSE_ONDEMAND_COURSES_V1 = \
     'https://api.coursera.org/api/onDemandCourses.v1?q=slug&slug={class_name}&'\
     'includes=instructorIds%2CpartnerIds%2C_links&'\

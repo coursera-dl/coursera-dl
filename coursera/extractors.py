@@ -12,9 +12,8 @@ import logging
 from .api import (CourseraOnDemand, OnDemandCourseMaterialItemsV1,
                   ModulesV1, LessonsV1, ItemsV2)
 from .define import OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2
-from .cookies import login
 from .network import get_page
-from .utils import is_debug_run, spit_json, slurp_json
+from .utils import is_debug_run, spit_json
 
 
 class PlatformExtractor(object):
@@ -28,8 +27,7 @@ class PlatformExtractor(object):
 
 
 class CourseraExtractor(PlatformExtractor):
-    def __init__(self, session, username, password):
-        login(session, username, password)
+    def __init__(self, session):
         self._notebook_downloaded = False
         self._session = session
 

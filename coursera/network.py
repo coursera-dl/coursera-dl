@@ -9,7 +9,7 @@ import logging
 import requests
 
 
-def get_reply(session, url, post=False, data=None, headers=None):
+def get_reply(session, url, post=False, data=None, headers=None, quiet=False):
     """
     Download an HTML page using the requests session. Low-level function
     that allows for flexible request configuration.
@@ -29,6 +29,10 @@ def get_reply(session, url, post=False, data=None, headers=None):
     @param headers: Additional headers to send with request.
     @type headers: dict
 
+    @param quiet: Flag that tells whether to print error message when status
+        code != 200.
+    @type quiet: bool
+
     @return: Requests response.
     @rtype: requests.Response
     """
@@ -46,8 +50,9 @@ def get_reply(session, url, post=False, data=None, headers=None):
     try:
         reply.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        logging.error("Error %s getting page %s", e, url)
-        logging.error("The server replied: %s", reply.text)
+        if not quiet:
+            logging.error("Error %s getting page %s", e, url)
+            logging.error("The server replied: %s", reply.text)
         raise
 
     return reply
@@ -59,6 +64,7 @@ def get_page(session,
              post=False,
              data=None,
              headers=None,
+             quiet=False,
              **kwargs):
     """
     Download an HTML page using the requests session.
@@ -82,7 +88,8 @@ def get_page(session,
     @rtype: str
     """
     url = url.format(**kwargs)
-    reply = get_reply(session, url, post=post, data=data, headers=headers)
+    reply = get_reply(session, url, post=post, data=data, headers=headers,
+                      quiet=quiet)
     return reply.json() if json else reply.text
 
 

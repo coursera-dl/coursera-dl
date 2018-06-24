@@ -60,7 +60,7 @@ import requests
 
 from .cookies import (
     AuthenticationFailed, ClassNotFound,
-    get_cookies_for_class, make_cookie_values, TLSAdapter)
+    get_cookies_for_class, make_cookie_values, TLSAdapter, login)
 from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE)
 from .downloaders import get_downloader
 from .workflow import CourseraDownloader
@@ -70,6 +70,7 @@ from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
                     decode_input, BeautifulSoup, is_debug_run,
                     spit_json, slurp_json)
 
+from .api import expand_specializations
 from .network import get_page, get_page_and_url
 from .commandline import parse_args
 from .extractors import CourseraExtractor
@@ -104,16 +105,18 @@ def list_courses(args):
     @type args: namedtuple
     """
     session = get_session()
-    extractor = CourseraExtractor(session, args.username, args.password)
+    login(session, args.username, args.password)
+    extractor = CourseraExtractor(session)
     courses = extractor.list_courses()
     logging.info('Found %d courses', len(courses))
     for course in courses:
         logging.info(course)
 
 
-def download_on_demand_class(args, class_name):
+def download_on_demand_class(session, args, class_name):
     """
-    Download all requested resources from the on-demand class given in class_name.
+    Download all requested resources from the on-demand class given
+    in class_name.
 
     @return: Tuple of (bool, bool), where the first bool indicates whether
         errors occurred while parsing syllabus, the second bool indicates
@@ -122,8 +125,7 @@ def download_on_demand_class(args, class_name):
     """
 
     error_occurred = False
-    session = get_session()
-    extractor = CourseraExtractor(session, args.username, args.password)
+    extractor = CourseraExtractor(session)
 
     cached_syllabus_filename = '%s-syllabus-parsed.json' % class_name
     if args.cache_syllabus and os.path.isfile(cached_syllabus_filename):
@@ -199,7 +201,7 @@ def print_failed_urls(failed_urls):
     logging.info('-' * 80)
 
 
-def download_class(args, class_name):
+def download_class(session, args, class_name):
     """
     Try to download on-demand class.
 
@@ -209,7 +211,7 @@ def download_class(args, class_name):
     @rtype: (bool, bool)
     """
     logging.debug('Downloading new style (on demand) class %s', class_name)
-    return download_on_demand_class(args, class_name)
+    return download_on_demand_class(session, args, class_name)
 
 
 def main():
@@ -230,11 +232,16 @@ def main():
         list_courses(args)
         return
 
+    session = get_session()
+    login(session, args.username, args.password)
+    args.class_names = expand_specializations(session, args.class_names)
+
     for class_index, class_name in enumerate(args.class_names):
         try:
             logging.info('Downloading class: %s (%d / %d)',
                          class_name, class_index + 1, len(args.class_names))
-            error_occurred, completed = download_class(args, class_name)
+            error_occurred, completed = download_class(
+                session, args, class_name)
             if completed:
                 completed_classes.append(class_name)
             if error_occurred:
@@ -248,10 +255,10 @@ def main():
             print_ssl_error_message(e)
             if is_debug_run():
                 raise
-        except ClassNotFound as cnf:
-            logging.error('Could not find class: %s', cnf)
-        except AuthenticationFailed as af:
-            logging.error('Could not authenticate: %s', af)
+        except ClassNotFound as e:
+            logging.error('Could not find class: %s', e)
+        except AuthenticationFailed as e:
+            logging.error('Could not authenticate: %s', e)
 
         if class_index + 1 != len(args.class_names):
             logging.info('Sleeping for %d seconds before downloading next course. '

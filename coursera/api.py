@@ -32,6 +32,7 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_ONDEMAND_COURSES_V1,
                      OPENCOURSE_ONDEMAND_LECTURE_VIDEOS_URL,
                      OPENCOURSE_ONDEMAND_LECTURE_ASSETS_URL,
+                     OPENCOURSE_ONDEMAND_SPECIALIZATIONS_V1,
                      OPENCOURSE_MEMBERSHIPS,
                      OPENCOURSE_REFERENCES_POLL_URL,
                      OPENCOURSE_REFERENCE_ITEM_URL,
@@ -539,6 +540,45 @@ class VideosV1(object):
 
     def get_best(self):
         return next(iter(self.children.values()))
+
+
+def expand_specializations(session, class_names):
+    """
+    Checks whether any given name is not a class but a specialization.
+
+    If it's a specialization, expand the list of class names with the child
+    class names.
+    """
+    result = []
+    for class_name in class_names:
+        specialization = SpecializationV1.create(session, class_name)
+        if specialization is None:
+            result.append(class_name)
+        else:
+            result.extend(specialization.children)
+            logging.info('Expanded specialization "%s" into the following'
+                         ' classes: %s',
+                         class_name, ' '.join(specialization.children))
+
+    return result
+
+
+@attr.s
+class SpecializationV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def create(session, class_name):
+        try:
+            dom = get_page(session, OPENCOURSE_ONDEMAND_SPECIALIZATIONS_V1,
+                           json=True, quiet=True,
+                           class_name=class_name)
+        except requests.exceptions.HTTPError as e:
+            logging.debug('Could not expand %s: %s', class_name, e)
+            return None
+
+        return SpecializationV1(
+            [course['slug'] for course in dom['linked']['courses.v1']])
 
 
 class CourseraOnDemand(object):
