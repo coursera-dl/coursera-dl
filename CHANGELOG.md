@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.11.3 (2018-06-24)
+
 Bugfixes:
   - Switch to newer API for syllabus and lecture retrieval (#665, #673, #634)
 
