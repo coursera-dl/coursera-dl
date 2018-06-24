@@ -654,87 +654,84 @@ class CourseraOnDemand(object):
         supplement_links = {}
 
         url = url.format(**kwargs)
-        reply = get_page(
-            self._session,
-            url,
-            json=True
-        )
-
-        headers = self._auth_headers_with_json()
+        reply = get_page(self._session, url, json=True)
 
         for content in reply['content']:
 
             if content['type'] == 'directory':
                 a = self._get_notebook_folder(
-                    OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path=content['path'], timestamp=int(time.time()))
+                    OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId,
+                    path=content['path'], timestamp=int(time.time()))
                 supplement_links.update(a)
 
             elif content['type'] == 'file':
-                tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
-                    path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
-                filename, extension = os.path.splitext(clean_url(tmpUrl))
+                tmp_url = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
+                    path=content['path'], jupId=jupyterId,
+                    timestamp=int(time.time()))
+                filename, extension = os.path.splitext(clean_url(tmp_url))
 
                 head, tail = os.path.split(content['path'])
                 # '/' in the following line is for a reason:
                 # @noureddin says: "I split head using split('/') not
                 # os.path.split() because it's seems to me that it comes from a
                 # web page, so the separator will always be /, so using the
-                # native path splitting function is not the most portable way to
-                # do it."
-                # Original pull request: https://github.com/coursera-dl/coursera-dl/pull/654
+                # native path splitting function is not the most portable
+                # way to do it."
+                # Original pull request:
+                # https://github.com/coursera-dl/coursera-dl/pull/654
                 head = '/'.join([clean_filename(dir, minimal_change=True)
                                  for dir in head.split('/')])
                 tail = clean_filename(tail, minimal_change=True)
 
-                if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
-                    logging.info('Creating [{}] directories...'.format(head))
+                if not os.path.isdir(self._course_name + "/notebook/" + head + "/"):
+                    logging.info('Creating [%s] directories...', head)
                     os.makedirs(self._course_name + "/notebook/" + head + "/")
 
-                r = requests.get(tmpUrl.replace(" ", "%20"),
+                r = requests.get(tmp_url.replace(" ", "%20"),
                                  cookies=self._session.cookies)
-                if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
-                    logging.info('Downloading {} into {}'.format(tail, head))
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/" + tail):
+                    logging.info('Downloading %s into %s', tail, head)
                     with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
                         f.write(r.content)
                 else:
-                    logging.info('Skipping {}... (file exists)'.format(tail))
+                    logging.info('Skipping %s... (file exists)', tail)
 
-                if not str(extension[1:]) in supplement_links:
+                if str(extension[1:]) not in supplement_links:
                     supplement_links[str(extension[1:])] = []
 
                 supplement_links[str(extension[1:])].append(
-                    (tmpUrl.replace(" ", "%20"), filename))
+                    (tmp_url.replace(" ", "%20"), filename))
 
             elif content['type'] == 'notebook':
-                tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
+                tmp_url = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
                     path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
-                filename, extension = os.path.splitext(clean_url(tmpUrl))
+                filename, extension = os.path.splitext(clean_url(tmp_url))
 
                 head, tail = os.path.split(content['path'])
 
-                if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
-                    logging.info('Creating [{}] directories...'.format(head))
+                if not os.path.isdir(self._course_name + "/notebook/" + head + "/"):
+                    logging.info('Creating [%s] directories...', head)
                     os.makedirs(self._course_name + "/notebook/" + head + "/")
 
-                r = requests.get(tmpUrl.replace(" ", "%20"),
+                r = requests.get(tmp_url.replace(" ", "%20"),
                                  cookies=self._session.cookies)
-                if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/" + tail):
                     logging.info(
-                        'Downloading Jupyter {} into {}'.format(tail, head))
+                        'Downloading Jupyter %s into %s', tail, head)
                     with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
                         f.write(r.content)
                 else:
-                    logging.info('Skipping {}... (file exists)'.format(tail))
+                    logging.info('Skipping %s... (file exists)', tail)
 
-                if not "ipynb" in supplement_links:
+                if "ipynb" not in supplement_links:
                     supplement_links["ipynb"] = []
 
                 supplement_links["ipynb"].append(
-                    (tmpUrl.replace(" ", "%20"), filename))
+                    (tmp_url.replace(" ", "%20"), filename))
 
             else:
                 logging.info(
-                    'Unsupported typename {} in notebook'.format(content['type']))
+                    'Unsupported typename %s in notebook', content['type'])
 
         return supplement_links
 
@@ -749,18 +746,21 @@ class CourseraOnDemand(object):
             headers=headers
         )
 
-        jupyterId = re.findall(r"\"\/user\/(.*)\/tree\"", reply)
-        if len(jupyterId) == 0:
+        jupyted_id = re.findall(r"\"\/user\/(.*)\/tree\"", reply)
+        if len(jupyted_id) == 0:
             logging.error('Could not download notebook %s', notebook_id)
             return None
 
-        jupyterId = jupyterId[0]
+        jupyted_id = jupyted_id[0]
 
         newReq = requests.Session()
         req = newReq.get(OPENCOURSE_NOTEBOOK_TREE.format(
-            jupId=jupyterId, path="/", timestamp=int(time.time())), headers=headers)
+            jupId=jupyted_id, path="/", timestamp=int(time.time())),
+            headers=headers)
 
-        return self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path="/", timestamp=int(time.time()))
+        return self._get_notebook_folder(
+            OPENCOURSE_NOTEBOOK_TREE, jupyted_id, jupId=jupyted_id,
+            path="/", timestamp=int(time.time()))
 
     def extract_links_from_notebook(self, notebook_id):
 
