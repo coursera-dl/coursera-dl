@@ -234,7 +234,8 @@ def main():
 
     session = get_session()
     login(session, args.username, args.password)
-    args.class_names = expand_specializations(session, args.class_names)
+    if args.specialization:
+        args.class_names = expand_specializations(session, args.class_names)
 
     for class_index, class_name in enumerate(args.class_names):
         try:

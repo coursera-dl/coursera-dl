@@ -126,6 +126,16 @@ def parse_args(args=None):
         'Selection of material to download')
 
     group_material.add_argument(
+        '--specialization',
+        dest='specialization',
+        action='store_true',
+        default=False,
+        help='treat given class names as specialization names and try to '
+        'download its courses, if available. Note that there are name '
+        'clashes, e.g. "machine-learning" is both a course and a '
+        'specialization (Default: False)')
+
+    group_material.add_argument(
         '--only-syllabus',
         dest='only_syllabus',
         action='store_true',
