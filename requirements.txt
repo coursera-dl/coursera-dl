@@ -5,3 +5,4 @@ urllib3>=1.10
 pyasn1>=0.1.7
 keyring>=4.0
 configargparse>=0.12.0
+attrs==18.1.0

@@ -61,8 +61,10 @@ OPENCOURSE_LIST_COURSES = 'https://api.coursera.org/api/courses.v1?q=watchlist&s
 #     }
 # }
 OPENCOURSE_MEMBERSHIPS = 'https://api.coursera.org/api/memberships.v1?includes=courseId,courses.v1&q=me&showHidden=true&filter=current,preEnrolled'
-OPENCOURSE_CONTENT_URL = 'https://api.coursera.org/api/opencourse.v1/course/{class_name}?showLockedItems=true'
-OPENCOURSE_VIDEO_URL = 'https://api.coursera.org/api/opencourse.v1/video/{video_id}'
+OPENCOURSE_ONDEMAND_LECTURE_VIDEOS_URL = \
+    'https://api.coursera.org/api/onDemandLectureVideos.v1/'\
+    '{course_id}~{video_id}?includes=video&'\
+    'fields=onDemandVideos.v1(sources%2Csubtitles%2CsubtitlesVtt%2CsubtitlesTxt)'
 OPENCOURSE_SUPPLEMENT_URL = 'https://api.coursera.org/api/onDemandSupplements.v1/'\
     '{course_id}~{element_id}?includes=asset&fields=openCourseAssets.v1%28typeName%29,openCourseAssets.v1%28definition%29'
 OPENCOURSE_PROGRAMMING_ASSIGNMENTS_URL = \
@@ -96,6 +98,23 @@ OPENCOURSE_REFERENCE_ITEM_URL = \
 # }
 OPENCOURSE_ASSET_URL = \
     'https://api.coursera.org/api/assetUrls.v1?ids={ids}'
+
+# Sample response:
+#  "linked": {
+#    "openCourseAssets.v1": [
+#      {
+#        "typeName": "asset",
+#        "definition": {
+#          "assetId": "fytYX5rYEeedWRLokafKRg",
+#          "name": "Lecture slides"
+#        },
+#        "id": "j6g7VZrYEeeUVgpv-dYMig"
+#      }
+#    ]
+#  }
+OPENCOURSE_ONDEMAND_LECTURE_ASSETS_URL = \
+    'https://api.coursera.org/api/onDemandLectureAssets.v1/'\
+    '{course_id}~{video_id}/?includes=openCourseAssets'
 
 # These ids are provided in lecture json:
 #
@@ -170,9 +189,35 @@ OPENCOURSE_API_ASSETS_V1_URL = \
 
 OPENCOURSE_ONDEMAND_COURSE_MATERIALS = \
     'https://api.coursera.org/api/onDemandCourseMaterials.v1/?'\
-        'q=slug&slug={class_name}&includes=moduleIds%2ClessonIds%2CpassableItemGroups%2CpassableItemGroupChoices%2CpassableLessonElements%2CitemIds%2Ctracks'\
-        '&fields=moduleIds%2ConDemandCourseMaterialModules.v1(name%2Cslug%2Cdescription%2CtimeCommitment%2ClessonIds%2Coptional)%2ConDemandCourseMaterialLessons.v1(name%2Cslug%2CtimeCommitment%2CelementIds%2Coptional%2CtrackId)%2ConDemandCourseMaterialPassableItemGroups.v1(requiredPassedCount%2CpassableItemGroupChoiceIds%2CtrackId)%2ConDemandCourseMaterialPassableItemGroupChoices.v1(name%2Cdescription%2CitemIds)%2ConDemandCourseMaterialPassableLessonElements.v1(gradingWeight)%2ConDemandCourseMaterialItems.v1(name%2Cslug%2CtimeCommitment%2Ccontent%2CisLocked%2ClockableByItem%2CitemLockedReasonCode%2CtrackId)%2ConDemandCourseMaterialTracks.v1(passablesCount)'\
-        '&showLockedItems=true'
+    'q=slug&slug={class_name}&includes=moduleIds%2ClessonIds%2CpassableItemGroups%2CpassableItemGroupChoices%2CpassableLessonElements%2CitemIds%2Ctracks'\
+    '&fields=moduleIds%2ConDemandCourseMaterialModules.v1(name%2Cslug%2Cdescription%2CtimeCommitment%2ClessonIds%2Coptional)%2ConDemandCourseMaterialLessons.v1(name%2Cslug%2CtimeCommitment%2CelementIds%2Coptional%2CtrackId)%2ConDemandCourseMaterialPassableItemGroups.v1(requiredPassedCount%2CpassableItemGroupChoiceIds%2CtrackId)%2ConDemandCourseMaterialPassableItemGroupChoices.v1(name%2Cdescription%2CitemIds)%2ConDemandCourseMaterialPassableLessonElements.v1(gradingWeight)%2ConDemandCourseMaterialItems.v1(name%2Cslug%2CtimeCommitment%2Ccontent%2CisLocked%2ClockableByItem%2CitemLockedReasonCode%2CtrackId)%2ConDemandCourseMaterialTracks.v1(passablesCount)'\
+    '&showLockedItems=true'
+
+OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2 = \
+    'https://api.coursera.org/api/onDemandCourseMaterials.v2/?q=slug&slug={class_name}'\
+    '&includes=modules%2Clessons%2CpassableItemGroups%2CpassableItemGroupChoices%2CpassableLessonElements%2Citems%2Ctracks%2CgradePolicy&'\
+    '&fields=moduleIds%2ConDemandCourseMaterialModules.v1(name%2Cslug%2Cdescription%2CtimeCommitment%2ClessonIds%2Coptional%2ClearningObjectives)%2ConDemandCourseMaterialLessons.v1(name%2Cslug%2CtimeCommitment%2CelementIds%2Coptional%2CtrackId)%2ConDemandCourseMaterialPassableItemGroups.v1(requiredPassedCount%2CpassableItemGroupChoiceIds%2CtrackId)%2ConDemandCourseMaterialPassableItemGroupChoices.v1(name%2Cdescription%2CitemIds)%2ConDemandCourseMaterialPassableLessonElements.v1(gradingWeight%2CisRequiredForPassing)%2ConDemandCourseMaterialItems.v2(name%2Cslug%2CtimeCommitment%2CcontentSummary%2CisLocked%2ClockableByItem%2CitemLockedReasonCode%2CtrackId%2ClockedStatus%2CitemLockSummary)%2ConDemandCourseMaterialTracks.v1(passablesCount)'\
+    '&showLockedItems=true'
+
+OPENCOURSE_ONDEMAND_SPECIALIZATIONS_V1 = \
+    'https://api.coursera.org/api/onDemandSpecializations.v1?q=slug'\
+    '&slug={class_name}&fields=courseIds,interchangeableCourseIds,launchedAt,'\
+    'logo,memberships,metadata,partnerIds,premiumExperienceVariant,'\
+    'onDemandSpecializationMemberships.v1(suggestedSessionSchedule),'\
+    'onDemandSpecializationSuggestedSchedule.v1(suggestedSessions),'\
+    'partners.v1(homeLink,name),courses.v1(courseProgress,description,'\
+    'membershipIds,startDate,v2Details,vcMembershipIds),v2Details.v1('\
+    'onDemandSessions,plannedLaunchDate),memberships.v1(grade,'\
+    'vcMembershipId),vcMemberships.v1(certificateCodeWithGrade)'\
+    '&includes=courseIds,memberships,partnerIds,'\
+    'onDemandSpecializationMemberships.v1(suggestedSessionSchedule),'\
+    'courses.v1(courseProgress,membershipIds,v2Details,vcMembershipIds),'\
+    'v2Details.v1(onDemandSessions)'
+
+OPENCOURSE_ONDEMAND_COURSES_V1 = \
+    'https://api.coursera.org/api/onDemandCourses.v1?q=slug&slug={class_name}&'\
+    'includes=instructorIds%2CpartnerIds%2C_links&'\
+    'fields=brandingImage%2CcertificatePurchaseEnabledAt%2Cpartners.v1(squareLogo%2CrectangularLogo)%2Cinstructors.v1(fullName)%2CoverridePartnerLogos%2CsessionsEnabledAt%2CdomainTypes%2CpremiumExperienceVariant%2CisRestrictedMembership'
 
 ABOUT_URL = ('https://api.coursera.org/api/catalog.v1/courses?'
              'fields=largeIcon,photo,previewLink,shortDescription,smallIcon,'
@@ -924,7 +969,7 @@ pre {
 <script type="text/javascript" async
   src="'''
 INSTRUCTIONS_HTML_MATHJAX_URL = 'https://cdn.mathjax.org/mathjax/latest/MathJax.js'
-INSTRUCTIONS_HTML_INJECTION_AFTER ='''?config=TeX-AMS-MML_HTMLorMML">
+INSTRUCTIONS_HTML_INJECTION_AFTER = '''?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 <script type="text/x-mathjax-config">

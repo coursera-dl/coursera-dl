@@ -73,7 +73,7 @@ def test_extract_links_from_lecture_http_error(get_page, course):
     locked_response.status_code = define.HTTP_FORBIDDEN
     get_page.side_effect = HTTPError('Mocked HTTP error',
                                      response=locked_response)
-    assert None == course.extract_links_from_lecture('0')
+    assert None == course.extract_links_from_lecture('fake_course_id', '0')
 
 
 @patch('coursera.api.get_page')
@@ -132,7 +132,8 @@ def test_extract_links_from_programming_immediate_instructions_http_error(
 
 @patch('coursera.api.get_page')
 def test_ondemand_programming_supplement_no_instructions(get_page, course):
-    no_instructions = slurp_fixture('json/supplement-programming-no-instructions.json')
+    no_instructions = slurp_fixture(
+        'json/supplement-programming-no-instructions.json')
     get_page.return_value = json.loads(no_instructions)
 
     output = course.extract_links_from_programming('0')
@@ -171,7 +172,8 @@ def test_ondemand_from_programming_immediate_instructions_no_instructions(
 
 @patch('coursera.api.get_page')
 def test_ondemand_programming_supplement_empty_instructions(get_page, course):
-    empty_instructions = slurp_fixture('json/supplement-programming-empty-instructions.json')
+    empty_instructions = slurp_fixture(
+        'json/supplement-programming-empty-instructions.json')
     get_page.return_value = json.loads(empty_instructions)
     output = course.extract_links_from_programming('0')
 
@@ -186,7 +188,7 @@ def test_ondemand_programming_supplement_empty_instructions(get_page, course):
 
 @patch('coursera.api.get_page')
 def test_ondemand_programming_immediate_instructions_empty_instructions(
-            get_page, course):
+        get_page, course):
     empty_instructions = slurp_fixture(
         'json/supplement-programming-immediate-instructions-empty-instructions.json')
     get_page.return_value = json.loads(empty_instructions)
@@ -207,10 +209,10 @@ def test_ondemand_programming_supplement_one_asset(get_page, course):
     one_asset_url = slurp_fixture('json/asset-urls-one.json')
     asset_json = json.loads(one_asset_url)
     get_page.side_effect = [json.loads(one_asset_tag),
-                                 json.loads(one_asset_url)]
+                            json.loads(one_asset_url)]
 
     expected_output = {'pdf': [(asset_json['elements'][0]['url'],
-                               'statement-pca')]}
+                                'statement-pca')]}
     output = course.extract_links_from_programming('0')
 
     # Make sure that SOME html content has been extracted, but remove
@@ -238,14 +240,15 @@ def test_extract_references_poll(get_page, course):
 
 @patch('coursera.api.get_page')
 def test_ondemand_programming_immediate_instructions_one_asset(get_page, course):
-    one_asset_tag = slurp_fixture('json/supplement-programming-immediate-instructions-one-asset.json')
+    one_asset_tag = slurp_fixture(
+        'json/supplement-programming-immediate-instructions-one-asset.json')
     one_asset_url = slurp_fixture('json/asset-urls-one.json')
     asset_json = json.loads(one_asset_url)
     get_page.side_effect = [json.loads(one_asset_tag),
-                                 json.loads(one_asset_url)]
+                            json.loads(one_asset_url)]
 
     expected_output = {'pdf': [(asset_json['elements'][0]['url'],
-                               'statement-pca')]}
+                                'statement-pca')]}
     output = course.extract_links_from_programming_immediate_instructions('0')
 
     # Make sure that SOME html content has been extracted, but remove
@@ -259,12 +262,14 @@ def test_ondemand_programming_immediate_instructions_one_asset(get_page, course)
 
 @patch('coursera.api.get_page')
 def test_ondemand_programming_supplement_three_assets(get_page, course):
-    three_assets_tag = slurp_fixture('json/supplement-programming-three-assets.json')
+    three_assets_tag = slurp_fixture(
+        'json/supplement-programming-three-assets.json')
     three_assets_url = slurp_fixture('json/asset-urls-three.json')
     get_page.side_effect = [json.loads(three_assets_tag),
-                                 json.loads(three_assets_url)]
+                            json.loads(three_assets_url)]
 
-    expected_output = json.loads(slurp_fixture('json/supplement-three-assets-output.json'))
+    expected_output = json.loads(slurp_fixture(
+        'json/supplement-three-assets-output.json'))
     output = course.extract_links_from_programming('0')
     output = json.loads(json.dumps(output))
 
@@ -279,12 +284,15 @@ def test_ondemand_programming_supplement_three_assets(get_page, course):
 
 @patch('coursera.api.get_page')
 def test_extract_links_from_lecture_assets_typename_asset(get_page, course):
-    open_course_assets_reply = slurp_fixture('json/supplement-open-course-assets-reply.json')
-    api_assets_v1_reply = slurp_fixture('json/supplement-api-assets-v1-reply.json')
+    open_course_assets_reply = slurp_fixture(
+        'json/supplement-open-course-assets-reply.json')
+    api_assets_v1_reply = slurp_fixture(
+        'json/supplement-api-assets-v1-reply.json')
     get_page.side_effect = [json.loads(open_course_assets_reply),
-                                 json.loads(api_assets_v1_reply)]
+                            json.loads(api_assets_v1_reply)]
 
-    expected_output = json.loads(slurp_fixture('json/supplement-extract-links-from-lectures-output.json'))
+    expected_output = json.loads(slurp_fixture(
+        'json/supplement-extract-links-from-lectures-output.json'))
     assets = ['giAxucdaEeWJTQ5WTi8YJQ']
     output = course._extract_links_from_lecture_assets(assets)
     output = json.loads(json.dumps(output))
@@ -298,14 +306,20 @@ def test_extract_links_from_lecture_assets_typname_url_and_asset(get_page, cours
     links both from typename == 'asset' and == 'url'.
     """
     get_page.side_effect = [
-        json.loads(slurp_fixture('json/supplement-open-course-assets-typename-url-reply-1.json')),
-        json.loads(slurp_fixture('json/supplement-open-course-assets-typename-url-reply-2.json')),
-        json.loads(slurp_fixture('json/supplement-open-course-assets-typename-url-reply-3.json')),
-        json.loads(slurp_fixture('json/supplement-open-course-assets-typename-url-reply-4.json')),
-        json.loads(slurp_fixture('json/supplement-open-course-assets-typename-url-reply-5.json')),
+        json.loads(slurp_fixture(
+            'json/supplement-open-course-assets-typename-url-reply-1.json')),
+        json.loads(slurp_fixture(
+            'json/supplement-open-course-assets-typename-url-reply-2.json')),
+        json.loads(slurp_fixture(
+            'json/supplement-open-course-assets-typename-url-reply-3.json')),
+        json.loads(slurp_fixture(
+            'json/supplement-open-course-assets-typename-url-reply-4.json')),
+        json.loads(slurp_fixture(
+            'json/supplement-open-course-assets-typename-url-reply-5.json')),
     ]
 
-    expected_output = json.loads(slurp_fixture('json/supplement-extract-links-from-lectures-url-asset-output.json'))
+    expected_output = json.loads(slurp_fixture(
+        'json/supplement-extract-links-from-lectures-url-asset-output.json'))
     assets = ['Yry0spSKEeW8oA5fR3afVQ',
               'kMQyUZSLEeWj-hLVp2Pm8w',
               'xkAloZmJEeWjYA4jOOgP8Q']
@@ -322,7 +336,8 @@ def test_list_courses(get_page, course):
     get_page.side_effect = [
         json.loads(slurp_fixture('json/list-courses-input.json'))
     ]
-    expected_output = json.loads(slurp_fixture('json/list-courses-output.json'))
+    expected_output = json.loads(
+        slurp_fixture('json/list-courses-output.json'))
     expected_output = expected_output['courses']
     output = course.list_courses()
     assert expected_output == output
@@ -344,12 +359,13 @@ def test_list_courses(get_page, course):
             'en,zh-CN|zh-TW', "None"),
     ]
 )
-def test_extract_subtitles_from_video_dom(input_filename,output_filename,subtitle_language, video_id):
+def test_extract_subtitles_from_video_dom(input_filename, output_filename, subtitle_language, video_id):
     video_dom = json.loads(slurp_fixture('json/%s' % input_filename))
     expected_output = json.loads(slurp_fixture('json/%s' % output_filename))
     course = api.CourseraOnDemand(
         session=Mock(cookies={}), course_id='0', course_name='test_course')
-    actual_output = course._extract_subtitles_from_video_dom(video_dom, subtitle_language, video_id)
+    actual_output = course._extract_subtitles_from_video_dom(
+        video_dom, subtitle_language, video_id)
     actual_output = json.loads(json.dumps(actual_output))
     assert actual_output == expected_output
 
@@ -357,22 +373,29 @@ def test_extract_subtitles_from_video_dom(input_filename,output_filename,subtitl
 @pytest.mark.parametrize(
     "input_filename,output_filename", [
         ('empty-input.json', 'empty-output.txt'),
-        ('answer-text-replaced-with-span-input.json', 'answer-text-replaced-with-span-output.txt'),
-        ('question-type-textExactMatch-input.json', 'question-type-textExactMatch-output.txt'),
+        ('answer-text-replaced-with-span-input.json',
+         'answer-text-replaced-with-span-output.txt'),
+        ('question-type-textExactMatch-input.json',
+         'question-type-textExactMatch-output.txt'),
         ('question-type-regex-input.json', 'question-type-regex-output.txt'),
-        ('question-type-mathExpression-input.json', 'question-type-mathExpression-output.txt'),
+        ('question-type-mathExpression-input.json',
+         'question-type-mathExpression-output.txt'),
         ('question-type-checkbox-input.json', 'question-type-checkbox-output.txt'),
         ('question-type-mcq-input.json', 'question-type-mcq-output.txt'),
-        ('question-type-singleNumeric-input.json', 'question-type-singleNumeric-output.txt'),
+        ('question-type-singleNumeric-input.json',
+         'question-type-singleNumeric-output.txt'),
         ('question-type-reflect-input.json', 'question-type-reflect-output.txt'),
-        ('question-type-mcqReflect-input.json', 'question-type-mcqReflect-output.txt'),
+        ('question-type-mcqReflect-input.json',
+         'question-type-mcqReflect-output.txt'),
         ('question-type-unknown-input.json', 'question-type-unknown-output.txt'),
         ('multiple-questions-input.json', 'multiple-questions-output.txt'),
     ]
 )
 def test_quiz_exam_to_markup_converter(input_filename, output_filename):
-    quiz_json = json.loads(slurp_fixture('json/quiz-to-markup/%s' % input_filename))
-    expected_output = slurp_fixture('json/quiz-to-markup/%s' % output_filename).strip()
+    quiz_json = json.loads(slurp_fixture(
+        'json/quiz-to-markup/%s' % input_filename))
+    expected_output = slurp_fixture(
+        'json/quiz-to-markup/%s' % output_filename).strip()
 
     converter = api.QuizExamToMarkupConverter(session=None)
     actual_output = converter(quiz_json).strip()
@@ -411,7 +434,8 @@ class TestMarkupToHTMLConverter:
         <meta charset="UTF-8"/>
         """
         assert self._p(markup) + self.STYLE == output
-        assert self._p(markup) + self.STYLE_WITH_ALTER == output_with_alter_mjcdn
+        assert self._p(markup) + \
+            self.STYLE_WITH_ALTER == output_with_alter_mjcdn
 
     def test_replace_text_tag(self):
         markup = """
@@ -438,7 +462,8 @@ class TestMarkupToHTMLConverter:
         output = self.markup_to_html(markup)
         output_with_alter_mjcdn = self.markup_to_html_with_alter_mjcdn(markup)
         assert self._p(result) + self.STYLE == output
-        assert self._p(result) + self.STYLE_WITH_ALTER == output_with_alter_mjcdn
+        assert self._p(result) + \
+            self.STYLE_WITH_ALTER == output_with_alter_mjcdn
 
     def test_replace_heading(self):
         output = self.markup_to_html("""
@@ -501,7 +526,8 @@ class TestMarkupToHTMLConverter:
             'nodata': Mock(data=None, content_type='image/png')
         }
         mock_asset_retriever.__call__ = Mock(return_value=None)
-        mock_asset_retriever.__getitem__  = Mock(side_effect=replies.__getitem__)
+        mock_asset_retriever.__getitem__ = Mock(
+            side_effect=replies.__getitem__)
         self.markup_to_html._asset_retriever = mock_asset_retriever
 
         output = self.markup_to_html("""
@@ -532,7 +558,8 @@ class TestMarkupToHTMLConverter:
             'bWTK9sYwEeW7AxLLCrgDQQ': Mock(data=b'b', content_type='unknown')
         }
         mock_asset_retriever.__call__ = Mock(return_value=None)
-        mock_asset_retriever.__getitem__  = Mock(side_effect=replies.__getitem__)
+        mock_asset_retriever.__getitem__ = Mock(
+            side_effect=replies.__getitem__)
         self.markup_to_html._asset_retriever = mock_asset_retriever
 
         output = self.markup_to_html("""
@@ -570,6 +597,7 @@ def test_quiz_converter():
     with open('quiz.html', 'w') as file:
         file.write(result)
 
+
 def test_quiz_converter_all():
     pytest.skip()
     import os
@@ -583,8 +611,8 @@ def test_quiz_converter_all():
     markup_to_html = api.MarkupToHTMLConverter(session=session)
 
     path = 'quiz_json'
-    for filename in ['quiz-audio.json']: #os.listdir(path):
-    # for filename in ['all_question_types.json']:
+    for filename in ['quiz-audio.json']:  # os.listdir(path):
+        # for filename in ['all_question_types.json']:
         # if 'YV0W4' not in filename:
         #     continue
         # if 'QVHj1' not in filename:
@@ -599,6 +627,7 @@ def test_quiz_converter_all():
         # print('RESULT', result)
         with open('quiz_html/' + filename + '.html', 'w') as f:
             f.write(result)
+
 
 def create_session():
     from coursera.coursera_dl import get_session
@@ -625,10 +654,14 @@ def test_asset_retriever(get_reply, get_page):
                  'vdqUTz61Eea_CQ5dfWSAjQ']
 
     expected_output = [
-        api.Asset(id="bWTK9sYwEeW7AxLLCrgDQQ", name="M111.mp3", type_name="audio", url="url4", content_type="image/png", data="<...>"),
-        api.Asset(id="VceKeChKEeaOMw70NkE3iw", name="09_graph_decomposition_problems_1.pdf", type_name="pdf", url="url7", content_type="image/png", data="<...>"),
-        api.Asset(id="VcmGXShKEea4ehL5RXz3EQ", name="09_graph_decomposition_starter_files_1.zip", type_name="generic", url="url2", content_type="image/png", data="<...>"),
-        api.Asset(id="vdqUTz61Eea_CQ5dfWSAjQ", name="Capture.PNG", type_name="image", url="url9", content_type="image/png", data="<...>"),
+        api.Asset(id="bWTK9sYwEeW7AxLLCrgDQQ", name="M111.mp3", type_name="audio",
+                  url="url4", content_type="image/png", data="<...>"),
+        api.Asset(id="VceKeChKEeaOMw70NkE3iw", name="09_graph_decomposition_problems_1.pdf",
+                  type_name="pdf", url="url7", content_type="image/png", data="<...>"),
+        api.Asset(id="VcmGXShKEea4ehL5RXz3EQ", name="09_graph_decomposition_starter_files_1.zip",
+                  type_name="generic", url="url2", content_type="image/png", data="<...>"),
+        api.Asset(id="vdqUTz61Eea_CQ5dfWSAjQ", name="Capture.PNG",
+                  type_name="image", url="url9", content_type="image/png", data="<...>"),
     ]
 
     retriever = api.AssetRetriever(session=None)

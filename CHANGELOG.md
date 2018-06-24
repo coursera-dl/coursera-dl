@@ -1,5 +1,12 @@
 # Change Log
 
+Bugfixes:
+  - Switch to newer API for syllabus and lecture retrieval (#665, #673, #634)
+
+Features:
+  - You can now download specializations: the child courses will be
+    downloaded automatically
+
 ## 0.11.2 (2018-06-03)
 
 Bugfixes:

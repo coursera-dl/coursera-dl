@@ -8,6 +8,7 @@ import os
 import re
 import sys
 import time
+import json
 import errno
 import random
 import string
@@ -41,7 +42,9 @@ else:
 from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
 
 # Force us of bs4 with html.parser
-BeautifulSoup = lambda page: BeautifulSoup_(page, 'html.parser')
+
+
+def BeautifulSoup(page): return BeautifulSoup_(page, 'html.parser')
 
 
 if six.PY2:
@@ -53,6 +56,16 @@ if six.PY2:
 else:
     def decode_input(x):
         return x
+
+
+def spit_json(obj, filename):
+    with open(filename, 'w') as file_object:
+        json.dump(obj, file_object, indent=4)
+
+
+def slurp_json(filename):
+    with open(filename) as file_object:
+        return json.load(file_object)
 
 
 def is_debug_run():

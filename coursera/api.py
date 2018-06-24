@@ -12,9 +12,11 @@ import logging
 import time
 import requests
 import urllib
-from collections import namedtuple
+
+from collections import namedtuple, OrderedDict
 from six import iterkeys, iteritems
 from six.moves.urllib_parse import quote_plus
+import attr
 
 from .utils import (BeautifulSoup, make_coursera_absolute_url,
                     extend_supplement_links, clean_url, clean_filename,
@@ -26,7 +28,11 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      OPENCOURSE_ASSETS_URL,
                      OPENCOURSE_API_ASSETS_V1_URL,
                      OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
-                     OPENCOURSE_VIDEO_URL,
+                     OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2,
+                     OPENCOURSE_ONDEMAND_COURSES_V1,
+                     OPENCOURSE_ONDEMAND_LECTURE_VIDEOS_URL,
+                     OPENCOURSE_ONDEMAND_LECTURE_ASSETS_URL,
+                     OPENCOURSE_ONDEMAND_SPECIALIZATIONS_V1,
                      OPENCOURSE_MEMBERSHIPS,
                      OPENCOURSE_REFERENCES_POLL_URL,
                      OPENCOURSE_REFERENCE_ITEM_URL,
@@ -278,7 +284,7 @@ class MarkupToHTMLConverter(object):
                 audio.insert_after(controls_tag)
 
 
-class OnDemandCourseMaterialItems(object):
+class OnDemandCourseMaterialItemsV1(object):
     """
     Helper class that allows accessing lecture JSONs by lesson IDs.
     """
@@ -312,7 +318,7 @@ class OnDemandCourseMaterialItems(object):
         dom = get_page(session, OPENCOURSE_ONDEMAND_COURSE_MATERIALS,
                        json=True,
                        class_name=course_name)
-        return OnDemandCourseMaterialItems(
+        return OnDemandCourseMaterialItemsV1(
             dom['linked']['onDemandCourseMaterialItems.v1'])
 
     def get(self, lesson_id):
@@ -408,6 +414,173 @@ class AssetRetriever(object):
         return result
 
 
+@attr.s
+class ModuleV1(object):
+    name = attr.ib()
+    id = attr.ib()
+    slug = attr.ib()
+    child_ids = attr.ib()
+
+    def children(self, all_children):
+        return [all_children[child] for child in self.child_ids]
+
+
+@attr.s
+class ModulesV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+        return ModulesV1(OrderedDict(
+            (item['id'],
+             ModuleV1(item['name'],
+                      item['id'],
+                      item['slug'],
+                      item['lessonIds']))
+            for item in data
+        ))
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+    def __iter__(self):
+        return iter(self.children.values())
+
+
+@attr.s
+class LessonV1(object):
+    name = attr.ib()
+    id = attr.ib()
+    slug = attr.ib()
+    child_ids = attr.ib()
+
+    def children(self, all_children):
+        return [all_children[child] for child in self.child_ids]
+
+
+@attr.s
+class LessonsV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+        return LessonsV1(OrderedDict(
+            (item['id'],
+             LessonV1(item['name'],
+                      item['id'],
+                      item['slug'],
+                      item['itemIds']))
+            for item in data
+        ))
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+
+@attr.s
+class ItemV2(object):
+    name = attr.ib()
+    id = attr.ib()
+    slug = attr.ib()
+    type_name = attr.ib()
+    lesson_id = attr.ib()
+    module_id = attr.ib()
+
+
+@attr.s
+class ItemsV2(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+        return ItemsV2(OrderedDict(
+            (item['id'],
+             ItemV2(item['name'],
+                    item['id'],
+                    item['slug'],
+                    item['contentSummary']['typeName'],
+                    item['lessonId'],
+                    item['moduleId']))
+            for item in data
+        ))
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+
+@attr.s
+class VideoV1(object):
+    resolution = attr.ib()
+    mp4_video_url = attr.ib()
+
+
+@attr.s
+class VideosV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def from_json(data):
+
+        videos = [VideoV1(resolution, links['mp4VideoUrl'])
+                  for resolution, links
+                  in data['sources']['byResolution'].items()]
+        videos.sort(key=lambda video: video.resolution, reverse=True)
+
+        videos = OrderedDict(
+            (video.resolution, video)
+            for video in videos
+        )
+        return VideosV1(videos)
+
+    def __contains__(self, key):
+        return key in self.children
+
+    def __getitem__(self, key):
+        return self.children[key]
+
+    def get_best(self):
+        return next(iter(self.children.values()))
+
+
+def expand_specializations(session, class_names):
+    """
+    Checks whether any given name is not a class but a specialization.
+
+    If it's a specialization, expand the list of class names with the child
+    class names.
+    """
+    result = []
+    for class_name in class_names:
+        specialization = SpecializationV1.create(session, class_name)
+        if specialization is None:
+            result.append(class_name)
+        else:
+            result.extend(specialization.children)
+            logging.info('Expanded specialization "%s" into the following'
+                         ' classes: %s',
+                         class_name, ' '.join(specialization.children))
+
+    return result
+
+
+@attr.s
+class SpecializationV1(object):
+    children = attr.ib()
+
+    @staticmethod
+    def create(session, class_name):
+        try:
+            dom = get_page(session, OPENCOURSE_ONDEMAND_SPECIALIZATIONS_V1,
+                           json=True, quiet=True,
+                           class_name=class_name)
+        except requests.exceptions.HTTPError as e:
+            logging.debug('Could not expand %s: %s', class_name, e)
+            return None
+
+        return SpecializationV1(
+            [course['slug'] for course in dom['linked']['courses.v1']])
+
+
 class CourseraOnDemand(object):
     """
     This is a class that provides a friendly interface to extract certain
@@ -481,87 +654,84 @@ class CourseraOnDemand(object):
         supplement_links = {}
 
         url = url.format(**kwargs)
-        reply = get_page(
-            self._session,
-            url,
-            json=True
-        )
-
-        headers = self._auth_headers_with_json()
+        reply = get_page(self._session, url, json=True)
 
         for content in reply['content']:
 
             if content['type'] == 'directory':
                 a = self._get_notebook_folder(
-                    OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path=content['path'], timestamp=int(time.time()))
+                    OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId,
+                    path=content['path'], timestamp=int(time.time()))
                 supplement_links.update(a)
 
             elif content['type'] == 'file':
-                tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
-                    path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
-                filename, extension = os.path.splitext(clean_url(tmpUrl))
+                tmp_url = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
+                    path=content['path'], jupId=jupyterId,
+                    timestamp=int(time.time()))
+                filename, extension = os.path.splitext(clean_url(tmp_url))
 
                 head, tail = os.path.split(content['path'])
                 # '/' in the following line is for a reason:
                 # @noureddin says: "I split head using split('/') not
                 # os.path.split() because it's seems to me that it comes from a
                 # web page, so the separator will always be /, so using the
-                # native path splitting function is not the most portable way to
-                # do it."
-                # Original pull request: https://github.com/coursera-dl/coursera-dl/pull/654
+                # native path splitting function is not the most portable
+                # way to do it."
+                # Original pull request:
+                # https://github.com/coursera-dl/coursera-dl/pull/654
                 head = '/'.join([clean_filename(dir, minimal_change=True)
                                  for dir in head.split('/')])
                 tail = clean_filename(tail, minimal_change=True)
 
-                if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
-                    logging.info('Creating [{}] directories...'.format(head))
+                if not os.path.isdir(self._course_name + "/notebook/" + head + "/"):
+                    logging.info('Creating [%s] directories...', head)
                     os.makedirs(self._course_name + "/notebook/" + head + "/")
 
-                r = requests.get(tmpUrl.replace(" ", "%20"),
+                r = requests.get(tmp_url.replace(" ", "%20"),
                                  cookies=self._session.cookies)
-                if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
-                    logging.info('Downloading {} into {}'.format(tail, head))
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/" + tail):
+                    logging.info('Downloading %s into %s', tail, head)
                     with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
                         f.write(r.content)
                 else:
-                    logging.info('Skipping {}... (file exists)'.format(tail))
+                    logging.info('Skipping %s... (file exists)', tail)
 
-                if not str(extension[1:]) in supplement_links:
+                if str(extension[1:]) not in supplement_links:
                     supplement_links[str(extension[1:])] = []
 
                 supplement_links[str(extension[1:])].append(
-                    (tmpUrl.replace(" ", "%20"), filename))
+                    (tmp_url.replace(" ", "%20"), filename))
 
             elif content['type'] == 'notebook':
-                tmpUrl = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
+                tmp_url = OPENCOURSE_NOTEBOOK_DOWNLOAD.format(
                     path=content['path'], jupId=jupyterId, timestamp=int(time.time()))
-                filename, extension = os.path.splitext(clean_url(tmpUrl))
+                filename, extension = os.path.splitext(clean_url(tmp_url))
 
                 head, tail = os.path.split(content['path'])
 
-                if os.path.isdir(self._course_name + "/notebook/" + head + "/") == False:
-                    logging.info('Creating [{}] directories...'.format(head))
+                if not os.path.isdir(self._course_name + "/notebook/" + head + "/"):
+                    logging.info('Creating [%s] directories...', head)
                     os.makedirs(self._course_name + "/notebook/" + head + "/")
 
-                r = requests.get(tmpUrl.replace(" ", "%20"),
+                r = requests.get(tmp_url.replace(" ", "%20"),
                                  cookies=self._session.cookies)
-                if os.path.exists(self._course_name + "/notebook/" + head + "/" + tail) == False:
+                if not os.path.exists(self._course_name + "/notebook/" + head + "/" + tail):
                     logging.info(
-                        'Downloading Jupyter {} into {}'.format(tail, head))
+                        'Downloading Jupyter %s into %s', tail, head)
                     with open(self._course_name + "/notebook/" + head + "/" + tail, 'wb+') as f:
                         f.write(r.content)
                 else:
-                    logging.info('Skipping {}... (file exists)'.format(tail))
+                    logging.info('Skipping %s... (file exists)', tail)
 
-                if not "ipynb" in supplement_links:
+                if "ipynb" not in supplement_links:
                     supplement_links["ipynb"] = []
 
                 supplement_links["ipynb"].append(
-                    (tmpUrl.replace(" ", "%20"), filename))
+                    (tmp_url.replace(" ", "%20"), filename))
 
             else:
                 logging.info(
-                    'Unsupported typename {} in notebook'.format(content['type']))
+                    'Unsupported typename %s in notebook', content['type'])
 
         return supplement_links
 
@@ -576,18 +746,21 @@ class CourseraOnDemand(object):
             headers=headers
         )
 
-        jupyterId = re.findall(r"\"\/user\/(.*)\/tree\"", reply)
-        if len(jupyterId) == 0:
+        jupyted_id = re.findall(r"\"\/user\/(.*)\/tree\"", reply)
+        if len(jupyted_id) == 0:
             logging.error('Could not download notebook %s', notebook_id)
             return None
 
-        jupyterId = jupyterId[0]
+        jupyted_id = jupyted_id[0]
 
         newReq = requests.Session()
         req = newReq.get(OPENCOURSE_NOTEBOOK_TREE.format(
-            jupId=jupyterId, path="/", timestamp=int(time.time())), headers=headers)
+            jupId=jupyted_id, path="/", timestamp=int(time.time())),
+            headers=headers)
 
-        return self._get_notebook_folder(OPENCOURSE_NOTEBOOK_TREE, jupyterId, jupId=jupyterId, path="/", timestamp=int(time.time()))
+        return self._get_notebook_folder(
+            OPENCOURSE_NOTEBOOK_TREE, jupyted_id, jupId=jupyted_id,
+            path="/", timestamp=int(time.time()))
 
     def extract_links_from_notebook(self, notebook_id):
 
@@ -687,9 +860,9 @@ class CourseraOnDemand(object):
         })
         return headers
 
-    def extract_links_from_lecture(self,
+    def extract_links_from_lecture(self, course_id,
                                    video_id, subtitle_language='en',
-                                   resolution='540p', assets=None):
+                                   resolution='540p'):
         """
         Return the download URLs of on-demand course video.
 
@@ -702,18 +875,13 @@ class CourseraOnDemand(object):
         @param resolution: Preferred video resolution.
         @type resolution: str
 
-        @param assets: List of assets that may present in the video.
-        @type assets: [str]
-
         @return: @see CourseraOnDemand._extract_links_from_text
         """
-        if assets is None:
-            assets = []
-
         try:
             links = self._extract_videos_and_subtitles_from_lecture(
-                video_id, subtitle_language, resolution)
+                course_id, video_id, subtitle_language, resolution)
 
+            assets = self._get_lecture_asset_ids(course_id, video_id)
             assets = self._normalize_assets(assets)
             extend_supplement_links(
                 links, self._extract_links_from_lecture_assets(assets))
@@ -726,6 +894,17 @@ class CourseraOnDemand(object):
                 logging.exception(
                     'Could not download lecture %s: %s', video_id, exception)
             return None
+
+    def _get_lecture_asset_ids(self, course_id, video_id):
+        """
+        Obtain a list of asset ids from a lecture.
+        """
+        dom = get_page(self._session, OPENCOURSE_ONDEMAND_LECTURE_ASSETS_URL,
+                       json=True, course_id=course_id, video_id=video_id)
+        # Note that we extract here "id", not definition -> assetId, as it
+        # be extracted later.
+        return [asset['id']
+                for asset in dom['linked']['openCourseAssets.v1']]
 
     def _normalize_assets(self, assets):
         """
@@ -850,41 +1029,34 @@ class CourseraOnDemand(object):
         return urls
 
     def _extract_videos_and_subtitles_from_lecture(self,
+                                                   course_id,
                                                    video_id,
                                                    subtitle_language='en',
                                                    resolution='540p'):
 
-        dom = get_page(self._session, OPENCOURSE_VIDEO_URL,
-                       json=True,
-                       video_id=video_id)
-
         logging.debug('Parsing JSON for video_id <%s>.', video_id)
+
+        dom = get_page(self._session, OPENCOURSE_ONDEMAND_LECTURE_VIDEOS_URL,
+                       json=True,
+                       course_id=course_id,
+                       video_id=video_id)
+        dom = dom['linked']['onDemandVideos.v1'][0]
+
+        videos = VideosV1.from_json(dom)
         video_content = {}
 
-        # videos
-        logging.debug('Gathering video URLs for video_id <%s>.', video_id)
-        sources = dom['sources']
-        sources.sort(key=lambda src: src['resolution'])
-        sources.reverse()
-
-        # Try to select resolution requested by the user.
-        filtered_sources = [source
-                            for source in sources
-                            if source['resolution'] == resolution]
-
-        if len(filtered_sources) == 0:
-            # We will just use the 'vanilla' version of sources here, instead of
-            # filtered_sources.
-            logging.warning('Requested resolution %s not available for <%s>. '
-                            'Downloading highest resolution available instead.',
-                            resolution, video_id)
-        else:
+        if resolution in videos:
+            source = videos[resolution]
             logging.debug('Proceeding with download of resolution %s of <%s>.',
                           resolution, video_id)
-            sources = filtered_sources
+        else:
+            source = videos.get_best()
+            logging.warning(
+                'Requested resolution %s not available for <%s>. '
+                'Downloading highest resolution (%s) available instead.',
+                resolution, video_id, source.resolution)
 
-        video_url = sources[0]['formatSources']['video/mp4']
-        video_content['mp4'] = video_url
+        video_content['mp4'] = source.mp4_video_url
 
         subtitle_link = self._extract_subtitles_from_video_dom(
             dom, subtitle_language, video_id)
