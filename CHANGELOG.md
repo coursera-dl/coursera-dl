@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.4 (2018-06-24)
+
+Features:
+  - Do not expand class names if there is a specialization with the same name,
+    but add --specialization flag to do that explicitly (#673)
+
 ## 0.11.3 (2018-06-24)
 
 Bugfixes:
