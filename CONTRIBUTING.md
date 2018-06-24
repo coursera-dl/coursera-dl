@@ -239,7 +239,7 @@ DRAFT
 5. `git push && git push --tags`
 6. `pandoc --from=markdown --to=rst --output=README.rst README.md`.
    I think this is required for PyPI description to look nice.
-7. `python setup.py sdist` to build the package
+7. `python setup.py sdist bdist_wheel --universal` to build the package
 8. `twine upload dist/coursera-dl-0.6.1.tar.gz` to deploy the package.
 
 ## Docker
