@@ -200,7 +200,7 @@ OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2 = \
     '&showLockedItems=true'
 
 OPENCOURSE_ONDEMAND_SPECIALIZATIONS_V1 = \
-    'https://www.coursera.org/api/onDemandSpecializations.v1?q=slug'\
+    'https://api.coursera.org/api/onDemandSpecializations.v1?q=slug'\
     '&slug={class_name}&fields=courseIds,interchangeableCourseIds,launchedAt,'\
     'logo,memberships,metadata,partnerIds,premiumExperienceVariant,'\
     'onDemandSpecializationMemberships.v1(suggestedSessionSchedule),'\
