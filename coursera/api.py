@@ -492,16 +492,16 @@ class ItemsV2(object):
 
     @staticmethod
     def from_json(data):
-        return ItemsV2({
-            item['id']:
-            ItemV2(item['name'],
-                   item['id'],
-                   item['slug'],
-                   item['contentSummary']['typeName'],
-                   item['lessonId'],
-                   item['moduleId'])
+        return ItemsV2(OrderedDict(
+            (item['id'],
+             ItemV2(item['name'],
+                    item['id'],
+                    item['slug'],
+                    item['contentSummary']['typeName'],
+                    item['lessonId'],
+                    item['moduleId']))
             for item in data
-        })
+        ))
 
     def __getitem__(self, key):
         return self.children[key]
