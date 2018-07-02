@@ -45,7 +45,9 @@ def get_reply(session, url, post=False, data=None, headers=None, quiet=False):
                                headers=request_headers)
     prepared_request = session.prepare_request(request)
 
-    reply = session.send(prepared_request)
+    settings = session.merge_environment_settings(request.url, {}, False, False, None)
+
+    reply = session.send(prepared_request, **settings)
 
     try:
         reply.raise_for_status()
