@@ -334,6 +334,20 @@ OPENCOURSE_PEER_ASSIGNMENT_INSTRUCTIONS = (
     'includes=gradingMetadata%2CreviewSchemas%2CsubmissionSchemas&'
     'fields=instructions%2ConDemandPeerAssignmentGradingMetadata.v1(requiredAuthoredReviewCount%2CisMentorGraded%2CassignmentDetails)%2ConDemandPeerReviewSchemas.v1(reviewSchema)%2ConDemandPeerSubmissionSchemas.v1(submissionSchema)')
 
+#POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION = 'https://www.coursera.org/api/opencourse.v1/user/20044/course/algorithms-part1/item/RZW72/lecture/inVideoQuiz/session'
+# Sample response:
+#
+# {
+#   "contentResponseBody":{
+#     "session":{
+#       "id":"opencourse~yQcuJCOcEeagwg7hVay0BQ:20044:zuKpXyOcEeawgA7Q_IVIpw@7:1530764314683@1",
+#       "open":true
+#     }
+#   }
+# }
+
+POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION = 'https://api.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/lecture/inVideoQuiz/session'
+
 #POST_OPENCOURSE_API_QUIZ_SESSION = 'https://api.coursera.org/api/opencourse.v1/user/4958/course/text-mining/item/7OQHc/quiz/session'
 # Sample response:
 #
@@ -436,6 +450,82 @@ POST_OPENCOURSE_API_QUIZ_SESSION = 'https://api.coursera.org/api/opencourse.v1/u
 #
 POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE = 'https://api.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/quiz/session/{session_id}/action/getState?autoEnroll=false'
 
+#POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION_GET_QUESTIONS = 'https://www.coursera.org/api/opencourse.v1/user/20044/course/algorithms-part1/item/dfxCQ/lecture/inVideoQuiz/session/opencourse~yQcuJCOcEeagwg7hVay0BQ:20044:zv6V3iOcEeawgA7Q_IVIpw@4:1530766081088@1/action/getQuestions?autoEnroll=false'
+# Sample response:
+#
+# {
+#   "contentResponseBody":{
+#     "return":{
+#       "questions":[
+#         {
+#           "id":"e105e1d98ce175f92b9f3bf9bed71aee",
+#           "question":{
+#             "type":"mcq",
+#             "responseType":"submission"
+#           },
+#           "variant":{
+#             "prompt":{
+#               "typeName":"cml",
+#               "definition":{
+#                 "dtdId":"assess/1",
+#                 "value":"<co-content><text hasMath=\"true\">Which of the following functions is $$O(n^3)$$?</text><text/></co-content>"
+#               }
+#             },
+#             "options":[
+#               {
+#                 "id":"386ade8cbdf3c699e04e67be9561977d",
+#                 "display":{
+#                   "typeName":"cml",
+#                   "definition":{
+#                     "dtdId":"assess/1",
+#                     "value":"<co-content><text hasMath=\"true\">$$11n + 15 \\lg n + 100$$</text></co-content>"
+#                   }
+#                 }
+#               },
+#               {
+#                 "id":"b9218e27abdf6ba72d6e9202ff77364d",
+#                 "display":{
+#                   "typeName":"cml",
+#                   "definition":{
+#                     "dtdId":"assess/1",
+#                     "value":"<co-content><text hasMath=\"true\">$$\\frac{1}{3} n^2$$</text></co-content>"
+#                   }
+#                 }
+#               },
+#               {
+#                 "id":"226ee8565f9c56018fd4965abcd9635a",
+#                 "display":{
+#                   "typeName":"cml",
+#                   "definition":{
+#                     "dtdId":"assess/1",
+#                     "value":"<co-content><text hasMath=\"true\">$$25,000 n^3$$</text></co-content>"
+#                   }
+#                 }
+#               },
+#               {
+#                 "id":"08fc526b256ce6ce5ac2386fe2f35d51",
+#                 "display":{
+#                   "typeName":"cml",
+#                   "definition":{
+#                     "dtdId":"assess/1",
+#                     "value":"<co-content><text>All of the above</text></co-content>"
+#                   }
+#                 }
+#               }
+#             ]
+#           },
+#           "video":{
+#             "cuePointMs":688400,
+#             "order":0
+#           },
+#           "isSubmitAllowed":true
+#         }
+#       ]
+#     }
+#   }
+# }
+ 
+POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION_GET_QUESTIONS = 'https://api.coursera.org/api/opencourse.v1/user/{user_id}/course/{class_name}/item/{quiz_id}/lecture/inVideoQuiz/session/{session_id}/action/getQuestions?autoEnroll=false'
 #POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS = 'https://api.coursera.org/api/onDemandExamSessions.v1/-N44X0IJEeWpogr5ZO8qxQ~YV0W4~10!~1467462079068/actions?includes=gradingAttempts'
 # Sample response:
 #

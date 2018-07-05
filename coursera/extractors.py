@@ -155,7 +155,8 @@ class CourseraExtractor(PlatformExtractor):
                         links = course.extract_links_from_lecture(
                             class_id,
                             lecture_video_id, subtitle_language,
-                            video_resolution)
+                            video_resolution, download_invideo_quiz=download_quizzes)
+                        
 
                     elif typename == 'supplement':
                         links = course.extract_links_from_supplement(
