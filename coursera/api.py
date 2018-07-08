@@ -111,18 +111,9 @@ class QuizExamToMarkupConverter(object):
                 options = question_json['variant']['definition'].get('options', [])
 
             # Question number and (if invideo) when quiz appear in the video
+            cue_point = self._get_cue_point(question_json) if invideo else ""
             
-            if invideo:
-               seconds = int(question_json['video']['cuePointMs']) / 1000
-               minutes = int(seconds / 60)
-               seconds = int(seconds % 60)
-               if minutes == 0:
-                   cuePoint = " at 0′{}″".format(seconds)
-               else:
-                   cuePoint = " at {}′{}″".format(minutes, seconds)
-            else:
-                cuePoint = ""
-            result.append('<h3>Question %d%s</h3>' % (question_index + 1, cuePoint))
+            result.append('<h3>Question %d%s</h3>' % (question_index + 1, cue_point))
 
             # Question text
             question_text = unescape_html(prompt['definition']['value'])
@@ -175,6 +166,20 @@ class QuizExamToMarkupConverter(object):
         while soup.find(initial_tag):
             soup.find(initial_tag).name = target_tag
         return soup.prettify()
+
+    def _get_cue_point(self, question_json):
+        """
+        get the time when the quiz appears in a video and convert it to mm′ss″ format
+      
+        """
+        seconds = int(question_json['video']['cuePointMs']) / 1000
+        minutes = int(seconds / 60)                                
+        seconds = int(seconds % 60)                                
+        if minutes == 0:                                           
+            cue_point = " at 0′{}″".format(seconds)       
+        else:                                                      
+            cue_point = " at {}′{}″".format(minutes, seconds)
+        return cue_point
 
     def _generate_input_field(self):
         return ['<form><label>Enter answer here:<input type="text" '
@@ -804,10 +809,7 @@ class CourseraOnDemand(object):
         try:
             session_id = self._get_quiz_session_id(quiz_id, invideo)
             quiz_json = self._get_quiz_json(quiz_id, session_id, invideo)
-            if invideo:
-                tag = 'inVideoQuiz'
-            else:
-                tag = 'quiz'
+            tag = 'inVideoQuiz' if invideo else 'quiz'
             return self._convert_quiz_json_to_links(quiz_json, tag, invideo)
         except requests.exceptions.HTTPError as exception:
             logging.error('Could not download quiz %s: %s', quiz_id, exception)
