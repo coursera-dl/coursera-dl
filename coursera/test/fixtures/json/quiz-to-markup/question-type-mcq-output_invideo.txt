@@ -1,0 +1,25 @@
+<h3>Question 1 at 11′28″</h3>
+<co-content><text hasMath="true">Which of the following functions is $$O(n^3)$$?</text><text/></co-content>
+<form>
+<label><input type="radio" name="0"><co-content>
+ <span hasmath="true">
+  $$11n   15 \lg n   100$$
+ </span>
+</co-content><br></label>
+<label><input type="radio" name="0"><co-content>
+ <span hasmath="true">
+  $$\frac{1}{3} n^2$$
+ </span>
+</co-content><br></label>
+<label><input type="radio" name="0"><co-content>
+ <span hasmath="true">
+  $$25,000 n^3$$
+ </span>
+</co-content><br></label>
+<label><input type="radio" name="0"><co-content>
+ <span>
+  All of the above
+ </span>
+</co-content><br></label>
+</form>
+<hr>
