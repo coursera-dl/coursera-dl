@@ -88,6 +88,17 @@ def test_extract_links_from_quiz_http_error(get_page, course):
                                      response=locked_response)
     assert None == course.extract_links_from_quiz('0')
 
+@patch('coursera.api.get_page')
+def test_extract_links_from_quiz_invideo_http_error(get_page, course):
+    """
+    This test checks that downloader skips locked quizzes
+    instead of throwing an error. (Locked == returning 403 error code)
+    """
+    locked_response = Response()
+    locked_response.status_code = define.HTTP_FORBIDDEN
+    get_page.side_effect = HTTPError('Mocked HTTP error',
+                                     response=locked_response)
+    assert None == course.extract_links_from_quiz('0', invideo=True)
 
 @patch('coursera.api.get_page')
 def test_extract_references_poll_http_error(get_page, course):
@@ -389,6 +400,12 @@ def test_extract_subtitles_from_video_dom(input_filename, output_filename, subti
          'question-type-mcqReflect-output.txt'),
         ('question-type-unknown-input.json', 'question-type-unknown-output.txt'),
         ('multiple-questions-input.json', 'multiple-questions-output.txt'),
+        ('question-type-mcq-input_invideo.json', 
+         'question-type-mcq-output_invideo.txt'),
+        ('question-type-continue-input_invideo.json',
+         'question-type-continue-output_invideo.txt'),
+        ('question-type-checkboxpoll-input_invideo.json',
+         'question-type-checkboxpoll-output_invideo.txt'),
     ]
 )
 def test_quiz_exam_to_markup_converter(input_filename, output_filename):
@@ -398,11 +415,11 @@ def test_quiz_exam_to_markup_converter(input_filename, output_filename):
         'json/quiz-to-markup/%s' % output_filename).strip()
 
     converter = api.QuizExamToMarkupConverter(session=None)
-    actual_output = converter(quiz_json).strip()
-    # print('>%s<' % expected_output)
-    # print('>%s<' % actual_output)
+    invideo = True if '_invideo' in input_filename else False
+    actual_output = converter(quiz_json, invideo).strip()
+    #print('>%s<' % expected_output)
+    #print('>%s<' % actual_output)
     assert actual_output == expected_output
-
 
 class TestMarkupToHTMLConverter:
     def _p(self, html):
