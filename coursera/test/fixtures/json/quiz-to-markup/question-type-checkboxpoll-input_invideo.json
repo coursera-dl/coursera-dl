@@ -123,7 +123,7 @@
                         "display": {
                             "definition": {
                                 "dtdId": "assess/1",
-                                "value": "<co-content><text>Did you get a reasonable night\u2019s sleep before the test?</text></co-content>"
+                                "value": "<co-content><text>Did you get a reasonable night’s sleep before the test?</text></co-content>"
                             },
                             "typeName": "cml"
                         },
@@ -133,7 +133,7 @@
                 "prompt": {
                     "definition": {
                         "dtdId": "assess/1",
-                        "value": "<co-content><text>The following is the test checklist that was discussed in this week\u2019s video. Please select the top TWO items on the checklist that you think are the MOST important when you are studying for a test.(Scroll down to make sure you view them all.)</text><text>Please only select TWO options. </text></co-content>"
+                        "value": "<co-content><text>The following is the test checklist that was discussed in this week’s video. Please select the top TWO items on the checklist that you think are the MOST important when you are studying for a test.(Scroll down to make sure you view them all.)</text><text>Please only select TWO options. </text></co-content>"
                     },
                     "typeName": "cml"
                 }
