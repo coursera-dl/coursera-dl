@@ -1,11 +1,11 @@
 {
     "questions": [
         {
-            "id": "Y-1Al_VtEeOrHCIACwwNZQ@13",
+            "id": "ESsOrhaVEeSufCIACw8Xfg@31",
             "isSubmitAllowed": true,
             "question": {
                 "responseType": "submission",
-                "type": "poll"
+                "type": "checkboxPoll"
             },
             "variant": {
                 "options": [
@@ -13,7 +13,7 @@
                         "display": {
                             "definition": {
                                 "dtdId": "assess/1",
-                                "value": "<co-content><text>Yes</text></co-content>"
+                                "value": "<co-content><text>Did you make a serious effort to understand the text?</text></co-content>"
                             },
                             "typeName": "cml"
                         },
@@ -23,23 +23,123 @@
                         "display": {
                             "definition": {
                                 "dtdId": "assess/1",
-                                "value": "<co-content><text>No</text></co-content>"
+                                "value": "<co-content><text>Did you work with classmates on homework problems?</text></co-content>"
                             },
                             "typeName": "cml"
                         },
-                        "id": "hwhyfoih0o3r845f2dimi3s"
+                        "id": "hy68txpay7toa92symzbfbi"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you attempt to outline each homework question before discussing it with classmates?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68ukfvz4tymmb568q29d9"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you participate actively in homework group discussions?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68uqrie40sw8tdrnbkein"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you consult with the instructor/teach assistants when you were having trouble?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68ux07k5g696snlwdakt4"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you understand all of your homework problem solutions before the assignment was handed in?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68v313aa2klk6jxs88xql"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you ask in class for explanations of homework problems that were unclear to you?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68v9a5m51xcvbat62z6z1"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>If you had a study guide, did you carefully go through it before the test and convince yourself you understood all of the</text><text>material?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68vwffsp69bcijeg85n8s"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you attempt to outline lots of problem solutions quickly without spending time doing the algebra?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68whv5d5qvj266w42dori"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you go over the study guide and problems with classmates and quiz one another?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68wncpu69mhrq3jfg9gau"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>If there was a review session, did you attend and ask questions about any concepts or ideas that you were unsure of?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68wub32go52myn06dam2k"
+                    },
+                    {
+                        "display": {
+                            "definition": {
+                                "dtdId": "assess/1",
+                                "value": "<co-content><text>Did you get a reasonable night\u2019s sleep before the test?</text></co-content>"
+                            },
+                            "typeName": "cml"
+                        },
+                        "id": "hy68wz6l3kc14h0g03n9wy8"
                     }
                 ],
                 "prompt": {
                     "definition": {
                         "dtdId": "assess/1",
-                        "value": "<co-content><text>Anagrams are rearrangements of letters so that one word or phrase can spell something different. Let\u2019s say you have the phrase \u201cMe, radium ace.\u201d Can you rearrange it to spell the last name and honorific (title) of a famous physicist?</text><text>By the way, the answer to this question is \"<strong>Madame Curie</strong>.\"</text><text>In the above question, do you think that your eye drifted naturally to the solution, so that the anagram seemed easier to solve than it truly was?</text><text/></co-content>"
+                        "value": "<co-content><text>The following is the test checklist that was discussed in this week\u2019s video. Please select the top TWO items on the checklist that you think are the MOST important when you are studying for a test.(Scroll down to make sure you view them all.)</text><text>Please only select TWO options. </text></co-content>"
                     },
                     "typeName": "cml"
                 }
             },
             "video": {
-                "cuePointMs": 490000,
+                "cuePointMs": 205200,
                 "order": 0
             }
         }
