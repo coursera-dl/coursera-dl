@@ -406,6 +406,7 @@ def test_extract_subtitles_from_video_dom(input_filename, output_filename, subti
          'question-type-continue-output_invideo.txt'),
         ('question-type-checkboxpoll-input_invideo.json',
          'question-type-checkboxpoll-output_invideo.txt'),
+        ('question-type-poll-input_invideo.json', 'question-type-poll-output_invideo.txt'),
     ]
 )
 def test_quiz_exam_to_markup_converter(input_filename, output_filename):

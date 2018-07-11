@@ -1,45 +1,23 @@
 {
     "questions": [
         {
-            "id": "Y-1Al_VtEeOrHCIACwwNZQ@13",
+            "id": "ENSnJwMBEeS_mBIxORxg9A@14",
             "isSubmitAllowed": true,
             "question": {
-                "responseType": "submission",
-                "type": "poll"
+                "responseType": "continueOnly",
+                "type": "continue"
             },
             "variant": {
-                "options": [
-                    {
-                        "display": {
-                            "definition": {
-                                "dtdId": "assess/1",
-                                "value": "<co-content><text>Yes</text></co-content>"
-                            },
-                            "typeName": "cml"
-                        },
-                        "id": "1"
-                    },
-                    {
-                        "display": {
-                            "definition": {
-                                "dtdId": "assess/1",
-                                "value": "<co-content><text>No</text></co-content>"
-                            },
-                            "typeName": "cml"
-                        },
-                        "id": "hwhyfoih0o3r845f2dimi3s"
-                    }
-                ],
                 "prompt": {
                     "definition": {
                         "dtdId": "assess/1",
-                        "value": "<co-content><text>Anagrams are rearrangements of letters so that one word or phrase can spell something different. Let’s say you have the phrase “Me, radium ace.” Can you rearrange it to spell the last name and honorific (title) of a famous physicist?</text><text>By the way, the answer to this question is \"<strong>Madame Curie</strong>.\"</text><text>In the above question, do you think that your eye drifted naturally to the solution, so that the anagram seemed easier to solve than it truly was?</text><text/></co-content>"
+                        "value": "<co-content><text>Look away from the screen and see how many key ideas and concepts regarding procrastination that you can recall. \u00a0Remember that when you do this, you are deepening the neural pathways that relate to these ideas, so that they will come to mind more easily later, when they are needed.</text></co-content>"
                     },
                     "typeName": "cml"
                 }
             },
             "video": {
-                "cuePointMs": 490000,
+                "cuePointMs": 110000,
                 "order": 0
             }
         }
