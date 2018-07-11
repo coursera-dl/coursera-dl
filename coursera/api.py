@@ -137,7 +137,7 @@ class QuizExamToMarkupConverter(object):
             result.extend(self._convert_options(
                 question_index, options, input_type))
 
-            result.append('<hr>')
+            result.append(u'<hr>')
 
         return '\n'.join(result)
 
@@ -145,7 +145,7 @@ class QuizExamToMarkupConverter(object):
         if not options:
             return []
 
-        result = ['<form>']
+        result = [u'<form>']
 
         for option in options:
             option_text = unescape_html(
@@ -158,7 +158,7 @@ class QuizExamToMarkupConverter(object):
                           '%s<br></label>' % (
                               input_type, question_index, option_text))
 
-        result.append('</form>')
+        result.append(u'</form>')
         return result
 
     def _replace_tag(self, text, initial_tag, target_tag):
@@ -176,9 +176,9 @@ class QuizExamToMarkupConverter(object):
         minutes = int(seconds / 60)                                
         seconds = int(seconds % 60)                                
         if minutes == 0:                                           
-            cue_point = " at 0′{}″".format(seconds)       
+            cue_point = u" at 0′{}″".format(seconds)       
         else:                                                      
-            cue_point = " at {}′{}″".format(minutes, seconds)
+            cue_point = u" at {}′{}″".format(minutes, seconds)
         return cue_point
 
     def _generate_input_field(self):
