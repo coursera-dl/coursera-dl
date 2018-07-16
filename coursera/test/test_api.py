@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 """
 Test APIs.
 """
@@ -453,10 +455,10 @@ def test_quiz_exam_to_markup_converter(input_filename, output_filename):
 
 @pytest.mark.parametrize(
     "ms,expected_output", [
-        (1000, ' at 0′1″'),
-        (60000, ' at 1′0″'),
-        (3600000, ' at 60′0″'),
-        (3601000, ' at 60′1″')
+        (1000, u' at 0′1″'),
+        (60000, u' at 1′0″'),
+        (3600000, u' at 60′0″'),
+        (3601000, u' at 60′1″')
     ]
 )
 def test_quiz_exam_to_markup_converter_cue_point(ms, expected_output):
