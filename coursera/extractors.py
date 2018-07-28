@@ -151,11 +151,11 @@ class CourseraExtractor(PlatformExtractor):
                         #     'assets', [])
                         lecture_video_id = lecture.id
                         # assets = []
-
+                        download_invideo_quiz = download_quizzes and lecture.definition.get('hasInVideoAssessment', False)
                         links = course.extract_links_from_lecture(
                             class_id,
                             lecture_video_id, subtitle_language,
-                            video_resolution, download_invideo_quiz=download_quizzes)
+                            video_resolution, download_invideo_quiz=download_invideo_quiz)
                         
 
                     elif typename == 'supplement':

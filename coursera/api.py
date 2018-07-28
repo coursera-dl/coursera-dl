@@ -93,8 +93,11 @@ class QuizExamToMarkupConverter(object):
 
     def __call__(self, quiz_or_exam_json, invideo=False):
         result = []
+        questions = quiz_or_exam_json['questions']
+        if invideo:
+            questions.sort(key=lambda x: x['video']['cuePointMs'])
 
-        for question_index, question_json in enumerate(quiz_or_exam_json['questions']):
+        for question_index, question_json in enumerate(questions):
             question_type = question_json['question']['type']
             if question_type not in self.KNOWN_QUESTION_TYPES:
                 logging.info('Unknown question type: %s', question_type)
@@ -514,6 +517,7 @@ class ItemV2(object):
     type_name = attr.ib()
     lesson_id = attr.ib()
     module_id = attr.ib()
+    definition = attr.ib()
 
 
 @attr.s
@@ -529,7 +533,8 @@ class ItemsV2(object):
                     item['slug'],
                     item['contentSummary']['typeName'],
                     item['lessonId'],
-                    item['moduleId']))
+                    item['moduleId'],
+                    item['contentSummary']['definition']))
             for item in data
         ))
 
