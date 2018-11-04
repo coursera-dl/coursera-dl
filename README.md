@@ -19,6 +19,7 @@
         - [ArchLinux](#archlinux)
         - [Installing dependencies on your own](#installing-dependencies-on-your-own)
     - [Docker](#docker)
+    - [Nix](#nix-package-manager)
     - [Windows](#windows)
     - [Create an account with Coursera](#create-an-account-with-coursera)
     - [Running the script](#running-the-script)
@@ -243,6 +244,11 @@ docker run --rm -it \
 
 The actual working dir for coursera-dl is /courses, all courses will be
 downloaded there if you don't specify otherwise.
+
+
+## Nix package manager
+
+`nix-env -i coursera-dl`
 
 ## Windows
 
