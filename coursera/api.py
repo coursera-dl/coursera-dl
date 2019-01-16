@@ -1475,12 +1475,18 @@ class CourseraOnDemand(object):
         for element in dom['elements']:
             # There is only one section with Instructions
             if 'introduction' in element['instructions']:
-                result.append(element['instructions']
+                if element['instructions']['introduction']['typeName'] == 'html':
+                    result.append(element['instructions']['introduction']['definition'])
+                else:
+                    result.append(element['instructions']
                               ['introduction']['definition']['value'])
 
             # But there may be multiple sections in Sections
             for section in element['instructions'].get('sections', []):
-                section_value = section['content']['definition']['value']
+                if section['content']['typeName'] == 'html':
+                    section_value = section['content']['definition']
+                else:
+                    section_value = section['content']['definition']['value']
                 section_title = section.get('title')
                 if section_title is not None:
                     # If section title is present, put it in the beginning of
