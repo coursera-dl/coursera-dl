@@ -6,10 +6,15 @@ Cookie handling module.
 
 import logging
 import os
+import re
 import ssl
+import time
+
+from multiprocessing.pool import ThreadPool
 
 import requests
 from requests.adapters import HTTPAdapter
+import webview
 
 try:  # Workaround for broken Debian/Ubuntu packages? (See issue #331)
     from requests.packages.urllib3.poolmanager import PoolManager
@@ -21,6 +26,8 @@ from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
 from .define import CLASS_URL, AUTH_REDIRECT_URL, PATH_COOKIES, AUTH_URL_V3
 from .utils import mkdir_p, random_string
+
+
 
 # Monkey patch cookielib.Cookie.__init__.
 # Reason: The expires value may be a decimal string,
@@ -108,6 +115,39 @@ def prepare_auth_headers(session, include_cauth=False):
     return headers
 
 
+def login_with_webview():
+    """
+    Creates a physical login window for the use to login.
+    """
+    url = "https://www.coursera.org/?authMode=login"
+
+    def get_cookies():
+        timeout = 120
+
+        def is_logged_in():
+            return webview.evaluate_js("document.querySelector('#logout-btn') !== null")
+
+        while not webview.webview_ready() or not is_logged_in():
+            time.sleep(1)
+            timeout -= 1
+            if timeout == 0:
+                raise AuthenticationFailed("Can't login, timeout exceeded.")
+
+        cookies = webview.evaluate_js("document.cookie")
+        webview.destroy_window()
+        return cookies
+
+    def create_login_window():
+        webview.create_window("Login to Coursera", url)
+
+    pool = ThreadPool(processes=1)
+    async_result = pool.apply_async(get_cookies)
+    create_login_window()
+    cookies = async_result.get()
+    parsed_cookies = dict(re.findall(r"([^\=]+)\=([^;]+);\s?", cookies))
+    return parsed_cookies
+
+
 def login(session, username, password, class_name=None):
     """
     Login on coursera.org with the given credentials.
@@ -151,8 +191,9 @@ def login(session, username, password, class_name=None):
         # for coursera!!!
         v = session.cookies.pop('CAUTH')
         session.cookies.set('CAUTH', v)
-    except requests.exceptions.HTTPError as e:
-        raise AuthenticationFailed('Cannot login on coursera.org: %s' % e)
+    except requests.exceptions.HTTPError:
+        logging.debug("Can't login through api, try to login using webview.")
+        session.cookies.update(login_with_webview())
 
     logging.info('Logged in on coursera.org.')
 
