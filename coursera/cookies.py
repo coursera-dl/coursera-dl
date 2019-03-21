@@ -132,6 +132,8 @@ def login_with_webview():
             timeout -= 1
             if timeout == 0:
                 raise AuthenticationFailed("Can't login, timeout exceeded.")
+            if not webview.window_exists():
+                raise AuthenticationFailed("Webview window closed prematurely.")
 
         cookies = webview.evaluate_js("document.cookie")
         webview.destroy_window()
@@ -144,6 +146,7 @@ def login_with_webview():
     async_result = pool.apply_async(get_cookies)
     create_login_window()
     cookies = async_result.get()
+    # creates a dict from a raw cookie string i.e. "cookie1=value1; cookie2=value2;"
     parsed_cookies = dict(re.findall(r"([^\=]+)\=([^;]+);\s?", cookies))
     return parsed_cookies
 
