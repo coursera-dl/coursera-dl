@@ -233,7 +233,10 @@ def main():
         return
 
     session = get_session()
-    login(session, args.username, args.password)
+    if args.cookies_cauth:
+        session.cookies.set('CAUTH', args.cookies_cauth)
+    else:
+        login(session, args.username, args.password)
     if args.specialization:
         args.class_names = expand_specializations(session, args.class_names)
 
