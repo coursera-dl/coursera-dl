@@ -1,3 +1,5 @@
+> WARNING: Coursera secured their login page in a way that we cannot easily circumvent. Therefore this repository doesn't work without external tools, such as third-party browser extensions, or by manually copying certain cookies from your browser to use in this tool. This tool is therefore no longer a standalone tool that can be used in isolation (from the command line). There are workarounds, but we have chosen inaction and fictional security arguments over user convenience and long term project viability.
+
 # Coursera Downloader
 
 [![Build Status](https://travis-ci.org/coursera-dl/coursera-dl.svg?branch=master)](https://travis-ci.org/coursera-dl/coursera-dl)
