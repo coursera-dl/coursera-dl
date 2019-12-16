@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.11.5 (2019-12-16)
+
+Features:
+  - add --cauth argument to specify CAUTH cookie directly from command-line (#724)
+
 ## 0.11.4 (2018-06-24)
 
 Features:
