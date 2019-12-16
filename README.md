@@ -280,6 +280,8 @@ class names, as well as any additional parameters:
 
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
 
+    With CAUTH parameter:	 coursera-dl -ca 'some-ca-value-from-browser' modelthinking-004
+
 If you don't want to type your password in command line as plain text, you can use the script without `-p` option. In this case you will be prompted for password  once the script is run.
 
     Without -p field:            coursera-dl -u <user> modelthinking-004
