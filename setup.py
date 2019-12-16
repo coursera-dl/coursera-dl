@@ -60,9 +60,8 @@ def read_file(filename, alt=None):
 generate_readme_rst()
 
 long_description = read_file(
-    'README.rst',
-    'Generate README.rst from README.md via pandoc!\n\nExample: '
-    'pandoc --from=markdown --to=rst --output=README.rst README.md'
+    'README.md',
+    'Cannot read README.md'
 )
 requirements = read_file('requirements.txt')
 dev_requirements = read_file('requirements-dev.txt')
@@ -101,6 +100,7 @@ setup(
 
     description='Script for downloading Coursera.org videos and naming them.',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     keywords=['coursera-dl', 'coursera',
               'download', 'education', 'MOOCs', 'video'],
     classifiers=trove_classifiers,
