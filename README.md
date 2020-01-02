@@ -21,7 +21,7 @@
     - [Docker](#docker)
     - [Windows](#windows)
     - [Create an account with Coursera](#create-an-account-with-coursera)
-    - [Running the script](#running-the-script)
+- [Running the script](#running-the-script)
     - [Resuming downloads](#resuming-downloads)
 - [Troubleshooting](#troubleshooting)
     - [China issues](#china-issues)
@@ -272,7 +272,10 @@ Coursera-dl can now be run from commandline or powershell.
 If you don't already have one, create a [Coursera][1] account and enroll in
 a class. See https://www.coursera.org/courses for the list of classes.
 
-## Running the script
+# Running the script
+
+Refer to `coursera-dl --help` for a complete, up-to-date reference on the runtime options
+supported by this utility. 
 
 Run the script to download the materials by providing your Coursera account
 credentials (e.g. email address and password or a `~/.netrc` file), the
@@ -282,7 +285,11 @@ class names, as well as any additional parameters:
 
     With CAUTH parameter:	 coursera-dl -ca 'some-ca-value-from-browser' modelthinking-004
 
-If you don't want to type your password in command line as plain text, you can use the script without `-p` option. In this case you will be prompted for password  once the script is run.
+If you don't want to type your password in command line as plain text, you can use the
+script without `-p` option. In this case you will be prompted for password  once the
+script is run.
+
+Here are some examples of how to invoke `coursera-dl` from the command line:
 
     Without -p field:            coursera-dl -u <user> modelthinking-004
     Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
@@ -291,6 +298,7 @@ If you don't want to type your password in command line as plain text, you can u
     Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" qcomp-2012-001
     Use a ~/.netrc file:         coursera-dl -n -- matrix-001
     Get the preview classes:     coursera-dl -n -b ni-001
+	Download videos at 720p:     coursera-dl -n --video-resolution 720p ni-001
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ comnetworks-002
     Display help:                coursera-dl --help
 
@@ -302,7 +310,10 @@ If you don't want to type your password in command line as plain text, you can u
 may experience problems.  Be sure to escape the `ls` command (use `\ls`) to
 assure that no special characters get sent to the script.
 
-Note that we *do* support the New Platform ("on-demand") classes.
+Note that we *do* support the New Platform ("on-demand") courses.
+
+By default, videos are downloaded at 540p resolution. For on-demand courses, the
+`--video-resolution` flag accepts 360p, 540p, and 720p values.
 
 On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username (i.e., your email address) and password every
