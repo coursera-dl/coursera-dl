@@ -275,7 +275,7 @@ a class. See https://www.coursera.org/courses for the list of classes.
 # Running the script
 
 Refer to `coursera-dl --help` for a complete, up-to-date reference on the runtime options
-supported by this utility. 
+supported by this utility.
 
 Run the script to download the materials by providing your Coursera account
 credentials (e.g. email address and password or a `~/.netrc` file), the
@@ -470,7 +470,8 @@ file that lists all the course materials. Maybe your friend who is enrolled
 could save that course page for you. In that case use the `--process_local_page`
 option.
 
-Alternatively you may want to try this Chrome extension: https://chrome.google.com/webstore/detail/coursera-materials-downlo/ijkboagofaehocnjacacdhdcbbcpilih
+Alternatively you may want to try this various browser extensions designed for
+this problem.
 
 If none of the above works for you, there is nothing we can do.
 
