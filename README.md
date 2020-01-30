@@ -280,17 +280,17 @@ supported by this utility.
 Run the script to download the materials by providing your Coursera account
 credentials (e.g. email address and password or a `~/.netrc` file), the
 class names, as well as any additional parameters:
-
+```
     General:                     coursera-dl -u <user> -p <pass> modelthinking-004
 
     With CAUTH parameter:	 coursera-dl -ca 'some-ca-value-from-browser' modelthinking-004
-
+```
 If you don't want to type your password in command line as plain text, you can use the
 script without `-p` option. In this case you will be prompted for password  once the
 script is run.
 
 Here are some examples of how to invoke `coursera-dl` from the command line:
-
+```
     Without -p field:            coursera-dl -u <user> modelthinking-004
     Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
     Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" crypto-004
@@ -305,7 +305,7 @@ Here are some examples of how to invoke `coursera-dl` from the command line:
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
       Update:                  coursera-dl -n --path CURRENT `\ls CURRENT`
-
+```
 **Note:** If your `ls` command is aliased to display a colorized output, you
 may experience problems.  Be sure to escape the `ls` command (use `\ls`) to
 assure that no special characters get sent to the script.
@@ -315,14 +315,18 @@ Note that we *do* support the New Platform ("on-demand") courses.
 By default, videos are downloaded at 540p resolution. For on-demand courses, the
 `--video-resolution` flag accepts 360p, 540p, and 720p values.
 
+To download just the `.txt` and/or `.srt` subtitle files instead of the videos,
+use `-ignore-formats mp4 --subtitle-language en` or whatever format the videos
+are encoded in and desired languages for subtitles.
+
 On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username (i.e., your email address) and password every
 time on the command line. To use it, simply add a line like the one below to
 a file named `.netrc` in your home directory (or the [equivalent][8], if you
 are using Windows) with contents like:
-
+```
     machine coursera-dl login <user> password <pass>
-
+```
 Create the file if it doesn't exist yet.  From then on, you can switch from
 using `-u` and `-p` to simply call `coursera-dl` with the option `-n`
 instead.  This is especially convenient, as typing usernames (email
@@ -332,16 +336,16 @@ more if you happened to choose a "strong" password).
 Alternatively, if you want to store your preferred parameters (which might
 also include your username and password), create a file named `coursera-dl.conf`
 where the script is supposed to be executed, with the following format:
-
+```
     --username <user>
     --password <pass>
     --subtitle-language en,zh-CN|zh-TW
     --download-quizzes
     #--mathjax-cdn https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js
     # more other parameters
-
-Parameter which is stored in the file will be overriden if it is again specified
-in your commandline script
+```
+Parameters which are specified in the file will be overriden if they are 
+provided again on the commandline.
 
 **Note:** In `coursera-dl.conf`, all the parameters should not be wrapped
 with quotes.
