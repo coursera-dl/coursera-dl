@@ -235,6 +235,16 @@ def main():
     session = get_session()
     if args.cookies_cauth:
         session.cookies.set('CAUTH', args.cookies_cauth)
+    elif args.autocookie_chrome:
+        def autocookie():
+            import browser_cookie3
+            cj = browser_cookie3.chrome(domain_name='coursera.org')
+            for cookie in cj:
+                if cookie.name =='CAUTH':
+                    return cookie.value
+            else:
+                raise Exception("can not find CAUTH in Chrome.")
+        session.cookies.set('CAUTH', autocookie())
     else:
         login(session, args.username, args.password)
     if args.specialization:
