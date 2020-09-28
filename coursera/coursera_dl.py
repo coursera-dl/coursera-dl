@@ -104,8 +104,7 @@ def list_courses(args):
     @param args: Command-line arguments.
     @type args: namedtuple
     """
-    session = get_session()
-    login(session, args.username, args.password)
+
     extractor = CourseraExtractor(session)
     courses = extractor.list_courses()
     logging.info('Found %d courses', len(courses))
