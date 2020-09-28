@@ -104,6 +104,11 @@ def list_courses(args):
     @param args: Command-line arguments.
     @type args: namedtuple
     """
+    session = get_session()
+    if args.cookies_cauth:
+        session.cookies.set('CAUTH', args.cookies_cauth)
+    else:
+        login(session, args.username, args.password)
 
     extractor = CourseraExtractor(session)
     courses = extractor.list_courses()
