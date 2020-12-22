@@ -344,7 +344,7 @@ where the script is supposed to be executed, with the following format:
     #--mathjax-cdn https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js
     # more other parameters
 ```
-Parameters which are specified in the file will be overriden if they are 
+Parameters which are specified in the file will be overridden if they are 
 provided again on the commandline.
 
 **Note:** In `coursera-dl.conf`, all the parameters should not be wrapped
