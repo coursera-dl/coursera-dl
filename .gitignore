@@ -13,6 +13,7 @@ _cache/
 .tox
 tags
 tmp
+.vscode
 
 # virtualenv folders
 venv2
