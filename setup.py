@@ -88,7 +88,7 @@ setup(
     name='coursera-dl',
     version=__version__,
     maintainer='Rogério Theodoro de Brito',
-    maintainer_email='rbrito@ime.usp.br',
+    maintainer_email='rbrito@gmail.com',
 
     license='LGPL',
     url='https://github.com/coursera-dl/coursera-dl',
