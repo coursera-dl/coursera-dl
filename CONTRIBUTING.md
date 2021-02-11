@@ -4,7 +4,7 @@ developers/maintainers feel good when trying to change code that other
 people contributed.
 
 For the record, when this document mentions "I", it mostly means Rogério
-Brito's (@rbrito) is the one to blame.
+Theodoro de Brito's (@rbrito) is the one to blame.
 
 # Write good commit messages
 
