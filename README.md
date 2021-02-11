@@ -635,10 +635,9 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 
 # Contact
 
-Please, post bugs and issues on [github][11]. Send other comments to Rogério
-Theodoro de Brito (the current maintainer): rbrito@ime.usp.br (twitter:
-[@rtdbrito][21]) or to John Lehmann (the original author): first last at
-geemail dotcom (twitter: [@jplehmann][12]).
+Please, post bugs and issues on [github][11]. Please, **DON'T** send support
+requests privately to the maintainers! We are quite swamped with day-to-day
+activities. If you have problems, **PLEASE**, file them on the isue tracker.
 
 [1]: https://www.coursera.org
 [2]: https://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
@@ -651,7 +650,6 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [9]: https://chrome.google.com/webstore/detail/cookietxt-export/lopabhfecdfhgogdbojmaicoicjekelh
 [10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies/
 [11]: https://github.com/coursera-dl/coursera-dl/issues
-[12]: https://twitter.com/jplehmann
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform/
 [14]: http://www.tunapanda.org
 [15]: https://github.com/html5lib/html5lib-python
@@ -660,7 +658,6 @@ geemail dotcom (twitter: [@jplehmann][12]).
 [18]: http://ww45.python-distribute.org/pip_distribute.png
 [19]: https://pypi.python.org/pypi/six/
 [20]: https://www.coursera.org/about/terms
-[21]: https://twitter.com/rtdbrito
 [22]: https://pypi.python.org/
 [23]: https://pypi.python.org/pypi/coursera-dl
 [issue213]: https://github.com/coursera-dl/coursera-dl/issues/213
