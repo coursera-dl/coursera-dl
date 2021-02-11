@@ -32,36 +32,36 @@ environment:
       PYTHON_VERSION: "2.7.x" # currently 2.7.11
       PYTHON_ARCH: "64"
 
-    - PYTHON: "C:\\Python33"
-      PYTHON_VERSION: "3.3.x" # currently 3.3.5
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python33-x64"
-      PYTHON_VERSION: "3.3.x" # currently 3.3.5
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.x" # currently 3.4.3
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python34-x64"
-      PYTHON_VERSION: "3.4.x" # currently 3.4.3
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.x" # currently 3.5.1
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.x" # currently 3.5.1
-      PYTHON_ARCH: "64"
-
     - PYTHON: "C:\\Python36"
       PYTHON_VERSION: "3.6.x" # currently 3.6.?
       PYTHON_ARCH: "32"
 
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6.x" # currently 3.6.?
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python37"
+      PYTHON_VERSION: "3.7.x" # currently 3.7.?
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python37-x64"
+      PYTHON_VERSION: "3.7.x" # currently 3.7.?
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python38"
+      PYTHON_VERSION: "3.8.x" # currently 3.8.?
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.x" # currently 3.8.?
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python39"
+      PYTHON_VERSION: "3.8.x" # currently 3.9.?
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.x" # currently 3.9.?
       PYTHON_ARCH: "64"
 
 init:
