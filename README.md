@@ -637,7 +637,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 
 Please, post bugs and issues on [github][11]. Please, **DON'T** send support
 requests privately to the maintainers! We are quite swamped with day-to-day
-activities. If you have problems, **PLEASE**, file them on the isue tracker.
+activities. If you have problems, **PLEASE**, file them on the issue tracker.
 
 [1]: https://www.coursera.org
 [2]: https://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
