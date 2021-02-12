@@ -101,11 +101,11 @@ relevant excerpt:
 # Installation instructions
 
 `coursera-dl` requires Python 2 or Python 3 and a free Coursera account
-enrolled in the class of interest. (As of February of 2016, we test
-automatically the execution of the program with Python versions 2.6, 2.7,
-Pypy, 3.4, 3.5, and 3.6).
+enrolled in the class of interest. (As of February of 2020, we test
+automatically the execution of the program with Python versions 2.7, Pypy,
+3.6, 3.7, 3.8, and 3.9).
 
-**Note:** We *strongly* recommend that you use a Python 3 interpreter (3.4
+**Note:** We *strongly* recommend that you use a Python 3 interpreter (3.9
 or later).
 
 On any operating system, ensure that the Python executable location is added
@@ -145,7 +145,7 @@ installed in your system (or they can interfere with `coursera-dl`).  Prefer
 to use the option `--user` to `pip install`, if you need can.
 
 **Note 2:** As already mentioned, we *strongly* recommend that you use a new
-Python 3 interpreter (e.g., 3.4 or later), since Python 3 has better support
+Python 3 interpreter (e.g., 3.9 or later), since Python 3 has better support
 for SSL/TLS (for secure connections) than earlier versions.<br/>
 If you must use Python 2, be sure that you have at least Python 2.7.9 (later
 versions are OK).<br/>
@@ -254,7 +254,7 @@ Settings > Environment Variables.
 
 ```
 Example:
-C:\Python35\Scripts\;C:\Python35\;
+C:\Python39\Scripts\;C:\Python39\;
 ```
 
 Or if you have restricted installation permissions and you've installed Python
@@ -262,7 +262,7 @@ under AppData, add this to your PATH.
 
 ```
 Example:
-C:\Users\<user>\AppData\Local\Programs\Python\Python35-32\Scripts;C:\Users\<user>\AppData\Local\Programs\Python\Python35-32;
+C:\Users\<user>\AppData\Local\Programs\Python\Python39-32\Scripts;C:\Users\<user>\AppData\Local\Programs\Python\Python39-32;
 ```
 
 Coursera-dl can now be run from commandline or powershell.
@@ -517,7 +517,7 @@ Related discussion: [#205](https://github.com/coursera-dl/coursera-dl/issues/205
 
 ## Windows: Failed to create process
 
-In `C:\Users\<user>\AppData\Local\Programs\Python\Python35-32\Scripts`
+In `C:\Users\<user>\AppData\Local\Programs\Python\Python39-32\Scripts`
 or wherever Python installed (above is default for Windows)
 edit below file in idle: (right click on script name and select 'edit with idle in menu)
 
@@ -528,13 +528,13 @@ coursera-dl-script
 from
 
 ```
-#!c:\users\<user>\appdata\local\programs\python\python35-32\python.exe
+#!c:\users\<user>\appdata\local\programs\python\python39-32\python.exe
 ```
 
 to
 
 ```
-#"!c:\users\<user>\appdata\local\programs\python\python35-32\python.exe"
+#"!c:\users\<user>\appdata\local\programs\python\python39-32\python.exe"
 ```
 
 (add quotes). This is a known pip bug.
