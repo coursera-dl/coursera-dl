@@ -358,6 +358,13 @@ def parse_args(args=None):
         help='full path to the cookies.txt file')
 
     group_adv_auth.add_argument(
+        '-acc',
+        '--autocookie_chrome',
+        action='store_true',
+        default=False,
+        help='auto load chrome cookie')
+
+    group_adv_auth.add_argument(
         '-n',
         '--netrc',
         dest='netrc',
@@ -500,7 +507,7 @@ def parse_args(args=None):
         logging.error('Cookies file not found: %s', args.cookies_file)
         sys.exit(1)
 
-    if not args.cookies_file and not args.cookies_cauth:
+    if not args.cookies_file and not args.cookies_cauth and not args.autocookie_chrome:
         try:
             args.username, args.password = get_credentials(
                 username=args.username, password=args.password,
