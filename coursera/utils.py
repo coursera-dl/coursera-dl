@@ -14,7 +14,7 @@ import random
 import string
 import logging
 import datetime
-
+import html
 
 from bs4 import BeautifulSoup as BeautifulSoup_
 from xml.sax.saxutils import escape, unescape
@@ -114,8 +114,7 @@ def clean_filename(s, minimal_change=False):
     """
 
     # First, deal with URL encoded strings
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
+    s = html.unescape(s)
     s = unquote_plus(s)
 
     # Strip forbidden characters
