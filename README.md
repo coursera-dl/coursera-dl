@@ -23,6 +23,7 @@
     - [Create an account with Coursera](#create-an-account-with-coursera)
 - [Running the script](#running-the-script)
     - [Resuming downloads](#resuming-downloads)
+- [List of some known old courses](#list-of-some-known-old-courses)
 - [Troubleshooting](#troubleshooting)
     - [China issues](#china-issues)
     - [Found 0 sections and 0 lectures on this page](#found-0-sections-and-0-lectures-on-this-page)
@@ -381,6 +382,22 @@ escape them from your shell. With bash or other Bourne-shell clones (and
 probably with many other shells) one of the better ways to do so is to
 enclose your password in single quotes, so that you don't run into
 problems.  See [issue #213][issue213] for more information.
+
+# List of some known old courses
+
+* "Automata by Jeff Ullman" -> automata-002
+* "Introduction to Logic by Michael Genesereth" -> intrologic-006
+* "Discrete Optimization" -> optimization-002
+* "Bitcoin and Cryptocurrency Technologies by Arvind Narayanan" -> bitcointech-001
+* "Pattern-Oriented Software Architectures for Concurrent and Networked Software" -> posasoftware-001
+* "Introduction to Mathematical Thinking by Dr. Keith Devlin Stanford University" -> maththink-2012-001
+* "Model Thinking by Scott Page University of Michigan" -> model-thinking
+* "Probabilistic Graphical Models by Daphne Koller" -> pgm-003
+* "Calculus: Single Variable Part 1 - Functions University of Pennsylvania" (on demand) -> single-variable-calculus
+* "Introduction to Public Speaking by University of Washington" -> public-speaking
+* "Calculus One by The Ohio State University" -> calculus1
+* "Learning How to Learn: Powerful mental tools to help you master tough subjects" -> learning-how-to-learn
+* "Programming Cloud Services for Android Handheld Systems: Security" -> mobilecloudsecurity
 
 # Troubleshooting
 
