@@ -28,15 +28,12 @@
 
 """
 Module for downloading lecture resources such as videos for Coursera classes.
-
 Given a class name, username and password, it scrapes the course listing
 page to get the section (week) and lecture names, and then downloads the
 related materials into appropriately named files and directories.
-
 Examples:
   coursera-dl -u <user> -p <passwd> saas
   coursera-dl -u <user> -p <passwd> -l listing.html -o saas --skip-download
-
 For further documentation and examples, visit the project's home at:
   https://github.com/coursera-dl/coursera
 """
@@ -75,6 +72,8 @@ from .network import get_page, get_page_and_url
 from .commandline import parse_args
 from .extractors import CourseraExtractor
 
+from six.moves import http_cookiejar as cookielib
+
 from coursera import __version__
 
 
@@ -92,6 +91,9 @@ def get_session():
     """
 
     session = requests.Session()
+    cj = cookielib.MozillaCookieJar()
+    cj.load('cookies.txt', ignore_expires=True)
+    session.cookies.update(cj)
     session.mount('https://', TLSAdapter())
 
     return session
@@ -100,12 +102,11 @@ def get_session():
 def list_courses(args):
     """
     List enrolled courses.
-
     @param args: Command-line arguments.
     @type args: namedtuple
     """
     session = get_session()
-    login(session, args.username, args.password)
+    # login(session, args.username, args.password)
     extractor = CourseraExtractor(session)
     courses = extractor.list_courses()
     logging.info('Found %d courses', len(courses))
@@ -117,7 +118,6 @@ def download_on_demand_class(session, args, class_name):
     """
     Download all requested resources from the on-demand class given
     in class_name.
-
     @return: Tuple of (bool, bool), where the first bool indicates whether
         errors occurred while parsing syllabus, the second bool indicates
         whether the course appears to be completed.
@@ -204,7 +204,6 @@ def print_failed_urls(failed_urls):
 def download_class(session, args, class_name):
     """
     Try to download on-demand class.
-
     @return: Tuple of (bool, bool), where the first bool indicates whether
         errors occurred while parsing syllabus, the second bool indicates
         whether the course appears to be completed.
@@ -233,10 +232,7 @@ def main():
         return
 
     session = get_session()
-    if args.cookies_cauth:
-        session.cookies.set('CAUTH', args.cookies_cauth)
-    else:
-        login(session, args.username, args.password)
+    # login(session, args.username, args.password)
     if args.specialization:
         args.class_names = expand_specializations(session, args.class_names)
 
