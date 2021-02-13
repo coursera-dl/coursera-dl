@@ -1,0 +1,68 @@
+<h3>Question 1 at 3′25″</h3>
+<co-content><text>The following is the test checklist that was discussed in this week’s video. Please select the top TWO items on the checklist that you think are the MOST important when you are studying for a test.(Scroll down to make sure you view them all.)</text><text>Please only select TWO options. </text></co-content>
+<form>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you make a serious effort to understand the text?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you work with classmates on homework problems?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you attempt to outline each homework question before discussing it with classmates?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you participate actively in homework group discussions?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you consult with the instructor/teach assistants when you were having trouble?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you understand all of your homework problem solutions before the assignment was handed in?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you ask in class for explanations of homework problems that were unclear to you?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  If you had a study guide, did you carefully go through it before the test and convince yourself you understood all of the
+ </span>
+ <span>
+  material?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you attempt to outline lots of problem solutions quickly without spending time doing the algebra?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you go over the study guide and problems with classmates and quiz one another?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  If there was a review session, did you attend and ask questions about any concepts or ideas that you were unsure of?
+ </span>
+</co-content><br></label>
+<label><input type="checkbox" name="0"><co-content>
+ <span>
+  Did you get a reasonable night’s sleep before the test?
+ </span>
+</co-content><br></label>
+</form>
+<hr>

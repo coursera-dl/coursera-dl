@@ -49,6 +49,8 @@ from .define import (OPENCOURSE_SUPPLEMENT_URL,
                      POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
                      POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS,
                      POST_OPENCOURSE_ONDEMAND_EXAM_SESSIONS_GET_STATE,
+                     POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION,
+                     POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION_GET_QUESTIONS,
 
                      INSTRUCTIONS_HTML_INJECTION_PRE,
                      INSTRUCTIONS_HTML_MATHJAX_URL,
@@ -69,9 +71,12 @@ class QuizExamToMarkupConverter(object):
     KNOWN_QUESTION_TYPES = ('mcq',
                             'mcqReflect',
                             'checkbox',
+                            'checkboxPoll',
+                            'poll',
                             'singleNumeric',
                             'textExactMatch',
                             'mathExpression',
+                            'continue',
                             'regex',
                             'reflect')
 
@@ -86,22 +91,32 @@ class QuizExamToMarkupConverter(object):
     def __init__(self, session):
         self._session = session
 
-    def __call__(self, quiz_or_exam_json):
+    def __call__(self, quiz_or_exam_json, invideo=False):
         result = []
+        questions = quiz_or_exam_json['questions']
+        if invideo:
+            questions.sort(key=lambda x: x['video']['cuePointMs'])
 
-        for question_index, question_json in enumerate(quiz_or_exam_json['questions']):
+        for question_index, question_json in enumerate(questions):
             question_type = question_json['question']['type']
             if question_type not in self.KNOWN_QUESTION_TYPES:
                 logging.info('Unknown question type: %s', question_type)
                 logging.info('Question json: %s', question_json)
                 logging.info('Please report class name, quiz name and the data'
                              ' above to coursera-dl authors')
+            
+            
+            if invideo:
+                prompt = question_json['variant']['prompt']
+                options = question_json['variant'].get('options', [])
+            else:
+                prompt = question_json['variant']['definition']['prompt']
+                options = question_json['variant']['definition'].get('options', [])
 
-            prompt = question_json['variant']['definition']['prompt']
-            options = question_json['variant']['definition'].get('options', [])
-
-            # Question number
-            result.append('<h3>Question %d</h3>' % (question_index + 1))
+            # Question number and (if invideo) when quiz appear in the video
+            cue_point = self._get_cue_point(question_json) if invideo else ""
+            
+            result.append('<h3>Question %d%s</h3>' % (question_index + 1, cue_point))
 
             # Question text
             question_text = unescape_html(prompt['definition']['value'])
@@ -115,14 +130,17 @@ class QuizExamToMarkupConverter(object):
             input_type = {
                 'mcq': 'radio',
                 'mcqReflect': 'radio',
-                'checkbox': 'checkbox'
+                'poll': 'radio',
+                'checkbox': 'checkbox',
+                'checkboxPoll': 'checkbox',
+                'continue': 'button'
             }.get(question_type, '')
 
             # Convert options, they are either checkboxes or radio buttons
             result.extend(self._convert_options(
                 question_index, options, input_type))
 
-            result.append('<hr>')
+            result.append(u'<hr>')
 
         return '\n'.join(result)
 
@@ -130,7 +148,7 @@ class QuizExamToMarkupConverter(object):
         if not options:
             return []
 
-        result = ['<form>']
+        result = [u'<form>']
 
         for option in options:
             option_text = unescape_html(
@@ -143,7 +161,7 @@ class QuizExamToMarkupConverter(object):
                           '%s<br></label>' % (
                               input_type, question_index, option_text))
 
-        result.append('</form>')
+        result.append(u'</form>')
         return result
 
     def _replace_tag(self, text, initial_tag, target_tag):
@@ -151,6 +169,20 @@ class QuizExamToMarkupConverter(object):
         while soup.find(initial_tag):
             soup.find(initial_tag).name = target_tag
         return soup.prettify()
+
+    def _get_cue_point(self, question_json):
+        """
+        get the time when the quiz appears in a video and convert it to mm′ss″ format
+      
+        """
+        seconds = int(question_json['video']['cuePointMs']) / 1000
+        minutes = int(seconds / 60)                                
+        seconds = int(seconds % 60)                                
+        if minutes == 0:                                           
+            cue_point = u" at 0′{}″".format(seconds)       
+        else:                                                      
+            cue_point = u" at {}′{}″".format(minutes, seconds)
+        return cue_point
 
     def _generate_input_field(self):
         return ['<form><label>Enter answer here:<input type="text" '
@@ -485,6 +517,7 @@ class ItemV2(object):
     type_name = attr.ib()
     lesson_id = attr.ib()
     module_id = attr.ib()
+    definition = attr.ib()
 
 
 @attr.s
@@ -500,7 +533,8 @@ class ItemsV2(object):
                     item['slug'],
                     item['contentSummary']['typeName'],
                     item['lessonId'],
-                    item['moduleId']))
+                    item['moduleId'],
+                    item['contentSummary']['definition']))
             for item in data
         ))
 
@@ -776,11 +810,12 @@ class CourseraOnDemand(object):
                     'Could not download notebook %s: %s', notebook_id, exception)
             return None
 
-    def extract_links_from_quiz(self, quiz_id):
+    def extract_links_from_quiz(self, quiz_id, invideo=False):
         try:
-            session_id = self._get_quiz_session_id(quiz_id)
-            quiz_json = self._get_quiz_json(quiz_id, session_id)
-            return self._convert_quiz_json_to_links(quiz_json, 'quiz')
+            session_id = self._get_quiz_session_id(quiz_id, invideo)
+            quiz_json = self._get_quiz_json(quiz_id, session_id, invideo)
+            tag = 'inVideoQuiz' if invideo else 'quiz'
+            return self._convert_quiz_json_to_links(quiz_json, tag, invideo)
         except requests.exceptions.HTTPError as exception:
             logging.error('Could not download quiz %s: %s', quiz_id, exception)
             if is_debug_run():
@@ -788,8 +823,9 @@ class CourseraOnDemand(object):
                     'Could not download quiz %s: %s', quiz_id, exception)
             return None
 
-    def _convert_quiz_json_to_links(self, quiz_json, filename_suffix):
-        markup = self._quiz_to_markup(quiz_json)
+
+    def _convert_quiz_json_to_links(self, quiz_json, filename_suffix, invideo=False):
+        markup = self._quiz_to_markup(quiz_json, invideo)
         html = self._markup_to_html(markup)
 
         supplement_links = {}
@@ -822,12 +858,17 @@ class CourseraOnDemand(object):
                                            headers=headers)
         return reply.headers.get('X-Coursera-Id')
 
-    def _get_quiz_json(self, quiz_id, session_id):
+    def _get_quiz_json(self, quiz_id, session_id, invideo=False):
         headers = self._auth_headers_with_json()
         data = {"contentRequestBody": {"argument": []}}
+        
+        if invideo:
+           api_url = POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION_GET_QUESTIONS      
+        else:
+           api_url = POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE
 
         reply = get_page(self._session,
-                         POST_OPENCOURSE_API_QUIZ_SESSION_GET_STATE,
+                         api_url,
                          json=True,
                          post=True,
                          data=json.dumps(data),
@@ -838,11 +879,18 @@ class CourseraOnDemand(object):
                          session_id=session_id)
         return reply['contentResponseBody']['return']
 
-    def _get_quiz_session_id(self, quiz_id):
+   
+
+    def _get_quiz_session_id(self, quiz_id, invideo=False):
         headers = self._auth_headers_with_json()
+        
+        if invideo:
+           api_url = POST_OPENCOURSE_API_INVIDEOQUIZ_SESSION
+        else:
+           api_url = POST_OPENCOURSE_API_QUIZ_SESSION
         data = {"contentRequestBody": []}
         reply = get_page(self._session,
-                         POST_OPENCOURSE_API_QUIZ_SESSION,
+                         api_url,
                          json=True,
                          post=True,
                          data=json.dumps(data),
@@ -862,7 +910,7 @@ class CourseraOnDemand(object):
 
     def extract_links_from_lecture(self, course_id,
                                    video_id, subtitle_language='en',
-                                   resolution='540p'):
+                                   resolution='540p', download_invideo_quiz=False):
         """
         Return the download URLs of on-demand course video.
 
@@ -885,6 +933,10 @@ class CourseraOnDemand(object):
             assets = self._normalize_assets(assets)
             extend_supplement_links(
                 links, self._extract_links_from_lecture_assets(assets))
+            if download_invideo_quiz:
+                quiz = self.extract_links_from_quiz(video_id, invideo=True)
+                if quiz:
+                    extend_supplement_links(links, quiz)
 
             return links
         except requests.exceptions.HTTPError as exception:

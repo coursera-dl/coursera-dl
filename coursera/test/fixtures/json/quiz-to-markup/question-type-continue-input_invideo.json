@@ -1,0 +1,25 @@
+{
+    "questions": [
+        {
+            "id": "ENSnJwMBEeS_mBIxORxg9A@14",
+            "isSubmitAllowed": true,
+            "question": {
+                "responseType": "continueOnly",
+                "type": "continue"
+            },
+            "variant": {
+                "prompt": {
+                    "definition": {
+                        "dtdId": "assess/1",
+                        "value": "<co-content><text>Look away from the screen and see how many key ideas and concepts regarding procrastination that you can recall. \u00a0Remember that when you do this, you are deepening the neural pathways that relate to these ideas, so that they will come to mind more easily later, when they are needed.</text></co-content>"
+                    },
+                    "typeName": "cml"
+                }
+            },
+            "video": {
+                "cuePointMs": 110000,
+                "order": 0
+            }
+        }
+    ]
+}

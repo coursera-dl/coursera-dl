@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 """
 Test APIs.
 """
@@ -88,6 +90,17 @@ def test_extract_links_from_quiz_http_error(get_page, course):
                                      response=locked_response)
     assert None == course.extract_links_from_quiz('0')
 
+@patch('coursera.api.get_page')
+def test_extract_links_from_quiz_invideo_http_error(get_page, course):
+    """
+    This test checks that downloader skips locked quizzes
+    instead of throwing an error. (Locked == returning 403 error code)
+    """
+    locked_response = Response()
+    locked_response.status_code = define.HTTP_FORBIDDEN
+    get_page.side_effect = HTTPError('Mocked HTTP error',
+                                     response=locked_response)
+    assert None == course.extract_links_from_quiz('0', invideo=True)
 
 @patch('coursera.api.get_page')
 def test_extract_references_poll_http_error(get_page, course):
@@ -369,6 +382,35 @@ def test_extract_subtitles_from_video_dom(input_filename, output_filename, subti
     actual_output = json.loads(json.dumps(actual_output))
     assert actual_output == expected_output
 
+@patch('coursera.api.CourseraOnDemand._get_quiz_session_id')
+@patch('coursera.api.get_page')
+@patch('coursera.api.CourseraOnDemand._extract_links_from_lecture_assets')
+@patch('coursera.api.CourseraOnDemand._get_lecture_asset_ids')
+@patch('coursera.api.CourseraOnDemand._extract_videos_and_subtitles_from_lecture')
+def test_noInVideoQuiz(_extract_videos_and_subtitles_from_lecture, _get_lecture_asset_ids, _extract_links_from_lecture_assets, get_page, _get_quiz_session_id):
+    """
+    Test if extract_links_from_lecture runs smoothly when a video doesn't have a quiz
+    """
+    links = {}
+    links['html'] = [('https://test.org', 'test')]
+    expected = links
+    _extract_links_from_lecture_assets = {}
+    _extract_videos_and_subtitles_from_lecture.return_value = expected
+    _get_lecture_asset_ids.return_value = {}
+    
+
+    course = api.CourseraOnDemand(
+        session=Mock(cookies={}), course_id='0', course_name='test_course')
+    locked_response = Response()
+    locked_response.status_code = define.HTTP_FORBIDDEN
+    get_page.side_effect = HTTPError('Mocked HTTP error',
+                                     response=locked_response)
+
+    _get_quiz_session_id.return_value = 'fake_session_id'
+    links = course.extract_links_from_lecture(course_id='0',
+                                   video_id='test_video', subtitle_language='en',
+                                   resolution='540p', download_invideo_quiz=True)
+    assert expected == links
 
 @pytest.mark.parametrize(
     "input_filename,output_filename", [
@@ -389,6 +431,13 @@ def test_extract_subtitles_from_video_dom(input_filename, output_filename, subti
          'question-type-mcqReflect-output.txt'),
         ('question-type-unknown-input.json', 'question-type-unknown-output.txt'),
         ('multiple-questions-input.json', 'multiple-questions-output.txt'),
+        ('question-type-mcq-input_invideo.json', 
+         'question-type-mcq-output_invideo.txt'),
+        ('question-type-continue-input_invideo.json',
+         'question-type-continue-output_invideo.txt'),
+        ('question-type-checkboxpoll-input_invideo.json',
+         'question-type-checkboxpoll-output_invideo.txt'),
+        ('question-type-poll-input_invideo.json', 'question-type-poll-output_invideo.txt'),
     ]
 )
 def test_quiz_exam_to_markup_converter(input_filename, output_filename):
@@ -398,11 +447,34 @@ def test_quiz_exam_to_markup_converter(input_filename, output_filename):
         'json/quiz-to-markup/%s' % output_filename).strip()
 
     converter = api.QuizExamToMarkupConverter(session=None)
-    actual_output = converter(quiz_json).strip()
-    # print('>%s<' % expected_output)
-    # print('>%s<' % actual_output)
+    invideo = True if '_invideo' in input_filename else False
+    actual_output = converter(quiz_json, invideo).strip()
+    #print('>%s<' % expected_output)
+    #print('>%s<' % actual_output)
     assert actual_output == expected_output
 
+@pytest.mark.parametrize(
+    "ms,expected_output", [
+        (1000, u' at 0′1″'),
+        (60000, u' at 1′0″'),
+        (3600000, u' at 60′0″'),
+        (3601000, u' at 60′1″')
+    ]
+)
+def test_quiz_exam_to_markup_converter_cue_point(ms, expected_output):
+    """
+    Test the converted format of cue_points (ms to minutes and seconds) 
+    """
+
+    question_json = {}
+    question_json['video'] = {}
+    question_json['video']['cuePointMs'] = ms
+
+    converter = api.QuizExamToMarkupConverter(session=None)
+    actual_output = converter._get_cue_point(question_json)
+    #print('>%s<' % expected_output)
+    #print('>%s<' % actual_output)
+    assert actual_output == expected_output
 
 class TestMarkupToHTMLConverter:
     def _p(self, html):

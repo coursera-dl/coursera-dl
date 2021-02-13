@@ -1,0 +1,15 @@
+<h3>Question 1 at 8′10″</h3>
+<co-content><text>Anagrams are rearrangements of letters so that one word or phrase can spell something different. Let’s say you have the phrase “Me, radium ace.” Can you rearrange it to spell the last name and honorific (title) of a famous physicist?</text><text>By the way, the answer to this question is "<strong>Madame Curie</strong>."</text><text>In the above question, do you think that your eye drifted naturally to the solution, so that the anagram seemed easier to solve than it truly was?</text><text/></co-content>
+<form>
+<label><input type="radio" name="0"><co-content>
+ <span>
+  Yes
+ </span>
+</co-content><br></label>
+<label><input type="radio" name="0"><co-content>
+ <span>
+  No
+ </span>
+</co-content><br></label>
+</form>
+<hr>
