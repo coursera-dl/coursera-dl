@@ -321,6 +321,12 @@ class NativeDownloader(Downloader):
             logging.info('Resume downloading %s -> %s', url, filename)
         else:
             logging.info('Downloading %s -> %s', url, filename)
+        
+        edm_flag = 'extended-description-mixed'
+        if edm_flag in filename:
+            logging.warn('########## This file is an "extended-description-mixed" file, SKIPPED...')
+            return False 
+
 
         max_attempts = 3
         attempts_count = 0
