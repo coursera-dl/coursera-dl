@@ -233,7 +233,9 @@ def main():
         return
 
     session = get_session()
-    if args.cookies_cauth:
+    if args.cookies_header:
+        session.cookies_header = args.cookies_header # @monkeyPatch
+    elif args.cookies_cauth:
         session.cookies.set('CAUTH', args.cookies_cauth)
     else:
         login(session, args.username, args.password)

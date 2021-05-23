@@ -347,7 +347,16 @@ def parse_args(args=None):
         dest='cookies_cauth',
         action='store',
         default=None,
-        help='cauth cookie value from browser')
+        help='cauth cookie value from browser (overrides the username/password auth)')
+
+
+    group_adv_auth.add_argument(
+        '-C',
+        '--cookies-header',
+        dest='cookies_header',
+        action='store',
+        default=None,
+        help='pass the whole cookies header (overrides all other auth options)')
 
     group_adv_auth.add_argument(
         '-c',
@@ -500,7 +509,7 @@ def parse_args(args=None):
         logging.error('Cookies file not found: %s', args.cookies_file)
         sys.exit(1)
 
-    if not args.cookies_file and not args.cookies_cauth:
+    if not args.cookies_file and not args.cookies_cauth and not args.cookies_header:
         try:
             args.username, args.password = get_credentials(
                 username=args.username, password=args.password,

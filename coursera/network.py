@@ -8,6 +8,21 @@ import logging
 
 import requests
 
+def patch_headers(session, headers):
+    if headers == None:
+        headers = dict()
+
+    headers.setdefault('User-Agent',  'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36') # Shame on Coursera
+
+    cookies_header = getattr(session, "cookies_header", None)
+    if cookies_header:
+        headers.set("Cookie", cookies_header)
+        logging.debug(f"set the Cookie header to {cookies_header}")
+
+    logging.debug("patched headers")
+
+    return headers
+
 
 def get_reply(session, url, post=False, data=None, headers=None, quiet=False):
     """
@@ -37,7 +52,7 @@ def get_reply(session, url, post=False, data=None, headers=None, quiet=False):
     @rtype: requests.Response
     """
 
-    request_headers = {} if headers is None else headers
+    request_headers = patch_headers(session, headers)
 
     request = requests.Request('POST' if post else 'GET',
                                url,
@@ -88,12 +103,6 @@ def get_page(session,
     @rtype: str
     """
     url = url.format(**kwargs)
-
-    if headers == None:
-        headers = dict()
-
-    headers.setdefault('User-Agent',  'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36') # Shame on Coursera
-    logging.debug("user-agent set")
 
     reply = get_reply(session, url, post=post, data=data, headers=headers,
                       quiet=quiet)
