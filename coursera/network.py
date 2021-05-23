@@ -88,6 +88,13 @@ def get_page(session,
     @rtype: str
     """
     url = url.format(**kwargs)
+
+    if headers == None:
+        headers = dict()
+
+    headers.setdefault('User-Agent',  'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36') # Shame on Coursera
+    logging.debug("user-agent set")
+
     reply = get_reply(session, url, post=post, data=data, headers=headers,
                       quiet=quiet)
     return reply.json() if json else reply.text
