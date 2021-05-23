@@ -16,8 +16,8 @@ def patch_headers(session, headers):
 
     cookies_header = getattr(session, "cookies_header", None)
     if cookies_header:
-        headers.set("Cookie", cookies_header)
-        logging.debug(f"set the Cookie header to {cookies_header}")
+        headers["Cookie"] = cookies_header
+        logging.debug(f"set the Cookie header") # `to {cookies_header}`
 
     logging.debug("patched headers")
 
