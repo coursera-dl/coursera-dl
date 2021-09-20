@@ -1,3 +1,0 @@
-<h3>Question 1</h3>
-<co-content><text>Lorem ipsum</text></co-content>
-<hr>

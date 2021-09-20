@@ -1,6 +1,0 @@
-{
-    "zh-CN.txt": "https://api.coursera.org/api/subtitleAssetProxy.v1/UKEuZoMQRcChLmaDEMXAsA?expiry=1495238400000&hmac=eNyKwEu_aMQtn7bg0mUj6uIyVZvjahFSE5x2CrbOXOU&fileExtension=txt",
-    "en.srt": "https://api.coursera.org/api/subtitleAssetProxy.v1/GgGZN65HQkyBmTeuR2JMsw?expiry=1495238400000&hmac=afqFhv9FWfxxEeSka8PCA4ihiyX3g2Z6K4jWJPFlcdo&fileExtension=srt",
-    "zh-CN.srt": "https://api.coursera.org/api/subtitleAssetProxy.v1/UKEuZoMQRcChLmaDEMXAsA?expiry=1495238400000&hmac=nmGzGoF4oNLv28ZDLUtX5dF4xPXUABgym76XMs4UzDE&fileExtension=srt",
-    "en.txt": "https://api.coursera.org/api/subtitleAssetProxy.v1/GgGZN65HQkyBmTeuR2JMsw?expiry=1495238400000&hmac=2Z37WW5Rc7GoT0eft1vdK0HX5imBqoZTKULMTiZ2EjM&fileExtension=txt"
-}
