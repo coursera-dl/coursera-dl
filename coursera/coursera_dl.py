@@ -100,12 +100,12 @@ def get_session():
     """
     Create a session with TLS v1.2 certificate.
     """
-
     session = requests.Session()
     cj = MozillaCookieJar()
     cj.load("cookies.txt", ignore_expires=True)
     session.cookies.update(cj)
     session.mount("https://", TLSAdapter())
+
     return session
 
 
@@ -117,7 +117,7 @@ def list_courses(args):
     @type args: namedtuple
     """
     session = get_session()
-    login(session, args.username, args.password)
+    # login(session, args.username, args.password)
     extractor = CourseraExtractor(session)
     courses = extractor.list_courses()
     logging.info("Found %d courses", len(courses))
@@ -253,8 +253,8 @@ def main():
     session = get_session()
     if args.cookies_cauth:
         session.cookies.set("CAUTH", args.cookies_cauth)
-    else:
-        login(session, args.username, args.password)
+    # else:
+    #     login(session, args.username, args.password)
     if args.specialization:
         args.class_names = expand_specializations(session, args.class_names)
 
