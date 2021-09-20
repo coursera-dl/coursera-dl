@@ -1,5 +1,5 @@
-import os
 import glob
+import os
 
 
 def create_m3u_playlist(section_dir):
@@ -23,4 +23,3 @@ def create_m3u_playlist(section_dir):
                     m3u.write(video + "\n")
             os.chdir(path_to_return)
     os.chdir(path_to_return)
-

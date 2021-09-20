@@ -15,7 +15,7 @@ try:
 except ImportError:
     keyring = None
 
-KEYRING_SERVICE_NAME = 'coursera-dl'
+KEYRING_SERVICE_NAME = "coursera-dl"
 
 
 class CredentialsError(BaseException):
@@ -76,24 +76,20 @@ def get_config_paths(config_name):  # pragma: no test
     defaults until we succeed or have depleted all possibilities.
     """
 
-    if platform.system() != 'Windows':
+    if platform.system() != "Windows":
         return [None]
 
     # Now, we only treat the case of Windows
-    env_vars = [["HOME"],
-                ["HOMEDRIVE", "HOMEPATH"],
-                ["USERPROFILE"],
-                ["SYSTEMDRIVE"]]
+    env_vars = [["HOME"], ["HOMEDRIVE", "HOMEPATH"], ["USERPROFILE"], ["SYSTEMDRIVE"]]
 
     env_dirs = []
     for var_list in env_vars:
 
         var_values = [_getenv_or_empty(var) for var in var_list]
 
-        directory = ''.join(var_values)
+        directory = "".join(var_values)
         if not directory:
-            logging.debug('Environment var(s) %s not defined, skipping',
-                          var_list)
+            logging.debug("Environment var(s) %s not defined, skipping", var_list)
         else:
             env_dirs.append(directory)
 
@@ -103,9 +99,11 @@ def get_config_paths(config_name):  # pragma: no test
 
     leading_chars = [".", "_"]
 
-    res = [''.join([directory, os.sep, lc, config_name])
-           for directory in all_dirs
-           for lc in leading_chars]
+    res = [
+        "".join([directory, os.sep, lc, config_name])
+        for directory in all_dirs
+        for lc in leading_chars
+    ]
 
     return res
 
@@ -117,25 +115,26 @@ def authenticate_through_netrc(path=None):
     Raises CredentialsError if no valid netrc file is found.
     """
     errors = []
-    netrc_machine = 'coursera-dl'
+    netrc_machine = "coursera-dl"
     paths = [path] if path else get_config_paths("netrc")
     for path in paths:
         try:
-            logging.debug('Trying netrc file %s', path)
+            logging.debug("Trying netrc file %s", path)
             auths = netrc.netrc(path).authenticators(netrc_machine)
         except (IOError, netrc.NetrcParseError) as e:
             errors.append(e)
         else:
             if auths is None:
-                errors.append('Didn\'t find any credentials for ' +
-                              netrc_machine)
+                errors.append("Didn't find any credentials for " + netrc_machine)
             else:
                 return auths[0], auths[2]
 
-    error_messages = '\n'.join(str(e) for e in errors)
+    error_messages = "\n".join(str(e) for e in errors)
     raise CredentialsError(
-        'Did not find valid netrc file:\n' + error_messages +
-        '\nPlease run this command: chmod og-rw ~/.netrc')
+        "Did not find valid netrc file:\n"
+        + error_messages
+        + "\nPlease run this command: chmod og-rw ~/.netrc"
+    )
 
 
 def get_credentials(username=None, password=None, netrc=None, use_keyring=False):
@@ -150,14 +149,15 @@ def get_credentials(username=None, password=None, netrc=None, use_keyring=False)
 
     if not username:
         raise CredentialsError(
-            'Please provide a username with the -u option, '
-            'or a .netrc file with the -n option.')
+            "Please provide a username with the -u option, "
+            "or a .netrc file with the -n option."
+        )
 
     if not password and use_keyring:
         password = keyring.get_password(KEYRING_SERVICE_NAME, username)
 
     if not password:
-        password = getpass.getpass('Coursera password for {0}: '.format(username))
+        password = getpass.getpass("Coursera password for {0}: ".format(username))
         if use_keyring:
             keyring.set_password(KEYRING_SERVICE_NAME, username, password)
 

@@ -2,12 +2,11 @@
 This module contains filtering functions.
 """
 
-import re
 import logging
+import re
 
 from six import iteritems
 from six.moves.urllib_parse import urlparse
-
 
 # These formats are trusted and are not skipped
 VALID_FORMATS = r"""^mp4$|
@@ -52,16 +51,16 @@ def skip_format_url(format_, url):
     @rtype bool
     """
     # Do not download empty formats
-    if format_ == '':
+    if format_ == "":
         return True
 
     # Do not download email addresses
-    if ('mailto:' in url) and ('@' in url):
+    if ("mailto:" in url) and ("@" in url):
         return True
 
     # Is this localhost?
     parsed = urlparse(url)
-    if parsed.hostname == 'localhost':
+    if parsed.hostname == "localhost":
         return True
 
     # These are trusted manually added formats, do not skip them
@@ -74,7 +73,7 @@ def skip_format_url(format_, url):
         return True
 
     # Is this a link to the site root?
-    if parsed.path in ('', '/'):
+    if parsed.path in ("", "/"):
         return True
 
     # Do not skip
@@ -91,27 +90,33 @@ def find_resources_to_get(lecture, file_formats, resource_filter, ignored_format
         ignored_formats = []
 
     if len(ignored_formats):
-        logging.info("The following file formats will be ignored: " + ",".join(ignored_formats))
+        logging.info(
+            "The following file formats will be ignored: " + ",".join(ignored_formats)
+        )
 
     for fmt, resources in iteritems(lecture):
         fmt0 = fmt
 
         short_fmt = None
-        if '.' in fmt:
-            short_fmt = fmt.split('.')[1]
+        if "." in fmt:
+            short_fmt = fmt.split(".")[1]
 
-        if fmt in ignored_formats or (short_fmt != None and short_fmt in ignored_formats) :
+        if fmt in ignored_formats or (
+            short_fmt != None and short_fmt in ignored_formats
+        ):
             continue
 
-        if fmt in file_formats or (short_fmt != None and short_fmt in file_formats) or 'all' in file_formats:
+        if (
+            fmt in file_formats
+            or (short_fmt != None and short_fmt in file_formats)
+            or "all" in file_formats
+        ):
             for r in resources:
                 if resource_filter and r[1] and not re.search(resource_filter, r[1]):
-                    logging.debug('Skipping b/c of rf: %s %s',
-                                  resource_filter, r[1])
+                    logging.debug("Skipping b/c of rf: %s %s", resource_filter, r[1])
                     continue
                 resources_to_get.append((fmt0, r[0], r[1]))
         else:
-            logging.debug(
-                'Skipping b/c format %s not in %s', fmt, file_formats)
+            logging.debug("Skipping b/c format %s not in %s", fmt, file_formats)
 
     return resources_to_get

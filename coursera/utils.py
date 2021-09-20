@@ -4,22 +4,20 @@
 This module provides utility functions that are used within the script.
 """
 
+import datetime
+import errno
+import json
+import logging
 import os
+import random
 import re
+import string
 import sys
 import time
-import json
-import errno
-import random
-import string
-import logging
-import datetime
-
-
-from bs4 import BeautifulSoup as BeautifulSoup_
 from xml.sax.saxutils import escape, unescape
 
 import six
+from bs4 import BeautifulSoup as BeautifulSoup_
 from six import iteritems
 from six.moves import html_parser
 from six.moves.urllib.parse import ParseResult
@@ -27,9 +25,9 @@ from six.moves.urllib_parse import unquote_plus
 
 #  six.moves doesn’t support urlparse
 if six.PY3:  # pragma: no cover
-    from urllib.parse import urlparse, urljoin
+    from urllib.parse import urljoin, urlparse
 else:
-    from urlparse import urlparse, urljoin
+    from urlparse import urljoin, urlparse
 
 # Python3 (and six) don't provide string
 if six.PY3:
@@ -44,22 +42,27 @@ from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
 # Force us of bs4 with html.parser
 
 
-def BeautifulSoup(page): return BeautifulSoup_(page, 'html.parser')
+def BeautifulSoup(page):
+    return BeautifulSoup_(page, "html.parser")
 
 
 if six.PY2:
+
     def decode_input(x):
         stdin_encoding = sys.stdin.encoding
         if stdin_encoding is None:
             stdin_encoding = "UTF-8"
         return x.decode(stdin_encoding)
+
+
 else:
+
     def decode_input(x):
         return x
 
 
 def spit_json(obj, filename):
-    with open(filename, 'w') as file_object:
+    with open(filename, "w") as file_object:
         json.dump(obj, file_object, indent=4)
 
 
@@ -84,24 +87,22 @@ def random_string(length):
     """
     valid_chars = string_ascii_letters + string_digits
 
-    return ''.join(random.choice(valid_chars) for i in range(length))
+    return "".join(random.choice(valid_chars) for i in range(length))
 
 
 # Taken from: https://wiki.python.org/moin/EscapingHtml
 # escape() and unescape() takes care of &, < and >.
-HTML_ESCAPE_TABLE = {
-    '"': "&quot;",
-    "'": "&apos;"
-}
+HTML_ESCAPE_TABLE = {'"': "&quot;", "'": "&apos;"}
 
 HTML_UNESCAPE_TABLE = dict((v, k) for k, v in HTML_ESCAPE_TABLE.items())
 
 
 def unescape_html(s):
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
-    s = unquote_plus(s)
-    return unescape(s, HTML_UNESCAPE_TABLE)
+    # h = html_parser.HTMLParser()
+    # s = h.unescape(s)
+    # s = unquote_plus(s)
+    s = unescape(s, HTML_UNESCAPE_TABLE)
+    return unquote_plus(s)
 
 
 def clean_filename(s, minimal_change=False):
@@ -114,38 +115,39 @@ def clean_filename(s, minimal_change=False):
     """
 
     # First, deal with URL encoded strings
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
-    s = unquote_plus(s)
+    # h = html_parser.HTMLParser()
+    # s = h.unescape(s)
+    # s = unquote_plus(s)
+    s = unescape_html(s)
 
     # Strip forbidden characters
     # https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
     s = (
-        s.replace(':', '-')
-        .replace('/', '-')
-        .replace('<', '-')
-        .replace('>', '-')
-        .replace('"', '-')
-        .replace('\\', '-')
-        .replace('|', '-')
-        .replace('?', '-')
-        .replace('*', '-')
-        .replace('\x00', '-')
-        .replace('\n', ' ')
+        s.replace(":", "-")
+        .replace("/", "-")
+        .replace("<", "-")
+        .replace(">", "-")
+        .replace('"', "-")
+        .replace("\\", "-")
+        .replace("|", "-")
+        .replace("?", "-")
+        .replace("*", "-")
+        .replace("\x00", "-")
+        .replace("\n", " ")
     )
 
     # Remove trailing dots and spaces; forbidden on Windows
-    s = s.rstrip(' .')
+    s = s.rstrip(" .")
 
     if minimal_change:
         return s
 
-    s = s.replace('(', '').replace(')', '')
-    s = s.rstrip('.')  # Remove excess of trailing dots
+    s = s.replace("(", "").replace(")", "")
+    s = s.rstrip(".")  # Remove excess of trailing dots
 
-    s = s.strip().replace(' ', '_')
-    valid_chars = '-_.()%s%s' % (string.ascii_letters, string.digits)
-    return ''.join(c for c in s if c in valid_chars)
+    s = s.strip().replace(" ", "_")
+    valid_chars = "-_.()%s%s" % (string.ascii_letters, string.digits)
+    return "".join(c for c in s if c in valid_chars)
 
 
 def normalize_path(path):
@@ -161,7 +163,7 @@ def normalize_path(path):
     @return: Normalized path.
     @rtype str
     """
-    if sys.platform != 'win32':
+    if sys.platform != "win32":
         return path
 
     if path.startswith(WINDOWS_UNC_PREFIX):
@@ -208,8 +210,8 @@ def clean_url(url):
     """
     parsed = urlparse(url.strip())
     reconstructed = ParseResult(
-        parsed.scheme, parsed.netloc, parsed.path,
-        params='', query='', fragment='')
+        parsed.scheme, parsed.netloc, parsed.path, params="", query="", fragment=""
+    )
     return reconstructed.geturl()
 
 
@@ -255,8 +257,7 @@ def total_seconds(td):
 
     Added for backward compatibility, pre 2.7.
     """
-    return (td.microseconds +
-            (td.seconds + td.days * 24 * 3600) * 10 ** 6) // 10 ** 6
+    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10 ** 6) // 10 ** 6
 
 
 def make_coursera_absolute_url(url):
@@ -305,5 +306,8 @@ def print_ssl_error_message(exception):
 # Please read instructions on how to fix this error here:
 # https://github.com/coursera-dl/coursera-dl#sslerror-errno-1-_sslc504-error14094410ssl-routinesssl3_read_bytessslv3-alert-handshake-failure
 #####################################################################
-""" % (type(exception).__name__, str(exception))
+""" % (
+        type(exception).__name__,
+        str(exception),
+    )
     logging.error(message)

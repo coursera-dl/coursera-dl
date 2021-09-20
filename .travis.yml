@@ -1,21 +1,20 @@
 language: python
 python:
-  - "2.7"
-  - "3.6"
-  - "3.7"
-  - "3.8"
-  - "3.9"
-  - "pypy"
+    - "2.7"
+    - "3.6"
+    - "3.7"
+    - "3.8"
+    - "3.9"
+    - "pypy"
 matrix:
-  allow_failures:
-    - python: "pypy"
+    allow_failures:
+        - python: "pypy"
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
-  - pip install -r requirements-dev.txt
-  - pip install coveralls
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install coveralls
 # command to run tests
 script: py.test coursera/test -v --cov coursera --cov-report html
 
-after_success:
-  coveralls
+after_success: coveralls

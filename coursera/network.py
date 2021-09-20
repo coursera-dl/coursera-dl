@@ -39,10 +39,9 @@ def get_reply(session, url, post=False, data=None, headers=None, quiet=False):
 
     request_headers = {} if headers is None else headers
 
-    request = requests.Request('POST' if post else 'GET',
-                               url,
-                               data=data,
-                               headers=request_headers)
+    request = requests.Request(
+        "POST" if post else "GET", url, data=data, headers=request_headers
+    )
     prepared_request = session.prepare_request(request)
 
     reply = session.send(prepared_request)
@@ -58,14 +57,9 @@ def get_reply(session, url, post=False, data=None, headers=None, quiet=False):
     return reply
 
 
-def get_page(session,
-             url,
-             json=False,
-             post=False,
-             data=None,
-             headers=None,
-             quiet=False,
-             **kwargs):
+def get_page(
+    session, url, json=False, post=False, data=None, headers=None, quiet=False, **kwargs
+):
     """
     Download an HTML page using the requests session.
 
@@ -88,8 +82,7 @@ def get_page(session,
     @rtype: str
     """
     url = url.format(**kwargs)
-    reply = get_reply(session, url, post=post, data=data, headers=headers,
-                      quiet=quiet)
+    reply = get_reply(session, url, post=post, data=data, headers=headers, quiet=quiet)
     return reply.json() if json else reply.text
 
 

@@ -12,7 +12,9 @@ _cache/
 *.egg-info
 .tox
 tags
+/target/
 tmp
+cookies.txt
 
 # virtualenv folders
 venv2

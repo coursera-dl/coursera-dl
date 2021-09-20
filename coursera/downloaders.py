@@ -17,12 +17,12 @@ import sys
 import time
 
 import requests
-
 from six import iteritems
 
 #
 # Below are file downloaders, they are wrappers for external downloaders.
 #
+
 
 class Downloader(object):
     """
@@ -55,8 +55,9 @@ class Downloader(object):
         except KeyboardInterrupt as e:
             # keep the file if resume is True
             if not resume:
-                logging.info('Keyboard Interrupt -- Removing partial file: %s',
-                             filename)
+                logging.info(
+                    "Keyboard Interrupt -- Removing partial file: %s", filename
+                )
                 try:
                     os.remove(filename)
                 except OSError:
@@ -92,11 +93,10 @@ class ExternalDownloader(Downloader):
         """
 
         req = requests.models.Request()
-        req.method = 'GET'
+        req.method = "GET"
         req.url = url
 
-        cookie_values = requests.cookies.get_cookie_header(
-            self.session.cookies, req)
+        cookie_values = requests.cookies.get_cookie_header(self.session.cookies, req)
 
         if cookie_values:
             self._add_cookies(command, cookie_values)
@@ -128,12 +128,11 @@ class ExternalDownloader(Downloader):
         if resume:
             self._enable_resume(command)
 
-        logging.debug('Executing %s: %s', self.bin, command)
+        logging.debug("Executing %s: %s", self.bin, command)
         try:
             subprocess.call(command)
         except OSError as e:
-            msg = "{0}. Are you sure that '{1}' is the right bin?".format(
-                e, self.bin)
+            msg = "{0}. Are you sure that '{1}' is the right bin?".format(e, self.bin)
             raise OSError(msg)
 
 
@@ -142,17 +141,16 @@ class WgetDownloader(ExternalDownloader):
     Uses wget, which is robust and gives nice visual feedback.
     """
 
-    bin = 'wget'
+    bin = "wget"
 
     def _enable_resume(self, command):
-        command.append('-c')
+        command.append("-c")
 
     def _add_cookies(self, command, cookie_values):
-        command.extend(['--header', "Cookie: " + cookie_values])
+        command.extend(["--header", "Cookie: " + cookie_values])
 
     def _create_command(self, url, filename):
-        return [self.bin, url, '-O', filename, '--no-cookies',
-                '--no-check-certificate']
+        return [self.bin, url, "-O", filename, "--no-cookies", "--no-check-certificate"]
 
 
 class CurlDownloader(ExternalDownloader):
@@ -160,16 +158,16 @@ class CurlDownloader(ExternalDownloader):
     Uses curl, which is robust and gives nice visual feedback.
     """
 
-    bin = 'curl'
+    bin = "curl"
 
     def _enable_resume(self, command):
-        command.extend(['-C', '-'])
+        command.extend(["-C", "-"])
 
     def _add_cookies(self, command, cookie_values):
-        command.extend(['--cookie', cookie_values])
+        command.extend(["--cookie", cookie_values])
 
     def _create_command(self, url, filename):
-        return [self.bin, url, '-k', '-#', '-L', '-o', filename]
+        return [self.bin, url, "-k", "-#", "-L", "-o", filename]
 
 
 class Aria2Downloader(ExternalDownloader):
@@ -178,18 +176,25 @@ class Aria2Downloader(ExternalDownloader):
     gets the job done much faster than the alternatives.
     """
 
-    bin = 'aria2c'
+    bin = "aria2c"
 
     def _enable_resume(self, command):
-        command.append('-c')
+        command.append("-c")
 
     def _add_cookies(self, command, cookie_values):
-        command.extend(['--header', "Cookie: " + cookie_values])
+        command.extend(["--header", "Cookie: " + cookie_values])
 
     def _create_command(self, url, filename):
-        return [self.bin, url, '-o', filename,
-                '--check-certificate=false', '--log-level=notice',
-                '--max-connection-per-server=4', '--min-split-size=1M']
+        return [
+            self.bin,
+            url,
+            "-o",
+            filename,
+            "--check-certificate=false",
+            "--log-level=notice",
+            "--max-connection-per-server=4",
+            "--min-split-size=1M",
+        ]
 
 
 class AxelDownloader(ExternalDownloader):
@@ -198,17 +203,16 @@ class AxelDownloader(ExternalDownloader):
     visual feedback and get the job done fast.
     """
 
-    bin = 'axel'
+    bin = "axel"
 
     def _enable_resume(self, command):
-        logging.warn('Resume download not implemented for this '
-                     'downloader!')
+        logging.warn("Resume download not implemented for this " "downloader!")
 
     def _add_cookies(self, command, cookie_values):
-        command.extend(['-H', "Cookie: " + cookie_values])
+        command.extend(["-H", "Cookie: " + cookie_values])
 
     def _create_command(self, url, filename):
-        return [self.bin, '-o', filename, '-n', '4', '-a', url]
+        return [self.bin, "-o", filename, "-n", "4", "-a", url]
 
 
 def format_bytes(bytes):
@@ -217,16 +221,16 @@ def format_bytes(bytes):
     Ripped from https://github.com/rg3/youtube-dl
     """
     if bytes is None:
-        return 'N/A'
+        return "N/A"
     if type(bytes) is str:
         bytes = float(bytes)
     if bytes == 0.0:
         exponent = 0
     else:
         exponent = int(math.log(bytes, 1024.0))
-    suffix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][exponent]
+    suffix = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"][exponent]
     converted = float(bytes) / float(1024 ** exponent)
-    return '{0:.2f}{1}'.format(converted, suffix)
+    return "{0:.2f}{1}".format(converted, suffix)
 
 
 class DownloadProgress(object):
@@ -236,7 +240,7 @@ class DownloadProgress(object):
     """
 
     def __init__(self, total):
-        if total in [0, '0', None]:
+        if total in [0, "0", None]:
             self._total = None
         else:
             self._total = int(total)
@@ -269,18 +273,18 @@ class DownloadProgress(object):
 
     def calc_percent(self):
         if self._total is None:
-            return '--%'
+            return "--%"
         if self._total == 0:
-            return '100% done'
+            return "100% done"
         percentage = int(float(self._current) / float(self._total) * 100.0)
         done = int(percentage / 2)
-        return '[{0: <50}] {1}%'.format(done * '#', percentage)
+        return "[{0: <50}] {1}%".format(done * "#", percentage)
 
     def calc_speed(self):
         dif = self._now - self._start
         if self._current == 0 or dif < 0.001:  # One millisecond
-            return '---b/s'
-        return '{0}/s'.format(format_bytes(float(self._current) / dif))
+            return "---b/s"
+        return "{0}/s".format(format_bytes(float(self._current) / dif))
 
     def report_progress(self):
         """Report download progress."""
@@ -288,9 +292,9 @@ class DownloadProgress(object):
         total = format_bytes(self._total)
 
         speed = self.calc_speed()
-        total_speed_report = '{0} at {1}'.format(total, speed)
+        total_speed_report = "{0} at {1}".format(total, speed)
 
-        report = '\r{0: <56} {1: >30}'.format(percent, total_speed_report)
+        report = "\r{0: <56} {1: >30}".format(percent, total_speed_report)
 
         if self._finished:
             print(report)
@@ -317,14 +321,14 @@ class NativeDownloader(Downloader):
         filesize = None
         if resume:
             filesize = os.path.getsize(filename)
-            headers['Range'] = 'bytes={}-'.format(filesize)
-            logging.info('Resume downloading %s -> %s', url, filename)
+            headers["Range"] = "bytes={}-".format(filesize)
+            logging.info("Resume downloading %s -> %s", url, filename)
         else:
-            logging.info('Downloading %s -> %s', url, filename)
+            logging.info("Downloading %s -> %s", url, filename)
 
         max_attempts = 3
         attempts_count = 0
-        error_msg = ''
+        error_msg = ""
         while attempts_count < max_attempts:
             r = self.session.get(url, stream=True, headers=headers)
 
@@ -338,21 +342,23 @@ class NativeDownloader(Downloader):
                 if resume and r.status_code == 206:
                     pass
                 elif resume and r.status_code == 416:
-                    logging.info('%s already downloaded', filename)
+                    logging.info("%s already downloaded", filename)
                     r.close()
                     return True
                 else:
-                    print('%s %s %s' % (r.status_code, url, filesize))
-                    logging.warn('Probably the file is missing from the AWS '
-                                 'repository...  waiting.')
+                    print("%s %s %s" % (r.status_code, url, filesize))
+                    logging.warn(
+                        "Probably the file is missing from the AWS "
+                        "repository...  waiting."
+                    )
 
                     if r.reason:
-                        error_msg = r.reason + ' ' + str(r.status_code)
+                        error_msg = r.reason + " " + str(r.status_code)
                     else:
-                        error_msg = 'HTTP Error ' + str(r.status_code)
+                        error_msg = "HTTP Error " + str(r.status_code)
 
                     wait_interval = 2 ** (attempts_count + 1)
-                    msg = 'Error downloading, will retry in {0} seconds ...'
+                    msg = "Error downloading, will retry in {0} seconds ..."
                     print(msg.format(wait_interval))
                     time.sleep(wait_interval)
                     attempts_count += 1
@@ -364,11 +370,11 @@ class NativeDownloader(Downloader):
                 # partial downloads.
                 resume = False
 
-            content_length = r.headers.get('content-length')
+            content_length = r.headers.get("content-length")
             chunk_sz = 1048576
             progress = DownloadProgress(content_length)
             progress.start()
-            f = open(filename, 'ab') if resume else open(filename, 'wb')
+            f = open(filename, "ab") if resume else open(filename, "wb")
             while True:
                 data = r.raw.read(chunk_sz, decode_content=True)
                 if not data:
@@ -381,7 +387,7 @@ class NativeDownloader(Downloader):
             return True
 
         if attempts_count == max_attempts:
-            logging.warn('Skipping, can\'t download file ...')
+            logging.warn("Skipping, can't download file ...")
             logging.error(error_msg)
             return False
 
@@ -392,15 +398,18 @@ def get_downloader(session, class_name, args):
     """
 
     external = {
-        'wget': WgetDownloader,
-        'curl': CurlDownloader,
-        'aria2': Aria2Downloader,
-        'axel': AxelDownloader,
+        "wget": WgetDownloader,
+        "curl": CurlDownloader,
+        "aria2": Aria2Downloader,
+        "axel": AxelDownloader,
     }
 
     for bin, class_ in iteritems(external):
         if getattr(args, bin):
-            return class_(session, bin=getattr(args, bin),
-                          downloader_arguments=args.downloader_arguments)
+            return class_(
+                session,
+                bin=getattr(args, bin),
+                downloader_arguments=args.downloader_arguments,
+            )
 
     return NativeDownloader(session)

@@ -7,11 +7,11 @@ from __future__ import print_function
 import errno
 import os
 
-from fabric.api import (env, local, task)
+from fabric.api import env, local, task
 
-MD2RST='pandoc --from=markdown --to=rst --output=README.rst README.md'
+MD2RST = "pandoc --from=markdown --to=rst --output=README.rst README.md"
 
-if not os.path.exists('README.rst'):
+if not os.path.exists("README.rst"):
     local(MD2RST)
 
 env.projname = local("python setup.py --name", capture=True)
@@ -57,8 +57,10 @@ def rebuild():
 
 @task
 def coverage():
-    local("py.test coursera/test -v --cov coursera --cov-report html \
-          --cov-report term-missing")
+    local(
+        "py.test coursera/test -v --cov coursera --cov-report html \
+          --cov-report term-missing"
+    )
 
 
 @task
@@ -68,7 +70,7 @@ def pylint():
 
 @task
 def tox():
-    local('tox')
+    local("tox")
 
 
 @task
@@ -87,7 +89,7 @@ def release():
     build()
     print("Releasing %s version %s." % (env.projname, env.version))
     local("git tag %s" % env.version)
-    local('gpg --detach-sign --armor dist/coursera-*.tar.gz*')
-    local('twine upload dist/coursera-*.tar.gz*')
+    local("gpg --detach-sign --armor dist/coursera-*.tar.gz*")
+    local("twine upload dist/coursera-*.tar.gz*")
     local("git push")
     local("git push --tags")

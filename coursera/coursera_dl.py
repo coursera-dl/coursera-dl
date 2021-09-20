@@ -46,44 +46,54 @@ import json
 import logging
 import os
 import re
-import time
 import shutil
-
+import time
 from distutils.version import LooseVersion as V
-
+from http.cookiejar import MozillaCookieJar
 
 # Test versions of some critical modules.
 # We may, perhaps, want to move these elsewhere.
 import bs4
-import six
 import requests
-
-from .cookies import (
-    AuthenticationFailed, ClassNotFound,
-    get_cookies_for_class, make_cookie_values, TLSAdapter, login)
-from .define import (CLASS_URL, ABOUT_URL, PATH_CACHE)
-from .downloaders import get_downloader
-from .workflow import CourseraDownloader
-from .parallel import ConsecutiveDownloader, ParallelDownloader
-from .utils import (clean_filename, get_anchor_format, mkdir_p, fix_url,
-                    print_ssl_error_message,
-                    decode_input, BeautifulSoup, is_debug_run,
-                    spit_json, slurp_json)
-
-from .api import expand_specializations
-from .network import get_page, get_page_and_url
-from .commandline import parse_args
-from .extractors import CourseraExtractor
+import six
 
 from coursera import __version__
 
+from .api import expand_specializations
+from .commandline import parse_args
+from .cookies import (
+    AuthenticationFailed,
+    ClassNotFound,
+    TLSAdapter,
+    get_cookies_for_class,
+    login,
+    make_cookie_values,
+)
+from .define import ABOUT_URL, CLASS_URL, PATH_CACHE
+from .downloaders import get_downloader
+from .extractors import CourseraExtractor
+from .network import get_page, get_page_and_url
+from .parallel import ConsecutiveDownloader, ParallelDownloader
+from .utils import (
+    BeautifulSoup,
+    clean_filename,
+    decode_input,
+    fix_url,
+    get_anchor_format,
+    is_debug_run,
+    mkdir_p,
+    print_ssl_error_message,
+    slurp_json,
+    spit_json,
+)
+from .workflow import CourseraDownloader
 
 # URL containing information about outdated modules
 _SEE_URL = " See https://github.com/coursera-dl/coursera/issues/139"
 
-assert V(requests.__version__) >= V('2.4'), "Upgrade requests!" + _SEE_URL
-assert V(six.__version__) >= V('1.5'), "Upgrade six!" + _SEE_URL
-assert V(bs4.__version__) >= V('4.1'), "Upgrade bs4!" + _SEE_URL
+assert V(requests.__version__) >= V("2.4"), "Upgrade requests!" + _SEE_URL
+assert V(six.__version__) >= V("1.5"), "Upgrade six!" + _SEE_URL
+assert V(bs4.__version__) >= V("4.1"), "Upgrade bs4!" + _SEE_URL
 
 
 def get_session():
@@ -92,8 +102,10 @@ def get_session():
     """
 
     session = requests.Session()
-    session.mount('https://', TLSAdapter())
-
+    cj = MozillaCookieJar()
+    cj.load("cookies.txt", ignore_expires=True)
+    session.cookies.update(cj)
+    session.mount("https://", TLSAdapter())
     return session
 
 
@@ -108,7 +120,7 @@ def list_courses(args):
     login(session, args.username, args.password)
     extractor = CourseraExtractor(session)
     courses = extractor.list_courses()
-    logging.info('Found %d courses', len(courses))
+    logging.info("Found %d courses", len(courses))
     for course in courses:
         logging.info(course)
 
@@ -127,7 +139,7 @@ def download_on_demand_class(session, args, class_name):
     error_occurred = False
     extractor = CourseraExtractor(session)
 
-    cached_syllabus_filename = '%s-syllabus-parsed.json' % class_name
+    cached_syllabus_filename = "%s-syllabus-parsed.json" % class_name
     if args.cache_syllabus and os.path.isfile(cached_syllabus_filename):
         modules = slurp_json(cached_syllabus_filename)
     else:
@@ -139,7 +151,7 @@ def download_on_demand_class(session, args, class_name):
             args.video_resolution,
             args.download_quizzes,
             args.mathjax_cdn_url,
-            args.download_notebooks
+            args.download_notebooks,
         )
 
     if is_debug_run or args.cache_syllabus():
@@ -149,8 +161,11 @@ def download_on_demand_class(session, args, class_name):
         return error_occurred, False
 
     downloader = get_downloader(session, class_name, args)
-    downloader_wrapper = ParallelDownloader(downloader, args.jobs) \
-        if args.jobs > 1 else ConsecutiveDownloader(downloader)
+    downloader_wrapper = (
+        ParallelDownloader(downloader, args.jobs)
+        if args.jobs > 1
+        else ConsecutiveDownloader(downloader)
+    )
 
     # obtain the resources
 
@@ -164,7 +179,7 @@ def download_on_demand_class(session, args, class_name):
         class_name=class_name,
         path=args.path,
         ignored_formats=ignored_formats,
-        disable_url_skipping=args.disable_url_skipping
+        disable_url_skipping=args.disable_url_skipping,
     )
 
     completed = course_downloader.download_modules(modules)
@@ -182,23 +197,26 @@ def download_on_demand_class(session, args, class_name):
 
 
 def print_skipped_urls(skipped_urls):
-    logging.info('The following URLs (%d) have been skipped and not '
-                 'downloaded:', len(skipped_urls))
-    logging.info('(if you want to download these URLs anyway, please '
-                 'add "--disable-url-skipping" option)')
-    logging.info('-' * 80)
+    logging.info(
+        "The following URLs (%d) have been skipped and not " "downloaded:",
+        len(skipped_urls),
+    )
+    logging.info(
+        "(if you want to download these URLs anyway, please "
+        'add "--disable-url-skipping" option)'
+    )
+    logging.info("-" * 80)
     for url in skipped_urls:
         logging.info(url)
-    logging.info('-' * 80)
+    logging.info("-" * 80)
 
 
 def print_failed_urls(failed_urls):
-    logging.info('The following URLs (%d) could not be downloaded:',
-                 len(failed_urls))
-    logging.info('-' * 80)
+    logging.info("The following URLs (%d) could not be downloaded:", len(failed_urls))
+    logging.info("-" * 80)
     for url in failed_urls:
         logging.info(url)
-    logging.info('-' * 80)
+    logging.info("-" * 80)
 
 
 def download_class(session, args, class_name):
@@ -210,7 +228,7 @@ def download_class(session, args, class_name):
         whether the course appears to be completed.
     @rtype: (bool, bool)
     """
-    logging.debug('Downloading new style (on demand) class %s', class_name)
+    logging.debug("Downloading new style (on demand) class %s", class_name)
     return download_on_demand_class(session, args, class_name)
 
 
@@ -220,7 +238,7 @@ def main():
     """
 
     args = parse_args()
-    logging.info('coursera_dl version %s', __version__)
+    logging.info("coursera_dl version %s", __version__)
     completed_classes = []
     classes_with_errors = []
 
@@ -228,13 +246,13 @@ def main():
     if args.clear_cache:
         shutil.rmtree(PATH_CACHE)
     if args.list_courses:
-        logging.info('Listing enrolled courses')
+        logging.info("Listing enrolled courses")
         list_courses(args)
         return
 
     session = get_session()
     if args.cookies_cauth:
-        session.cookies.set('CAUTH', args.cookies_cauth)
+        session.cookies.set("CAUTH", args.cookies_cauth)
     else:
         login(session, args.username, args.password)
     if args.specialization:
@@ -242,49 +260,56 @@ def main():
 
     for class_index, class_name in enumerate(args.class_names):
         try:
-            logging.info('Downloading class: %s (%d / %d)',
-                         class_name, class_index + 1, len(args.class_names))
-            error_occurred, completed = download_class(
-                session, args, class_name)
+            logging.info(
+                "Downloading class: %s (%d / %d)",
+                class_name,
+                class_index + 1,
+                len(args.class_names),
+            )
+            error_occurred, completed = download_class(session, args, class_name)
             if completed:
                 completed_classes.append(class_name)
             if error_occurred:
                 classes_with_errors.append(class_name)
         except requests.exceptions.HTTPError as e:
-            logging.error('HTTPError %s', e)
+            logging.error("HTTPError %s", e)
             if is_debug_run():
-                logging.exception('HTTPError %s', e)
+                logging.exception("HTTPError %s", e)
         except requests.exceptions.SSLError as e:
-            logging.error('SSLError %s', e)
+            logging.error("SSLError %s", e)
             print_ssl_error_message(e)
             if is_debug_run():
                 raise
         except ClassNotFound as e:
-            logging.error('Could not find class: %s', e)
+            logging.error("Could not find class: %s", e)
         except AuthenticationFailed as e:
-            logging.error('Could not authenticate: %s', e)
+            logging.error("Could not authenticate: %s", e)
 
         if class_index + 1 != len(args.class_names):
-            logging.info('Sleeping for %d seconds before downloading next course. '
-                         'You can change this with --download-delay option.',
-                         args.download_delay)
+            logging.info(
+                "Sleeping for %d seconds before downloading next course. "
+                "You can change this with --download-delay option.",
+                args.download_delay,
+            )
             time.sleep(args.download_delay)
 
     if completed_classes:
-        logging.info('-' * 80)
-        logging.info(
-            "Classes which appear completed: " + " ".join(completed_classes))
+        logging.info("-" * 80)
+        logging.info("Classes which appear completed: " + " ".join(completed_classes))
 
     if classes_with_errors:
-        logging.info('-' * 80)
-        logging.info('The following classes had errors during the syllabus'
-                     ' parsing stage. You may want to review error messages and'
-                     ' courses (sometimes enrolling to the course or switching'
-                     ' session helps):')
+        logging.info("-" * 80)
+        logging.info(
+            "The following classes had errors during the syllabus"
+            " parsing stage. You may want to review error messages and"
+            " courses (sometimes enrolling to the course or switching"
+            " session helps):"
+        )
         for class_name in classes_with_errors:
-            logging.info('%s (https://www.coursera.org/learn/%s)',
-                         class_name, class_name)
+            logging.info(
+                "%s (https://www.coursera.org/learn/%s)", class_name, class_name
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

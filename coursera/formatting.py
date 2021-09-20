@@ -4,31 +4,27 @@ from .define import FORMAT_MAX_LENGTH, TITLE_MAX_LENGTH
 
 
 def format_section(num, section, class_name, verbose_dirs):
-    sec = '%02d_%s' % (num, section)
+    sec = "%02d_%s" % (num, section)
     if verbose_dirs:
-        sec = class_name.upper() + '_' + sec
+        sec = class_name.upper() + "_" + sec
     return sec
 
 
 def format_resource(num, name, title, fmt):
     if title:
-        title = '_' + title
-    return '%02d_%s%s.%s' % (num, name, title, fmt)
+        title = "_" + title
+    return "%02d_%s%s.%s" % (num, name, title, fmt)
 
 
 def format_combine_number_resource(secnum, lecnum, lecname, title, fmt):
     if title:
-        title = '_' + title
-    return '%02d_%02d_%s%s.%s' % (secnum, lecnum, lecname, title, fmt)
+        title = "_" + title
+    return "%02d_%02d_%s%s.%s" % (secnum, lecnum, lecname, title, fmt)
 
 
-def get_lecture_filename(combined_section_lectures_nums,
-                         section_dir,
-                         secnum,
-                         lecnum,
-                         lecname,
-                         title,
-                         fmt):
+def get_lecture_filename(
+    combined_section_lectures_nums, section_dir, secnum, lecnum, lecname, title, fmt
+):
     """
     Prepare a destination lecture filename.
 
@@ -67,10 +63,11 @@ def get_lecture_filename(combined_section_lectures_nums,
     if combined_section_lectures_nums:
         lecture_filename = os.path.join(
             section_dir,
-            format_combine_number_resource(
-                secnum + 1, lecnum + 1, lecname, title, fmt))
+            format_combine_number_resource(secnum + 1, lecnum + 1, lecname, title, fmt),
+        )
     else:
         lecture_filename = os.path.join(
-            section_dir, format_resource(lecnum + 1, lecname, title, fmt))
+            section_dir, format_resource(lecnum + 1, lecname, title, fmt)
+        )
 
     return lecture_filename
