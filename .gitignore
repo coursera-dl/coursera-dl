@@ -16,6 +16,10 @@ tags
 tmp
 cookies.txt
 
+# Downloaded files
+/Downloads/
+/*.json
+
 # virtualenv folders
 venv2
 venv3
