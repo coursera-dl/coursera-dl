@@ -14,12 +14,11 @@ import re
 import string
 import sys
 import time
-from xml.sax.saxutils import escape, unescape
+from xml.sax.saxutils import unescape
 
 import six
 from bs4 import BeautifulSoup as BeautifulSoup_
 from six import iteritems
-from six.moves import html_parser
 from six.moves.urllib.parse import ParseResult
 from six.moves.urllib_parse import unquote_plus
 
@@ -34,10 +33,11 @@ if six.PY3:
     from string import ascii_letters as string_ascii_letters
     from string import digits as string_digits
 else:
-    from string import letters as string_ascii_letters
+    from string import ascii_letters as string_ascii_letters
     from string import digits as string_digits
 
 from .define import COURSERA_URL, WINDOWS_UNC_PREFIX
+
 
 # Force us of bs4 with html.parser
 
@@ -124,16 +124,16 @@ def clean_filename(s, minimal_change=False):
     # https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
     s = (
         s.replace(":", "-")
-        .replace("/", "-")
-        .replace("<", "-")
-        .replace(">", "-")
-        .replace('"', "-")
-        .replace("\\", "-")
-        .replace("|", "-")
-        .replace("?", "-")
-        .replace("*", "-")
-        .replace("\x00", "-")
-        .replace("\n", " ")
+            .replace("/", "-")
+            .replace("<", "-")
+            .replace(">", "-")
+            .replace('"', "-")
+            .replace("\\", "-")
+            .replace("|", "-")
+            .replace("?", "-")
+            .replace("*", "-")
+            .replace("\x00", "-")
+            .replace("\n", " ")
     )
 
     # Remove trailing dots and spaces; forbidden on Windows

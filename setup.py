@@ -10,7 +10,6 @@ from __future__ import print_function
 import os.path
 import subprocess
 import sys
-
 # For compatibility with Python2.7
 from io import open
 

@@ -241,7 +241,7 @@ class CourseraDownloader(CourseDownloader):
         if overwrite or not os.path.exists(lecture_filename) or resume:
             if not skip_download:
                 if url.startswith(IN_MEMORY_MARKER):
-                    page_content = url[len(IN_MEMORY_MARKER) :]
+                    page_content = url[len(IN_MEMORY_MARKER):]
                     logging.info("Saving page contents to: %s", lecture_filename)
                     with codecs.open(lecture_filename, "w", "utf-8") as file_object:
                         file_object.write(page_content)
@@ -260,7 +260,7 @@ class CourseraDownloader(CourseDownloader):
             logging.info("%s already downloaded", lecture_filename)
             # if this file hasn't been modified in a long time,
             # record that time
-            last_update = max(last_update, os.path.getmtime(lecture_filename))
+            last_update = max(os.path.getmtime(lecture_filename), last_update)
         return last_update
 
     def _run_hooks(self, section, hooks):

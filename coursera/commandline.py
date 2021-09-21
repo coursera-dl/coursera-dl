@@ -10,7 +10,6 @@ import sys
 import configargparse as argparse
 
 from coursera import __version__
-
 from .credentials import CredentialsError, get_credentials, keyring
 from .utils import decode_input
 
@@ -77,7 +76,7 @@ def parse_args(args=None):
         default=1,
         type=int,
         help="number of parallel jobs to use for "
-        "downloading resources. (Default: 1)",
+             "downloading resources. (Default: 1)",
     )
 
     group_basic.add_argument(
@@ -87,7 +86,7 @@ def parse_args(args=None):
         default=60,
         type=int,
         help="number of seconds to wait before downloading "
-        "next course. (Default: 60)",
+             "next course. (Default: 60)",
     )
 
     group_basic.add_argument(
@@ -114,15 +113,15 @@ def parse_args(args=None):
         action="store",
         default="all",
         help="Choose language to download subtitles and transcripts."
-        '(Default: all) Use special value "all" to download all available.'
-        "To download subtitles and transcripts of multiple languages,"
-        "use comma(s) (without spaces) to seperate the names of the languages,"
-        ' i.e., "en,zh-CN".'
-        "To download subtitles and transcripts of alternative language(s) "
-        "if only the current language is not available,"
-        'put an "|<lang>" for each of the alternative languages after '
-        'the current language, i.e., "en|fr,zh-CN|zh-TW|de", and make sure '
-        'the parameter are wrapped with quotes when "|" presents.',
+             '(Default: all) Use special value "all" to download all available.'
+             "To download subtitles and transcripts of multiple languages,"
+             "use comma(s) (without spaces) to seperate the names of the languages,"
+             ' i.e., "en,zh-CN".'
+             "To download subtitles and transcripts of alternative language(s) "
+             "if only the current language is not available,"
+             'put an "|<lang>" for each of the alternative languages after '
+             'the current language, i.e., "en|fr,zh-CN|zh-TW|de", and make sure '
+             'the parameter are wrapped with quotes when "|" presents.',
     )
 
     # Selection of material to download
@@ -134,9 +133,9 @@ def parse_args(args=None):
         action="store_true",
         default=False,
         help="treat given class names as specialization names and try to "
-        "download its courses, if available. Note that there are name "
-        'clashes, e.g. "machine-learning" is both a course and a '
-        "specialization (Default: False)",
+             "download its courses, if available. Note that there are name "
+             'clashes, e.g. "machine-learning" is both a course and a '
+             "specialization (Default: False)",
     )
 
     group_material.add_argument(
@@ -178,8 +177,8 @@ def parse_args(args=None):
         action="store",
         default="all",
         help="file format extensions to be downloaded in"
-        ' quotes space separated, e.g. "mp4 pdf" '
-        '(default: special value "all")',
+             ' quotes space separated, e.g. "mp4 pdf" '
+             '(default: special value "all")',
     )
 
     group_material.add_argument(
@@ -223,8 +222,8 @@ def parse_args(args=None):
         action="store",
         default="540p",
         help="video resolution to download (default: 540p); "
-        "only valid for on-demand courses; "
-        "only values allowed: 360p, 540p, 720p",
+             "only valid for on-demand courses; "
+             "only values allowed: 360p, 540p, 720p",
     )
 
     group_material.add_argument(
@@ -291,7 +290,7 @@ def parse_args(args=None):
         action="store_true",
         default=False,
         help="list course names (slugs) and quit. Listed "
-        "course names can be put into program arguments",
+             "course names can be put into program arguments",
     )
 
     parser.add_argument(
@@ -382,7 +381,7 @@ def parse_args(args=None):
         const=True,
         default=False,
         help="use netrc for reading passwords, uses default"
-        " location if no path specified",
+             " location if no path specified",
     )
 
     group_adv_auth.add_argument(

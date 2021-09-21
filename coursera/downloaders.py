@@ -19,6 +19,7 @@ import time
 import requests
 from six import iteritems
 
+
 #
 # Below are file downloaders, they are wrappers for external downloaders.
 #
@@ -206,7 +207,7 @@ class AxelDownloader(ExternalDownloader):
     bin = "axel"
 
     def _enable_resume(self, command):
-        logging.warn("Resume download not implemented for this " "downloader!")
+        logging.warning("Resume download not implemented for this " "downloader!")
 
     def _add_cookies(self, command, cookie_values):
         command.extend(["-H", "Cookie: " + cookie_values])
@@ -347,7 +348,7 @@ class NativeDownloader(Downloader):
                     return True
                 else:
                     print("%s %s %s" % (r.status_code, url, filesize))
-                    logging.warn(
+                    logging.warning(
                         "Probably the file is missing from the AWS "
                         "repository...  waiting."
                     )
@@ -387,7 +388,7 @@ class NativeDownloader(Downloader):
             return True
 
         if attempts_count == max_attempts:
-            logging.warn("Skipping, can't download file ...")
+            logging.warning("Skipping, can't download file ...")
             logging.error(error_msg)
             return False
 

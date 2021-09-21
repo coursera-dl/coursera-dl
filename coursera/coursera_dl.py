@@ -41,11 +41,8 @@ For further documentation and examples, visit the project's home at:
   https://github.com/coursera-dl/coursera
 """
 
-
-import json
 import logging
 import os
-import re
 import shutil
 import time
 from distutils.version import LooseVersion as V
@@ -58,28 +55,18 @@ import requests
 import six
 
 from coursera import __version__
-
 from .api import expand_specializations
 from .commandline import parse_args
 from .cookies import (
     AuthenticationFailed,
     ClassNotFound,
     TLSAdapter,
-    get_cookies_for_class,
-    login,
-    make_cookie_values,
 )
-from .define import ABOUT_URL, CLASS_URL, PATH_CACHE
+from .define import PATH_CACHE
 from .downloaders import get_downloader
 from .extractors import CourseraExtractor
-from .network import get_page, get_page_and_url
 from .parallel import ConsecutiveDownloader, ParallelDownloader
 from .utils import (
-    BeautifulSoup,
-    clean_filename,
-    decode_input,
-    fix_url,
-    get_anchor_format,
     is_debug_run,
     mkdir_p,
     print_ssl_error_message,
