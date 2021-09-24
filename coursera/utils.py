@@ -124,16 +124,16 @@ def clean_filename(s, minimal_change=False):
     # https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
     s = (
         s.replace(":", "-")
-            .replace("/", "-")
-            .replace("<", "-")
-            .replace(">", "-")
-            .replace('"', "-")
-            .replace("\\", "-")
-            .replace("|", "-")
-            .replace("?", "-")
-            .replace("*", "-")
-            .replace("\x00", "-")
-            .replace("\n", " ")
+        .replace("/", "-")
+        .replace("<", "-")
+        .replace(">", "-")
+        .replace('"', "-")
+        .replace("\\", "-")
+        .replace("|", "-")
+        .replace("?", "-")
+        .replace("*", "-")
+        .replace("\x00", "-")
+        .replace("\n", " ")
     )
 
     # Remove trailing dots and spaces; forbidden on Windows

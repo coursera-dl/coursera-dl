@@ -272,7 +272,7 @@ class MarkupToHTMLConverter(object):
             audio
             for audio in soup.find_all("asset")
             if audio.attrs.get("id") is not None
-               and audio.attrs.get("assettype") == "audio"
+            and audio.attrs.get("assettype") == "audio"
         ]
         if not audios:
             return
@@ -1228,7 +1228,7 @@ class CourseraOnDemand(object):
                     # some subtitle urls are relative!
                     subtitle_links[
                         "%s.%s" % (current_subtitle_language, subtitle_extension)
-                        ] = make_coursera_absolute_url(subtitle_url)
+                    ] = make_coursera_absolute_url(subtitle_url)
         return subtitle_links
 
     def extract_links_from_programming_immediate_instructions(self, element_id):
@@ -1647,8 +1647,8 @@ class CourseraOnDemand(object):
                     # If section title is present, put it in the beginning of
                     # section value as if it was there.
                     section_value = (
-                                        '<heading level="3">%s</heading>' % section_title
-                                    ) + section_value
+                        '<heading level="3">%s</heading>' % section_title
+                    ) + section_value
                 result.append(section_value)
 
         return result
