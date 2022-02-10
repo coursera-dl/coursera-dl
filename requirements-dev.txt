@@ -5,3 +5,4 @@ mock>=1.0.1
 coverage>=3.7
 keyrings.alt
 tox
+attrs>=21.4.0

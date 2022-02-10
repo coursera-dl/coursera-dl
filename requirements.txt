@@ -1,6 +1,6 @@
 beautifulsoup4>=4.1.3
 requests>=2.10.0
-six>=1.5.0
+six>=1.16.0
 urllib3>=1.23
 pyasn1>=0.1.7
 keyring>=4.0

@@ -98,8 +98,7 @@ HTML_UNESCAPE_TABLE = dict((v, k) for k, v in HTML_ESCAPE_TABLE.items())
 
 
 def unescape_html(s):
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
+    s = html_parser.unescape(s)
     s = unquote_plus(s)
     return unescape(s, HTML_UNESCAPE_TABLE)
 
@@ -114,8 +113,7 @@ def clean_filename(s, minimal_change=False):
     """
 
     # First, deal with URL encoded strings
-    h = html_parser.HTMLParser()
-    s = h.unescape(s)
+    s = html_parser.unescape(s)
     s = unquote_plus(s)
 
     # Strip forbidden characters
