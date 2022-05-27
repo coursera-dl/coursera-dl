@@ -153,10 +153,22 @@ def test_aria2():
     s = _ext_get_session()
 
     d = downloaders.Aria2Downloader(s)
-    command = d._create_command('download_url', 'save_to')
+    absolute_filepath = '/absolute/path/to/save_to'
+    command = d._create_command('download_url', absolute_filepath)
     assert command[0] == 'aria2c'
     assert 'download_url' in command
+    assert '/absolute/path/to' in command
     assert 'save_to' in command
+    assert absolute_filepath not in command, \
+        'Absolute filepath should be split'
+
+    d = downloaders.Aria2Downloader(s)
+    relative_filepath = 'save_to'
+    command = d._create_command('download_url', relative_filepath)
+    assert command[0] == 'aria2c'
+    assert 'download_url' in command
+    assert relative_filepath in command
+    assert '.' in command, 'Relative filepath should use --dir .'
 
     d._prepare_cookies(command, 'http://www.coursera.org')
     assert any("Cookie: " in e for e in command)

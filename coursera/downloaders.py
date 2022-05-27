@@ -186,8 +186,9 @@ class Aria2Downloader(ExternalDownloader):
     def _add_cookies(self, command, cookie_values):
         command.extend(['--header', "Cookie: " + cookie_values])
 
-    def _create_command(self, url, filename):
-        return [self.bin, url, '-o', filename,
+    def _create_command(self, url, filepath):
+        filedir, filename = os.path.split(filepath)
+        return [self.bin, url, '-o', filename, '--dir', filedir or '.',
                 '--check-certificate=false', '--log-level=notice',
                 '--max-connection-per-server=4', '--min-split-size=1M']
 
