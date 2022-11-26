@@ -9,7 +9,7 @@ import abc
 import json
 import logging
 
-from .api import (CourseraOnDemand, OnDemandCourseMaterialItemsV1,
+from .api import (CourseraOnDemand, OnDemandCourseMaterialItemsV2,
                   ModulesV1, LessonsV1, ItemsV2)
 from .define import OPENCOURSE_ONDEMAND_COURSE_MATERIALS_V2
 from .network import get_page
@@ -102,7 +102,7 @@ class CourseraExtractor(PlatformExtractor):
             unrestricted_filenames=unrestricted_filenames,
             mathjax_cdn_url=mathjax_cdn_url)
         course.obtain_user_id()
-        ondemand_material_items = OnDemandCourseMaterialItemsV1.create(
+        ondemand_material_items = OnDemandCourseMaterialItemsV2.create(
             session=self._session, course_name=course_name)
 
         if is_debug_run():
