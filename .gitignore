@@ -22,3 +22,5 @@ venv3
 .ipynb_checkpoints
 .ropeproject
 .mypy_cache
+
+*.rst
