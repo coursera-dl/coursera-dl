@@ -16,6 +16,7 @@ try:  # Workaround for broken Debian/Ubuntu packages? (See issue #331)
 except ImportError:
     from urllib3.poolmanager import PoolManager
 
+import six
 
 from six.moves import StringIO
 from six.moves import http_cookiejar as cookielib
@@ -288,7 +289,7 @@ def load_cookies_file(cookies_file):
 
     cookies = StringIO()
     cookies.write('# Netscape HTTP Cookie File')
-    cookies.write(open(cookies_file, 'rU').read())
+    cookies.write(open(cookies_file, 'r' if six.PY3 else 'rU').read())
     cookies.flush()
     cookies.seek(0)
     return cookies
